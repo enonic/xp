@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import java.io.IOException;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,7 +42,8 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
  * <p>
  * A token is accepted on a vhost if the user's id provider is enabled there with the
  * {@link IdProviderFlow#AUTOLOGIN autologin} flow (or no flow restriction), the vhost accepts its
- * audience, and its grant is live. The request then runs as the user with the grant's current
+ * audience (its configured list, or else XP's issuer name and the mapping's own identifier, the
+ * URL the request came to), and its grant is live. The request then runs as the user with the grant's current
  * restriction, and the token is available to controllers as the request's access token.
  * <p>
  * An XP token that fails a check gets 401 with {@code WWW-Authenticate: Bearer error="invalid_token"},
@@ -102,7 +105,8 @@ public final class AccessTokenFilter
         throws Exception
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
-        final String refusal = virtualHost == null ? "No virtual host" : refusal( claims, virtualHost );
+        final String identifier = virtualHost == null ? null : virtualHost.identifier( req.getScheme(), req.getServerName(), req.getServerPort() );
+        final String refusal = virtualHost == null ? "No virtual host" : refusal( claims, virtualHost, identifier );
         if ( refusal != null )
         {
             LOG.debug( "Token [{}] not accepted on vhost [{}]: {}", claims.getTokenId(), virtualHost == null ? null : virtualHost.getName(),
@@ -118,7 +122,7 @@ public final class AccessTokenFilter
             reject( res, "The access token has been revoked" );
             return;
         }
-        if ( !virtualHost.acceptsAudience( grant.get().getAudience(), claims.getIssuer() ) )
+        if ( !virtualHost.acceptsAudience( grant.get().getAudience(), claims.getIssuer(), identifier ) )
         {
             LOG.debug( "Token [{}] not accepted on vhost [{}]: the grant's audience {} no longer names it", claims.getTokenId(),
                        virtualHost.getName(), grant.get().getAudience() );
@@ -150,8 +154,10 @@ public final class AccessTokenFilter
 
     /**
      * Why the vhost refuses the token, or null if it accepts it.
+     *
+     * @param identifier the mapping's identifier for this request, see {@link VirtualHost#identifier}
      */
-    static String refusal( final AccessTokenClaims claims, final VirtualHost virtualHost )
+    static String refusal( final AccessTokenClaims claims, final VirtualHost virtualHost, final String identifier )
     {
         final IdProviderKey idProvider = claims.getSubject().getIdProviderKey();
         final VirtualHostIdProvider vhostIdProvider = virtualHost.getIdProviders().get( idProvider );
@@ -164,18 +170,19 @@ public final class AccessTokenFilter
             return "the autologin flow is disabled for id provider [" + idProvider + "]";
         }
         // A verified token's issuer is XP's own, which is what a vhost declaring no audience expects.
-        if ( virtualHost.acceptsAudience( claims.getAudience(), claims.getIssuer() ) )
+        if ( virtualHost.acceptsAudience( claims.getAudience(), claims.getIssuer(), identifier ) )
         {
             return null;
         }
         final Set<String> served = virtualHost.getAudience();
         return served.isEmpty()
-            ? "audience " + claims.getAudience() + " does not name this XP [" + claims.getIssuer() + "], vhost declares no audience"
+            ? "audience " + claims.getAudience() + " names neither this XP [" + claims.getIssuer() + "] nor this host [" + identifier +
+                "], vhost declares no audience"
             : "audience " + claims.getAudience() + " is not served, vhost serves " + served;
     }
 
     private static void reject( final HttpServletResponse res, final String description )
-        throws java.io.IOException
+        throws IOException
     {
         res.setHeader( "WWW-Authenticate", "Bearer error=\"invalid_token\", error_description=\"" + description + "\"" );
         res.sendError( HttpServletResponse.SC_UNAUTHORIZED );

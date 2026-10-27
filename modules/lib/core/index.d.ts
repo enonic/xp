@@ -396,7 +396,7 @@ export type OAuthConsent = OAuthConsentEnter | OAuthConsentConfirm | OAuthConsen
 export interface IdProviderSettings {
     /** The flows the host serves for the ID provider, sorted. Empty means no restriction. */
     flows: string[];
-    /** The audiences the host serves, sorted. Empty means it accepts only tokens naming XP's issuer. */
+    /** The audiences the host serves, sorted: its configured list, or else its own identifier, the URL of the request's mapping. */
     audience: string[];
 }
 

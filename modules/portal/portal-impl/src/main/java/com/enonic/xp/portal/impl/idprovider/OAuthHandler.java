@@ -10,8 +10,11 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -55,6 +58,7 @@ import com.enonic.xp.shared.SharedMapService;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -237,7 +241,6 @@ public class OAuthHandler
                                    "Unknown scope " + unknown + "; known scopes: " + known.getIds() );
             }
         }
-        final Set<String> allowedAudience = servedAudiences();
         final Set<String> requestedAudience =
             withinClient( audience( request ), client.map( Client::getResource ).orElse( Set.of() ) );
         if ( requestedAudience == null )
@@ -247,21 +250,36 @@ public class OAuthHandler
         final Set<String> audience;
         if ( requestedAudience.isEmpty() )
         {
-            // RFC 8707: no resource named, so the token is for XP itself, by its issuer name,
-            // which a vhost declaring no audience accepts, and for everything XP serves.
             audience = new LinkedHashSet<>();
             audience.add( accessTokenService.getIssuer() );
-            audience.addAll( allowedAudience );
-        }
-        else if ( allowedAudience.containsAll( requestedAudience ) )
-        {
-            audience = requestedAudience;
+            final VirtualHost here = request.getVirtualHost();
+            if ( here != null )
+            {
+                if ( here.getAudience().isEmpty() )
+                {
+                    audience.add( here.identifier( request.getScheme(), request.getHost(), request.getPort() ) );
+                }
+                else
+                {
+                    audience.addAll( here.getAudience() );
+                }
+            }
         }
         else
         {
-            final Set<String> unknown = new LinkedHashSet<>( requestedAudience );
-            unknown.removeAll( allowedAudience );
-            return oauthError( HttpStatus.BAD_REQUEST, "invalid_target", "Unknown resource " + unknown );
+            final Set<String> unknown = new LinkedHashSet<>();
+            for ( final String resource : requestedAudience )
+            {
+                if ( !isServed( resource ) )
+                {
+                    unknown.add( resource );
+                }
+            }
+            if ( !unknown.isEmpty() )
+            {
+                return oauthError( HttpStatus.BAD_REQUEST, "invalid_target", "Unknown resource " + unknown );
+            }
+            audience = requestedAudience;
         }
         final DeviceCodeStore.Pending pending = store.create( idProvider, clientId, scope, audience );
 
@@ -510,7 +528,8 @@ public class OAuthHandler
 
     /**
      * The audiences a token is for (RFC 8707): those asked for with {@code resource}, each one the
-     * grant holds, or all the grant's when none is asked for. Null when one is beyond the grant.
+     * grant holds or a URL under one it holds, or all the grant's when none is asked for. Null when
+     * one is beyond the grant.
      */
     private static @Nullable Set<String> tokenAudience( final PortalRequest request, final Set<String> granted )
     {
@@ -519,7 +538,12 @@ public class OAuthHandler
         {
             return granted;
         }
-        return granted.containsAll( asked ) ? asked : null;
+        return asked.stream().allMatch( resource -> granted.stream().anyMatch( held -> holds( held, resource ) ) ) ? asked : null;
+    }
+
+    private static boolean holds( final String held, final String resource )
+    {
+        return held.equals( resource ) || ( held.contains( "://" ) && resource.startsWith( held.endsWith( "/" ) ? held : held + "/" ) );
     }
 
     private static PortalResponse beyondGrant( final Set<String> granted )
@@ -736,18 +760,40 @@ public class OAuthHandler
     }
 
     /**
-     * The audiences XP serves (RFC 8707): its issuer name, for XP as a whole, and the {@code audience}
-     * lists of all vhost mappings.
+     * Whether XP serves the resource (RFC 8707): its issuer name, for XP as a whole; an audience a
+     * vhost mapping is configured with; or the identifier of a web mapping, the URL its source path
+     * is served at for a host it matches.
      */
-    private Set<String> servedAudiences()
+    private boolean isServed( final String resource )
     {
-        final Set<String> audiences = new LinkedHashSet<>();
-        audiences.add( accessTokenService.getIssuer() );
-        for ( final VirtualHost virtualHost : virtualHostService.getVirtualHosts() )
+        if ( accessTokenService.getIssuer().equals( resource ) )
         {
-            audiences.addAll( virtualHost.getAudience() );
+            return true;
         }
-        return audiences;
+        final List<VirtualHost> mappings = virtualHostService.getVirtualHosts();
+        if ( mappings.stream().anyMatch( mapping -> mapping.getAudience().contains( resource ) ) )
+        {
+            return true;
+        }
+        final URI uri;
+        try
+        {
+            uri = new URI( resource );
+        }
+        catch ( URISyntaxException e )
+        {
+            return false;
+        }
+        final String scheme = uri.getScheme();
+        final String host = uri.getHost();
+        if ( host == null || !( "https".equals( scheme ) || "http".equals( scheme ) ) )
+        {
+            return false;
+        }
+        return mappings.stream()
+            .filter( mapping -> DispatchConstants.WEB_CONNECTOR.equals( mapping.getConnector() ) && mapping.getAudience().isEmpty() )
+            .filter( mapping -> mapping.matchesHost( host ) )
+            .anyMatch( mapping -> resource.equals( mapping.identifier( scheme, host, uri.getPort() ) ) );
     }
 
     /**

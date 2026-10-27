@@ -15,7 +15,9 @@
   "contextPath": "/site/live/master/a",
   "idProviderSettings": {
     "flows": [],
-    "audience": []
+    "audience": [
+      "http://localhost"
+    ]
   },
   "params": {
     "param1": "value1",

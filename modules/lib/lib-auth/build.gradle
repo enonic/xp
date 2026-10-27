@@ -7,4 +7,5 @@ dependencies {
 
     testImplementation( testFixtures( project( ':core:core-api' ) ) )
     testImplementation project( ':tools:testing' )
+    testImplementation project( ':web:web-vhost' )
 }

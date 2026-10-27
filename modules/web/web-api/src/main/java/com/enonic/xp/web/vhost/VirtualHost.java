@@ -75,23 +75,38 @@ public interface VirtualHost
     int getOrder();
 
     /**
-     * The audiences this vhost serves (the mapping's {@code audience} list); empty if none is
-     * declared. See {@link #acceptsAudience(Set, String)}.
+     * The audiences this vhost is configured to serve (the mapping's {@code audience} list); empty
+     * if none is declared, in which case the mapping serves its own {@link #identifier identifier}
+     * and XP's issuer name. See {@link #acceptsAudience(Set, String, String)}.
      */
-    default Set<String> getAudience()
-    {
-        return Set.of();
-    }
+    Set<String> getAudience();
+
+    /**
+     * The mapping's own identifier as a resource (RFC 8707): the URL its source path is served at
+     * for the given scheme and port, {@code https://host/source}, without a trailing slash. The
+     * port is left out when it is the scheme's default or unknown. For a mapping matching hosts by
+     * pattern it is the identifier for the given host name.
+     *
+     * @param scheme the request scheme, {@code http} or {@code https}
+     * @param host   the host name the request was for
+     * @param port   the request port, or a value no greater than zero when unknown
+     */
+    String identifier( String scheme, String host, int port );
+
+    /**
+     * Whether the mapping matches a host name: the mapping's host, one of its space-separated
+     * hosts, or its regular expression when prefixed with {@code ~}.
+     */
+    boolean matchesHost( String serverName );
 
     /**
      * Whether a token with the given audiences is accepted here: it names a declared audience, or,
-     * if none is declared, {@code self}, XP's issuer name.
+     * if none is declared, {@code self}, XP's issuer name, or {@code identifier}, this mapping's own.
+     *
+     * @param self       XP's issuer name
+     * @param identifier the mapping's identifier for the request, see {@link #identifier}, or null when unknown
      */
-    default boolean acceptsAudience( final Set<String> audience, final String self )
-    {
-        final Set<String> served = getAudience();
-        return served.isEmpty() ? audience.contains( self ) : audience.stream().anyMatch( served::contains );
-    }
+    boolean acceptsAudience( Set<String> audience, String self, @Nullable String identifier );
 
     /**
      * Returns the mapping's context attributes ({@code mapping.<name>.context.*}), copied into the
