@@ -426,14 +426,12 @@ public final class SecurityServiceImpl
                 throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
             }
 
-            final User user = PrincipalNodeTranslator.userFromNode( node );
-
             final String authenticationHash =
                 password != null ? this.passwordSecurityService.defaultEncoder().encode( password.toCharArray() ) : null;
 
-            final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
-
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate ) );
+            final Node updatedNode = nodeService.update(
+                PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode,
+                                                            user -> User.create( user ).authenticationHash( authenticationHash ).build() ) );
 
             securityAuditLogSupport.setPassword( key );
 
@@ -502,16 +500,17 @@ public final class SecurityServiceImpl
                 throw new PrincipalNotFoundException( updateUserParams.getKey() );
             }
 
-            final User existingUser = PrincipalNodeTranslator.userFromNode( node );
-
-            final User userToUpdate = updateUserParams.update( existingUser );
+            final User userToUpdate = updateUserParams.update( PrincipalNodeTranslator.userFromNode( node ) );
             duplicateEmailValidation( userToUpdate.getKey(), userToUpdate.getEmail() );
 
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate ) );
+            final Node updatedNode = nodeService.update(
+                PrincipalNodeTranslator.toUpdateNodeParams( updateUserParams.getKey(), PrincipalNodeTranslator::userFromNode,
+                                                            updateUserParams::update ) );
+            final User updatedUser = PrincipalNodeTranslator.userFromNode( updatedNode );
 
-            securityAuditLogSupport.updateUser( UpdateUserParams.create( userToUpdate ).build() );
+            securityAuditLogSupport.updateUser( UpdateUserParams.create( updatedUser ).build() );
 
-            return PrincipalNodeTranslator.userFromNode( updatedNode );
+            return updatedUser;
         } );
 
     }
@@ -604,15 +603,14 @@ public final class SecurityServiceImpl
                 throw new PrincipalNotFoundException( updateGroupParams.getKey() );
             }
 
-            final Group existingGroup = PrincipalNodeTranslator.groupFromNode( node );
+            final Node updatedNode = nodeService.update(
+                PrincipalNodeTranslator.toUpdateNodeParams( updateGroupParams.getKey(), PrincipalNodeTranslator::groupFromNode,
+                                                            updateGroupParams::update ) );
+            final Group updatedGroup = PrincipalNodeTranslator.groupFromNode( updatedNode );
 
-            final Group groupToUpdate = updateGroupParams.update( existingGroup );
+            securityAuditLogSupport.updateGroup( UpdateGroupParams.create( updatedGroup ).build() );
 
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( groupToUpdate ) );
-
-            securityAuditLogSupport.updateGroup( UpdateGroupParams.create( groupToUpdate ).build() );
-
-            return PrincipalNodeTranslator.groupFromNode( updatedNode );
+            return updatedGroup;
         } );
     }
 
@@ -661,15 +659,14 @@ public final class SecurityServiceImpl
                 throw new PrincipalNotFoundException( updateRoleParams.getKey() );
             }
 
-            final Role existingRole = PrincipalNodeTranslator.roleFromNode( node );
+            final Node updatedNode = nodeService.update(
+                PrincipalNodeTranslator.toUpdateNodeParams( updateRoleParams.getKey(), PrincipalNodeTranslator::roleFromNode,
+                                                            updateRoleParams::update ) );
+            final Role updatedRole = PrincipalNodeTranslator.roleFromNode( updatedNode );
 
-            final Role roleToUpdate = updateRoleParams.update( existingRole );
+            securityAuditLogSupport.updateRole( UpdateRoleParams.create( updatedRole ).build() );
 
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( roleToUpdate ) );
-
-            securityAuditLogSupport.updateRole( UpdateRoleParams.create( roleToUpdate ).build() );
-
-            return PrincipalNodeTranslator.roleFromNode( updatedNode );
+            return updatedRole;
         } );
     }
 
@@ -899,12 +896,9 @@ public final class SecurityServiceImpl
                 return null;
             }
 
-            final IdProvider existingIdProvider = IdProviderNodeTranslator.fromNode( node );
-
-            final IdProvider idProviderToUpdate = updateIdProviderParams.update( existingIdProvider );
-
-            final UpdateNodeParams updateNodeParams = IdProviderNodeTranslator.toUpdateNodeParams( idProviderToUpdate, node.id() );
-            final Node idProviderNode = nodeService.update( updateNodeParams );
+            final Node idProviderNode =
+                nodeService.update( IdProviderNodeTranslator.toUpdateNodeParams( node.id(), updateIdProviderParams::update ) );
+            final IdProvider updatedIdProvider = IdProviderNodeTranslator.fromNode( idProviderNode );
 
             if ( updateIdProviderParams.getIdProviderPermissions() != null )
             {
@@ -931,9 +925,9 @@ public final class SecurityServiceImpl
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
             }
 
-            securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( idProviderToUpdate ).build() );
+            securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( updatedIdProvider ).build() );
 
-            return IdProviderNodeTranslator.fromNode( idProviderNode );
+            return updatedIdProvider;
         } );
     }
 

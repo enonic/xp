@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.security;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -116,30 +118,33 @@ abstract class PrincipalNodeTranslator
         return builder.build();
     }
 
-    public static UpdateNodeParams toUpdateNodeParams( final Principal principal )
+    static <T extends Principal> UpdateNodeParams toUpdateNodeParams( final PrincipalKey key, final Function<Node, T> read,
+                                                                       final UnaryOperator<T> change )
     {
-        requireNonNull( principal );
+        requireNonNull( key );
 
-        return UpdateNodeParams.create().
-            path( principal.getKey().toPath() ).
-            editor( editableNode -> {
-                final PropertyTree nodeData = editableNode.data;
-                nodeData.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, principal.getDisplayName() );
-                switch ( principal.getKey().getType() )
-                {
-                    case USER:
-                        populateUserData( nodeData.getRoot(), (User) principal );
-                        break;
-                    case ROLE:
-                        populateRoleData( nodeData.getRoot(), (Role) principal );
-                        break;
-                    case GROUP:
-                        populateGroupData( nodeData.getRoot(), (Group) principal );
-                        break;
-                }
-            } ).
-            refresh( RefreshMode.ALL ).
-            build();
+        return UpdateNodeParams.create()
+            .path( key.toPath() )
+            .editor( editableNode -> populateData( editableNode.data, change.apply( read.apply( editableNode.build() ) ) ) )
+            .refresh( RefreshMode.ALL )
+            .build();
+    }
+
+    private static void populateData( final PropertyTree nodeData, final Principal principal )
+    {
+        nodeData.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, principal.getDisplayName() );
+        switch ( principal.getKey().getType() )
+        {
+            case USER:
+                populateUserData( nodeData.getRoot(), (User) principal );
+                break;
+            case ROLE:
+                populateRoleData( nodeData.getRoot(), (Role) principal );
+                break;
+            case GROUP:
+                populateGroupData( nodeData.getRoot(), (Group) principal );
+                break;
+        }
     }
 
     static UpdateNodeParams addRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
