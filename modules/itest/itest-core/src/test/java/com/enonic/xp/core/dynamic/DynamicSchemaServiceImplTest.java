@@ -20,6 +20,7 @@ import org.mockito.quality.Strictness;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.audit.AuditLogService;
@@ -27,6 +28,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationHelper;
+import com.enonic.xp.core.impl.app.ApplicationRegistry;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
@@ -138,6 +140,8 @@ class DynamicSchemaServiceImplTest
     NodeServiceImpl nodeService;
 
     private DynamicSchemaServiceImpl dynamicSchemaService;
+
+    private ApplicationRegistry applicationRegistry;
 
     private ProjectServiceImpl projectService;
 
@@ -276,7 +280,9 @@ class DynamicSchemaServiceImplTest
         final EventPublisher applicationEventPublisher = mock( EventPublisher.class );
         doAnswer( invocation -> applicationEvents.add( invocation.getArgument( 0 ) ) ).when( applicationEventPublisher ).publish( any() );
 
-        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, applicationEventPublisher );
+        this.applicationRegistry = mock( ApplicationRegistry.class );
+        this.dynamicSchemaService =
+            new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, applicationEventPublisher, applicationRegistry );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
             .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
@@ -986,6 +992,64 @@ class DynamicSchemaServiceImplTest
         assertEquals( "Application [unknownapp] is not installed", exception.getMessage() );
 
         assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/unknownapp" ) ) ) );
+    }
+
+    @Test
+    void systemApplicationIsNeverWritten()
+        throws Exception
+    {
+        // the keys the platform owns, and an installed bundle of the system type: no write goes through, whatever the nodes
+        final ApplicationKey systemBundleKey = ApplicationKey.from( "com.enonic.app.systembundle" );
+        final Application systemBundle = mock( Application.class );
+        when( systemBundle.isSystem() ).thenReturn( true );
+        when( applicationRegistry.get( systemBundleKey ) ).thenReturn( systemBundle );
+        createApplicationNode( systemBundleKey );
+
+        final String contentType = readResource( "_contentType.yaml" );
+        final String part = readResource( "_part.yaml" );
+        final String styles = readResource( "_styles.yaml" );
+        final String macro = readResource( "_macro.yaml" );
+        applicationEvents.clear();
+
+        for ( final ApplicationKey key : List.of( ApplicationKey.BASE, ApplicationKey.PORTAL, ApplicationKey.MEDIA_MOD, ApplicationKey.SYSTEM,
+                                                  ApplicationKey.from( "com.enonic.xp.app.system" ), systemBundleKey ) )
+        {
+            final List<Runnable> writes = List.of( () -> dynamicSchemaService.createOrUpdateCms(
+                                                       CreateOrUpdateCmsParams.create().key( key ).resource( CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ),
+                                                   () -> dynamicSchemaService.createOrUpdateContentType( CreateOrUpdateContentSchemaParams.create()
+                                                                                                             .name( ContentTypeName.from( key, "mytype" ) )
+                                                                                                             .resource( contentType )
+                                                                                                             .build() ),
+                                                   () -> dynamicSchemaService.createOrUpdatePart(
+                                                       CreateOrUpdateComponentParams.create().key( DescriptorKey.from( key, "mypart" ) ).resource( part ).build() ),
+                                                   () -> dynamicSchemaService.createOrUpdateStyles(
+                                                       CreateOrUpdateStylesParams.create().key( key ).resource( styles ).build() ),
+                                                   () -> dynamicSchemaService.createOrUpdateMacro(
+                                                       CreateOrUpdateMacroParams.create().key( MacroKey.from( key, "mymacro" ) ).resource( macro ).build() ),
+                                                   () -> dynamicSchemaService.createOrUpdatePhrases(
+                                                       CreateOrUpdatePhrasesParams.create().key( key ).name( "phrases_en" ).resource( "a=b\n" ).build() ),
+                                                   () -> dynamicSchemaService.deleteContentType( ContentTypeName.from( key, "mytype" ) ),
+                                                   () -> dynamicSchemaService.deletePart( DescriptorKey.from( key, "mypart" ) ),
+                                                   () -> dynamicSchemaService.deleteStyles( key ),
+                                                   () -> dynamicSchemaService.deleteMacro( MacroKey.from( key, "mymacro" ) ),
+                                                   () -> dynamicSchemaService.deletePhrases(
+                                                       DeleteDynamicPhrasesParams.create().key( key ).name( "phrases_en" ).build() ),
+                                                   () -> dynamicSchemaService.deleteCms( key ) );
+            for ( final Runnable write : writes )
+            {
+                final IllegalArgumentException exception =
+                    assertThrows( IllegalArgumentException.class, () -> createAdminContext().runWith( write ) );
+                assertEquals( "Cannot modify system application: " + key, exception.getMessage() );
+            }
+
+            // the system check comes after the role check
+            assertThrows( ForbiddenAccessException.class, () -> ctxDefault().runWith( writes.get( 0 ) ) );
+        }
+
+        assertTrue( applicationEvents.isEmpty() );
+        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/base" ) ) ) );
+        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/com.enonic.xp.app.system" ) ) ) );
+        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/com.enonic.app.systembundle/cms" ) ) ) );
     }
 
     @Test

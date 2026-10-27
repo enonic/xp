@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.SchemaNodeLayout.Kind;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
@@ -81,15 +82,18 @@ public class DynamicSchemaServiceImpl
 
     private final EventPublisher eventPublisher;
 
+    private final ApplicationRegistry applicationRegistry;
+
     @Activate
     public DynamicSchemaServiceImpl( @Reference final NodeService nodeService,
                                      @Reference final DynamicSchemaAuditLogSupport auditLogSupport,
-                                     @Reference final EventPublisher eventPublisher )
+                                     @Reference final EventPublisher eventPublisher, @Reference final ApplicationRegistry applicationRegistry )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService );
         this.dynamicResourceParser = new DynamicResourceParser();
         this.auditLogSupport = auditLogSupport;
         this.eventPublisher = eventPublisher;
+        this.applicationRegistry = applicationRegistry;
     }
 
     // the generic methods of the 8.1 API dispatch by the type of the params to the method of the kind
@@ -318,6 +322,7 @@ public class DynamicSchemaServiceImpl
                                                                                             final DynamicComponentType type )
     {
         requireAdminRole();
+        requireWritableApplication( params.getKey().getApplicationKey() );
         requireCmsDescriptor( params.getKey().getApplicationKey() );
         final Kind kind = kind( type );
         if ( !kind.hasIcon() && !( params.getIcon() instanceof IconUpdate.Keep ) )
@@ -377,6 +382,7 @@ public class DynamicSchemaServiceImpl
     private boolean doDeleteComponent( final DescriptorKey key, final DynamicComponentType type )
     {
         requireAdminRole();
+        requireWritableApplication( key.getApplicationKey() );
 
         final boolean deleted = dynamicResourceManager.delete( key.getApplicationKey(), kind( type ), key.getName() );
 
@@ -393,6 +399,7 @@ public class DynamicSchemaServiceImpl
                                                                                    final DynamicContentSchemaType type )
     {
         requireAdminRole();
+        requireWritableApplication( params.getName().getApplicationKey() );
         requireSchemaName( params.getName(), type );
         requireCmsDescriptor( params.getName().getApplicationKey() );
 
@@ -447,6 +454,7 @@ public class DynamicSchemaServiceImpl
     private boolean doDeleteSchema( final BaseSchemaName name, final DynamicContentSchemaType type )
     {
         requireAdminRole();
+        requireWritableApplication( name.getApplicationKey() );
 
         final boolean deleted = dynamicResourceManager.delete( name.getApplicationKey(), kind( type ), name.getLocalName() );
 
@@ -467,6 +475,7 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<CmsDescriptor> createOrUpdateCms( final CreateOrUpdateCmsParams params )
     {
         requireAdminRole();
+        requireWritableApplication( params.getKey() );
         requireApplicationNode( params.getKey() );
 
         final CmsDescriptor cmsDescriptor = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
@@ -524,6 +533,7 @@ public class DynamicSchemaServiceImpl
     public boolean deleteCms( final ApplicationKey key )
     {
         requireAdminRole();
+        requireWritableApplication( key );
 
         final boolean deleted = dynamicResourceManager.deleteCms( key );
 
@@ -540,6 +550,7 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<StyleDescriptor> createOrUpdateStyles( final CreateOrUpdateStylesParams params )
     {
         requireAdminRole();
+        requireWritableApplication( params.getKey() );
         requireCmsDescriptor( params.getKey() );
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
@@ -598,6 +609,7 @@ public class DynamicSchemaServiceImpl
     public boolean deleteStyles( final ApplicationKey key )
     {
         requireAdminRole();
+        requireWritableApplication( key );
 
         final boolean deleted = dynamicResourceManager.delete( key, Kind.STYLE, null );
 
@@ -614,6 +626,7 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<MacroDescriptor> createOrUpdateMacro( final CreateOrUpdateMacroParams params )
     {
         requireAdminRole();
+        requireWritableApplication( params.getKey().getApplicationKey() );
         requireCmsDescriptor( params.getKey().getApplicationKey() );
 
         final Stored<MacroDescriptor> stored =
@@ -668,6 +681,7 @@ public class DynamicSchemaServiceImpl
     public boolean deleteMacro( final MacroKey key )
     {
         requireAdminRole();
+        requireWritableApplication( key.getApplicationKey() );
 
         final boolean deleted = dynamicResourceManager.delete( key.getApplicationKey(), Kind.MACRO, key.getName() );
 
@@ -684,6 +698,7 @@ public class DynamicSchemaServiceImpl
     public Resource createOrUpdatePhrases( final CreateOrUpdatePhrasesParams params )
     {
         requireAdminRole();
+        requireWritableApplication( params.getKey() );
         requireCmsDescriptor( params.getKey() );
 
         final String name = phrasesName( params.getName() );
@@ -725,6 +740,7 @@ public class DynamicSchemaServiceImpl
     public boolean deletePhrases( final DeleteDynamicPhrasesParams params )
     {
         requireAdminRole();
+        requireWritableApplication( params.getKey() );
 
         final String name = phrasesName( params.getName() );
         final boolean deleted = dynamicResourceManager.delete( params.getKey(), Kind.PHRASES, name );
@@ -875,6 +891,15 @@ public class DynamicSchemaServiceImpl
     private static void requireAdminRole()
     {
         ApplicationHelper.requireSchemaAdminRole();
+    }
+
+    /**
+     * The schema of a system application is never written, see {@link ApplicationHelper#requireNonSystemApplication}.
+     */
+    private void requireWritableApplication( final ApplicationKey key )
+    {
+        final Application application = applicationRegistry.get( key );
+        ApplicationHelper.requireNonSystemApplication( key, application != null && application.isSystem() );
     }
 
     /**

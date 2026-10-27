@@ -172,7 +172,7 @@ interface CreateOrUpdateApplicationDescriptorHandler {
  * the editor then receives a descriptor holding only the key. Installing a bundle of the application later persists the
  * bundle's descriptor over it.
  *
- * Requires the `system.admin` or `system.schema.admin` role.
+ * Requires the `system.admin` or `system.schema.admin` role. The system applications shipped with XP are never written.
  *
  * @example-ref examples/app/createOrUpdate.js
  *

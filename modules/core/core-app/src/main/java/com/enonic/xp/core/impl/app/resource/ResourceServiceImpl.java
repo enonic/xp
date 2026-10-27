@@ -20,6 +20,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
+import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.resource.MultiResourceProcessor;
@@ -35,8 +36,6 @@ import com.enonic.xp.vfs.VirtualFile;
 public final class ResourceServiceImpl
     implements ResourceService
 {
-    private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
-
     private final ConcurrentMap<ProcessingKey, ProcessingEntry> cache;
 
     private final ConcurrentMap<ProcessingKey, MultiProcessingEntry> multiCache;
@@ -88,7 +87,7 @@ public final class ResourceServiceImpl
 
     private static ApplicationKey effectiveKey( final ApplicationKey key )
     {
-        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key ) ? SYSTEM_APPLICATION_KEY : key;
+        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key ) ? ApplicationHelper.SYSTEM_APPLICATION_KEY : key;
     }
 
     private BundleStamp bundleStamp( final ApplicationKey key )

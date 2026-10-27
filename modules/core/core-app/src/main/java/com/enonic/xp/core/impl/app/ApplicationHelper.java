@@ -31,6 +31,12 @@ public final class ApplicationHelper
 {
     private static final String LOCAL_BUNDLE_LOCATION_PREFIX = "local:";
 
+    /**
+     * The application shipping the built-in schema: the resources of the reserved keys ({@code base}, {@code portal}, {@code media},
+     * {@code system}) are served through it.
+     */
+    public static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+
     public static ApplicationKey getApplicationKey( final Bundle bundle )
     {
         return ApplicationKey.from( ApplicationBundleUtils.getApplicationName( bundle ) );
@@ -153,6 +159,29 @@ public final class ApplicationHelper
         if ( !hasAdminRole )
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
+    /**
+     * {@code true} for a key the platform owns: a reserved key or the key of the application shipping the built-in schema.
+     */
+    static boolean isSystemApplicationKey( final ApplicationKey key )
+    {
+        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key ) || SYSTEM_APPLICATION_KEY.equals( key );
+    }
+
+    /**
+     * The persisted schema and descriptor of a system application are never written: neither for a key the platform owns, see
+     * {@link #isSystemApplicationKey(ApplicationKey)}, nor for an installed bundle of the system type ({@code X-Bundle-Type: system}).
+     *
+     * @param key          the application written
+     * @param systemBundle {@code true} when the application is installed from a bundle of the system type
+     */
+    static void requireNonSystemApplication( final ApplicationKey key, final boolean systemBundle )
+    {
+        if ( systemBundle || isSystemApplicationKey( key ) )
+        {
+            throw new IllegalArgumentException( "Cannot modify system application: " + key );
         }
     }
 

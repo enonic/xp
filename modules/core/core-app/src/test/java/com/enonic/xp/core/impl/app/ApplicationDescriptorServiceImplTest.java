@@ -211,6 +211,37 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
+    void createOrUpdate_rejects_system_applications()
+    {
+        // an installed bundle of the system type is told by its manifest
+        final Bundle systemBundle = mockAppBundle( "com.enonic.systembundle" );
+        final Hashtable<String, String> headers = new Hashtable<>();
+        headers.put( "X-Bundle-Type", "system" );
+        Mockito.when( systemBundle.getHeaders() ).thenReturn( headers );
+        appDescriptorService.start( componentContext );
+        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, systemBundle ) );
+
+        for ( final ApplicationKey key : List.of( ApplicationKey.BASE, ApplicationKey.PORTAL, ApplicationKey.MEDIA_MOD, ApplicationKey.SYSTEM,
+                                                  ApplicationKey.from( "com.enonic.xp.app.system" ),
+                                                  ApplicationKey.from( "com.enonic.systembundle" ) ) )
+        {
+            final CreateOrUpdateApplicationDescriptorParams params =
+                CreateOrUpdateApplicationDescriptorParams.create().key( key ).editor( edit -> edit.title = "Hijacked" ).build();
+            final IllegalArgumentException exception =
+                assertThrows( IllegalArgumentException.class, () -> asAdmin( () -> appDescriptorService.createOrUpdate( params ) ) );
+            assertEquals( "Cannot modify system application: " + key, exception.getMessage() );
+
+            // the system check comes after the role check
+            assertThrows( ForbiddenAccessException.class, () -> appDescriptorService.createOrUpdate( params ) );
+        }
+
+        // nothing is created or written for any of them
+        verify( repoService, never() ).createApplicationNode( any() );
+        verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
+        verify( eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
     void createOrUpdate_keeps_untouched_fields_and_clears_nulls()
     {
         final AtomicReference<String> persisted = stubUpsert();
