@@ -20,20 +20,7 @@
     ],
     "audience": [
       "api"
-    ],
-    "scopes": {
-      "content:read": {
-        "roles": [
-          "role:cms.cm.app",
-          "role:cms.project.site.viewer"
-        ],
-        "required": true
-      },
-      "profile": {
-        "roles": [],
-        "required": false
-      }
-    }
+    ]
   },
   "params": {
     "param1": "value1",

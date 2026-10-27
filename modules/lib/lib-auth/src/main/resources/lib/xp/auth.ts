@@ -124,10 +124,10 @@ const isLoginParams = (params: unknown): params is LoginParams =>
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
  * @param {string[]} [params.roles] Restricts the login to these roles: the user gets only those of them they hold, directly or through a group. Groups are never kept. An empty list leaves only the user's own key and the roles every authenticated user has. Omit for no restriction. A SESSION login keeps the result for the session's lifetime.
  * @param {string} [params.actor] The principal acting on the user's behalf, such as a service logging a user in for a call it makes for them. Recorded next to the user in the audit log.
- * @param {object} [params.accessToken] An access token from another issuer, already verified by the caller. XP checks its audience against the virtual host, maps its scopes to roles through the host's scope catalogue, and exposes it as `request.accessToken`.
+ * @param {object} [params.accessToken] An access token from another issuer, already verified by the caller. XP checks its audience against the virtual host, maps its scopes to roles through the ID provider's scopes, and exposes it as `request.accessToken`.
  * @param {string} params.accessToken.issuer The token's issuer.
  * @param {string} [params.accessToken.clientId] The client the token was issued to.
- * @param {string[]} [params.accessToken.scope] The token's scopes. Scopes unknown to the host's catalogue give no roles.
+ * @param {string[]} [params.accessToken.scope] The token's scopes. Scopes the ID provider does not define give no roles.
  * @param {string[]} [params.accessToken.audience] The token's audiences. One of them must be declared by the virtual host, or the login is refused.
  * @returns {LoginResult} Information for logged-in user.
  */
@@ -1037,4 +1037,207 @@ export function getIdProviders(): IdProvider[] {
     const bean: GetIdProvidersHandler = __.newBean<GetIdProvidersHandler>('com.enonic.xp.lib.auth.GetIdProvidersHandler');
 
     return __.toNativeObject(bean.getIdProviders());
+}
+
+/**
+ * A scope of an ID provider: what a client may ask for, what the user is asked to approve, and the
+ * roles a token granted it is restricted to.
+ */
+export interface Scope {
+    /** The ID provider the scope belongs to. */
+    idProvider: string;
+    /** The scope's id: what a client puts in `scope` and what the token carries. */
+    id: string;
+    /** The title shown on the consent page; the id when none was given. */
+    title: string;
+    /** What approving the scope allows, in the user's words; absent when the scope has none. */
+    description?: string;
+    /** The roles a token granted the scope is restricted to, sorted. Empty for a label. */
+    roles: RoleKey[];
+    /** Whether the user may not drop the scope when approving a request that names it. */
+    required: boolean;
+}
+
+export interface CreateScopeParams {
+    idProvider: string;
+    id: string;
+    title?: string;
+    description?: string;
+    roles?: RoleKey[];
+    required?: boolean;
+}
+
+interface CreateScopeHandler {
+    setIdProvider(value: string): void;
+
+    setId(value: string): void;
+
+    setTitle(value: string | null): void;
+
+    setDescription(value: string | null): void;
+
+    setRoles(value: string[] | null): void;
+
+    setRequired(value: boolean): void;
+
+    createScope(): Scope;
+}
+
+/**
+ * Adds a scope to an ID provider. The caller must be allowed to administer the ID provider.
+ *
+ * @example-ref examples/auth/createScope.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider to add the scope to.
+ * @param {string} params.id The scope's id: printable ASCII without spaces, quotes or backslashes, and a valid node name.
+ * @param {string} [params.title] The title shown on the consent page. Defaults to the id.
+ * @param {string} [params.description] What approving the scope allows, in the user's words.
+ * @param {string[]} [params.roles] The roles a token granted the scope is restricted to. Omit for a label that restricts nothing by itself.
+ * @param {boolean} [params.required=false] Whether the user may not drop the scope when approving a request that names it.
+ * @returns {Scope} The created scope.
+ */
+export function createScope(params: CreateScopeParams): Scope {
+    const idProvider = checkRequired(params, 'idProvider');
+    const id = checkRequired(params, 'id');
+
+    const bean: CreateScopeHandler = __.newBean<CreateScopeHandler>('com.enonic.xp.lib.auth.CreateScopeHandler');
+
+    bean.setIdProvider(idProvider);
+    bean.setId(id);
+    bean.setTitle(__.nullOrValue(params.title));
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setRoles(__.nullOrValue(params.roles));
+    bean.setRequired(params.required === true);
+
+    return __.toNativeObject(bean.createScope());
+}
+
+export interface ModifyScopeParams {
+    idProvider: string;
+    id: string;
+    title?: string | null;
+    description?: string | null;
+    roles?: RoleKey[];
+    required?: boolean;
+}
+
+interface ModifyScopeHandler {
+    setIdProvider(value: string): void;
+
+    setId(value: string): void;
+
+    setTitle(value: string | null): void;
+
+    setDescription(value: string | null): void;
+
+    setRoles(value: string[]): void;
+
+    setRequired(value: boolean): void;
+
+    modifyScope(): Scope | null;
+}
+
+/**
+ * Changes a scope. A property left out keeps its value; `title` and `description` set to
+ * null are cleared. The caller must be allowed to administer the ID provider.
+ *
+ * @example-ref examples/auth/modifyScope.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider the scope belongs to.
+ * @param {string} params.id The scope to change.
+ * @param {string|null} [params.title] A new title, or null to fall back to the id.
+ * @param {string|null} [params.description] A new description, or null to remove it.
+ * @param {string[]} [params.roles] New roles; an empty list makes the scope a label.
+ * @param {boolean} [params.required] Whether the user may not drop the scope.
+ * @returns {Scope|null} The changed scope, or null when the ID provider has no such scope.
+ */
+export function modifyScope(params: ModifyScopeParams): Scope | null {
+    const idProvider = checkRequired(params, 'idProvider');
+    const id = checkRequired(params, 'id');
+
+    const bean: ModifyScopeHandler = __.newBean<ModifyScopeHandler>('com.enonic.xp.lib.auth.ModifyScopeHandler');
+
+    bean.setIdProvider(idProvider);
+    bean.setId(id);
+    if ('title' in params) {
+        bean.setTitle(__.nullOrValue(params.title));
+    }
+    if ('description' in params) {
+        bean.setDescription(__.nullOrValue(params.description));
+    }
+    if (params.roles != null) {
+        bean.setRoles(params.roles);
+    }
+    if (params.required != null) {
+        bean.setRequired(params.required);
+    }
+
+    return __.toNativeObject(bean.modifyScope());
+}
+
+export interface GetScopesParams {
+    idProvider: string;
+}
+
+interface GetScopesHandler {
+    setIdProvider(value: string): void;
+
+    getScopes(): Scope[];
+}
+
+/**
+ * Returns an ID provider's scopes, by id.
+ *
+ * @example-ref examples/auth/getScopes.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider.
+ * @returns {Scope[]} The scopes; empty when the ID provider has none, or does not exist.
+ */
+export function getScopes(params: GetScopesParams): Scope[] {
+    const idProvider = checkRequired(params, 'idProvider');
+
+    const bean: GetScopesHandler = __.newBean<GetScopesHandler>('com.enonic.xp.lib.auth.GetScopesHandler');
+
+    bean.setIdProvider(idProvider);
+
+    return __.toNativeObject(bean.getScopes());
+}
+
+export interface DeleteScopeParams {
+    idProvider: string;
+    id: string;
+}
+
+interface DeleteScopeHandler {
+    setIdProvider(value: string): void;
+
+    setId(value: string): void;
+
+    deleteScope(): boolean;
+}
+
+/**
+ * Removes a scope from an ID provider. Grants already holding the scope keep it. The caller must
+ * be allowed to administer the ID provider.
+ *
+ * @example-ref examples/auth/deleteScope.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider the scope belongs to.
+ * @param {string} params.id The scope to remove.
+ * @returns {boolean} True when the scope was removed, false when the ID provider had no such scope.
+ */
+export function deleteScope(params: DeleteScopeParams): boolean {
+    const idProvider = checkRequired(params, 'idProvider');
+    const id = checkRequired(params, 'id');
+
+    const bean: DeleteScopeHandler = __.newBean<DeleteScopeHandler>('com.enonic.xp.lib.auth.DeleteScopeHandler');
+
+    bean.setIdProvider(idProvider);
+    bean.setId(id);
+
+    return bean.deleteScope();
 }

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -344,10 +343,7 @@ class VirtualHostResolverImplTest
     @Test
     void resolved_host_keeps_the_id_providers_settings()
     {
-        final VirtualHostIdProvider settings = VirtualHostIdProvider.create()
-            .flows( Set.of( "login", "device" ) )
-            .scopes( Map.of( "content:read", new VirtualHostIdProvider.Scope( PrincipalKeys.from( "role:cms.project.site.viewer" ), true ) ) )
-            .build();
+        final VirtualHostIdProvider settings = VirtualHostIdProvider.create().flows( Set.of( "login", "device" ) ).build();
         final VirtualHostIdProvidersMapping idProviders =
             VirtualHostIdProvidersMapping.create().addIdProviderWithSettings( IdProviderKey.system(), settings ).build();
         when( virtualHostService.getVirtualHosts() ).thenReturn(

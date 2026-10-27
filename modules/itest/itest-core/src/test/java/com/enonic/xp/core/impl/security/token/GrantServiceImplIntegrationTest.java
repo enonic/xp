@@ -153,7 +153,7 @@ class GrantServiceImplIntegrationTest
     {
         final GrantWithRefreshToken issued = create( "cli" );
         assertThat( issued.grant().getRestriction() ).isEqualTo( RoleRestriction.none() );
-        assertThat( service.list( ALICE ).getFirst().getRestriction() ).isEqualTo( RoleRestriction.none() );
+        assertThat( service.list( ALICE ).first().getRestriction() ).isEqualTo( RoleRestriction.none() );
         assertThat( grantNode( issued ).data().getBoolean( "unrestricted" ) ).isTrue();
         assertThat( grantNode( issued ).data().hasProperty( "roles" ) ).isFalse();
 

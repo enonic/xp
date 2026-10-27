@@ -15,8 +15,7 @@
   "contextPath": "/site/live/master/a",
   "idProviderSettings": {
     "flows": [],
-    "audience": [],
-    "scopes": {}
+    "audience": []
   },
   "params": {
     "param1": "value1",

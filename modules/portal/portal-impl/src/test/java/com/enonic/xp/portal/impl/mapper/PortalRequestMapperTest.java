@@ -22,8 +22,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AccessTokenInfo;
@@ -83,12 +81,7 @@ class PortalRequestMapperTest
     @Test
     void testIdProviderSettings()
     {
-        final VirtualHostIdProvider settings = VirtualHostIdProvider.create()
-            .flows( Set.of( "basic", "autologin" ) )
-            .scopes( Map.of( "profile", VirtualHostIdProvider.Scope.of( PrincipalKeys.empty() ), "content:read",
-                             new VirtualHostIdProvider.Scope(
-                                 PrincipalKeys.from( PrincipalKey.ofRole( "cms.project.site.viewer" ), RoleKeys.CONTENT_MANAGER_APP ), true ) ) )
-            .build();
+        final VirtualHostIdProvider settings = VirtualHostIdProvider.create().flows( Set.of( "basic", "autologin" ) ).build();
         setIdProviderSettings( IdProvider.create().key( IdProviderKey.system() ).build(), settings, Set.of( "api" ) );
 
         // every list is serialized sorted

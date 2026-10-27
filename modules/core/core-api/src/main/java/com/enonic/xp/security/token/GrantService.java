@@ -1,6 +1,5 @@
 package com.enonic.xp.security.token;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.jspecify.annotations.NullMarked;
@@ -11,7 +10,7 @@ import com.enonic.xp.security.PrincipalKey;
 /**
  * Keeps a user's grants and redeems them with refresh tokens. The grant is the one durable record
  * of an approval; access tokens are issued from it and never kept. Grants are stored under the
- * user and go when the user goes.
+ * user; deleting the user deletes them.
  * <p>
  * Refresh tokens rotate (OAuth 2.1): a redeem after the rotation window returns a new token and
  * retires the old one. A retired token presented again within a short grace period gets the same
@@ -48,7 +47,7 @@ public interface GrantService
     /**
      * The user's current grants, newest first.
      */
-    List<Grant> list( PrincipalKey user );
+    Grants list( PrincipalKey user );
 
     /**
      * The user's grant with the given id, or empty if the user has no such grant or it has expired.

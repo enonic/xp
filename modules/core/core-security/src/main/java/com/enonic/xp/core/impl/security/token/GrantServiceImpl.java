@@ -47,6 +47,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.token.CreateGrantParams;
 import com.enonic.xp.security.token.Grant;
 import com.enonic.xp.security.token.GrantService;
+import com.enonic.xp.security.token.Grants;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.RedeemRefreshTokenParams;
 import com.enonic.xp.security.token.UpdateGrantParams;
@@ -241,7 +242,7 @@ public class GrantServiceImpl
     }
 
     @Override
-    public List<Grant> list( final PrincipalKey user )
+    public Grants list( final PrincipalKey user )
     {
         final List<GrantNode> grants = inSecurityRepo( () -> children( GrantNodes.grantsPath( user ) ) );
         final Instant now = now();
@@ -249,7 +250,7 @@ public class GrantServiceImpl
             .filter( g -> g.isLive( now ) )
             .sorted( Comparator.comparing( GrantNode::createdAt ).reversed() )
             .map( GrantNode::toGrant )
-            .toList();
+            .collect( Grants.collector() );
     }
 
     @Override

@@ -22,6 +22,8 @@ import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.token.AccessTokenService;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
@@ -52,6 +54,7 @@ class LoginHandlerTest
         final AccessTokenService accessTokenService = Mockito.mock( AccessTokenService.class );
         Mockito.when( accessTokenService.getIssuer() ).thenReturn( "xp" );
         addService( AccessTokenService.class, accessTokenService );
+        Mockito.when( this.securityService.getScopes( Mockito.any() ) ).thenReturn( Scopes.empty() );
 
         ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
@@ -178,9 +181,9 @@ class LoginHandlerTest
     }
 
     @Test
-    void testLoginWithAccessTokenDerivesRolesFromTheCatalogue()
+    void testLoginWithAccessTokenDerivesRolesFromTheScopes()
     {
-        serveVirtualHost( Set.of( "xp-api" ), catalogue() );
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
@@ -206,7 +209,7 @@ class LoginHandlerTest
     @Test
     void testLoginWithAccessTokenAndRolesNarrowsFurther()
     {
-        serveVirtualHost( Set.of( "xp-api" ), catalogue() );
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
@@ -218,7 +221,7 @@ class LoginHandlerTest
     }
 
     @Test
-    void testLoginWithAccessTokenWithoutCatalogueLeavesNoRestriction()
+    void testLoginWithAccessTokenWithoutScopesLeavesNoRestriction()
     {
         serveVirtualHost( Set.of( "xp-api" ), null );
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
@@ -235,7 +238,7 @@ class LoginHandlerTest
     @Test
     void testLoginWithAccessTokenForAnotherAudienceIsRefused()
     {
-        serveVirtualHost( Set.of( "xp-api" ), catalogue() );
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
 
         runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
 
@@ -271,7 +274,7 @@ class LoginHandlerTest
         runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutAudience" );
         verifyNoInteractions( this.securityService );
 
-        serveVirtualHost( Set.of(), catalogue() );
+        serveVirtualHost( Set.of(), withScopes() );
         runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutAudience" );
         runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
         verifyNoInteractions( this.securityService );
@@ -286,13 +289,20 @@ class LoginHandlerTest
         verifyNoInteractions( this.securityService );
     }
 
-    private static VirtualHostIdProvider catalogue()
+    /**
+     * Gives the enonic id provider two scopes and returns vhost settings enabling it.
+     */
+    private VirtualHostIdProvider withScopes()
     {
-        return VirtualHostIdProvider.create()
-            .scopes( Map.of( "content:read", VirtualHostIdProvider.Scope.of(
-                                 PrincipalKeys.from( "role:cms.project.site.viewer", "role:cms.project.site.editor" ) ), "profile",
-                             new VirtualHostIdProvider.Scope( PrincipalKeys.empty(), true ) ) )
-            .build();
+        final IdProviderKey enonic = IdProviderKey.from( "enonic" );
+        Mockito.when( this.securityService.getScopes( enonic ) ).thenReturn( Scopes.from( Scope.create()
+                                                                                .idProvider( enonic )
+                                                                                .id( "content:read" )
+                                                                                .roles( PrincipalKeys.from( "role:cms.project.site.viewer",
+                                                                                                            "role:cms.project.site.editor" ) )
+                                                                                .build(),
+                                                                            Scope.create().idProvider( enonic ).id( "profile" ).required( true ).build() ) );
+        return VirtualHostIdProvider.create().build();
     }
 
     private void serveVirtualHost( final Set<String> audience, final VirtualHostIdProvider enonic )

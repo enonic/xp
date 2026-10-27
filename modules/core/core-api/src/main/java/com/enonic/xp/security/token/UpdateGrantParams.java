@@ -127,12 +127,12 @@ public final class UpdateGrantParams
         /**
          * The new scopes, replacing the grant's. Call with an empty set for none.
          *
-         * @throws IllegalArgumentException if a scope is not a {@link Scopes scope name}
+         * @throws IllegalArgumentException if a scope is not a {@link ScopeNames scope name}
          */
         public Builder scope( final Iterable<String> scope )
         {
             final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-            scope.forEach( s -> builder.add( Scopes.checkScope( s ) ) );
+            scope.forEach( s -> builder.add( ScopeNames.checkScope( s ) ) );
             this.scope = builder;
             return this;
         }
