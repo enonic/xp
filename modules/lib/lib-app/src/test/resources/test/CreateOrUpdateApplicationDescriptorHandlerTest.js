@@ -133,3 +133,15 @@ exports.requireKeyAndEditor = function () {
         appLib.createOrUpdate({key: 'my_app'});
     });
 };
+
+exports.rejectSystemApplication = function () {
+    assert.assertThrows(function () {
+        appLib.createOrUpdate({
+            key: 'com.enonic.xp.app.system',
+            editor: function (descriptor) {
+                descriptor.title = 'Hijacked';
+                return descriptor;
+            }
+        });
+    });
+};

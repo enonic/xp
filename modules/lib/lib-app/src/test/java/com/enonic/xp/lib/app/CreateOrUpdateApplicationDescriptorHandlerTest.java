@@ -165,6 +165,16 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
     }
 
     @Test
+    void rejectsSystemApplication()
+    {
+        // the service refuses a system application: the error reaches the script
+        when( applicationDescriptorService.createOrUpdate( isA( CreateOrUpdateApplicationDescriptorParams.class ) ) ).thenThrow(
+            new IllegalArgumentException( "Cannot modify system application: com.enonic.xp.app.system" ) );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "rejectSystemApplication" );
+    }
+
+    @Test
     void requiresKeyAndEditor()
     {
         runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "requireKeyAndEditor" );

@@ -517,7 +517,7 @@ interface CreateOrUpdateCmsHandler {
  *
  * The CMS descriptor marks the application as providing schemas for the CMS: content types, components, macros, styles and
  * phrases can be stored for the application once it exists. The application must exist, installed or created through
- * the App library.
+ * the App library. The system applications shipped with XP are never written.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
