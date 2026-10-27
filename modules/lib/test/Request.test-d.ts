@@ -844,6 +844,7 @@ const oauthConsentRequest: Request = new RequestImplementation({
     oauthConsent: {
         idProvider: 'system',
         action: 'confirm',
+        flow: 'device',
         user: {key: 'user:system:alice', login: 'alice', displayName: 'Alice'},
         userCode: 'BCDF-GHJK',
         clientId: 'my-cli',

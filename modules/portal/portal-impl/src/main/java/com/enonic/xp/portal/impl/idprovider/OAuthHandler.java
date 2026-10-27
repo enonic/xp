@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.idprovider;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.util.Base64;
@@ -11,11 +10,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,10 +27,12 @@ import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -72,7 +75,10 @@ import static java.util.Objects.requireNonNull;
  * <li>{@code POST device/code}: a device code and a user code (RFC 8628).</li>
  * <li>{@code GET device}, {@code POST device}: the consent page for a device code, rendered by the id
  * provider; 401 when unauthenticated, so the vhost's interactive login takes over.</li>
- * <li>{@code POST token}: tokens for a device code or a refresh token.</li>
+ * <li>{@code GET authorize}, {@code POST authorize}: the consent page for an authorization request with
+ * PKCE (RFC 6749, RFC 7636); the browser is then sent to a loopback or registered redirect URI with a
+ * code, or with an error.</li>
+ * <li>{@code POST token}: tokens for a device code, an authorization code or a refresh token.</li>
  * </ul>
  * What may be asked for and granted is checked here: against the id provider's scopes, the
  * client's record when it has one, the audiences XP serves, and the choice the user posted from
@@ -85,6 +91,10 @@ public class OAuthHandler
     static final String DEVICE_CODE_GRANT = GrantTypes.DEVICE_CODE;
 
     static final String REFRESH_TOKEN_GRANT = GrantTypes.REFRESH_TOKEN;
+
+    static final String AUTHORIZATION_CODE_GRANT = GrantTypes.AUTHORIZATION_CODE;
+
+    private static final Set<String> LOOPBACK_HOSTS = Set.of( "127.0.0.1", "[::1]", "localhost" );
 
     /**
      * The request attribute holding the {@link OAuthConsentContext} data for the consent page.
@@ -102,7 +112,7 @@ public class OAuthHandler
     /**
      * What only the posted form may say on the verification submit.
      */
-    private static final Set<String> FORM_ONLY = Set.of( "approve", "scope" );
+    private static final Set<String> FORM_ONLY = Set.of( "approve", "scope", "request" );
 
     private final GrantService grantService;
 
@@ -115,6 +125,8 @@ public class OAuthHandler
     private final IdProviderControllerService idProviderControllerService;
 
     private final DeviceCodeStore store;
+
+    private final AuthorizationCodeStore codes;
 
     @Activate
     public OAuthHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
@@ -136,10 +148,12 @@ public class OAuthHandler
         this.virtualHostService = virtualHostService;
         this.idProviderControllerService = idProviderControllerService;
         this.store = new DeviceCodeStore( sharedMapService, clock );
+        this.codes = new AuthorizationCodeStore( sharedMapService, clock );
     }
 
     /**
-     * Whether the id provider supports device login, that is, has the consent page function.
+     * Whether the id provider supports device login and the authorization code flow, that is, has
+     * the consent page function.
      */
     public boolean supports( final IdProviderKey idProvider )
     {
@@ -160,6 +174,20 @@ public class OAuthHandler
                 return deviceAuthorization( request, idProvider );
             } );
             case OAuthEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings ) );
+            case OAuthEndpoints.AUTHORIZE -> switch ( method )
+            {
+                case GET, HEAD ->
+                {
+                    requireSupport( idProvider );
+                    yield authorizationRequest( request, idProvider );
+                }
+                case POST ->
+                {
+                    requireSupport( idProvider );
+                    yield authorizationSubmit( request, idProvider );
+                }
+                default -> throw methodNotAllowed( method );
+            };
             case OAuthEndpoints.DEVICE -> switch ( method )
             {
                 case GET, HEAD ->
@@ -182,7 +210,7 @@ public class OAuthHandler
     {
         if ( !supports( idProvider ) )
         {
-            throw WebException.notFound( String.format( "'%s' id provider has no device login page (%s)", idProvider, CONSENT_FUNCTION ) );
+            throw WebException.notFound( String.format( "'%s' id provider has no consent page (%s)", idProvider, CONSENT_FUNCTION ) );
         }
     }
 
@@ -213,39 +241,79 @@ public class OAuthHandler
         {
             return refused;
         }
+        final Asked asked = asked( request, idProvider, client.orElse( null ) );
+        if ( asked.error() != null )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, asked.error(), asked.description() );
+        }
+        final DeviceCodeStore.Pending pending = store.create( idProvider, clientId, asked.scope(), asked.audience() );
+
+        final String url = request.getUrl();
+        final int query = url.indexOf( '?' );
+        final String endpointUrl = query < 0 ? url : url.substring( 0, query );
+        final String verificationUri = endpointUrl.substring( 0, endpointUrl.length() - "/code".length() );
+        final String userCode = DeviceCodeStore.formatUserCode( pending.userCode() );
+
+        final Map<String, Object> body = new LinkedHashMap<>();
+        body.put( "device_code", pending.deviceCode() );
+        body.put( "user_code", userCode );
+        body.put( "verification_uri", verificationUri );
+        body.put( "verification_uri_complete", verificationUri + "?user_code=" + userCode );
+        body.put( "expires_in", DeviceCodeStore.CODE_TTL_SECONDS );
+        body.put( "interval", DeviceCodeStore.POLL_INTERVAL_SECONDS );
+        return json( HttpStatus.OK, body );
+    }
+
+    /**
+     * What a request asks for, resolved: the scopes and audiences a grant would hold, or the OAuth
+     * error refusing them.
+     */
+    private record Asked(Set<String> scope, Set<String> audience, @Nullable String error, @Nullable String description)
+    {
+        static Asked refused( final String error, final String description )
+        {
+            return new Asked( Set.of(), Set.of(), error, description );
+        }
+    }
+
+    /**
+     * Resolves the {@code scope} and {@code resource} parameters against the id provider's scopes,
+     * what XP serves, and the client's lists when it is registered.
+     */
+    private Asked asked( final PortalRequest request, final IdProviderKey idProvider, final @Nullable Client client )
+    {
         final Scopes known = securityService.getScopes( idProvider );
-        final Set<String> scope = withinClient( scopes( param( request, "scope" ) ), client.map( Client::getScope ).orElse( Set.of() ) );
+        final Set<String> clientScope = client == null ? Set.of() : client.getScope();
+        final Set<String> scope = withinClient( scopes( param( request, "scope" ) ), clientScope );
         if ( scope == null )
         {
-            return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope", "Scope beyond the client's: " + client.orElseThrow().getScope() );
+            return Asked.refused( "invalid_scope", "Scope beyond the client's: " + clientScope );
         }
         if ( known.isEmpty() )
         {
             if ( !scope.isEmpty() )
             {
-                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope",
-                                   "The id provider has no scopes; ask for none" );
+                return Asked.refused( "invalid_scope", "The id provider has no scopes; ask for none" );
             }
         }
         else
         {
-            if ( scope.isEmpty() && client.isEmpty() )
+            if ( scope.isEmpty() && client == null )
             {
-                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope", "scope is required; known scopes: " + known.getIds() );
+                return Asked.refused( "invalid_scope", "scope is required; known scopes: " + known.getIds() );
             }
             final Set<String> unknown = new LinkedHashSet<>( scope );
             unknown.removeAll( known.getIds() );
             if ( !unknown.isEmpty() )
             {
-                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope",
-                                   "Unknown scope " + unknown + "; known scopes: " + known.getIds() );
+                return Asked.refused( "invalid_scope", "Unknown scope " + unknown + "; known scopes: " + known.getIds() );
             }
         }
-        final Set<String> requestedAudience =
-            withinClient( audience( request ), client.map( Client::getResource ).orElse( Set.of() ) );
+        final Set<String> clientResource = client == null ? Set.of() : client.getResource();
+        final Set<String> requestedAudience = withinClient( audience( request ), clientResource );
         if ( requestedAudience == null )
         {
-            return oauthError( HttpStatus.BAD_REQUEST, "invalid_target", "Resource beyond the client's: " + client.orElseThrow().getResource() );
+            return Asked.refused( "invalid_target", "Resource beyond the client's: " + clientResource );
         }
         final Set<String> audience;
         if ( requestedAudience.isEmpty() )
@@ -277,26 +345,268 @@ public class OAuthHandler
             }
             if ( !unknown.isEmpty() )
             {
-                return oauthError( HttpStatus.BAD_REQUEST, "invalid_target", "Unknown resource " + unknown );
+                return Asked.refused( "invalid_target", "Unknown resource " + unknown );
             }
             audience = requestedAudience;
         }
-        final DeviceCodeStore.Pending pending = store.create( idProvider, clientId, scope, audience );
+        return new Asked( scope, audience, null, null );
+    }
 
-        final String url = request.getUrl();
-        final int query = url.indexOf( '?' );
-        final String endpointUrl = query < 0 ? url : url.substring( 0, query );
-        final String verificationUri = endpointUrl.substring( 0, endpointUrl.length() - "/code".length() );
-        final String userCode = DeviceCodeStore.formatUserCode( pending.userCode() );
+    /**
+     * {@code GET authorize}: checks the request, then shows the consent page to a signed-in user.
+     * A request with a redirect URI the client may not use is answered here; any other fault is
+     * reported to the client at its redirect URI, with the state it sent.
+     */
+    private PortalResponse authorizationRequest( final PortalRequest request, final IdProviderKey idProvider )
+    {
+        final String clientId = clientId( request );
+        if ( clientId == null )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing client_id" );
+        }
+        final String redirectUri = param( request, "redirect_uri" );
+        if ( redirectUri == null || redirectUri.isBlank() )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing redirect_uri" );
+        }
+        final Optional<Client> client = securityService.getClient( idProvider, clientId );
+        if ( !redirectAllowed( redirectUri.trim(), client.orElse( null ) ) )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request",
+                               "redirect_uri must be a loopback address or one registered for the client" );
+        }
+        final String state = param( request, "state" );
+        if ( !"code".equals( param( request, "response_type" ) ) )
+        {
+            return redirectError( redirectUri.trim(), state, "unsupported_response_type", "response_type must be code" );
+        }
+        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.AUTHORIZATION_CODE ) ).orElse( null );
+        if ( refused != null )
+        {
+            return redirectError( redirectUri.trim(), state, "unauthorized_client", errorDescription( refused ) );
+        }
+        final String codeChallenge = param( request, "code_challenge" );
+        if ( !"S256".equals( param( request, "code_challenge_method" ) ) || !AuthorizationCodeStore.isChallenge( codeChallenge ) )
+        {
+            return redirectError( redirectUri.trim(), state, "invalid_request", "A code_challenge with code_challenge_method S256 is required" );
+        }
+        final Asked asked = asked( request, idProvider, client.orElse( null ) );
+        if ( asked.error() != null )
+        {
+            return redirectError( redirectUri.trim(), state, asked.error(), asked.description() );
+        }
+        requireInteractiveSignIn( request );
+        final Optional<User> user = signedInUserOf( idProvider );
+        if ( user.isEmpty() )
+        {
+            return notSignedIn( request, idProvider );
+        }
+        final AuthorizationCodeStore.PendingAuthorization pending =
+            codes.createRequest( idProvider, clientId, redirectUri.trim(), state, codeChallenge, asked.scope(), asked.audience(),
+                                 user.get().getKey() );
+        return render( request, idProvider,
+                       OAuthConsentContext.Confirm.forCode( idProvider, user.get(), pending.id(), clientId, client.orElse( null ),
+                                                           pending.scope(), pending.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
+    }
 
-        final Map<String, Object> body = new LinkedHashMap<>();
-        body.put( "device_code", pending.deviceCode() );
-        body.put( "user_code", userCode );
-        body.put( "verification_uri", verificationUri );
-        body.put( "verification_uri_complete", verificationUri + "?user_code=" + userCode );
-        body.put( "expires_in", DeviceCodeStore.CODE_TTL_SECONDS );
-        body.put( "interval", DeviceCodeStore.POLL_INTERVAL_SECONDS );
-        return json( HttpStatus.OK, body );
+    /**
+     * {@code POST authorize}: records the decision and sends the browser back to the client.
+     */
+    private PortalResponse authorizationSubmit( final PortalRequest request, final IdProviderKey idProvider )
+    {
+        requireInteractiveSignIn( request );
+        final Optional<User> user = signedInUserOf( idProvider );
+        if ( user.isEmpty() )
+        {
+            return notSignedIn( request, idProvider );
+        }
+        if ( !csrfToken( user.get().getKey() ).equals( param( request, "_csrf" ) ) )
+        {
+            throw WebException.forbidden( "Invalid or missing form token" );
+        }
+        if ( queryNames( request.getRawRequest().getQueryString() ).stream().anyMatch( FORM_ONLY::contains ) )
+        {
+            throw WebException.badRequest( "approve, scope and request are form fields, not query parameters" );
+        }
+        final String requestId = param( request, "request" );
+        final Optional<AuthorizationCodeStore.PendingAuthorization> taken =
+            requestId == null ? Optional.empty() : codes.takeRequest( idProvider, requestId, user.get().getKey() );
+        if ( taken.isEmpty() )
+        {
+            final Optional<AuthorizationCodeStore.PendingAuthorization> reshown =
+                requestId == null ? Optional.empty() : codes.showRequest( idProvider, requestId, user.get().getKey() );
+            if ( reshown.isEmpty() )
+            {
+                throw WebException.badRequest( "The authorization request is unknown, decided or timed out" );
+            }
+            final AuthorizationCodeStore.PendingAuthorization p = reshown.get();
+            return render( request, idProvider,
+                           OAuthConsentContext.Confirm.forCode( idProvider, user.get(), p.id(), p.clientId(),
+                                                               securityService.getClient( idProvider, p.clientId() ).orElse( null ), p.scope(),
+                                                               p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
+        }
+        final AuthorizationCodeStore.PendingAuthorization pending = taken.get();
+        if ( !"true".equals( param( request, "approve" ) ) )
+        {
+            return redirectError( pending.redirectUri(), pending.state(), "access_denied", null );
+        }
+        final Scopes known = securityService.getScopes( idProvider );
+        if ( known.isEmpty() && !pending.scope().isEmpty() )
+        {
+            return redirectError( pending.redirectUri(), pending.state(), "access_denied", "The scopes asked for no longer exist" );
+        }
+        final Set<String> kept = new LinkedHashSet<>( request.getParams().get( "scope" ) );
+        known.stream().filter( Scope::isRequired ).map( Scope::getId ).forEach( kept::add );
+        kept.retainAll( pending.scope() );
+        kept.retainAll( known.getIds() );
+        if ( !pending.scope().isEmpty() && kept.isEmpty() )
+        {
+            return redirectError( pending.redirectUri(), pending.state(), "access_denied", "No permission was kept" );
+        }
+        final RoleRestriction restriction =
+            known.restrictionFor( kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
+        final AuthorizationCodeStore.IssuedCode issued = codes.issue( pending, user.get().getKey(), kept, restriction );
+        final Map<String, String> params = new LinkedHashMap<>();
+        params.put( "code", issued.code() );
+        if ( pending.state() != null )
+        {
+            params.put( "state", pending.state() );
+        }
+        return redirect( pending.redirectUri(), params );
+    }
+
+    private PortalResponse authorizationCodeGrant( final PortalRequest request, final IdProviderKey idProvider )
+    {
+        final String code = trimmed( param( request, "code" ) );
+        final String clientId = trimmed( clientId( request ) );
+        final String redirectUri = trimmed( param( request, "redirect_uri" ) );
+        final String codeVerifier = trimmed( param( request, "code_verifier" ) );
+        for ( final Map.Entry<String, String> required : Map.of( "code", code, "client_id", clientId, "redirect_uri", redirectUri, "code_verifier",
+                                                                  codeVerifier ).entrySet() )
+        {
+            if ( required.getValue().isEmpty() )
+            {
+                return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing " + required.getKey() );
+            }
+        }
+        final Optional<Client> client = securityService.getClient( idProvider, clientId );
+        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.AUTHORIZATION_CODE ) ).orElse( null );
+        if ( refused != null )
+        {
+            return refused;
+        }
+        final Optional<AuthorizationCodeStore.IssuedCode> taken = codes.redeem( idProvider, code );
+        if ( taken.isEmpty() )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "Invalid, used or expired code" );
+        }
+        final AuthorizationCodeStore.IssuedCode issued = taken.get();
+        if ( !issued.clientId().equals( clientId ) || !issued.redirectUri().equals( redirectUri ) ||
+            !AuthorizationCodeStore.verifies( codeVerifier, issued.codeChallenge() ) )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "The code was not issued to this client, redirect_uri and verifier" );
+        }
+        final PortalResponse beyond = client.map( c -> beyondClient( c, issued.scope(), issued.audience() ) ).orElse( null );
+        if ( beyond != null )
+        {
+            return beyond;
+        }
+        final Set<String> audience = tokenAudience( request, issued.audience() );
+        if ( audience == null )
+        {
+            return beyondGrant( issued.audience() );
+        }
+        final GrantWithRefreshToken grant = grantService.create( CreateGrantParams.create()
+                                                                     .subject( issued.subject() )
+                                                                     .clientId( issued.clientId() )
+                                                                     .scope( issued.scope() )
+                                                                     .audience( issued.audience() )
+                                                                     .restriction( issued.restriction() )
+                                                                     .ttl( client.map( Client::getGrantTtl ).orElse( null ) )
+                                                                     .build() );
+        return tokenResponse( grant, client.orElse( null ), audience );
+    }
+
+    /**
+     * Whether the browser may be sent to the redirect URI: a loopback address, for any client, or
+     * one the client registered.
+     */
+    static boolean redirectAllowed( final String redirectUri, final @Nullable Client client )
+    {
+        final URI uri;
+        try
+        {
+            uri = new URI( redirectUri );
+        }
+        catch ( URISyntaxException e )
+        {
+            return false;
+        }
+        if ( !uri.isAbsolute() || uri.getFragment() != null )
+        {
+            return false;
+        }
+        if ( "http".equals( uri.getScheme() ) && uri.getHost() != null && LOOPBACK_HOSTS.contains( uri.getHost().toLowerCase( Locale.ROOT ) ) )
+        {
+            return true;
+        }
+        return client != null && client.getRedirectUris().contains( redirectUri );
+    }
+
+    private static PortalResponse redirectError( final String redirectUri, final @Nullable String state, final String error,
+                                                 final @Nullable String description )
+    {
+        final Map<String, String> params = new LinkedHashMap<>();
+        params.put( "error", error );
+        if ( description != null )
+        {
+            params.put( "error_description", description );
+        }
+        if ( state != null )
+        {
+            params.put( "state", state );
+        }
+        return redirect( redirectUri, params );
+    }
+
+    /**
+     * Sends the browser to the redirect URI with the parameters added to its query.
+     */
+    private static PortalResponse redirect( final String redirectUri, final Map<String, String> params )
+    {
+        final StringBuilder location = new StringBuilder( redirectUri );
+        location.append( redirectUri.indexOf( '?' ) < 0 ? '?' : '&' );
+        boolean first = true;
+        for ( final Map.Entry<String, String> param : params.entrySet() )
+        {
+            if ( !first )
+            {
+                location.append( '&' );
+            }
+            first = false;
+            location.append( URLEncoder.encode( param.getKey(), StandardCharsets.UTF_8 ) )
+                .append( '=' )
+                .append( URLEncoder.encode( param.getValue(), StandardCharsets.UTF_8 ) );
+        }
+        return PortalResponse.create()
+            .status( HttpStatus.FOUND )
+            .header( "Location", location.toString() )
+            .header( "Cache-Control", "no-store" )
+            .header( "Pragma", "no-cache" )
+            .build();
+    }
+
+    private static String errorDescription( final PortalResponse oauthError )
+    {
+        try
+        {
+            final JsonNode body = MAPPER.readTree( (String) oauthError.getBody() );
+            return body.path( "error_description" ).asText( null );
+        }
+        catch ( JsonProcessingException e )
+        {
+            return null;
+        }
     }
 
     private PortalResponse verificationPage( final PortalRequest request, final IdProviderKey idProvider )
@@ -323,9 +633,9 @@ public class OAuthHandler
             return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
         return render( request, idProvider,
-                       OAuthConsentContext.Confirm.of( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ), p.clientId(),
-                                                      securityService.getClient( idProvider, p.clientId() ).orElse( null ), p.scope(), p.audience(),
-                                                      securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
+                       OAuthConsentContext.Confirm.forDevice( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ),
+                                                             p.clientId(), securityService.getClient( idProvider, p.clientId() ).orElse( null ),
+                                                             p.scope(), p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
     }
 
     private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider )
@@ -344,7 +654,7 @@ public class OAuthHandler
         // link that opened the page could otherwise carry the choice.
         if ( queryNames( request.getRawRequest().getQueryString() ).stream().anyMatch( FORM_ONLY::contains ) )
         {
-            throw WebException.badRequest( "approve and scope are form fields, not query parameters" );
+            throw WebException.badRequest( "approve, scope and request are form fields, not query parameters" );
         }
         final String userCode = param( request, "user_code" );
         final boolean approve = "true".equals( param( request, "approve" ) );
@@ -411,6 +721,15 @@ public class OAuthHandler
             }
             requireSupport( idProvider );
             return deviceCodeGrant( request, idProvider );
+        }
+        if ( AUTHORIZATION_CODE_GRANT.equals( grantType ) )
+        {
+            if ( !settings.serves( IdProviderFlow.CODE ) )
+            {
+                return oauthError( HttpStatus.BAD_REQUEST, "unauthorized_client", "The authorization code flow is disabled here" );
+            }
+            requireSupport( idProvider );
+            return authorizationCodeGrant( request, idProvider );
         }
         if ( REFRESH_TOKEN_GRANT.equals( grantType ) )
         {
@@ -616,6 +935,11 @@ public class OAuthHandler
         return null;
     }
 
+    private static String trimmed( final @Nullable String value )
+    {
+        return value == null ? "" : value.trim();
+    }
+
     private static boolean exceeds( final Set<String> granted, final Set<String> allowed )
     {
         return !allowed.isEmpty() && ( granted.isEmpty() || !allowed.containsAll( granted ) );
@@ -699,18 +1023,11 @@ public class OAuthHandler
             secret = Base64.getUrlEncoder().withoutPadding().encodeToString( bytes );
             session.setAttribute( CSRF_SESSION_ATTRIBUTE, secret );
         }
-        try
-        {
-            final MessageDigest digest = MessageDigest.getInstance( "SHA-256" );
-            digest.update( secret.getBytes( StandardCharsets.UTF_8 ) );
-            digest.update( (byte) 0 );
-            digest.update( user.toString().getBytes( StandardCharsets.UTF_8 ) );
-            return Base64.getUrlEncoder().withoutPadding().encodeToString( digest.digest() );
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            throw new IllegalStateException( e );
-        }
+        final MessageDigest digest = MessageDigests.sha256();
+        digest.update( secret.getBytes( StandardCharsets.UTF_8 ) );
+        digest.update( (byte) 0 );
+        digest.update( user.toString().getBytes( StandardCharsets.UTF_8 ) );
+        return Base64.getUrlEncoder().withoutPadding().encodeToString( digest.digest() );
     }
 
     static Set<String> queryNames( final String query )

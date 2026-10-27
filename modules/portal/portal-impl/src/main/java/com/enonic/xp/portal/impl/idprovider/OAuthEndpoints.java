@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 
 /**
- * The device-login endpoints under {@code /_/idprovider/<idp>/}, and the vhost flow each needs.
+ * The OAuth endpoints under {@code /_/idprovider/<idp>/}, and the vhost flow each needs.
  */
 @NullMarked
 public final class OAuthEndpoints
@@ -24,7 +24,12 @@ public final class OAuthEndpoints
     public static final String DEVICE = "device";
 
     /**
-     * The token endpoint: the device-code grant and the refresh-token grant.
+     * The authorization endpoint (RFC 6749): the consent page of the authorization code flow.
+     */
+    public static final String AUTHORIZE = "authorize";
+
+    /**
+     * The token endpoint: the device-code, authorization-code and refresh-token grants.
      */
     public static final String TOKEN = "token";
 
@@ -32,9 +37,9 @@ public final class OAuthEndpoints
      * The flows that issue tokens through the token endpoint. The endpoint is served while any of
      * them is enabled on the vhost.
      */
-    public static final Set<String> ISSUING_FLOWS = Set.of( IdProviderFlow.DEVICE );
+    public static final Set<String> ISSUING_FLOWS = Set.of( IdProviderFlow.DEVICE, IdProviderFlow.CODE );
 
-    private static final Set<String> ALL = Set.of( DEVICE_CODE, DEVICE, TOKEN );
+    private static final Set<String> ALL = Set.of( DEVICE_CODE, DEVICE, AUTHORIZE, TOKEN );
 
     private OAuthEndpoints()
     {
@@ -54,6 +59,11 @@ public final class OAuthEndpoints
      */
     public static @Nullable String requiredFlow( final String endpoint )
     {
-        return TOKEN.equals( endpoint ) ? null : IdProviderFlow.DEVICE;
+        return switch ( endpoint )
+        {
+            case TOKEN -> null;
+            case AUTHORIZE -> IdProviderFlow.CODE;
+            default -> IdProviderFlow.DEVICE;
+        };
     }
 }

@@ -30,7 +30,7 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|token))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|authorize|token))?" );
 
     private final IdProviderControllerService idProviderControllerService;
 
@@ -91,7 +91,7 @@ public class IdentityHandler
         {
             if ( !DispatchConstants.WEB_CONNECTOR.equals( webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
             {
-                throw WebException.notFound( "Device login is served on the web endpoint only" );
+                throw WebException.notFound( "OAuth endpoints are served on the web endpoint only" );
             }
             final String requiredFlow = OAuthEndpoints.requiredFlow( idProviderFunction );
             if ( requiredFlow != null )

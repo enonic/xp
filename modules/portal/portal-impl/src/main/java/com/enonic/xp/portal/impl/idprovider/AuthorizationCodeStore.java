@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.idprovider;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -61,21 +62,45 @@ final class AuthorizationCodeStore
 
     private final SharedMap<String, Map<String, Object>> map;
 
-    AuthorizationCodeStore( final SharedMapService sharedMapService )
+    private final Clock clock;
+
+    AuthorizationCodeStore( final SharedMapService sharedMapService, final Clock clock )
     {
         this.map = sharedMapService.getSharedMap( MAP_NAME );
+        this.clock = clock;
     }
 
     /**
-     * An authorization request the user has not decided on.
+     * An authorization request the user has not decided on, shown to a user for a decision.
      */
     record PendingAuthorization(IdProviderKey idProvider, String id, String clientId, String redirectUri, @Nullable String state,
-                                String codeChallenge, Set<String> scope, Set<String> audience)
+                                String codeChallenge, Set<String> scope, Set<String> audience, long createdAt, PrincipalKey shownTo)
     {
         PendingAuthorization
         {
             scope = ImmutableSet.copyOf( scope );
             audience = ImmutableSet.copyOf( audience );
+        }
+
+        /**
+         * The deadline for the decision. Fixed at creation; showing the request again does not move it.
+         */
+        long expiresAt()
+        {
+            return createdAt + REQUEST_TTL_SECONDS * 1000L;
+        }
+
+        boolean isExpired( final long now )
+        {
+            return now >= expiresAt();
+        }
+
+        /**
+         * Whole seconds left until the deadline, at least one, so a write never outlives it.
+         */
+        int remainingSeconds( final long now )
+        {
+            return (int) Math.max( 1, ( expiresAt() - now + 999 ) / 1000 );
         }
 
         private Map<String, Object> toMap()
@@ -89,6 +114,8 @@ final class AuthorizationCodeStore
             value.put( "codeChallenge", codeChallenge );
             value.put( "scope", new ArrayList<>( scope ) );
             value.put( "audience", new ArrayList<>( audience ) );
+            value.put( "createdAt", createdAt );
+            value.put( "shownTo", shownTo.toString() );
             return value;
         }
 
@@ -99,7 +126,8 @@ final class AuthorizationCodeStore
                                              (String) value.get( "clientId" ), (String) value.get( "redirectUri" ),
                                              (String) value.get( "state" ), (String) value.get( "codeChallenge" ),
                                              ImmutableSet.copyOf( (List<String>) value.get( "scope" ) ),
-                                             ImmutableSet.copyOf( (List<String>) value.get( "audience" ) ) );
+                                             ImmutableSet.copyOf( (List<String>) value.get( "audience" ) ), (Long) value.get( "createdAt" ),
+                                             PrincipalKey.from( (String) value.get( "shownTo" ) ) );
         }
     }
 
@@ -150,25 +178,85 @@ final class AuthorizationCodeStore
     }
 
     /**
-     * Keeps an authorization request while the user decides.
+     * Records an authorization request as it is shown to a user for a decision.
      */
     PendingAuthorization createRequest( final IdProviderKey idProvider, final String clientId, final String redirectUri,
                                         final @Nullable String state, final String codeChallenge, final Set<String> scope,
-                                        final Set<String> audience )
+                                        final Set<String> audience, final PrincipalKey shownTo )
     {
         final PendingAuthorization pending =
-            new PendingAuthorization( idProvider, newToken(), clientId, redirectUri, state, codeChallenge, scope, audience );
+            new PendingAuthorization( idProvider, newToken(), clientId, redirectUri, state, codeChallenge, scope, audience, clock.millis(),
+                                      shownTo );
         map.set( requestKey( idProvider, pending.id() ), pending.toMap(), REQUEST_TTL_SECONDS );
         return pending;
     }
 
     /**
-     * Takes the authorization request with the id, so a decision is recorded once. Empty if there
-     * is none, or it timed out.
+     * Takes the authorization request with the id for the user's decision, so a decision is
+     * recorded once and only by the user the request was shown to. Empty if there is none, it
+     * timed out, or it was shown to another user.
      */
-    Optional<PendingAuthorization> takeRequest( final IdProviderKey idProvider, final String id )
+    Optional<PendingAuthorization> takeRequest( final IdProviderKey idProvider, final String id, final PrincipalKey subject )
     {
-        return take( requestKey( idProvider, id ) ).map( PendingAuthorization::fromMap );
+        final String key = requestKey( idProvider, id );
+        final Map<String, Object> current = map.get( key );
+        if ( current == null )
+        {
+            return Optional.empty();
+        }
+        final long now = clock.millis();
+        final List<PendingAuthorization> taken = new ArrayList<>( 1 );
+        map.modify( key, value -> {
+            if ( value == null )
+            {
+                return null;
+            }
+            final PendingAuthorization pending = PendingAuthorization.fromMap( value );
+            if ( pending.isExpired( now ) )
+            {
+                return null;
+            }
+            if ( !subject.equals( pending.shownTo() ) )
+            {
+                return value;
+            }
+            taken.add( pending );
+            return null;
+        }, PendingAuthorization.fromMap( current ).remainingSeconds( now ) );
+        return taken.stream().findFirst();
+    }
+
+    /**
+     * Shows the authorization request with the id to another user, whose decision then counts.
+     * Empty if there is none, or it timed out.
+     */
+    Optional<PendingAuthorization> showRequest( final IdProviderKey idProvider, final String id, final PrincipalKey subject )
+    {
+        final String key = requestKey( idProvider, id );
+        final Map<String, Object> current = map.get( key );
+        if ( current == null )
+        {
+            return Optional.empty();
+        }
+        final long now = clock.millis();
+        final List<PendingAuthorization> shown = new ArrayList<>( 1 );
+        map.modify( key, value -> {
+            if ( value == null )
+            {
+                return null;
+            }
+            final PendingAuthorization pending = PendingAuthorization.fromMap( value );
+            if ( pending.isExpired( now ) )
+            {
+                return null;
+            }
+            final PendingAuthorization reshown =
+                new PendingAuthorization( pending.idProvider(), pending.id(), pending.clientId(), pending.redirectUri(), pending.state(),
+                                          pending.codeChallenge(), pending.scope(), pending.audience(), pending.createdAt(), subject );
+            shown.add( reshown );
+            return reshown.toMap();
+        }, PendingAuthorization.fromMap( current ).remainingSeconds( now ) );
+        return shown.stream().findFirst();
     }
 
     /**

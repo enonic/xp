@@ -1,11 +1,16 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +28,7 @@ import com.google.common.net.MediaType;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
@@ -1268,6 +1274,428 @@ class OAuthHandlerTest
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getTtl() ).isEqualTo( Duration.ofDays( 7 ) );
         assertThat( grant.getValue().getAudience() ).containsExactly( "xp" );
+    }
+
+    private static final String VERIFIER = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+
+    private static String challenge( final String verifier )
+    {
+        final MessageDigest digest = MessageDigests.sha256();
+        digest.update( verifier.getBytes( StandardCharsets.US_ASCII ) );
+        return Base64.getUrlEncoder().withoutPadding().encodeToString( digest.digest() );
+    }
+
+    private static Map<String, String> authorizeParams( final String redirectUri )
+    {
+        final Map<String, String> params = new HashMap<>();
+        params.put( "response_type", "code" );
+        params.put( "client_id", "cli" );
+        params.put( "redirect_uri", redirectUri );
+        params.put( "code_challenge", challenge( VERIFIER ) );
+        params.put( "code_challenge_method", "S256" );
+        params.put( "state", "xyz" );
+        return params;
+    }
+
+    private static Map<String, String> query( final PortalResponse redirect )
+    {
+        assertThat( redirect.getStatus() ).isEqualTo( HttpStatus.FOUND );
+        final String location = redirect.getHeaders().get( "Location" );
+        final Map<String, String> query = new LinkedHashMap<>();
+        for ( String pair : location.substring( location.indexOf( '?' ) + 1 ).split( "&" ) )
+        {
+            final int eq = pair.indexOf( '=' );
+            query.put( URLDecoder.decode( pair.substring( 0, eq ), StandardCharsets.UTF_8 ),
+                       URLDecoder.decode( pair.substring( eq + 1 ), StandardCharsets.UTF_8 ) );
+        }
+        return query;
+    }
+
+    @Test
+    void a_code_request_for_scopes_is_denied_once_the_id_provider_has_none()
+    {
+        withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
+        final Map<String, String> params = authorizeParams( "http://127.0.0.1:51234/callback" );
+        params.put( "scope", "content:read" );
+
+        final PortalResponse back = asAlice( () -> {
+            handler.handle( request( HttpMethod.GET, "authorize", params ), IDP, "authorize", UNRESTRICTED );
+            when( securityService.getScopes( IDP ) ).thenReturn( Scopes.empty() );
+            final PortalRequest decision = request( HttpMethod.POST, "authorize",
+                                                    Map.of( "request", (String) lastContext.get( "requestId" ), "approve", "true", "_csrf",
+                                                            (String) lastContext.get( "csrf" ), "scope", "content:read" ) );
+            return handler.handle( decision, IDP, "authorize", UNRESTRICTED );
+        } );
+
+        assertThat( query( back ) ).containsEntry( "error", "access_denied" ).containsEntry( "state", "xyz" ).doesNotContainKey( "code" );
+    }
+
+    /**
+     * Shows the consent page for the authorization request and posts the decision; the redirect back.
+     */
+    private PortalResponse decide( final Map<String, String> authorizeParams, final boolean approve, final String... keptScopes )
+    {
+        return asAlice( () -> {
+            final PortalResponse page = handler.handle( request( HttpMethod.GET, "authorize", authorizeParams ), IDP, "authorize", UNRESTRICTED );
+            assertThat( page.getBody() ).isEqualTo( "page:confirm" );
+            lastContextOfConfirm = lastContext;
+            final PortalRequest decision = request( HttpMethod.POST, "authorize",
+                                                    Map.of( "request", (String) lastContext.get( "requestId" ), "approve",
+                                                            String.valueOf( approve ), "_csrf", (String) lastContext.get( "csrf" ) ) );
+            for ( String scope : keptScopes )
+            {
+                decision.getParams().put( "scope", scope );
+            }
+            return handler.handle( decision, IDP, "authorize", UNRESTRICTED );
+        } );
+    }
+
+    @Test
+    void the_code_exchange_may_ask_for_some_of_the_grants_audiences()
+        throws Exception
+    {
+        final String redirectUri = "http://127.0.0.1:51234/callback";
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( mapping( "api.example.com", "/", Set.of( "api" ) ) ) );
+        final Callable<Map<String, String>> consentToBoth = () -> asAlice( () -> {
+            final PortalRequest authorize = request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) );
+            authorize.getParams().put( "resource", "api" );
+            authorize.getParams().put( "resource", "xp" );
+            handler.handle( authorize, IDP, "authorize", UNRESTRICTED );
+            return query( handler.handle( request( HttpMethod.POST, "authorize",
+                                                   Map.of( "request", (String) lastContext.get( "requestId" ), "approve", "true", "_csrf",
+                                                           (String) lastContext.get( "csrf" ) ) ), IDP, "authorize", UNRESTRICTED ) );
+        } );
+        final PortalRequest exchange = request( HttpMethod.POST, "token",
+                                                Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code", consentToBoth.call().get( "code" ),
+                                                        "client_id", "cli", "redirect_uri", redirectUri, "code_verifier", VERIFIER ) );
+        exchange.getParams().put( "resource", "api" );
+        assertThat( handler.handle( exchange, IDP, "token", UNRESTRICTED ).getStatus() ).isEqualTo( HttpStatus.OK );
+        final ArgumentCaptor<IssueAccessTokenParams> token = ArgumentCaptor.forClass( IssueAccessTokenParams.class );
+        verify( accessTokenService ).issue( token.capture() );
+        assertThat( token.getValue().getAudience() ).as( "the token is for what was asked" ).containsExactly( "api" );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getAudience() ).as( "the grant keeps everything consented to" ).containsExactlyInAnyOrder( "api", "xp" );
+
+        final PortalRequest beyond = request( HttpMethod.POST, "token",
+                                              Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code", consentToBoth.call().get( "code" ),
+                                                      "client_id", "cli", "redirect_uri", redirectUri, "code_verifier", VERIFIER ) );
+        beyond.getParams().put( "resource", "https://elsewhere.org" );
+        assertThat( body( handler.handle( beyond, IDP, "token", UNRESTRICTED ) ).get( "error" ).asText() ).isEqualTo( "invalid_target" );
+        verify( grantService ).create( any() );
+    }
+
+    @Test
+    void code_consent_counts_only_for_the_user_it_was_shown_to()
+        throws Exception
+    {
+        final PrincipalKey bob = PrincipalKey.ofUser( IDP, "bob" );
+        final String redirectUri = "http://127.0.0.1:51234/callback";
+        final SessionMock browser = new SessionMock();
+        final Map<String, Object> shownToAlice = asUser( ALICE, RoleRestriction.none(), browser, () -> {
+            handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) ), IDP, "authorize", UNRESTRICTED );
+            return lastContext;
+        } );
+        final PortalRequest alicesForm = request( HttpMethod.POST, "authorize",
+                                                  Map.of( "request", (String) shownToAlice.get( "requestId" ), "approve", "true", "_csrf",
+                                                          (String) shownToAlice.get( "csrf" ) ) );
+        assertThatThrownBy( () -> asUser( bob, RoleRestriction.none(), browser, () -> handler.handle( alicesForm, IDP, "authorize", UNRESTRICTED ) ) )
+            .as( "the form was rendered for Alice" ).isInstanceOf( WebException.class ).hasMessageContaining( "form token" );
+
+        final Map<String, Object> shownToBob = asUser( bob, RoleRestriction.none(), browser, () -> {
+            handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) ), IDP, "authorize", UNRESTRICTED );
+            return lastContext;
+        } );
+        assertThat( shownToBob.get( "csrf" ) ).isNotEqualTo( shownToAlice.get( "csrf" ) );
+        assertThatThrownBy( () -> asUser( bob, RoleRestriction.none(), browser, () -> handler.handle( alicesForm, IDP, "authorize", UNRESTRICTED ) ) )
+            .as( "still Alice's form" ).isInstanceOf( WebException.class );
+        final PortalRequest bobsForm = request( HttpMethod.POST, "authorize",
+                                                Map.of( "request", (String) shownToBob.get( "requestId" ), "approve", "true", "_csrf",
+                                                        (String) shownToBob.get( "csrf" ) ) );
+        final PortalResponse back = asUser( bob, RoleRestriction.none(), browser, () -> handler.handle( bobsForm, IDP, "authorize", UNRESTRICTED ) );
+        final Map<String, String> query = query( back );
+        assertThat( query ).containsKey( "code" );
+        handler.handle( request( HttpMethod.POST, "token",
+                                 Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code", query.get( "code" ), "client_id", "cli",
+                                         "redirect_uri", redirectUri, "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getSubject() ).isEqualTo( bob );
+    }
+
+    @Test
+    void an_authorization_request_shown_to_another_user_meanwhile_is_shown_afresh_before_a_decision_counts()
+        throws Exception
+    {
+        final PrincipalKey bob = PrincipalKey.ofUser( IDP, "bob" );
+        final String redirectUri = "http://127.0.0.1:51234/callback";
+        final SessionMock alicesBrowser = new SessionMock();
+        final SessionMock bobsBrowser = new SessionMock();
+        final Map<String, Object> shownToAlice = asUser( ALICE, RoleRestriction.none(), alicesBrowser, () -> {
+            handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) ), IDP, "authorize", UNRESTRICTED );
+            return lastContext;
+        } );
+        final String requestId = (String) shownToAlice.get( "requestId" );
+        final String bobsToken = asUser( bob, RoleRestriction.none(), bobsBrowser, () -> {
+            handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) ), IDP, "authorize", UNRESTRICTED );
+            return (String) lastContext.get( "csrf" );
+        } );
+        final PortalRequest bobDecidesAlices =
+            request( HttpMethod.POST, "authorize", Map.of( "request", requestId, "approve", "true", "_csrf", bobsToken ) );
+        final PortalResponse shownToBob =
+            asUser( bob, RoleRestriction.none(), bobsBrowser, () -> handler.handle( bobDecidesAlices, IDP, "authorize", UNRESTRICTED ) );
+        assertThat( shownToBob.getBody() ).as( "shown to Alice, so Bob sees it first" ).isEqualTo( "page:confirm" );
+        assertThat( lastContext ).containsEntry( "requestId", requestId );
+        assertThat( user( lastContext ) ).containsEntry( "key", bob.toString() );
+
+        final PortalRequest alicesForm = request( HttpMethod.POST, "authorize", Map.of( "request", requestId, "approve", "true", "_csrf",
+                                                                                        (String) shownToAlice.get( "csrf" ) ) );
+        final PortalResponse shownToAliceAgain =
+            asUser( ALICE, RoleRestriction.none(), alicesBrowser, () -> handler.handle( alicesForm, IDP, "authorize", UNRESTRICTED ) );
+        assertThat( shownToAliceAgain.getBody() ).as( "shown to Bob since" ).isEqualTo( "page:confirm" );
+        final PortalResponse back =
+            asUser( ALICE, RoleRestriction.none(), alicesBrowser, () -> handler.handle( alicesForm, IDP, "authorize", UNRESTRICTED ) );
+        assertThat( query( back ) ).containsKey( "code" );
+        handler.handle( request( HttpMethod.POST, "token",
+                                 Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code", query( back ).get( "code" ), "client_id",
+                                         "cli", "redirect_uri", redirectUri, "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getSubject() ).isEqualTo( ALICE );
+    }
+
+    @Test
+    void a_client_given_a_scope_list_after_the_code_was_issued_gets_no_grant()
+        throws Exception
+    {
+        final String redirectUri = "http://127.0.0.1:51234/callback";
+        final Map<String, String> query = query( decide( authorizeParams( redirectUri ), true ) );
+        registered( Client.create().id( "cli" ).grantTypes( List.of( GrantTypes.AUTHORIZATION_CODE ) ).scope( Set.of( "content:read" ) ) );
+
+        final PortalResponse refused = handler.handle( request( HttpMethod.POST, "token",
+                                                                Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code",
+                                                                        query.get( "code" ), "client_id", "cli", "redirect_uri", redirectUri,
+                                                                        "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        verify( grantService, Mockito.never() ).create( any() );
+    }
+
+    @Test
+    void full_authorization_code_flow()
+        throws Exception
+    {
+        final String redirectUri = "http://127.0.0.1:51234/callback";
+        final PortalRequest anonymous = request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) );
+        assertThat( handler.handle( anonymous, IDP, "authorize", UNRESTRICTED ).getStatus() ).as( "the vhost's login takes over" )
+            .isEqualTo( HttpStatus.UNAUTHORIZED );
+        verify( idProviderControllerService, Mockito.never() ).execute( any() );
+
+        final PortalResponse back = decide( authorizeParams( redirectUri ), true );
+
+        assertThat( lastContextOfConfirm ).containsEntry( "flow", "code" )
+            .containsEntry( "clientId", "cli" )
+            .containsEntry( "audience", List.of( "xp" ) )
+            .containsEntry( "unrestricted", true )
+            .doesNotContainKey( "userCode" );
+        assertThat( (String) lastContextOfConfirm.get( "requestId" ) ).hasSize( 43 );
+        final Map<String, String> query = query( back );
+        assertThat( back.getHeaders().get( "Location" ) ).startsWith( redirectUri + "?" );
+        assertThat( back.getHeaders() ).containsEntry( "Cache-Control", "no-store" );
+        assertThat( query ).containsEntry( "state", "xyz" ).containsKey( "code" ).doesNotContainKey( "error" );
+
+        final PortalResponse wrongVerifier = handler.handle( request( HttpMethod.POST, "token",
+                                                                      Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code",
+                                                                              query.get( "code" ), "client_id", "cli", "redirect_uri", redirectUri,
+                                                                              "code_verifier", VERIFIER + "x" ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( wrongVerifier ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        verify( grantService, Mockito.never() ).create( any() );
+
+        final PortalResponse spent = handler.handle( request( HttpMethod.POST, "token",
+                                                              Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code",
+                                                                      query.get( "code" ), "client_id", "cli", "redirect_uri", redirectUri,
+                                                                      "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( spent ).get( "error" ).asText() ).as( "a wrong attempt spends the code" ).isEqualTo( "invalid_grant" );
+
+        final Map<String, String> again = query( decide( authorizeParams( redirectUri ), true ) );
+        final PortalResponse tokens = handler.handle( request( HttpMethod.POST, "token",
+                                                               Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code",
+                                                                       again.get( "code" ), "client_id", "cli", "redirect_uri", redirectUri,
+                                                                       "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        assertThat( tokens.getStatus() ).isEqualTo( HttpStatus.OK );
+        assertThat( body( tokens ).get( "access_token" ).asText() ).isEqualTo( "access-1" );
+        assertThat( body( tokens ).get( "refresh_token" ).asText() ).isEqualTo( "refresh-1" );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getSubject() ).isEqualTo( ALICE );
+        assertThat( grant.getValue().getClientId() ).isEqualTo( "cli" );
+        assertThat( grant.getValue().getAudience() ).containsExactly( "xp" );
+        assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.none() );
+
+        final PortalResponse replay = handler.handle( request( HttpMethod.POST, "token",
+                                                               Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code",
+                                                                       again.get( "code" ), "client_id", "cli", "redirect_uri", redirectUri,
+                                                                       "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( replay ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+    }
+
+    @Test
+    void a_denied_or_stale_authorization_sends_an_error_back()
+        throws Exception
+    {
+        final Map<String, String> denied = query( decide( authorizeParams( "http://localhost:8/cb?app=1" ), false ) );
+        assertThat( denied ).containsEntry( "error", "access_denied" ).containsEntry( "state", "xyz" ).containsEntry( "app", "1" );
+
+        asAlice( () -> {
+            handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( "http://localhost:8/cb" ) ), IDP, "authorize", UNRESTRICTED );
+            final String csrf = (String) lastContext.get( "csrf" );
+            final String requestId = (String) lastContext.get( "requestId" );
+            assertThatThrownBy( () -> handler.handle( request( HttpMethod.POST, "authorize", Map.of( "request", requestId, "approve", "true" ) ),
+                                                      IDP, "authorize", UNRESTRICTED ) ).isInstanceOf( WebException.class )
+                .hasMessageContaining( "form token" );
+            assertThatThrownBy( () -> handler.handle( request( HttpMethod.POST, "authorize",
+                                                               Map.of( "request", "nope", "approve", "true", "_csrf", csrf ) ), IDP, "authorize",
+                                                      UNRESTRICTED ) ).isInstanceOf( WebException.class ).hasMessageContaining( "unknown" );
+            final PortalRequest viaLink = request( HttpMethod.POST, "authorize", Map.of( "request", requestId, "approve", "false", "_csrf", csrf ) );
+            when( viaLink.getRawRequest().getQueryString() ).thenReturn( "approve=true" );
+            assertThatThrownBy( () -> handler.handle( viaLink, IDP, "authorize", UNRESTRICTED ) ).isInstanceOf( WebException.class )
+                .hasMessageContaining( "form fields" );
+            final PortalRequest otherRequest = request( HttpMethod.POST, "authorize", Map.of( "request", requestId, "approve", "true", "_csrf", csrf ) );
+            when( otherRequest.getRawRequest().getQueryString() ).thenReturn( "request=someone-elses" );
+            assertThatThrownBy( () -> handler.handle( otherRequest, IDP, "authorize", UNRESTRICTED ) ).as( "a request id in the query is not the one the page showed" )
+                .isInstanceOf( WebException.class )
+                .hasMessageContaining( "form fields" );
+            handler.handle( request( HttpMethod.POST, "authorize", Map.of( "request", requestId, "approve", "true", "_csrf", csrf ) ), IDP,
+                            "authorize", UNRESTRICTED );
+            assertThatThrownBy( () -> handler.handle( request( HttpMethod.POST, "authorize",
+                                                               Map.of( "request", requestId, "approve", "true", "_csrf", csrf ) ), IDP,
+                                                      "authorize", UNRESTRICTED ) ).as( "decided once" ).isInstanceOf( WebException.class );
+            return null;
+        } );
+    }
+
+    @Test
+    void the_browser_goes_only_to_a_loopback_or_a_registered_redirect_uri()
+        throws Exception
+    {
+        for ( String refused : List.of( "https://evil.example.com/cb", "http://evil.example.com/cb", "http://127.0.0.1/cb#x", "cb", "" ) )
+        {
+            final PortalResponse answered = handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( refused ) ), IDP, "authorize",
+                                                            UNRESTRICTED );
+            assertThat( answered.getStatus() ).as( refused ).isEqualTo( HttpStatus.BAD_REQUEST );
+            assertThat( body( answered ).get( "error" ).asText() ).isEqualTo( "invalid_request" );
+        }
+        for ( String allowed : List.of( "http://127.0.0.1:7/cb", "http://[::1]:7/cb", "http://LOCALHOST/cb" ) )
+        {
+            assertThat( query( decide( authorizeParams( allowed ), false ) ) ).as( allowed ).containsEntry( "error", "access_denied" );
+        }
+
+        registered( Client.create()
+                        .id( "cli" )
+                        .grantTypes( List.of( GrantTypes.AUTHORIZATION_CODE, GrantTypes.REFRESH_TOKEN ) )
+                        .redirectUris( List.of( "https://claude.ai/api/mcp/auth_callback" ) ) );
+        assertThat( query( decide( authorizeParams( "https://claude.ai/api/mcp/auth_callback" ), false ) ) ).containsEntry( "error",
+                                                                                                                             "access_denied" );
+        final PortalResponse nearMiss =
+            handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( "https://claude.ai/api/mcp/auth_callback/" ) ), IDP,
+                            "authorize", UNRESTRICTED );
+        assertThat( nearMiss.getStatus() ).as( "matched exactly" ).isEqualTo( HttpStatus.BAD_REQUEST );
+    }
+
+    @Test
+    void faults_in_an_authorization_request_are_reported_at_the_redirect_uri()
+        throws Exception
+    {
+        final String redirectUri = "http://127.0.0.1:7/cb";
+        final Map<String, String> noPkce = authorizeParams( redirectUri );
+        noPkce.remove( "code_challenge" );
+        assertThat( query( handler.handle( request( HttpMethod.GET, "authorize", noPkce ), IDP, "authorize", UNRESTRICTED ) ) )
+            .containsEntry( "error", "invalid_request" ).containsEntry( "state", "xyz" );
+        final Map<String, String> plain = authorizeParams( redirectUri );
+        plain.put( "code_challenge_method", "plain" );
+        assertThat( query( handler.handle( request( HttpMethod.GET, "authorize", plain ), IDP, "authorize", UNRESTRICTED ) ) )
+            .containsEntry( "error", "invalid_request" );
+        final Map<String, String> token = authorizeParams( redirectUri );
+        token.put( "response_type", "token" );
+        assertThat( query( handler.handle( request( HttpMethod.GET, "authorize", token ), IDP, "authorize", UNRESTRICTED ) ) )
+            .containsEntry( "error", "unsupported_response_type" );
+        final Map<String, String> scoped = authorizeParams( redirectUri );
+        scoped.put( "scope", "content:read" );
+        assertThat( query( handler.handle( request( HttpMethod.GET, "authorize", scoped ), IDP, "authorize", UNRESTRICTED ) ) )
+            .containsEntry( "error", "invalid_scope" );
+        final PortalRequest resource = request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) );
+        resource.getParams().put( "resource", "https://elsewhere.org" );
+        assertThat( query( handler.handle( resource, IDP, "authorize", UNRESTRICTED ) ) ).containsEntry( "error", "invalid_target" );
+
+        registered( Client.create().id( "cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE ) ) );
+        assertThat( query( handler.handle( request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) ), IDP, "authorize", UNRESTRICTED ) ) )
+            .containsEntry( "error", "unauthorized_client" ).containsEntry( "error_description", "The client may not use " + GrantTypes.AUTHORIZATION_CODE );
+        verify( idProviderControllerService, Mockito.never() ).execute( any() );
+    }
+
+    @Test
+    void dropping_every_scope_in_the_code_flow_sends_the_client_a_denial()
+        throws Exception
+    {
+        withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
+        final Map<String, String> params = authorizeParams( "http://127.0.0.1:7/cb" );
+        params.put( "scope", "content:read" );
+        assertThat( query( decide( params, true ) ) ).containsEntry( "error", "access_denied" )
+            .containsEntry( "error_description", "No permission was kept" ).containsEntry( "state", "xyz" ).doesNotContainKey( "code" );
+    }
+
+    @Test
+    void the_code_is_bound_to_the_client_and_the_redirect_uri_and_the_flow_to_the_vhost()
+        throws Exception
+    {
+        final String redirectUri = "http://127.0.0.1:7/cb";
+        withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ), "content:write", PrincipalKeys.from( "role:cms.project.site.editor" ) ) );
+        final Map<String, String> params = authorizeParams( redirectUri );
+        params.put( "scope", "content:read content:write" );
+        final Map<String, String> query = query( decide( params, true, "content:read" ) );
+        assertThat( scopeIds( lastContextOfConfirm ) ).containsExactly( "content:read", "content:write" );
+
+        final Map<String, String> exchange = new HashMap<>( Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code",
+                                                                    query.get( "code" ), "client_id", "cli", "redirect_uri", redirectUri,
+                                                                    "code_verifier", VERIFIER ) );
+        final PortalResponse disabled = handler.handle( request( HttpMethod.POST, "token", exchange ), IDP, "token", withFlows( "device" ) );
+        assertThat( body( disabled ).get( "error" ).asText() ).isEqualTo( "unauthorized_client" );
+
+        final Map<String, String> otherClient = new HashMap<>( exchange );
+        otherClient.put( "client_id", "other" );
+        final PortalResponse mismatch = handler.handle( request( HttpMethod.POST, "token", otherClient ), IDP, "token", UNRESTRICTED );
+        assertThat( body( mismatch ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        verify( grantService, Mockito.never() ).create( any() );
+
+        final Map<String, String> fresh = query( decide( params, true, "content:read" ) );
+        final Map<String, String> otherRedirect = new HashMap<>( exchange );
+        otherRedirect.put( "code", fresh.get( "code" ) );
+        otherRedirect.put( "redirect_uri", "http://127.0.0.1:8/cb" );
+        assertThat( body( handler.handle( request( HttpMethod.POST, "token", otherRedirect ), IDP, "token", UNRESTRICTED ) ).get( "error" ).asText() )
+            .isEqualTo( "invalid_grant" );
+
+        final Map<String, String> good = new HashMap<>( exchange );
+        good.put( "code", query( decide( params, true, "content:read" ) ).get( "code" ) );
+        assertThat( handler.handle( request( HttpMethod.POST, "token", good ), IDP, "token", UNRESTRICTED ).getStatus() ).isEqualTo( HttpStatus.OK );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getScope() ).containsExactly( "content:read" );
+        assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.to( PrincipalKey.ofRole( "cms.cm.app" ) ) );
+
+        final Map<String, String> missing = new HashMap<>( exchange );
+        missing.remove( "code_verifier" );
+        assertThat( body( handler.handle( request( HttpMethod.POST, "token", missing ), IDP, "token", UNRESTRICTED ) ).get( "error" ).asText() )
+            .isEqualTo( "invalid_request" );
+    }
+
+    @Test
+    void the_device_confirm_names_its_flow_and_code()
+        throws Exception
+    {
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        assertThat( lastContextOfConfirm ).containsEntry( "flow", "device" ).containsKey( "userCode" ).doesNotContainKey( "requestId" );
+        assertThat( lastContext ).containsEntry( "action", "done" ).containsEntry( "flow", "device" );
     }
 
     @Test

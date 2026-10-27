@@ -15,15 +15,18 @@ import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 
 /**
- * What the consent page shows. The id provider's {@code oauthConsent(req)} function
- * receives it as {@code req.oauthConsent}, as plain data:
+ * What the consent page shows, for device login and for the authorization code flow. The id
+ * provider's {@code oauthConsent(req)} function receives it as {@code req.oauthConsent}, as
+ * plain data:
  * <pre>
  * {
  *   idProvider: "system",
  *   action: "enter" | "confirm" | "done" | "wrongAccount",
+ *   flow: "device" | "code",               // confirm, done: which flow the request belongs to
  *   user: { key, login, displayName },
  *   error: "invalid_code",                 // enter: why the previous code was refused, if any; the page words it
- *   userCode: "BCDF-GHJK",                 // confirm
+ *   userCode: "BCDF-GHJK",                 // confirm, device flow
+ *   requestId: "...",                      // confirm, code flow: the form must post it back as request
  *   clientId: "my-cli",                    // confirm
  *   client: { id, displayName, uri, logoUri, policyUri, tosUri, registered },
  *                                          // confirm: the client as registered with the id provider;
@@ -37,10 +40,12 @@ import com.enonic.xp.security.token.Scopes;
  *   approved: true | false                 // done
  * }
  * </pre>
- * The confirm form posts {@code user_code}, {@code approve} ({@code true} or {@code false}),
- * {@code _csrf} and one {@code scope} per scope the user keeps. A scope left out is not granted,
- * except a required one, which is granted whenever the request is approved. The page may word a
- * scope itself or show the title and description its id provider gave it.
+ * The confirm form posts {@code user_code} (device flow) or {@code request} (code flow),
+ * {@code approve} ({@code true} or {@code false}), {@code _csrf} and one {@code scope} per scope
+ * the user keeps. A scope left out is not granted, except a required one, which is granted
+ * whenever the request is approved. The page may word a scope itself or show the title and
+ * description its id provider gave it. In the device flow the page then shows {@code done}; in the
+ * code flow the browser is sent back to the client.
  */
 sealed interface OAuthConsentContext
     permits OAuthConsentContext.Enter, OAuthConsentContext.Confirm, OAuthConsentContext.Done, OAuthConsentContext.WrongAccount
@@ -50,6 +55,10 @@ sealed interface OAuthConsentContext
      * word it in the user's language.
      */
     String INVALID_CODE = "invalid_code";
+
+    String DEVICE_FLOW = "device";
+
+    String CODE_FLOW = "code";
 
     IdProviderKey idProvider();
 
@@ -68,8 +77,8 @@ sealed interface OAuthConsentContext
      * what the client called itself; nothing verifies it. A registered client's record supplies
      * the name and links the page shows.
      */
-    record Confirm(IdProviderKey idProvider, User user, String userCode, String clientId, ClientInfo client, List<RequestedScope> scope,
-                   List<String> audience, boolean unrestricted, String csrf)
+    record Confirm(IdProviderKey idProvider, User user, String flow, @Nullable String userCode, @Nullable String requestId, String clientId,
+                   ClientInfo client, List<RequestedScope> scope, List<String> audience, boolean unrestricted, String csrf)
         implements OAuthConsentContext
     {
         public Confirm
@@ -79,12 +88,31 @@ sealed interface OAuthConsentContext
         }
 
         /**
+         * A device login's confirmation, by user code.
+         *
          * @param client    the client's record with the id provider, if it has one
          * @param known     the id provider's scopes
          */
-        static Confirm of( final IdProviderKey idProvider, final User user, final String userCode, final String clientId,
-                           final @Nullable Client client, final Set<String> scope, final Set<String> audience,
-                           final Scopes known, final String csrf )
+        static Confirm forDevice( final IdProviderKey idProvider, final User user, final String userCode, final String clientId,
+                                  final @Nullable Client client, final Set<String> scope, final Set<String> audience,
+                                  final Scopes known, final String csrf )
+        {
+            return of( idProvider, user, DEVICE_FLOW, userCode, null, clientId, client, scope, audience, known, csrf );
+        }
+
+        /**
+         * An authorization code flow's confirmation, by request id.
+         */
+        static Confirm forCode( final IdProviderKey idProvider, final User user, final String requestId, final String clientId,
+                                final @Nullable Client client, final Set<String> scope, final Set<String> audience,
+                                final Scopes known, final String csrf )
+        {
+            return of( idProvider, user, CODE_FLOW, null, requestId, clientId, client, scope, audience, known, csrf );
+        }
+
+        private static Confirm of( final IdProviderKey idProvider, final User user, final String flow, final @Nullable String userCode,
+                                   final @Nullable String requestId, final String clientId, final @Nullable Client client,
+                                   final Set<String> scope, final Set<String> audience, final Scopes known, final String csrf )
         {
             final List<RequestedScope> scopes = scope.stream().map( id -> {
                 final Scope found = known.get( id ).orElse( null );
@@ -93,8 +121,8 @@ sealed interface OAuthConsentContext
                     : new RequestedScope( id, found.getTitle(), found.getDescription(),
                                           found.getRoles().stream().map( PrincipalKey::toString ).toList(), found.isRequired() );
             } ).toList();
-            return new Confirm( idProvider, user, userCode, clientId, ClientInfo.of( clientId, client ), scopes, List.copyOf( audience ),
-                                scope.isEmpty(), csrf );
+            return new Confirm( idProvider, user, flow, userCode, requestId, clientId, ClientInfo.of( clientId, client ), scopes,
+                                List.copyOf( audience ), scope.isEmpty(), csrf );
         }
     }
 
@@ -163,10 +191,13 @@ sealed interface OAuthConsentContext
                     map.put( "error", error );
                 }
             }
-            case Confirm( _, _, var userCode, var clientId, var client, var scope, var audience, var unrestricted, var csrf ) ->
+            case Confirm( _, _, var flow, var userCode, var requestId, var clientId, var client, var scope, var audience, var unrestricted,
+                          var csrf ) ->
             {
                 map.put( "action", "confirm" );
-                map.put( "userCode", userCode );
+                map.put( "flow", flow );
+                putIfPresent( map, "userCode", userCode );
+                putIfPresent( map, "requestId", requestId );
                 map.put( "clientId", clientId );
                 final Map<String, Object> clientMap = new LinkedHashMap<>();
                 clientMap.put( "id", client.id() );
@@ -196,6 +227,7 @@ sealed interface OAuthConsentContext
             case Done( _, _, var approved ) ->
             {
                 map.put( "action", "done" );
+                map.put( "flow", DEVICE_FLOW );
                 map.put( "approved", approved );
             }
             case WrongAccount _ -> map.put( "action", "wrongAccount" );
