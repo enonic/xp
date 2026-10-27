@@ -42,4 +42,14 @@ class CreateOrUpdateCmsHandlerTest
     {
         runFunction( "/test/CreateOrUpdateCmsHandlerTest.js", "createInvalidCms" );
     }
+
+    @Test
+    void testSystemApplication()
+    {
+        // the service refuses a system application: the error reaches the script
+        when( dynamicSchemaService.createOrUpdateCms( isA( CreateOrUpdateCmsParams.class ) ) ).thenThrow(
+            new IllegalArgumentException( "Cannot modify system application: base" ) );
+
+        runFunction( "/test/CreateOrUpdateCmsHandlerTest.js", "createSystemCms" );
+    }
 }
