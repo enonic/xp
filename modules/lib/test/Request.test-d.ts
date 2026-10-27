@@ -847,7 +847,7 @@ const oauthConsentRequest: Request = new RequestImplementation({
         user: {key: 'user:system:alice', login: 'alice', displayName: 'Alice'},
         userCode: 'BCDF-GHJK',
         clientId: 'my-cli',
-        scope: [{id: 'content:read', roles: ['role:cms.project.site.viewer'], required: true}],
+        scope: [{id: 'content:read', title: 'Read content', roles: ['role:cms.project.site.viewer'], required: true}],
         unrestricted: false,
         audience: ['api'],
         csrf: 'token',
@@ -877,15 +877,11 @@ const idProviderRequest: Request = new RequestImplementation({
     idProviderSettings: {
         flows: ['device', 'login', 'logout'],
         audience: ['api'],
-        scopes: {
-            'content:read': {roles: ['role:cms.project.site.viewer'], required: true},
-            profile: {roles: [], required: false},
-        },
     },
 }).toObject();
 expectAssignable<Request>(idProviderRequest);
 expectAssignable<string[] | undefined>(idProviderRequest.idProviderSettings?.flows);
-expectAssignable<boolean | undefined>(idProviderRequest.idProviderSettings?.scopes['content:read']?.required);
+expectAssignable<string[] | undefined>(idProviderRequest.idProviderSettings?.audience);
 
 // Scenario: A request authenticated with an access token XP issued carries what the token was granted
 const tokenRequest: Request = new RequestImplementation({

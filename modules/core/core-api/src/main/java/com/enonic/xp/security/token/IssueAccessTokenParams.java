@@ -166,24 +166,24 @@ public final class IssueAccessTokenParams
         /**
          * Adds scopes.
          *
-         * @throws IllegalArgumentException if a scope is not a {@link Scopes scope name}
+         * @throws IllegalArgumentException if a scope is not a {@link ScopeNames scope name}
          */
         public Builder scope( final Iterable<String> scope )
         {
-            scope.forEach( s -> this.scope.add( Scopes.checkScope( s ) ) );
+            scope.forEach( s -> this.scope.add( ScopeNames.checkScope( s ) ) );
             return this;
         }
 
         /**
          * Adds scopes.
          *
-         * @throws IllegalArgumentException if a scope is not a {@link Scopes scope name}
+         * @throws IllegalArgumentException if a scope is not a {@link ScopeNames scope name}
          */
         public Builder scope( final String... scope )
         {
             for ( String s : scope )
             {
-                this.scope.add( Scopes.checkScope( s ) );
+                this.scope.add( ScopeNames.checkScope( s ) );
             }
             return this;
         }

@@ -30,6 +30,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -41,6 +42,8 @@ import com.enonic.xp.security.token.GrantService;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.IssueAccessTokenParams;
 import com.enonic.xp.security.token.RedeemRefreshTokenParams;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.shared.SharedMapService;
 import com.enonic.xp.web.HttpMethod;
@@ -52,34 +55,17 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostService;
 
 /**
- * The device login endpoints (RFC 8628) under {@code /_/idprovider/<idp>/}, served by XP for any
- * id provider's users:
+ * Serves the OAuth endpoints under {@code /_/idprovider/<idp>/} for an id provider's users:
  * <ul>
- * <li>{@code POST device/code}: the client asks for a device code and a user code.</li>
- * <li>{@code GET device}, {@code POST device}: the consent page, where a signed-in user of the
- * id provider enters the code and approves or denies. Unauthenticated, it answers 401 and the
- * vhost's interactive login takes over.</li>
- * <li>{@code POST token}: the client polls with the device code and, once approved, gets an access
- * token and a refresh token; later it refreshes with {@code grant_type=refresh_token}.</li>
+ * <li>{@code POST device/code}: a device code and a user code (RFC 8628).</li>
+ * <li>{@code GET device}, {@code POST device}: the consent page for a device code, rendered by the id
+ * provider; 401 when unauthenticated, so the vhost's interactive login takes over.</li>
+ * <li>{@code POST token}: tokens for a device code or a refresh token.</li>
  * </ul>
- * Approval creates a {@link Grant}; the tokens are issued from it when the client polls, so
- * nothing secret is kept in the pending state.
- * <p>
- * Every client is a public client: XP has no client registry yet, so {@code client_id} is whatever
- * the client calls itself. It is still required on every request, and a device code or refresh
- * token is honoured only for the client id it was issued to.
- * <p>
- * The vhost's id provider settings ({@link VirtualHostIdProvider}) decide what may be asked for.
- * With a scope catalogue a client must name known scopes, the user may keep or drop each one on
- * the page (required ones are kept), and the grant is restricted to the roles the kept scopes
- * imply, fixed at consent. Without a catalogue a client must ask for no scope, and the token
- * carries the user's full memberships. Audiences are what XP's vhosts serve.
- * <p>
- * XP serves no page of its own. The id provider renders the consent page in
- * {@code oauthConsent(req)} from {@code req.oauthConsent} (see {@link OAuthConsentContext}). An
- * id provider without that function does not support device login, and its device endpoints
- * answer 404. The posted choice is checked here against what was requested and what may be
- * granted.
+ * What may be asked for and granted is checked here: against the id provider's scopes, the
+ * audiences XP serves, and the choice the user posted from the page (see
+ * {@link OAuthConsentContext}). An id provider without {@code oauthConsent}
+ * answers 404 on these endpoints.
  */
 @Component(service = OAuthHandler.class)
 public class OAuthHandler
@@ -110,6 +96,8 @@ public class OAuthHandler
 
     private final AccessTokenService accessTokenService;
 
+    private final SecurityService securityService;
+
     private final VirtualHostService virtualHostService;
 
     private final IdProviderControllerService idProviderControllerService;
@@ -118,19 +106,21 @@ public class OAuthHandler
 
     @Activate
     public OAuthHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
-                               @Reference final VirtualHostService virtualHostService,
+                               @Reference final SecurityService securityService, @Reference final VirtualHostService virtualHostService,
                                @Reference final IdProviderControllerService idProviderControllerService,
                                @Reference final SharedMapService sharedMapService )
     {
-        this( grantService, accessTokenService, virtualHostService, idProviderControllerService, sharedMapService, Clock.systemUTC() );
+        this( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService, sharedMapService,
+              Clock.systemUTC() );
     }
 
-    OAuthHandler( final GrantService grantService, final AccessTokenService accessTokenService,
+    OAuthHandler( final GrantService grantService, final AccessTokenService accessTokenService, final SecurityService securityService,
                         final VirtualHostService virtualHostService, final IdProviderControllerService idProviderControllerService,
                         final SharedMapService sharedMapService, final Clock clock )
     {
         this.grantService = grantService;
         this.accessTokenService = accessTokenService;
+        this.securityService = securityService;
         this.virtualHostService = virtualHostService;
         this.idProviderControllerService = idProviderControllerService;
         this.store = new DeviceCodeStore( sharedMapService, clock );
@@ -145,7 +135,7 @@ public class OAuthHandler
     }
 
     /**
-     * @param settings the id provider's settings on the vhost: its flows (empty means no restriction) and its scope catalogue
+     * @param settings the id provider's settings on the vhost: its flows (empty means no restriction)
      */
     public PortalResponse handle( final PortalRequest request, final IdProviderKey idProvider, final String endpoint,
                                   final VirtualHostIdProvider settings )
@@ -155,7 +145,7 @@ public class OAuthHandler
         {
             case OAuthEndpoints.DEVICE_CODE -> requirePost( method, () -> {
                 requireSupport( idProvider );
-                return deviceAuthorization( request, idProvider, settings.getScopes() );
+                return deviceAuthorization( request, idProvider );
             } );
             case OAuthEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings ) );
             case OAuthEndpoints.DEVICE -> switch ( method )
@@ -163,12 +153,12 @@ public class OAuthHandler
                 case GET, HEAD ->
                 {
                     requireSupport( idProvider );
-                    yield verificationPage( request, idProvider, settings );
+                    yield verificationPage( request, idProvider );
                 }
                 case POST ->
                 {
                     requireSupport( idProvider );
-                    yield verificationSubmit( request, idProvider, settings );
+                    yield verificationSubmit( request, idProvider );
                 }
                 default -> throw methodNotAllowed( method );
             };
@@ -198,35 +188,35 @@ public class OAuthHandler
         return new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
     }
 
-    private PortalResponse deviceAuthorization( final PortalRequest request, final IdProviderKey idProvider,
-                                                final Map<String, VirtualHostIdProvider.Scope> catalogue )
+    private PortalResponse deviceAuthorization( final PortalRequest request, final IdProviderKey idProvider )
     {
         final String clientId = clientId( request );
         if ( clientId == null )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing client_id" );
         }
+        final Scopes known = securityService.getScopes( idProvider );
         final Set<String> scope = scopes( param( request, "scope" ) );
-        if ( catalogue.isEmpty() )
+        if ( known.isEmpty() )
         {
             if ( !scope.isEmpty() )
             {
                 return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope",
-                                   "No scopes are configured for this id provider here; ask for none" );
+                                   "The id provider has no scopes; ask for none" );
             }
         }
         else
         {
             if ( scope.isEmpty() )
             {
-                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope", "scope is required; configured scopes: " + catalogue.keySet() );
+                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope", "scope is required; known scopes: " + known.getIds() );
             }
             final Set<String> unknown = new LinkedHashSet<>( scope );
-            unknown.removeAll( catalogue.keySet() );
+            unknown.removeAll( known.getIds() );
             if ( !unknown.isEmpty() )
             {
                 return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope",
-                                   "Unknown scope " + unknown + "; configured scopes: " + catalogue.keySet() );
+                                   "Unknown scope " + unknown + "; known scopes: " + known.getIds() );
             }
         }
         final Set<String> allowedAudience = servedAudiences();
@@ -268,8 +258,7 @@ public class OAuthHandler
         return json( HttpStatus.OK, body );
     }
 
-    private PortalResponse verificationPage( final PortalRequest request, final IdProviderKey idProvider,
-                                             final VirtualHostIdProvider settings )
+    private PortalResponse verificationPage( final PortalRequest request, final IdProviderKey idProvider )
     {
         requireInteractiveSignIn( request );
         final Optional<User> user = signedInUserOf( idProvider );
@@ -290,11 +279,10 @@ public class OAuthHandler
         final DeviceCodeStore.Pending p = pending.get();
         return render( request, idProvider,
                        OAuthConsentContext.Confirm.of( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ), p.clientId(),
-                                                      p.scope(), p.audience(), settings, csrfToken() ) );
+                                                      p.scope(), p.audience(), securityService.getScopes( idProvider ), csrfToken() ) );
     }
 
-    private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider,
-                                               final VirtualHostIdProvider settings )
+    private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider )
     {
         requireInteractiveSignIn( request );
         final Optional<User> user = signedInUserOf( idProvider );
@@ -320,22 +308,20 @@ public class OAuthHandler
             return render( request, idProvider,
                            new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
+        final Scopes known = securityService.getScopes( idProvider );
         final Set<String> kept = new LinkedHashSet<>( request.getParams().get( "scope" ) );
-        settings.getScopes().forEach( ( id, scope ) -> {
-            if ( scope.required() )
-            {
-                kept.add( id );
-            }
-        } );
+        known.stream().filter( Scope::isRequired ).map( Scope::getId ).forEach( kept::add );
         kept.retainAll( pending.get().scope() );
+        kept.retainAll( known.getIds() );
+        final boolean granted = approve && ( known.isNotEmpty() || pending.get().scope().isEmpty() );
         final RoleRestriction restriction =
-            settings.restrictionFor( kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
-        if ( !store.resolve( idProvider, userCode, approve, user.get().getKey(), kept, restriction ) )
+            known.restrictionFor( kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
+        if ( !store.resolve( idProvider, userCode, granted, user.get().getKey(), kept, restriction ) )
         {
             return render( request, idProvider,
                            new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
-        return render( request, idProvider, new OAuthConsentContext.Done( idProvider, user.get(), approve ) );
+        return render( request, idProvider, new OAuthConsentContext.Done( idProvider, user.get(), granted ) );
     }
 
     /**

@@ -26,7 +26,6 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 public final class LoginHandler
     implements ScriptBean
@@ -132,10 +131,6 @@ public final class LoginHandler
 
         if ( tokenIssuer != null )
         {
-            // The caller has verified the token. XP checks its audience against the host (the
-            // declared list, or XP's issuer name where none is declared) and maps its scopes to
-            // roles through the host's catalogue, narrowed by any explicit roles. Outside a vhost
-            // the token is treated as on a host declaring no audience.
             final PortalRequest portalRequest = this.portalRequestSupplier.get();
             final VirtualHost virtualHost = portalRequest == null ? null : portalRequest.getVirtualHost();
             final String self = this.accessTokenServiceSupplier.get().getIssuer();
@@ -145,8 +140,8 @@ public final class LoginHandler
             {
                 return new LoginResultMapper( AuthenticationInfo.unAuthenticated(), "Token audience not accepted here" );
             }
-            final VirtualHostIdProvider settings = virtualHost == null ? null : virtualHost.getIdProviders().get( idp );
-            restriction = restriction.narrow( settings == null ? RoleRestriction.none() : settings.restrictionFor( tokenScope ) );
+            restriction = restriction.narrow(
+                this.securityServiceSupplier.get().getScopes( idp ).restrictionFor( tokenScope ) );
             accessToken = AccessTokenInfo.create()
                 .issuer( tokenIssuer )
                 .clientId( tokenClientId )

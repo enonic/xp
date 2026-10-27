@@ -4,8 +4,8 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +30,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleRestriction;
@@ -45,6 +46,8 @@ import com.enonic.xp.security.token.Grant;
 import com.enonic.xp.security.token.GrantService;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.IssueAccessTokenParams;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -82,9 +85,11 @@ class OAuthHandlerTest
 
     private final AccessTokenService accessTokenService = mock( AccessTokenService.class );
 
+    private final SecurityService securityService = mock( SecurityService.class );
+
     private final VirtualHostService virtualHostService = mock( VirtualHostService.class );
 
-    /** No flow restriction and no scope catalogue. */
+    /** No flow restriction. */
     private static final VirtualHostIdProvider UNRESTRICTED = VirtualHostIdProvider.create().allFlows().build();
 
     private final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
@@ -114,7 +119,8 @@ class OAuthHandlerTest
                 .body( "page:" + context.get( "action" ) )
                 .build();
         } );
-        handler = new OAuthHandler( grantService, accessTokenService, virtualHostService, idProviderControllerService,
+        when( securityService.getScopes( any() ) ).thenReturn( Scopes.empty() );
+        handler = new OAuthHandler( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService,
                                           new InMemorySharedMapService(), new Clock()
         {
             @Override
@@ -234,11 +240,15 @@ class OAuthHandlerTest
         return VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();
     }
 
-    private static VirtualHostIdProvider withScopes( final Map<String, PrincipalKeys> scopes )
+    /**
+     * Gives the id provider these scopes, none required, and returns settings without flow restriction.
+     */
+    private VirtualHostIdProvider withScopes( final Map<String, PrincipalKeys> scopes )
     {
-        final Map<String, VirtualHostIdProvider.Scope> catalogue = new LinkedHashMap<>();
-        scopes.forEach( ( id, roles ) -> catalogue.put( id, VirtualHostIdProvider.Scope.of( roles ) ) );
-        return VirtualHostIdProvider.create().allFlows().scopes( catalogue ).build();
+        final List<Scope> known = new ArrayList<>();
+        scopes.forEach( ( id, roles ) -> known.add( Scope.create().idProvider( IDP ).id( id ).roles( roles ).build() ) );
+        when( securityService.getScopes( IDP ) ).thenReturn( Scopes.from( known ) );
+        return UNRESTRICTED;
     }
 
     private String approve( final String userCode, final String... keptScopes )
@@ -332,7 +342,7 @@ class OAuthHandlerTest
         assertThat( grant.getValue().getSubject() ).isEqualTo( ALICE );
         assertThat( grant.getValue().getClientId() ).isEqualTo( "my-cli" );
         assertThat( grant.getValue().getScope() ).isEmpty();
-        assertThat( grant.getValue().getRestriction() ).as( "no catalogue: unrestricted" ).isEqualTo( RoleRestriction.none() );
+        assertThat( grant.getValue().getRestriction() ).as( "no scopes: unrestricted" ).isEqualTo( RoleRestriction.none() );
         assertThat( grant.getValue().getAudience() ).as( "no resource asked for: the token is for XP itself" ).containsExactly( "xp" );
 
         final ArgumentCaptor<IssueAccessTokenParams> token = ArgumentCaptor.forClass( IssueAccessTokenParams.class );
@@ -619,7 +629,7 @@ class OAuthHandlerTest
     }
 
     @Test
-    void without_a_catalogue_no_scope_may_be_asked_for()
+    void without_scopes_no_scope_may_be_asked_for()
         throws Exception
     {
         final PortalResponse refused = handler.handle(
@@ -627,11 +637,11 @@ class OAuthHandlerTest
             UNRESTRICTED );
         assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
         assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_scope" );
-        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "No scopes are configured" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "has no scopes" );
     }
 
     @Test
-    void catalogue_requires_known_scopes_and_restricts_the_grant()
+    void known_scopes_are_required_and_restrict_the_grant()
         throws Exception
     {
         final VirtualHostIdProvider settings = withScopes(
@@ -659,6 +669,8 @@ class OAuthHandlerTest
         @SuppressWarnings("unchecked") final List<Map<String, Object>> shown = (List<Map<String, Object>>) lastContextOfConfirm.get( "scope" );
         assertThat( shown ).hasSize( 2 );
         assertThat( shown.getFirst() ).containsEntry( "id", "content:read" )
+            .containsEntry( "title", "content:read" )
+            .doesNotContainKey( "description" )
             .containsEntry( "roles", List.of( "role:cms.cm.app", "role:cms.project.site.viewer" ) )
             .containsEntry( "required", false );
         assertThat( shown.get( 1 ) ).containsEntry( "id", "profile" ).containsEntry( "roles", List.of() );
@@ -700,7 +712,7 @@ class OAuthHandlerTest
     }
 
     @Test
-    void a_restricted_sign_in_without_a_catalogue_grants_its_own_roles_not_everything()
+    void a_restricted_sign_in_without_scopes_grants_its_own_roles_not_everything()
         throws Exception
     {
         final JsonNode issued =
@@ -724,10 +736,10 @@ class OAuthHandlerTest
     void required_scopes_cannot_be_dropped()
         throws Exception
     {
-        final VirtualHostIdProvider settings = VirtualHostIdProvider.create().allFlows()
-            .scopes( Map.of( "content:read", new VirtualHostIdProvider.Scope( PrincipalKeys.from( "role:cms.cm.app" ), true ), "content:write",
-                             VirtualHostIdProvider.Scope.of( PrincipalKeys.from( "role:cms.project.site.editor" ) ) ) )
-            .build();
+        when( securityService.getScopes( IDP ) ).thenReturn(
+            Scopes.from( Scope.create().idProvider( IDP ).id( "content:read" ).roles( PrincipalKeys.from( "role:cms.cm.app" ) ).required( true ).build(),
+                     Scope.create().idProvider( IDP ).id( "content:write" ).roles( PrincipalKeys.from( "role:cms.project.site.editor" ) ).build() ) );
+        final VirtualHostIdProvider settings = UNRESTRICTED;
         final JsonNode issued = body( handler.handle(
             request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:write content:read" ) ), IDP,
             "device/code", settings ) );
@@ -747,7 +759,7 @@ class OAuthHandlerTest
     }
 
     @Test
-    void catalogue_dropping_every_scope_leaves_no_roles()
+    void dropping_every_scope_leaves_no_roles()
         throws Exception
     {
         final VirtualHostIdProvider settings = withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
@@ -762,6 +774,27 @@ class OAuthHandlerTest
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getScope() ).isEmpty();
         assertThat( grant.getValue().getRestriction() ).as( "restricted, to nothing" ).isEqualTo( RoleRestriction.to() );
+    }
+
+    @Test
+    void a_request_for_scopes_is_denied_once_the_id_provider_has_none()
+        throws Exception
+    {
+        final VirtualHostIdProvider settings = withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
+        final JsonNode issued = body( handler.handle(
+            request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read" ) ), IDP, "device/code",
+            settings ) );
+        when( securityService.getScopes( IDP ) ).thenReturn( Scopes.empty() );
+
+        approve( settings, issued.get( "user_code" ).asText(), "content:read" );
+
+        assertThat( lastContext ).as( "the page showed a choice that no longer exists" ).containsEntry( "approved", false );
+        final JsonNode token = body( handler.handle( request( HttpMethod.POST, "token",
+                                                              Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                      issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP, "token",
+                                                     UNRESTRICTED ) );
+        assertThat( token.get( "error" ).asText() ).isEqualTo( "access_denied" );
+        verify( grantService, never() ).create( any() );
     }
 
     @Test

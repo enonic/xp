@@ -2,6 +2,12 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.Objects;
 
+import java.util.List;
+import com.enonic.xp.audit.AuditLogUris;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.token.CreateScopeParams;
+import com.enonic.xp.security.token.UpdateScopeParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -293,5 +299,27 @@ class SecurityAuditLogSupportImplTest
 
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.security.principal.setPassword", value.getType() );
+    }
+
+    @Test
+    void scopeChangesAreLogged()
+    {
+        instance.createScope( CreateScopeParams.create()
+                                  .idProvider( IdProviderKey.system() )
+                                  .id( "content:read" )
+                                  .roles( PrincipalKeys.from( "role:cms.cm.app" ) )
+                                  .build() );
+        instance.updateScope( UpdateScopeParams.create().idProvider( IdProviderKey.system() ).id( "content:read" ).editor( e -> e.required = true ).build() );
+        instance.removeScope( IdProviderKey.system(), "content:read" );
+
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 3 ) ).log( captor.capture() );
+        assertEquals( List.of( "system.security.scope.create", "system.security.scope.update", "system.security.scope.delete" ),
+                      captor.getAllValues().stream().map( LogAuditLogParams::getType ).toList() );
+        final PropertySet params = captor.getAllValues().get( 0 ).getData().getSet( "params" );
+        assertEquals( "system", params.getString( "idProvider" ) );
+        assertEquals( "content:read", params.getString( "id" ) );
+        assertEquals( "role:cms.cm.app", params.getString( "roles" ) );
+        assertEquals( AuditLogUris.from( "system" ), captor.getAllValues().get( 2 ).getObjectUris() );
     }
 }

@@ -78,6 +78,11 @@ import com.enonic.xp.security.UserQueryResult;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.impl.security.token.ScopeStore;
+import com.enonic.xp.security.token.CreateScopeParams;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.Scopes;
+import com.enonic.xp.security.token.UpdateScopeParams;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.PasswordAuthToken;
@@ -108,6 +113,8 @@ public final class SecurityServiceImpl
 
     private final SecurityAuditLogSupport securityAuditLogSupport;
 
+    private final ScopeStore scopes;
+
     public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport,
                                 final PasswordSecurityService passwordSecurityService, final SharedMapService sharedMapService )
     {
@@ -115,6 +122,7 @@ public final class SecurityServiceImpl
         this.idProviderLocks = sharedMapService.getSharedMap( ID_PROVIDER_LOCKS );
         this.securityAuditLogSupport = securityAuditLogSupport;
         this.passwordSecurityService = passwordSecurityService;
+        this.scopes = new ScopeStore( nodeService );
     }
 
     @Override
@@ -914,6 +922,7 @@ public final class SecurityServiceImpl
                 setNodePermissions( idProviderNode.id(), idProviderNodePermissions );
                 setNodePermissions( usersNode.id(), usersNodePermissions );
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
+                scopes.setPermissions( updateIdProviderParams.getKey(), idProviderNodePermissions );
             }
 
             securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( updatedIdProvider ).build() );
@@ -926,6 +935,45 @@ public final class SecurityServiceImpl
     {
         nodeService.applyPermissions( ApplyNodePermissionsParams.create().nodeId( nodeId ).permissions( permissions ).build() );
         nodeService.refresh( RefreshMode.ALL );
+    }
+
+    @Override
+    public Scope createScope( final CreateScopeParams params )
+    {
+        final Scope scope = scopes.create( params );
+        securityAuditLogSupport.createScope( params );
+        return scope;
+    }
+
+    @Override
+    public Optional<Scope> updateScope( final UpdateScopeParams params )
+    {
+        final Optional<Scope> scope = scopes.update( params );
+        scope.ifPresent( s -> securityAuditLogSupport.updateScope( params ) );
+        return scope;
+    }
+
+    @Override
+    public Optional<Scope> getScope( final IdProviderKey idProvider, final String id )
+    {
+        return scopes.get( idProvider, id );
+    }
+
+    @Override
+    public Scopes getScopes( final IdProviderKey idProvider )
+    {
+        return scopes.list( idProvider );
+    }
+
+    @Override
+    public boolean deleteScope( final IdProviderKey idProvider, final String id )
+    {
+        final boolean deleted = scopes.delete( idProvider, id );
+        if ( deleted )
+        {
+            securityAuditLogSupport.removeScope( idProvider, id );
+        }
+        return deleted;
     }
 
     private <T> T callWithContext( Callable<T> runnable )

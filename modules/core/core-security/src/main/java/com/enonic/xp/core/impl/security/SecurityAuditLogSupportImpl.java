@@ -20,6 +20,9 @@ import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.token.CreateScopeParams;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.UpdateScopeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
@@ -253,6 +256,52 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "key", key.toString() );
 
             log( "system.security.principal.setPassword", data, AuditLogUris.from( key.toString() ) );
+        }
+    }
+
+    @Override
+    public void createScope( final CreateScopeParams params )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final Scope scope = params.getScope();
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", scope.getIdProvider().toString() );
+            paramsSet.setString( "id", scope.getId() );
+            paramsSet.setString( "title", scope.getTitle() );
+            paramsSet.addStrings( "roles", scope.getRoles().stream().map( Object::toString ).toList() );
+            paramsSet.setBoolean( "required", scope.isRequired() );
+
+            log( "system.security.scope.create", data, AuditLogUris.from( scope.getIdProvider().toString() ) );
+        }
+    }
+
+    @Override
+    public void updateScope( final UpdateScopeParams params )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", params.getIdProvider().toString() );
+            paramsSet.setString( "id", params.getId() );
+
+            log( "system.security.scope.update", data, AuditLogUris.from( params.getIdProvider().toString() ) );
+        }
+    }
+
+    @Override
+    public void removeScope( final IdProviderKey idProvider, final String id )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", idProvider.toString() );
+            paramsSet.setString( "id", id );
+
+            log( "system.security.scope.delete", data, AuditLogUris.from( idProvider.toString() ) );
         }
     }
 

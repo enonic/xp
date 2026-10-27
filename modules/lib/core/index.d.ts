@@ -322,6 +322,10 @@ export interface OAuthConsentUser {
 
 export interface OAuthConsentScope {
     id: string;
+    /** The scope's title, as its id provider defines it; the id when it defines none. */
+    title: string;
+    /** What approving the scope allows, in the user's words, when the id provider says. */
+    description?: string;
     /** The roles the scope implies; empty for a scope that is only a label. */
     roles: string[];
     /** Whether the user may not drop it. */
@@ -345,7 +349,7 @@ export interface OAuthConsentConfirm extends OAuthConsentBase {
     /** How the client named itself; not a verified name. */
     clientId: string;
     scope: OAuthConsentScope[];
-    /** Whether the vhost has no scope catalogue, so an approved token carries the user's full memberships. */
+    /** Whether the id provider has no scopes, so an approved token carries the user's full memberships. */
     unrestricted: boolean;
     audience: string[];
     /** The form must post it back as _csrf. */
@@ -369,23 +373,13 @@ export type OAuthConsent = OAuthConsentEnter | OAuthConsentConfirm | OAuthConsen
 
 /**
  * An ID provider's settings on the virtual host serving the request (`mapping.<name>.idProvider.<idp>.*`
- * and the mapping's audience): what the host serves for it and what may be granted there.
+ * and the mapping's audience): what the host serves for it.
  */
 export interface IdProviderSettings {
     /** The flows the host serves for the ID provider, sorted. Empty means no restriction. */
     flows: string[];
     /** The audiences the host serves, sorted. Empty means it accepts only tokens naming XP's issuer. */
     audience: string[];
-    /** The scope catalogue: each scope id with what it means. */
-    scopes: Record<string, IdProviderScope>;
-}
-
-/** A scope of the host's catalogue. */
-export interface IdProviderScope {
-    /** The roles the scope implies, sorted. Empty for a label-only scope. */
-    roles: string[];
-    /** Whether the user may not drop it at consent. */
-    required: boolean;
 }
 
 export interface RequestConstructorParams {

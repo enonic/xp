@@ -5,6 +5,10 @@ import java.util.Optional;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.security.token.CreateScopeParams;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.Scopes;
+import com.enonic.xp.security.token.UpdateScopeParams;
 
 
 public interface SecurityService
@@ -161,4 +165,36 @@ public interface SecurityService
     void addRelationship( PrincipalRelationship relationship );
 
     void removeRelationship( PrincipalRelationship relationship );
+
+    /**
+     * Adds a scope to an id provider: what its clients may ask for and what a user may approve.
+     * Deleting the id provider deletes its scopes. Reading needs no permission, since the scopes
+     * are what every client is told; writing needs the permission to administer the id provider.
+     *
+     * @throws com.enonic.xp.security.token.ScopeAlreadyExistsException when the id provider has a scope with that id
+     * @throws IdProviderNotFoundException                              when there is no such id provider
+     */
+    Scope createScope( CreateScopeParams params );
+
+    /**
+     * Changes a scope's title, description, roles or required flag. Empty when the id provider has
+     * no such scope.
+     */
+    Optional<Scope> updateScope( UpdateScopeParams params );
+
+    /**
+     * The id provider's scope with the given id.
+     */
+    Optional<Scope> getScope( IdProviderKey idProvider, String id );
+
+    /**
+     * The id provider's scopes, by id. Empty when it has none, or does not exist.
+     */
+    Scopes getScopes( IdProviderKey idProvider );
+
+    /**
+     * Removes a scope; false when the id provider has no such scope. Grants already holding the
+     * scope keep it, with the restriction fixed when they were approved.
+     */
+    boolean deleteScope( IdProviderKey idProvider, String id );
 }

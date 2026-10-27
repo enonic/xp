@@ -1,52 +1,104 @@
 package com.enonic.xp.security.token;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 import org.jspecify.annotations.NullMarked;
 
-import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 /**
- * Scope names as RFC 6749 section 3.3 defines them: one or more printable ASCII characters,
- * excluding space, double quote and backslash.
+ * The scopes of an id provider.
  */
-@PublicApi
 @NullMarked
 public final class Scopes
+    extends AbstractImmutableEntityList<Scope>
 {
-    private Scopes()
+    private static final Scopes EMPTY = new Scopes( ImmutableList.of() );
+
+    private Scopes( final ImmutableList<Scope> list )
     {
+        super( list );
     }
 
     /**
-     * Returns the scope when it is a valid scope name.
+     * No scopes.
+     */
+    public static Scopes empty()
+    {
+        return EMPTY;
+    }
+
+    /**
+     * The scopes given, in that order.
+     */
+    public static Scopes from( final Scope... scopes )
+    {
+        return fromInternal( ImmutableList.copyOf( scopes ) );
+    }
+
+    /**
+     * The scopes given, in that order.
+     */
+    public static Scopes from( final Iterable<Scope> scopes )
+    {
+        return scopes instanceof Scopes s ? s : fromInternal( ImmutableList.copyOf( scopes ) );
+    }
+
+    /**
+     * Collects a stream of scopes.
+     */
+    public static Collector<Scope, ?, Scopes> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Scopes::fromInternal );
+    }
+
+    private static Scopes fromInternal( final ImmutableList<Scope> list )
+    {
+        return list.isEmpty() ? EMPTY : new Scopes( list );
+    }
+
+    /**
+     * The scope with the given id.
+     */
+    public Optional<Scope> get( final String id )
+    {
+        return stream().filter( scope -> scope.getId().equals( id ) ).findFirst();
+    }
+
+    /**
+     * The ids, in order.
+     */
+    public Set<String> getIds()
+    {
+        return stream().map( Scope::getId ).collect( ImmutableSet.toImmutableSet() );
+    }
+
+    /**
+     * The restriction a set of approved scopes implies: none when the id provider has no scopes at
+     * all, else exactly the union of the roles of the approved scopes among these. An id not among
+     * these implies nothing.
      *
-     * @throws IllegalArgumentException when it is not
+     * @param approved the ids of the scopes granted
      */
-    public static String checkScope( final String scope )
+    public RoleRestriction restrictionFor( final Collection<String> approved )
     {
-        if ( !isScope( scope ) )
+        if ( isEmpty() )
         {
-            throw new IllegalArgumentException( "Not a scope name: [" + scope + "]" );
+            return RoleRestriction.none();
         }
-        return scope;
-    }
-
-    /**
-     * Whether the string is a valid scope name.
-     */
-    public static boolean isScope( final String scope )
-    {
-        if ( scope.isEmpty() )
-        {
-            return false;
-        }
-        for ( int i = 0; i < scope.length(); i++ )
-        {
-            final char c = scope.charAt( i );
-            if ( c < 0x21 || c > 0x7E || c == '"' || c == '\\' )
-            {
-                return false;
-            }
-        }
-        return true;
+        final Set<String> ids = Set.copyOf( approved );
+        return RoleRestriction.to( stream()
+                                       .filter( scope -> ids.contains( scope.getId() ) )
+                                       .flatMap( scope -> scope.getRoles().stream() )
+                                       .collect( PrincipalKeys.collector() ) );
     }
 }
