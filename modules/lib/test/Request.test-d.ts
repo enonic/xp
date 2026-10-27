@@ -825,8 +825,8 @@ expectNotAssignable<Request>({
 //     custom: 'whatever', // Typed custom property allowed
 // });
 
-// Scenario: When implementing an idprovider deviceVerification function the Request has a deviceLogin property
-const deviceVerificationRequest: Request = new RequestImplementation({
+// Scenario: When implementing an idprovider oauthConsent function the Request has a oauthConsent property
+const oauthConsentRequest: Request = new RequestImplementation({
     cookies: {},
     headers: {} as Record<string, string>,
     host: 'localhost',
@@ -841,7 +841,7 @@ const deviceVerificationRequest: Request = new RequestImplementation({
     scheme: 'http',
     webSocket: false,
     locales: ['en'],
-    deviceLogin: {
+    oauthConsent: {
         idProvider: 'system',
         action: 'confirm',
         user: {key: 'user:system:alice', login: 'alice', displayName: 'Alice'},
@@ -853,9 +853,9 @@ const deviceVerificationRequest: Request = new RequestImplementation({
         csrf: 'token',
     },
 }).toObject();
-expectAssignable<Request>(deviceVerificationRequest);
-if (deviceVerificationRequest.deviceLogin?.action === 'confirm') {
-    expectAssignable<string>(deviceVerificationRequest.deviceLogin.csrf);
+expectAssignable<Request>(oauthConsentRequest);
+if (oauthConsentRequest.oauthConsent?.action === 'confirm') {
+    expectAssignable<string>(oauthConsentRequest.oauthConsent.csrf);
 }
 
 // Scenario: An id provider function sees the host's settings for its id provider

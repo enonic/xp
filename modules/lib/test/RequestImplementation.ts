@@ -4,7 +4,7 @@ import type {
     RequestCookies,
     RequestHeaders,
     RequestParams,
-    DeviceLogin,
+    OAuthConsent,
     RequestAccessToken,
 } from '../core/index';
 
@@ -81,7 +81,7 @@ export class RequestImplementation implements Request {
     repositoryId?: string;
     validTicket?: boolean;
     accessToken?: RequestAccessToken;
-    deviceLogin?: DeviceLogin;
+    oauthConsent?: OAuthConsent;
     body?: string;
 
     constructor({
@@ -107,7 +107,7 @@ export class RequestImplementation implements Request {
         repositoryId,
         validTicket,
         accessToken,
-        deviceLogin,
+        oauthConsent,
         // Special
         body,
     }: RequestConstructorParams) {
@@ -132,7 +132,7 @@ export class RequestImplementation implements Request {
         this.repositoryId = repositoryId;
         this.validTicket = validTicket;
         this.accessToken = accessToken;
-        this.deviceLogin = deviceLogin;
+        this.oauthConsent = oauthConsent;
 
         this.body = body;
     }
@@ -195,8 +195,8 @@ export class RequestImplementation implements Request {
         if (this.accessToken) {
             obj.accessToken = this.accessToken;
         }
-        if (this.deviceLogin) {
-            obj.deviceLogin = this.deviceLogin;
+        if (this.oauthConsent) {
+            obj.oauthConsent = this.oauthConsent;
         }
         return obj;
     }

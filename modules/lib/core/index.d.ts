@@ -314,13 +314,13 @@ export interface RequestAccessToken {
     audience: string[];
 }
 
-export interface DeviceLoginUser {
+export interface OAuthConsentUser {
     key: string;
     login: string;
     displayName: string;
 }
 
-export interface DeviceLoginScope {
+export interface OAuthConsentScope {
     id: string;
     /** The roles the scope implies; empty for a scope that is only a label. */
     roles: string[];
@@ -328,23 +328,23 @@ export interface DeviceLoginScope {
     required: boolean;
 }
 
-interface DeviceLoginBase {
+interface OAuthConsentBase {
     idProvider: string;
-    user: DeviceLoginUser;
+    user: OAuthConsentUser;
 }
 
-export interface DeviceLoginEnter extends DeviceLoginBase {
+export interface OAuthConsentEnter extends OAuthConsentBase {
     action: 'enter';
     /** Why the previous code was refused, when one was. */
     error?: string;
 }
 
-export interface DeviceLoginConfirm extends DeviceLoginBase {
+export interface OAuthConsentConfirm extends OAuthConsentBase {
     action: 'confirm';
     userCode: string;
     /** How the client named itself; not a verified name. */
     clientId: string;
-    scope: DeviceLoginScope[];
+    scope: OAuthConsentScope[];
     /** Whether the vhost has no scope catalogue, so an approved token carries the user's full memberships. */
     unrestricted: boolean;
     audience: string[];
@@ -352,20 +352,20 @@ export interface DeviceLoginConfirm extends DeviceLoginBase {
     csrf: string;
 }
 
-export interface DeviceLoginDone extends DeviceLoginBase {
+export interface OAuthConsentDone extends OAuthConsentBase {
     action: 'done';
     approved: boolean;
 }
 
-export interface DeviceLoginWrongAccount extends DeviceLoginBase {
+export interface OAuthConsentWrongAccount extends OAuthConsentBase {
     action: 'wrongAccount';
 }
 
 /**
- * The data a device verification page renders, handed to an id provider's deviceVerification
- * function as request.deviceLogin.
+ * The data the consent page renders, handed to an id provider's oauthConsent
+ * function as request.oauthConsent.
  */
-export type DeviceLogin = DeviceLoginEnter | DeviceLoginConfirm | DeviceLoginDone | DeviceLoginWrongAccount;
+export type OAuthConsent = OAuthConsentEnter | OAuthConsentConfirm | OAuthConsentDone | OAuthConsentWrongAccount;
 
 /**
  * An ID provider's settings on the virtual host serving the request (`mapping.<name>.idProvider.<idp>.*`
@@ -423,8 +423,8 @@ export interface RequestConstructorParams {
      * calls when the host maps that provider.
      */
     idProviderSettings?: IdProviderSettings;
-    /** Present when an id provider's deviceVerification function is called. */
-    deviceLogin?: DeviceLogin;
+    /** Present when an id provider's oauthConsent function is called. */
+    oauthConsent?: OAuthConsent;
 }
 
 export interface RequestInterface

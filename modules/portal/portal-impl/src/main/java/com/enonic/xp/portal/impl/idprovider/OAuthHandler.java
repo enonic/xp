@@ -56,7 +56,7 @@ import com.enonic.xp.web.vhost.VirtualHostService;
  * id provider's users:
  * <ul>
  * <li>{@code POST device/code}: the client asks for a device code and a user code.</li>
- * <li>{@code GET device}, {@code POST device}: the verification page, where a signed-in user of the
+ * <li>{@code GET device}, {@code POST device}: the consent page, where a signed-in user of the
  * id provider enters the code and approves or denies. Unauthenticated, it answers 401 and the
  * vhost's interactive login takes over.</li>
  * <li>{@code POST token}: the client polls with the device code and, once approved, gets an access
@@ -75,25 +75,25 @@ import com.enonic.xp.web.vhost.VirtualHostService;
  * imply, fixed at consent. Without a catalogue a client must ask for no scope, and the token
  * carries the user's full memberships. Audiences are what XP's vhosts serve.
  * <p>
- * XP serves no page of its own. The id provider renders the verification page in
- * {@code deviceVerification(req)} from {@code req.deviceLogin} (see {@link DeviceLoginContext}). An
+ * XP serves no page of its own. The id provider renders the consent page in
+ * {@code oauthConsent(req)} from {@code req.oauthConsent} (see {@link OAuthConsentContext}). An
  * id provider without that function does not support device login, and its device endpoints
  * answer 404. The posted choice is checked here against what was requested and what may be
  * granted.
  */
-@Component(service = DeviceLoginHandler.class)
-public class DeviceLoginHandler
+@Component(service = OAuthHandler.class)
+public class OAuthHandler
 {
     static final String DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 
     static final String REFRESH_TOKEN_GRANT = "refresh_token";
 
     /**
-     * The request attribute holding the {@link DeviceLoginContext} data for the verification page.
+     * The request attribute holding the {@link OAuthConsentContext} data for the consent page.
      */
-    public static final String CONTEXT_ATTRIBUTE = "com.enonic.xp.portal.idprovider.device.context";
+    public static final String CONTEXT_ATTRIBUTE = "com.enonic.xp.portal.idprovider.oauth.consent";
 
-    static final String VERIFICATION_FUNCTION = "deviceVerification";
+    static final String CONSENT_FUNCTION = "oauthConsent";
 
     private static final String CSRF_SESSION_ATTRIBUTE = "com.enonic.xp.portal.idprovider.device.csrf";
 
@@ -117,7 +117,7 @@ public class DeviceLoginHandler
     private final DeviceCodeStore store;
 
     @Activate
-    public DeviceLoginHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
+    public OAuthHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
                                @Reference final VirtualHostService virtualHostService,
                                @Reference final IdProviderControllerService idProviderControllerService,
                                @Reference final SharedMapService sharedMapService )
@@ -125,7 +125,7 @@ public class DeviceLoginHandler
         this( grantService, accessTokenService, virtualHostService, idProviderControllerService, sharedMapService, Clock.systemUTC() );
     }
 
-    DeviceLoginHandler( final GrantService grantService, final AccessTokenService accessTokenService,
+    OAuthHandler( final GrantService grantService, final AccessTokenService accessTokenService,
                         final VirtualHostService virtualHostService, final IdProviderControllerService idProviderControllerService,
                         final SharedMapService sharedMapService, final Clock clock )
     {
@@ -137,11 +137,11 @@ public class DeviceLoginHandler
     }
 
     /**
-     * Whether the id provider supports device login, that is, has the verification page function.
+     * Whether the id provider supports device login, that is, has the consent page function.
      */
     public boolean supports( final IdProviderKey idProvider )
     {
-        return idProviderControllerService.hasFunction( idProvider, VERIFICATION_FUNCTION );
+        return idProviderControllerService.hasFunction( idProvider, CONSENT_FUNCTION );
     }
 
     /**
@@ -153,12 +153,12 @@ public class DeviceLoginHandler
         final HttpMethod method = request.getMethod();
         return switch ( endpoint )
         {
-            case DeviceLoginEndpoints.DEVICE_CODE -> requirePost( method, () -> {
+            case OAuthEndpoints.DEVICE_CODE -> requirePost( method, () -> {
                 requireSupport( idProvider );
                 return deviceAuthorization( request, idProvider, settings.getScopes() );
             } );
-            case DeviceLoginEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings.getFlows() ) );
-            case DeviceLoginEndpoints.DEVICE -> switch ( method )
+            case OAuthEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings.getFlows() ) );
+            case OAuthEndpoints.DEVICE -> switch ( method )
             {
                 case GET, HEAD ->
                 {
@@ -180,7 +180,7 @@ public class DeviceLoginHandler
     {
         if ( !supports( idProvider ) )
         {
-            throw WebException.notFound( String.format( "'%s' id provider has no device login page (%s)", idProvider, VERIFICATION_FUNCTION ) );
+            throw WebException.notFound( String.format( "'%s' id provider has no device login page (%s)", idProvider, CONSENT_FUNCTION ) );
         }
     }
 
@@ -280,16 +280,16 @@ public class DeviceLoginHandler
         final String userCode = param( request, "user_code" );
         if ( userCode == null || userCode.isBlank() )
         {
-            return render( request, idProvider, new DeviceLoginContext.Enter( idProvider, user.get(), null ) );
+            return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), null ) );
         }
         final Optional<DeviceCodeStore.Pending> pending = store.findByUserCode( idProvider, userCode );
         if ( pending.isEmpty() || pending.get().status() != DeviceCodeStore.Status.PENDING )
         {
-            return render( request, idProvider, new DeviceLoginContext.Enter( idProvider, user.get(), DeviceLoginContext.INVALID_CODE ) );
+            return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
         final DeviceCodeStore.Pending p = pending.get();
         return render( request, idProvider,
-                       DeviceLoginContext.Confirm.of( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ), p.clientId(),
+                       OAuthConsentContext.Confirm.of( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ), p.clientId(),
                                                       p.scope(), p.audience(), settings, csrfToken() ) );
     }
 
@@ -318,7 +318,7 @@ public class DeviceLoginHandler
         if ( pending.isEmpty() )
         {
             return render( request, idProvider,
-                           new DeviceLoginContext.Enter( idProvider, user.get(), DeviceLoginContext.INVALID_CODE ) );
+                           new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
         final Set<String> kept = new LinkedHashSet<>( request.getParams().get( "scope" ) );
         settings.getScopes().forEach( ( id, scope ) -> {
@@ -333,15 +333,15 @@ public class DeviceLoginHandler
         if ( !store.resolve( idProvider, userCode, approve, user.get().getKey(), kept, restriction ) )
         {
             return render( request, idProvider,
-                           new DeviceLoginContext.Enter( idProvider, user.get(), DeviceLoginContext.INVALID_CODE ) );
+                           new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
-        return render( request, idProvider, new DeviceLoginContext.Done( idProvider, user.get(), approve ) );
+        return render( request, idProvider, new OAuthConsentContext.Done( idProvider, user.get(), approve ) );
     }
 
     /**
-     * Renders the page through the id provider's {@code deviceVerification} function.
+     * Renders the page through the id provider's {@code oauthConsent} function.
      */
-    private PortalResponse render( final PortalRequest request, final IdProviderKey idProvider, final DeviceLoginContext context )
+    private PortalResponse render( final PortalRequest request, final IdProviderKey idProvider, final OAuthConsentContext context )
     {
         if ( request.getRawRequest() != null )
         {
@@ -351,14 +351,14 @@ public class DeviceLoginHandler
         {
             final PortalResponse page = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
                                                                                  .idProviderKey( idProvider )
-                                                                                 .functionName( VERIFICATION_FUNCTION )
+                                                                                 .functionName( CONSENT_FUNCTION )
                                                                                  .portalRequest( request )
                                                                                  .build() );
             if ( page == null )
             {
                 requireSupport( idProvider );
                 throw WebException.internalServerError( String.format( "'%s' id provider's %s returned no response", idProvider,
-                                                                        VERIFICATION_FUNCTION ) );
+                                                                        CONSENT_FUNCTION ) );
             }
             return page;
         }
@@ -498,7 +498,7 @@ public class DeviceLoginHandler
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         if ( authInfo.isAuthenticated() )
         {
-            return render( request, idProvider, new DeviceLoginContext.WrongAccount( idProvider, authInfo.getUser() ) );
+            return render( request, idProvider, new OAuthConsentContext.WrongAccount( idProvider, authInfo.getUser() ) );
         }
         return PortalResponse.create().status( HttpStatus.UNAUTHORIZED ).build();
     }

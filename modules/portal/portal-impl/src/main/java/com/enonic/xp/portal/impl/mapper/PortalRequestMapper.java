@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
+import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.auth.AccessTokenInfo;
@@ -83,12 +83,12 @@ public final class PortalRequestMapper
             gen.end();
         }
 
-        @SuppressWarnings("unchecked") final Map<String, Object> deviceLogin = this.request.getRawRequest() == null
+        @SuppressWarnings("unchecked") final Map<String, Object> oauthConsent = this.request.getRawRequest() == null
             ? null
-            : (Map<String, Object>) this.request.getRawRequest().getAttribute( DeviceLoginHandler.CONTEXT_ATTRIBUTE );
-        if ( deviceLogin != null )
+            : (Map<String, Object>) this.request.getRawRequest().getAttribute( OAuthHandler.CONTEXT_ATTRIBUTE );
+        if ( oauthConsent != null )
         {
-            gen.value( "deviceLogin", deviceLogin );
+            gen.value( "oauthConsent", oauthConsent );
         }
 
         serializeBody( gen );

@@ -11,7 +11,7 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
  * The device-login endpoints under {@code /_/idprovider/<idp>/}, and the vhost flow each needs.
  */
 @NullMarked
-public final class DeviceLoginEndpoints
+public final class OAuthEndpoints
 {
     /**
      * Device authorization (RFC 8628): a client gets a device code and a user code.
@@ -19,7 +19,7 @@ public final class DeviceLoginEndpoints
     public static final String DEVICE_CODE = "device/code";
 
     /**
-     * The verification page.
+     * The consent page.
      */
     public static final String DEVICE = "device";
 
@@ -36,7 +36,7 @@ public final class DeviceLoginEndpoints
 
     private static final Set<String> ALL = Set.of( DEVICE_CODE, DEVICE, TOKEN );
 
-    private DeviceLoginEndpoints()
+    private OAuthEndpoints()
     {
     }
 
