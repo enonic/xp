@@ -11,7 +11,7 @@ import org.jspecify.annotations.NullMarked;
  * configured mapping serves only when its list names them. The default virtual host, used where no
  * mapping is configured, serves every flow.
  * <p>
- * {@link #LOGIN}, {@link #AUTOLOGIN}, {@link #LOGOUT}, {@link #DEVICE} and {@link #CODE} are XP's.
+ * {@link #LOGIN}, {@link #AUTOLOGIN}, {@link #LOGOUT}, {@link #DEVICE}, {@link #CODE} and {@link #REGISTER} are XP's.
  * Any other name is a flow of the id provider app itself.
  */
 @NullMarked
@@ -49,9 +49,16 @@ public final class IdProviderFlow
     public static final String CODE = "code";
 
     /**
-     * The flows that issue tokens to clients: off on a configured mapping unless its list names them.
+     * Client self-registration (RFC 7591): XP serves the id provider's registration endpoint, where
+     * a client the id provider has no record of registers itself. Web endpoint only.
      */
-    public static final Set<String> TOKEN_FLOWS = Set.of( DEVICE, CODE );
+    public static final String REGISTER = "register";
+
+    /**
+     * The flows that issue tokens to clients, or register clients for them: off on a configured
+     * mapping unless its list names them.
+     */
+    public static final Set<String> TOKEN_FLOWS = Set.of( DEVICE, CODE, REGISTER );
 
     private IdProviderFlow()
     {

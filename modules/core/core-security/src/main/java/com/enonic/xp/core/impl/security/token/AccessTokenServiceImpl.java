@@ -28,6 +28,9 @@ import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.core.internal.UuidHelper;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessToken;
+import com.enonic.xp.security.token.RegisterClientParams;
+import com.enonic.xp.security.token.Client;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.security.token.AccessTokenVerification;
@@ -51,10 +54,13 @@ import com.enonic.xp.shared.SharedMapService;
  * installation's name, {@link ServerInfo#getName()}), {@code token.ttl} (ISO-8601 duration, default
  * one hour) and the keys described in {@link ConfiguredTokenSigningKeys}; without configured keys,
  * {@link SharedMapTokenSigningKeys} is used.
+ * <p>
+ * The same keys sign the ids of self-registered clients (see {@link StatelessClients}), which
+ * hold for {@value #REGISTRATION_DAYS} days.
  */
 @Component(configurationPid = "com.enonic.xp.security")
 public class AccessTokenServiceImpl
-    implements AccessTokenService
+    implements AccessTokenService, TokenSigningKeys
 {
     static final Duration DEFAULT_TTL = Duration.ofHours( 1 );
 
@@ -69,6 +75,13 @@ public class AccessTokenServiceImpl
 
     private final Clock clock;
 
+    private final StatelessClients stateless;
+
+    /**
+     * How long a self-registration holds.
+     */
+    static final int REGISTRATION_DAYS = 90;
+
     private volatile Settings settings;
 
     @Activate
@@ -81,6 +94,7 @@ public class AccessTokenServiceImpl
     {
         this.sharedMapService = sharedMapService;
         this.clock = clock;
+        this.stateless = new StatelessClients( this, clock, Duration.ofDays( REGISTRATION_DAYS ) );
     }
 
     /**
@@ -133,6 +147,36 @@ public class AccessTokenServiceImpl
             .tokenId( UuidHelper.newUUIDv7( now.toEpochMilli() ).toString() );
         final AccessTokenClaims built = claims.build();
         return new AccessToken( JwsHs512.sign( settings.keys().signingKey(), toPayload( built ) ), built );
+    }
+
+    @Override
+    public Client registerClient( final RegisterClientParams params )
+    {
+        return stateless.register( params.getClient() );
+    }
+
+    @Override
+    public Optional<Client> getRegisteredClient( final IdProviderKey idProvider, final String clientId )
+    {
+        return StatelessClients.isStatelessId( clientId ) ? stateless.read( idProvider, clientId ) : Optional.empty();
+    }
+
+    @Override
+    public boolean isSelfRegisteredClientId( final String clientId )
+    {
+        return StatelessClients.isStatelessId( clientId );
+    }
+
+    @Override
+    public SigningKey signingKey()
+    {
+        return this.settings.keys().signingKey();
+    }
+
+    @Override
+    public Optional<SigningKey> verificationKey( final String kid )
+    {
+        return this.settings.keys().verificationKey( kid );
     }
 
     @Override

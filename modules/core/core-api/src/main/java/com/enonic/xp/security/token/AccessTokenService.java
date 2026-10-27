@@ -1,8 +1,11 @@
 package com.enonic.xp.security.token;
 
+import java.util.Optional;
+
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.security.IdProviderKey;
 
 /**
  * Issues and verifies XP's own access tokens. A token is a JWT in JWS compact form with the
@@ -35,4 +38,26 @@ public interface AccessTokenService
      * audience accepts tokens naming it.
      */
     String getIssuer();
+
+    /**
+     * Registers a client without storing it (RFC 7591): the returned client's id is its record,
+     * signed with the token keys, and is what the client sends as {@code client_id} from then on.
+     * The registration lasts a fixed time, after which the id reads as unregistered and the client
+     * registers again.
+     */
+    Client registerClient( RegisterClientParams params );
+
+    /**
+     * The client an id from {@link #registerClient} describes, while the registration holds. Empty
+     * for any other id, for an id of another id provider, a signature that does not verify or a
+     * registration that has run out.
+     */
+    Optional<Client> getRegisteredClient( IdProviderKey idProvider, String clientId );
+
+    /**
+     * Whether an id has the shape of one {@link #registerClient} issues. Such an id names a client
+     * only while {@link #getRegisteredClient} finds it; afterwards it names no client at all, and
+     * is not an ordinary client id either.
+     */
+    boolean isSelfRegisteredClientId( String clientId );
 }

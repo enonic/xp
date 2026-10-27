@@ -9,8 +9,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OAuthEndpointsTest
 {
     @Test
-    void the_four_endpoints_and_nothing_else()
+    void the_five_endpoints_and_nothing_else()
     {
+        assertThat( OAuthEndpoints.isEndpoint( "register" ) ).isTrue();
         assertThat( OAuthEndpoints.isEndpoint( "device/code" ) ).isTrue();
         assertThat( OAuthEndpoints.isEndpoint( "device" ) ).isTrue();
         assertThat( OAuthEndpoints.isEndpoint( "authorize" ) ).isTrue();
@@ -21,11 +22,12 @@ class OAuthEndpointsTest
     }
 
     @Test
-    void the_page_and_the_code_need_the_device_flow_and_the_token_endpoint_any_issuing_flow()
+    void each_endpoint_needs_its_flow_and_the_token_endpoint_any_issuing_flow()
     {
         assertThat( OAuthEndpoints.requiredFlow( "device/code" ) ).isEqualTo( IdProviderFlow.DEVICE );
         assertThat( OAuthEndpoints.requiredFlow( "device" ) ).isEqualTo( IdProviderFlow.DEVICE );
         assertThat( OAuthEndpoints.requiredFlow( "authorize" ) ).isEqualTo( IdProviderFlow.CODE );
+        assertThat( OAuthEndpoints.requiredFlow( "register" ) ).isEqualTo( IdProviderFlow.REGISTER );
         assertThat( OAuthEndpoints.requiredFlow( "token" ) ).isNull();
         assertThat( OAuthEndpoints.ISSUING_FLOWS ).containsExactlyInAnyOrder( IdProviderFlow.DEVICE, IdProviderFlow.CODE );
     }

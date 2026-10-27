@@ -34,12 +34,17 @@ public final class OAuthEndpoints
     public static final String TOKEN = "token";
 
     /**
+     * Dynamic client registration (RFC 7591).
+     */
+    public static final String REGISTER = "register";
+
+    /**
      * The flows that issue tokens through the token endpoint. The endpoint is served while any of
      * them is enabled on the vhost.
      */
     public static final Set<String> ISSUING_FLOWS = Set.of( IdProviderFlow.DEVICE, IdProviderFlow.CODE );
 
-    private static final Set<String> ALL = Set.of( DEVICE_CODE, DEVICE, AUTHORIZE, TOKEN );
+    private static final Set<String> ALL = Set.of( DEVICE_CODE, DEVICE, AUTHORIZE, TOKEN, REGISTER );
 
     private OAuthEndpoints()
     {
@@ -63,6 +68,7 @@ public final class OAuthEndpoints
         {
             case TOKEN -> null;
             case AUTHORIZE -> IdProviderFlow.CODE;
+            case REGISTER -> IdProviderFlow.REGISTER;
             default -> IdProviderFlow.DEVICE;
         };
     }
