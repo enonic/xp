@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 import com.google.common.collect.Streams;
 
@@ -214,25 +215,30 @@ abstract class IdProviderNodeTranslator
         return builder.build();
     }
 
-    static UpdateNodeParams toUpdateNodeParams( final IdProvider idProvider, final NodeId nodeId )
+    static UpdateNodeParams toUpdateNodeParams( final NodeId nodeId, final UnaryOperator<IdProvider> change )
     {
-        return UpdateNodeParams.create().id( nodeId ).editor( editableNode -> {
-            final PropertyTree nodeData = editableNode.data;
-            nodeData.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, idProvider.getDisplayName() );
-            nodeData.setString( IdProviderPropertyNames.DESCRIPTION_KEY, idProvider.getDescription() );
+        return UpdateNodeParams.create()
+            .id( nodeId )
+            .editor( editableNode -> populateData( editableNode.data, change.apply( fromNode( editableNode.build() ) ) ) )
+            .refresh( RefreshMode.ALL )
+            .build();
+    }
 
-            final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
-            if ( idProviderConfig == null )
-            {
-                nodeData.removeProperties( IdProviderPropertyNames.APPLICATION );
-            }
-            else
-            {
-                nodeData.setString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY, idProviderConfig.getApplicationKey().toString() );
-                nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY,
-                                 idProviderConfig.getConfig().getRoot().copy( nodeData ) );
-            }
-        } ).refresh( RefreshMode.ALL ).build();
+    private static void populateData( final PropertyTree nodeData, final IdProvider idProvider )
+    {
+        nodeData.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, idProvider.getDisplayName() );
+        nodeData.setString( IdProviderPropertyNames.DESCRIPTION_KEY, idProvider.getDescription() );
+
+        final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
+        if ( idProviderConfig == null )
+        {
+            nodeData.removeProperties( IdProviderPropertyNames.APPLICATION );
+        }
+        else
+        {
+            nodeData.setString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY, idProviderConfig.getApplicationKey().toString() );
+            nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot().copy( nodeData ) );
+        }
     }
 
     private static IdProvider createIdProviderFromNode( final Node node )

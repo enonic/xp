@@ -81,7 +81,7 @@ class SecurityServiceImplTest_roleRestriction
             .defaultAnswer( invocation -> invocation.getMethod().getDefaultValue() ) );
         final PasswordSecurityService passwordSecurityService = new PasswordSecurityService( new SuPasswordVerifier( "" ) );
         passwordSecurityService.activate( securityConfig );
-        securityService = new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService );
+        securityService = new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService, new InMemorySharedMapService() );
 
         principal( USER );
         principal( GROUP );

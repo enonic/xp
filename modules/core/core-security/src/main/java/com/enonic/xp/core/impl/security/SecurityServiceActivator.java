@@ -10,6 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.shared.SharedMapService;
 
 @Component(immediate = true)
 public class SecurityServiceActivator
@@ -22,23 +23,28 @@ public class SecurityServiceActivator
 
     private final PasswordSecurityService passwordSecurityService;
 
+    private final SharedMapService sharedMapService;
+
     private ServiceRegistration<SecurityService> service;
 
     @Activate
     public SecurityServiceActivator( @Reference final NodeService nodeService, @Reference final IndexService indexService,
                                      @Reference final SecurityAuditLogSupport securityAuditLogSupport,
-                                     @Reference final PasswordSecurityService passwordSecurityService )
+                                     @Reference final PasswordSecurityService passwordSecurityService,
+                                     @Reference final SharedMapService sharedMapService )
     {
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityAuditLogSupport = securityAuditLogSupport;
         this.passwordSecurityService = passwordSecurityService;
+        this.sharedMapService = sharedMapService;
     }
 
     @Activate
     public void activate( final BundleContext context )
     {
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
+        final SecurityServiceImpl securityService =
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService, sharedMapService );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

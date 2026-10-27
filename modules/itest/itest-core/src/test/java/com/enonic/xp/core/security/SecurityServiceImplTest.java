@@ -17,6 +17,7 @@ import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
@@ -161,7 +162,7 @@ class SecurityServiceImplTest
         final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
         passwordSecurityService.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService, new LocalSharedMapService() );
 
         runAsAdmin( () -> SecurityInitializer.create()
             .setIndexService( indexService )

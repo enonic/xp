@@ -59,6 +59,7 @@ import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.node.Node;
@@ -251,7 +252,7 @@ class DynamicSchemaServiceImplTest
         final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
         passwordSecurityService.activate( securityConfig );
 
-        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
+        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService, new LocalSharedMapService() );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

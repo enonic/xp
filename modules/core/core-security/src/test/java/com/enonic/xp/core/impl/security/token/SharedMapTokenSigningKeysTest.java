@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.security.token;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.core.impl.security.InMemorySharedMapService;
 import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 

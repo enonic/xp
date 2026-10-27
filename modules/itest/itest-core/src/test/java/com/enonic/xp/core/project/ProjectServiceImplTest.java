@@ -34,6 +34,7 @@ import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -185,7 +186,7 @@ class ProjectServiceImplTest
         final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
         passwordSecurityService.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService, new LocalSharedMapService() );
 
         adminContext().runWith( () -> {
             SecurityInitializer.create()
