@@ -53,6 +53,7 @@ import com.enonic.xp.security.token.UpdateGrantParams;
 import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 
+import static com.enonic.xp.core.impl.security.SharedLocks.withLock;
 import static com.enonic.xp.core.impl.security.token.GrantNodes.GrantNode;
 
 /**
@@ -420,16 +421,6 @@ public class GrantServiceImpl
     {
         final List<GrantNode> candidates = grants.stream().filter( among ).sorted( Comparator.comparing( GrantNode::createdAt ) ).toList();
         delete( grants, candidates.subList( 0, Math.max( 0, candidates.size() - keep ) )::contains );
-    }
-
-    private static <T> T withLock( final SharedMap<String, Boolean> locks, final String key, final Supplier<T> body )
-    {
-        final List<T> holder = new ArrayList<>( 1 );
-        locks.modify( key, _ -> {
-            holder.add( body.get() );
-            return null;
-        } );
-        return holder.getFirst();
     }
 
     private <T> T inSecurityRepo( final Supplier<T> body )

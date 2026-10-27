@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.core.impl.security.InMemorySharedMapService;
 import com.enonic.xp.core.impl.security.token.GrantNodes.GrantNode;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;

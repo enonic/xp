@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.locks.Lock;
 import java.util.function.Predicate;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -87,7 +85,10 @@ import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+import com.enonic.xp.shared.SharedMap;
+import com.enonic.xp.shared.SharedMapService;
 
+import static com.enonic.xp.core.impl.security.SharedLocks.withLock;
 import static java.util.Objects.requireNonNull;
 
 public final class SecurityServiceImpl
@@ -97,18 +98,21 @@ public final class SecurityServiceImpl
 
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
 
+    static final String ID_PROVIDER_LOCKS = "com.enonic.xp.security.lock.idprovider";
+
     private final PasswordSecurityService passwordSecurityService;
 
-    private final Striped<Lock> userEmailLocks = Striped.lazyWeakLock( 100 );
+    private final SharedMap<String, Boolean> idProviderLocks;
 
     private final NodeService nodeService;
 
     private final SecurityAuditLogSupport securityAuditLogSupport;
 
     public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport,
-                                PasswordSecurityService passwordSecurityService )
+                                final PasswordSecurityService passwordSecurityService, final SharedMapService sharedMapService )
     {
         this.nodeService = nodeService;
+        this.idProviderLocks = sharedMapService.getSharedMap( ID_PROVIDER_LOCKS );
         this.securityAuditLogSupport = securityAuditLogSupport;
         this.passwordSecurityService = passwordSecurityService;
     }
@@ -469,25 +473,13 @@ public final class SecurityServiceImpl
         }
     }
 
-    private String idProviderEmailKey( final PrincipalKey principalKey, final String email )
-    {
-        return principalKey.getIdProviderKey().toString() + '|' + email;
-    }
-
     @Override
     public User createUser( final CreateUserParams createUser )
     {
-        final Lock lock = userEmailLocks.get( idProviderEmailKey( createUser.getKey(), createUser.getEmail() ) );
-        lock.lock();
-        try
-        {
+        return withLock( idProviderLocks, createUser.getKey().getIdProviderKey().toString(), () -> {
             duplicateEmailValidation( createUser.getKey(), createUser.getEmail() );
             return doCreateUser( createUser );
-        }
-        finally
-        {
-            lock.unlock();
-        }
+        } );
     }
 
     private User doUpdateUser( final UpdateUserParams updateUserParams )
@@ -518,17 +510,7 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        final String key = idProviderEmailKey( updateUserParams.getKey(), updateUserParams.getEmail() );
-        final Lock lock = userEmailLocks.get( key );
-        lock.lock();
-        try
-        {
-            return doUpdateUser( updateUserParams );
-        }
-        finally
-        {
-            lock.unlock();
-        }
+        return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> doUpdateUser( updateUserParams ) );
     }
 
     private void duplicateEmailValidation( final PrincipalKey key, final String email )

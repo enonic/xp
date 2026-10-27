@@ -76,6 +76,7 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
@@ -321,7 +322,7 @@ public abstract class AbstractContentServiceTest
         passwordSecurityService.activate( securityConfig );
 
         final SecurityServiceImpl securityService =
-            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService, new LocalSharedMapService() );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.security.token;
+package com.enonic.xp.core.impl.security;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +10,7 @@ import com.enonic.xp.shared.SharedMapService;
 /**
  * A single-process stand-in for the cluster map: enough to test key creation and lookup.
  */
-final class InMemorySharedMapService
+public final class InMemorySharedMapService
     implements SharedMapService
 {
     private final Map<String, SharedMap<?, ?>> maps = new ConcurrentHashMap<>();

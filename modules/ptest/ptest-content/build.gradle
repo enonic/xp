@@ -16,6 +16,7 @@ dependencies {
     implementation project( ':core:core-media' )
     implementation project( ':core:core-project' )
     implementation project( ':core:core-app' )
+    implementation project( ':core:core-shared' )
     implementation project( ':core:core-security' )
 
     implementation( testFixtures( project( ':core:core-api' ) ) )

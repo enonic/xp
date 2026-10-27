@@ -88,7 +88,7 @@ class GrantServiceImplIntegrationTest
         final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
         passwordSecurityService.activate( securityConfig );
         securityService =
-            new SecurityServiceImpl( nodeService, mock( SecurityAuditLogSupport.class, withSettings().stubOnly() ), passwordSecurityService );
+            new SecurityServiceImpl( nodeService, mock( SecurityAuditLogSupport.class, withSettings().stubOnly() ), passwordSecurityService, sharedMapService );
         asAdmin( () -> {
             SecurityInitializer.create()
                 .setIndexService( indexService )

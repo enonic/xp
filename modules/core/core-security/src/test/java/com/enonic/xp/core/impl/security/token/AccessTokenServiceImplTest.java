@@ -13,6 +13,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.core.impl.security.InMemorySharedMapService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;

@@ -114,7 +114,7 @@ class SecurityServiceImplTest_suPassword
     {
         final SuPasswordVerifier suPasswordVerifier = new SuPasswordVerifier( "" );
         final PasswordSecurityService passwordSecurityService = createPasswordSecurityService( suPasswordVerifier );
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService );
+        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService, new InMemorySharedMapService() );
 
         final UsernamePasswordAuthToken authToken =
             new UsernamePasswordAuthToken( IdProviderKey.system(), PrincipalKey.ofSuperUser().getId(), "anyPassword" );
@@ -130,7 +130,7 @@ class SecurityServiceImplTest_suPassword
     {
         final SuPasswordVerifier suPasswordVerifier = new SuPasswordVerifier( "" );
         final PasswordSecurityService passwordSecurityService = createPasswordSecurityService( suPasswordVerifier );
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService );
+        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService, new InMemorySharedMapService() );
 
         final UsernamePasswordAuthToken authToken =
             new UsernamePasswordAuthToken( IdProviderKey.system(), PrincipalKey.ofSuperUser().getId(), "" );
@@ -146,7 +146,7 @@ class SecurityServiceImplTest_suPassword
         final String hash = computeSha256Hash( suPassword.toCharArray() );
         final SuPasswordVerifier suPasswordVerifier = new SuPasswordVerifier( "{sha256}" + hash );
         final PasswordSecurityService passwordSecurityService = createPasswordSecurityService( suPasswordVerifier );
-        return new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService );
+        return new SecurityServiceImpl( nodeService, auditLogSupport, passwordSecurityService, new InMemorySharedMapService() );
     }
 
     private PasswordSecurityService createPasswordSecurityService( final SuPasswordVerifier suPasswordVerifier )
