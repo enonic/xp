@@ -19,7 +19,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.websocket.WebSocketEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

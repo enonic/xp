@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.nio.file.Path;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

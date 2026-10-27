@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class ImageUploaderTypeTest
     extends BaseInputTypeTest
 {
-    public ImageUploaderTypeTest()
+    ImageUploaderTypeTest()
     {
         super( ImageUploaderType.INSTANCE );
     }

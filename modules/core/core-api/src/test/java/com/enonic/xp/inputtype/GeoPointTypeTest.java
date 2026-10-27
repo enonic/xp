@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GeoPointTypeTest
     extends BaseInputTypeTest
 {
-    public GeoPointTypeTest()
+    GeoPointTypeTest()
     {
         super( GeoPointType.INSTANCE );
     }

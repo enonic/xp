@@ -33,7 +33,7 @@ public class NoCacheAdminFilter
     static class NoCacheAdminResponseWrapper
         extends HttpServletResponseWrapper
     {
-        public NoCacheAdminResponseWrapper( final HttpServletResponse res )
+        NoCacheAdminResponseWrapper( final HttpServletResponse res )
         {
             super( res );
         }

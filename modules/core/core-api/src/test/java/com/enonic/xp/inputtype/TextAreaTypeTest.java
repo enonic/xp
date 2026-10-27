@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class TextAreaTypeTest
     extends BaseInputTypeTest
 {
-    public TextAreaTypeTest()
+    TextAreaTypeTest()
     {
         super( TextAreaType.INSTANCE );
     }

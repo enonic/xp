@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RadioButtonTypeTest
     extends BaseInputTypeTest
 {
-    public RadioButtonTypeTest()
+    RadioButtonTypeTest()
     {
         super( RadioButtonType.INSTANCE );
     }

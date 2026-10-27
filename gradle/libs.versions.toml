@@ -13,6 +13,7 @@ prometheus = "1.10.0"
 graalvm = "25.4.4.1.1"
 caffeine = "3.3.1"
 guava = "33.7.2-jre"
+checkstyle = "14.3.0"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }

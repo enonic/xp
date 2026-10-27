@@ -314,7 +314,7 @@ class CompressedExportImportIntegrationTest
         final Path exportDir = temporaryFolder.resolve( "exports" );
         Files.createDirectories( exportDir );
 
-        try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, "version-export" ))
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, "version-export" ))
         {
             final NodeExportResult exportResult = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
@@ -379,7 +379,7 @@ class CompressedExportImportIntegrationTest
     private NodeExportResult exportToZip( final String exportName, final NodePath sourcePath, final Path exportDir )
         throws IOException
     {
-        try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
             final NodeExportResult result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
