@@ -71,8 +71,9 @@ class DeviceCodeStoreTest
         now = now.plusSeconds( DeviceCodeStore.POLL_INTERVAL_SECONDS );
         assertThat( store.poll( IDP, pending.deviceCode(), "cli" ) ).isInstanceOf( DeviceCodeStore.Outcome.Waiting.class );
 
-        assertThat( store.resolve( IDP, typed, true, ALICE, Set.of( "content:read" ), RoleRestriction.to( PrincipalKeys.from( "role:cms.cm.app" ) ) ) ).isTrue();
-        assertThat( store.resolve( IDP, typed, false, ALICE, Set.of(), RoleRestriction.none() ) ).as( "already resolved" ).isFalse();
+        store.show( IDP, typed, ALICE );
+        assertThat( store.resolve( IDP, typed, true, ALICE, Set.of( "content:read" ), RoleRestriction.to( PrincipalKeys.from( "role:cms.cm.app" ) ) ) ).isEqualTo( DeviceCodeStore.Resolution.RESOLVED );
+        assertThat( store.resolve( IDP, typed, false, ALICE, Set.of(), RoleRestriction.none() ) ).as( "already resolved" ).isEqualTo( DeviceCodeStore.Resolution.GONE );
         assertThat( store.findByUserCode( IDP, typed ) ).map( DeviceCodeStore.Pending::status ).contains( DeviceCodeStore.Status.APPROVED );
 
         final DeviceCodeStore.Pending approved = switch ( store.poll( IDP, pending.deviceCode(), "cli" ) )
@@ -110,14 +111,15 @@ class DeviceCodeStoreTest
 
         now = deadline.minusSeconds( 1 );
         assertThat( store.findByUserCode( IDP, pending.userCode() ) ).isPresent();
-        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).isTrue();
+        store.show( IDP, pending.userCode(), ALICE );
+        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).isEqualTo( DeviceCodeStore.Resolution.RESOLVED );
         assertThat( ttlsWritten.getLast() ).isEqualTo( 1 );
 
         now = deadline;
         assertThat( store.poll( IDP, pending.deviceCode(), "cli" ) ).as( "approved, but past the advertised lifetime" )
             .isInstanceOf( DeviceCodeStore.Outcome.Expired.class );
         assertThat( store.findByUserCode( IDP, pending.userCode() ) ).isEmpty();
-        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).isFalse();
+        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).isEqualTo( DeviceCodeStore.Resolution.GONE );
     }
 
     @Test
@@ -128,14 +130,15 @@ class DeviceCodeStoreTest
         assertThat( store.poll( IDP, pending.deviceCode(), "cli" ) ).isInstanceOf( DeviceCodeStore.Outcome.Waiting.class );
         now = now.plusSeconds( 1 );
         assertThat( store.poll( IDP, pending.deviceCode(), "cli" ) ).isInstanceOf( DeviceCodeStore.Outcome.Expired.class );
-        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).as( "nothing left to approve" ).isFalse();
+        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).as( "nothing left to approve" ).isEqualTo( DeviceCodeStore.Resolution.GONE );
     }
 
     @Test
     void a_wrong_clients_poll_does_not_consume_the_approval()
     {
         final DeviceCodeStore.Pending pending = store.create( IDP, "cli", Set.of(), Set.of() );
-        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).isTrue();
+        store.show( IDP, pending.userCode(), ALICE );
+        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).isEqualTo( DeviceCodeStore.Resolution.RESOLVED );
         now = now.plusSeconds( DeviceCodeStore.POLL_INTERVAL_SECONDS );
 
         assertThat( store.poll( IDP, pending.deviceCode(), "other" ) ).isInstanceOf( DeviceCodeStore.Outcome.ClientMismatch.class );
@@ -147,10 +150,31 @@ class DeviceCodeStoreTest
     }
 
     @Test
+    void a_decision_counts_only_for_the_user_the_request_was_shown_to()
+    {
+        final PrincipalKey bob = PrincipalKey.ofUser( IDP, "bob" );
+        final DeviceCodeStore.Pending pending = store.create( IDP, "cli", Set.of(), Set.of() );
+        assertThat( store.resolve( IDP, pending.userCode(), true, ALICE, Set.of(), RoleRestriction.none() ) ).as( "never shown" )
+            .isEqualTo( DeviceCodeStore.Resolution.SHOWN_TO_ANOTHER );
+        assertThat( store.show( IDP, pending.userCode(), ALICE ) ).isTrue();
+        assertThat( store.resolve( IDP, pending.userCode(), true, bob, Set.of(), RoleRestriction.none() ) ).as( "shown to Alice" )
+            .isEqualTo( DeviceCodeStore.Resolution.SHOWN_TO_ANOTHER );
+        assertThat( store.findByUserCode( IDP, pending.userCode() ) ).map( DeviceCodeStore.Pending::status )
+            .contains( DeviceCodeStore.Status.PENDING );
+        assertThat( store.show( IDP, pending.userCode(), bob ) ).isTrue();
+        assertThat( store.resolve( IDP, pending.userCode(), true, bob, Set.of(), RoleRestriction.none() ) )
+            .isEqualTo( DeviceCodeStore.Resolution.RESOLVED );
+        assertThat( store.findByUserCode( IDP, pending.userCode() ) ).map( DeviceCodeStore.Pending::subject ).contains( bob );
+        assertThat( store.show( IDP, pending.userCode(), ALICE ) ).as( "decided already" ).isFalse();
+        assertThat( store.show( IDP, "ZZZZZZZZ", ALICE ) ).isFalse();
+    }
+
+    @Test
     void deny_is_consumed_too()
     {
         final DeviceCodeStore.Pending pending = store.create( IDP, "cli", Set.of(), Set.of() );
-        assertThat( store.resolve( IDP, pending.userCode(), false, ALICE, Set.of(), RoleRestriction.none() ) ).isTrue();
+        store.show( IDP, pending.userCode(), ALICE );
+        assertThat( store.resolve( IDP, pending.userCode(), false, ALICE, Set.of(), RoleRestriction.none() ) ).isEqualTo( DeviceCodeStore.Resolution.RESOLVED );
         assertThat( store.poll( IDP, pending.deviceCode(), "cli" ) ).isInstanceOf( DeviceCodeStore.Outcome.Denied.class );
         assertThat( store.poll( IDP, pending.deviceCode(), "cli" ) ).isInstanceOf( DeviceCodeStore.Outcome.Expired.class );
     }
@@ -159,7 +183,7 @@ class DeviceCodeStoreTest
     void unknown_codes()
     {
         assertThat( store.poll( IDP, "nope", "cli" ) ).isInstanceOf( DeviceCodeStore.Outcome.Expired.class );
-        assertThat( store.resolve( IDP, "ZZZZZZZZ", true, ALICE, Set.of(), RoleRestriction.none() ) ).isFalse();
+        assertThat( store.resolve( IDP, "ZZZZZZZZ", true, ALICE, Set.of(), RoleRestriction.none() ) ).isEqualTo( DeviceCodeStore.Resolution.GONE );
         assertThat( store.findByUserCode( IDP, null ) ).isEmpty();
         final Optional<DeviceCodeStore.Pending> none = store.findByUserCode( IDP, "" );
         assertThat( none ).isEmpty();

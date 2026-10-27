@@ -343,13 +343,31 @@ export interface OAuthConsentEnter extends OAuthConsentBase {
     error?: string;
 }
 
+/**
+ * A client as the consent page may present it: the name and links it registered with the ID
+ * provider, or, unregistered, its id alone.
+ */
+export interface OAuthConsentClient {
+    id: string;
+    /** The registered name, or the id when the client is not registered. */
+    displayName: string;
+    uri?: string;
+    logoUri?: string;
+    policyUri?: string;
+    tosUri?: string;
+    /** Whether the ID provider has a record of the client. */
+    registered: boolean;
+}
+
 export interface OAuthConsentConfirm extends OAuthConsentBase {
     action: 'confirm';
     userCode: string;
     /** How the client named itself; not a verified name. */
     clientId: string;
+    /** The client's record, or its id alone when it has none. */
+    client: OAuthConsentClient;
     scope: OAuthConsentScope[];
-    /** Whether the id provider has no scopes, so an approved token carries the user's full memberships. */
+    /** Whether the client asked for no scope, so an approved token carries the user's full memberships. */
     unrestricted: boolean;
     audience: string[];
     /** The form must post it back as _csrf. */

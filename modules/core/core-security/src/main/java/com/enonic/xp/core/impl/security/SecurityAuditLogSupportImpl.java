@@ -20,8 +20,11 @@ import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.token.Client;
+import com.enonic.xp.security.token.CreateClientParams;
 import com.enonic.xp.security.token.CreateScopeParams;
 import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.UpdateClientParams;
 import com.enonic.xp.security.token.UpdateScopeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.UpdateGroupParams;
@@ -302,6 +305,55 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "id", id );
 
             log( "system.security.scope.delete", data, AuditLogUris.from( idProvider.toString() ) );
+        }
+    }
+
+    @Override
+    public void createClient( final CreateClientParams params )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final Client client = params.getClient();
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", client.getIdProvider().toString() );
+            paramsSet.setString( "id", client.getId() );
+            paramsSet.setString( "displayName", client.getDisplayName() );
+            paramsSet.addStrings( "grantTypes", client.getGrantTypes() );
+            paramsSet.addStrings( "redirectUris", client.getRedirectUris() );
+            paramsSet.addStrings( "scope", client.getScope() );
+            paramsSet.addStrings( "resource", client.getResource() );
+            paramsSet.setBoolean( "enabled", client.isEnabled() );
+
+            log( "system.security.client.create", data, AuditLogUris.from( client.getIdProvider().toString() ) );
+        }
+    }
+
+    @Override
+    public void updateClient( final UpdateClientParams params )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", params.getIdProvider().toString() );
+            paramsSet.setString( "id", params.getId() );
+
+            log( "system.security.client.update", data, AuditLogUris.from( params.getIdProvider().toString() ) );
+        }
+    }
+
+    @Override
+    public void removeClient( final IdProviderKey idProvider, final String id )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", idProvider.toString() );
+            paramsSet.setString( "id", id );
+
+            log( "system.security.client.delete", data, AuditLogUris.from( idProvider.toString() ) );
         }
     }
 

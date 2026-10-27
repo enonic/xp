@@ -114,6 +114,12 @@ public class AccessTokenServiceImpl
     {
         final Settings settings = this.settings;
         final Instant now = clock.instant().truncatedTo( ChronoUnit.SECONDS );
+        final Instant byLifetime = now.plus( params.getTtl() != null ? params.getTtl() : settings.ttl() );
+        final Instant notAfter = params.getNotAfter() == null ? byLifetime : params.getNotAfter().truncatedTo( ChronoUnit.SECONDS );
+        if ( !notAfter.isAfter( now ) )
+        {
+            throw new IllegalArgumentException( "The token would be past its end at issue: " + notAfter );
+        }
         final AccessTokenClaims.Builder claims = AccessTokenClaims.create()
             .issuer( settings.issuer() )
             .subject( params.getSubject() )
@@ -123,7 +129,7 @@ public class AccessTokenServiceImpl
             .clientId( params.getClientId() )
             .grantId( params.getGrantId() )
             .issuedAt( now )
-            .expiresAt( now.plus( params.getTtl() != null ? params.getTtl() : settings.ttl() ) )
+            .expiresAt( notAfter.isBefore( byLifetime ) ? notAfter : byLifetime )
             .tokenId( UuidHelper.newUUIDv7( now.toEpochMilli() ).toString() );
         final AccessTokenClaims built = claims.build();
         return new AccessToken( JwsHs512.sign( settings.keys().signingKey(), toPayload( built ) ), built );

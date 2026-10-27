@@ -78,9 +78,14 @@ import com.enonic.xp.security.UserQueryResult;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.impl.security.token.ClientStore;
 import com.enonic.xp.core.impl.security.token.ScopeStore;
+import com.enonic.xp.security.token.Client;
+import com.enonic.xp.security.token.Clients;
+import com.enonic.xp.security.token.CreateClientParams;
 import com.enonic.xp.security.token.CreateScopeParams;
 import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.UpdateClientParams;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.security.token.UpdateScopeParams;
 import com.enonic.xp.security.auth.AuthenticationToken;
@@ -115,6 +120,8 @@ public final class SecurityServiceImpl
 
     private final ScopeStore scopes;
 
+    private final ClientStore clients;
+
     public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport,
                                 final PasswordSecurityService passwordSecurityService, final SharedMapService sharedMapService )
     {
@@ -123,6 +130,7 @@ public final class SecurityServiceImpl
         this.securityAuditLogSupport = securityAuditLogSupport;
         this.passwordSecurityService = passwordSecurityService;
         this.scopes = new ScopeStore( nodeService );
+        this.clients = new ClientStore( nodeService );
     }
 
     @Override
@@ -923,6 +931,7 @@ public final class SecurityServiceImpl
                 setNodePermissions( usersNode.id(), usersNodePermissions );
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
                 scopes.setPermissions( updateIdProviderParams.getKey(), idProviderNodePermissions );
+                clients.setPermissions( updateIdProviderParams.getKey(), idProviderNodePermissions );
             }
 
             securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( updatedIdProvider ).build() );
@@ -972,6 +981,49 @@ public final class SecurityServiceImpl
         if ( deleted )
         {
             securityAuditLogSupport.removeScope( idProvider, id );
+        }
+        return deleted;
+    }
+
+    @Override
+    public Client createClient( final CreateClientParams params )
+    {
+        final Client client = clients.create( params );
+        securityAuditLogSupport.createClient( params );
+        return client;
+    }
+
+    @Override
+    public Optional<Client> updateClient( final UpdateClientParams params )
+    {
+        final Optional<Client> client = clients.update( params );
+        client.ifPresent( c -> securityAuditLogSupport.updateClient( params ) );
+        return client;
+    }
+
+    @Override
+    public Optional<Client> getClient( final IdProviderKey idProvider, final String id )
+    {
+        return clients.get( idProvider, id );
+    }
+
+    @Override
+    public Clients getClients( final IdProviderKey idProvider )
+    {
+        return clients.list( idProvider );
+    }
+
+    @Override
+    public boolean deleteClient( final IdProviderKey idProvider, final String id )
+    {
+        if ( IdProviderKey.system().equals( idProvider ) && SecurityInitializer.ENONIC_CLI.equals( id ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] client of [%s] cannot be removed", id, idProvider ) );
+        }
+        final boolean deleted = clients.delete( idProvider, id );
+        if ( deleted )
+        {
+            securityAuditLogSupport.removeClient( idProvider, id );
         }
         return deleted;
     }

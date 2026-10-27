@@ -41,9 +41,11 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.security.token.AccessTokenService;
+import com.enonic.xp.security.token.Client;
 import com.enonic.xp.security.token.CreateGrantParams;
 import com.enonic.xp.security.token.Grant;
 import com.enonic.xp.security.token.GrantService;
+import com.enonic.xp.security.token.GrantTypes;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.IssueAccessTokenParams;
 import com.enonic.xp.security.token.Scope;
@@ -120,6 +122,7 @@ class OAuthHandlerTest
                 .build();
         } );
         when( securityService.getScopes( any() ) ).thenReturn( Scopes.empty() );
+        when( securityService.getClient( any(), any() ) ).thenReturn( Optional.empty() );
         handler = new OAuthHandler( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService,
                                           new InMemorySharedMapService(), new Clock()
         {
@@ -153,7 +156,7 @@ class OAuthHandlerTest
                 .restriction( params.getRestriction() )
                 .createdAt( now )
                 .rotatedAt( now )
-                .expiresAt( now.plus( Duration.ofDays( 90 ) ) )
+                .expiresAt( now.plus( params.getTtl() != null ? params.getTtl() : Duration.ofDays( 90 ) ) )
                 .build();
             return new GrantWithRefreshToken( grant, "refresh-1" );
         } );
@@ -168,7 +171,9 @@ class OAuthHandlerTest
                 .clientId( params.getClientId() )
                 .grantId( params.getGrantId() )
                 .issuedAt( now )
-                .expiresAt( now.plus( Duration.ofHours( 1 ) ) )
+                .expiresAt( params.getNotAfter() != null && params.getNotAfter().isBefore( now.plus( Duration.ofHours( 1 ) ) )
+                                ? params.getNotAfter()
+                                : now.plus( Duration.ofHours( 1 ) ) )
                 .tokenId( "jti-1" )
                 .build();
             return new AccessToken( "access-1", claims );
@@ -223,6 +228,14 @@ class OAuthHandlerTest
 
     private static <T> T asUser( final PrincipalKey key, final RoleRestriction restriction, final Callable<T> call )
     {
+        return asUser( key, restriction, new SessionMock(), call );
+    }
+
+    /**
+     * @param session the browser's session, which a sign-in as another user keeps
+     */
+    private static <T> T asUser( final PrincipalKey key, final RoleRestriction restriction, final SessionMock session, final Callable<T> call )
+    {
         final User user = User.create().key( key ).login( key.getId() ).displayName( "Alice" ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create()
             .user( user )
@@ -230,7 +243,7 @@ class OAuthHandlerTest
             .restriction( restriction )
             .build();
         return ContextBuilder.create().authInfo( authInfo ).build().callWith( () -> {
-            ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
+            ContextAccessor.current().getLocalScope().setSession( session );
             return call.call();
         } );
     }
@@ -613,6 +626,164 @@ class OAuthHandlerTest
     }
 
     @Test
+    void a_token_may_be_asked_for_some_of_the_grants_audiences()
+        throws Exception
+    {
+        final Grant grant = Grant.create()
+            .id( "grant-1" )
+            .subject( ALICE )
+            .clientId( "cli" )
+            .scope( Set.of() )
+            .audience( Set.of( "api", "mgmt" ) )
+            .restriction( RoleRestriction.none() )
+            .createdAt( now )
+            .rotatedAt( now )
+            .expiresAt( now.plusSeconds( 3600 ) )
+            .build();
+        when( grantService.lookup( any() ) ).thenReturn( Optional.of( grant ) );
+        when( grantService.redeem( any() ) ).thenReturn( Optional.of( new GrantWithRefreshToken( grant, "refresh-2" ) ) );
+
+        final PortalRequest some = request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) );
+        some.getParams().put( "resource", "api" );
+        final PortalResponse ok = handler.handle( some, IDP, "token", UNRESTRICTED );
+        assertThat( ok.getStatus() ).isEqualTo( HttpStatus.OK );
+        final ArgumentCaptor<IssueAccessTokenParams> token = ArgumentCaptor.forClass( IssueAccessTokenParams.class );
+        verify( accessTokenService ).issue( token.capture() );
+        assertThat( token.getValue().getAudience() ).as( "the token is for what was asked" ).containsExactly( "api" );
+        assertThat( token.getValue().getNotAfter() ).as( "and ends with the grant at the latest" ).isEqualTo( grant.getExpiresAt() );
+
+        final PortalRequest beyond = request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) );
+        beyond.getParams().put( "resource", "api" );
+        beyond.getParams().put( "resource", "other" );
+        final PortalResponse refused = handler.handle( beyond, IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_target" );
+        verify( grantService, never() ).revoke( any(), any() );
+        verify( grantService, never() ).update( any() );
+        verify( grantService, Mockito.times( 1 ) ).redeem( any() );
+    }
+
+    @Test
+    void a_grant_changed_between_the_lookup_and_the_redeem_is_checked_again()
+        throws Exception
+    {
+        final java.util.function.Function<Set<String>, Grant> grant = audience -> Grant.create()
+            .id( "grant-1" )
+            .subject( ALICE )
+            .clientId( "cli" )
+            .scope( Set.of() )
+            .audience( audience )
+            .restriction( RoleRestriction.none() )
+            .createdAt( now )
+            .rotatedAt( now )
+            .expiresAt( now.plusSeconds( 3600 ) )
+            .build();
+        registered( cli().resource( Set.of( "api" ) ) );
+        when( grantService.lookup( any() ) ).thenReturn( Optional.of( grant.apply( Set.of( "api" ) ) ) );
+        when( grantService.redeem( any() ) ).thenReturn( Optional.of( new GrantWithRefreshToken( grant.apply( Set.of( "api", "mgmt" ) ), "refresh-2" ) ) );
+        final PortalResponse widened = handler.handle(
+            request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) ), IDP,
+            "token", UNRESTRICTED );
+        assertThat( body( widened ).get( "error" ).asText() ).as( "widened beyond the client meanwhile" ).isEqualTo( "invalid_grant" );
+        verify( grantService ).revoke( ALICE, "grant-1" );
+        verify( accessTokenService, never() ).issue( any() );
+
+        registered( cli() );
+        when( grantService.lookup( any() ) ).thenReturn( Optional.of( grant.apply( Set.of( "api", "mgmt" ) ) ) );
+        when( grantService.redeem( any() ) ).thenReturn( Optional.of( new GrantWithRefreshToken( grant.apply( Set.of( "mgmt" ) ), "refresh-2" ) ) );
+        final PortalRequest forApi =
+            request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) );
+        forApi.getParams().put( "resource", "api" );
+        final PortalResponse narrowed = handler.handle( forApi, IDP, "token", UNRESTRICTED );
+        assertThat( body( narrowed ).get( "error" ).asText() ).as( "narrowed meanwhile" ).isEqualTo( "invalid_target" );
+        verify( accessTokenService, never() ).issue( any() );
+    }
+
+    @Test
+    void a_token_ends_with_its_grant_and_a_client_without_refresh_gets_no_refresh_token()
+        throws Exception
+    {
+        registered( Client.create().id( "cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE ) ).grantTtl( Duration.ofSeconds( 30 ) ) );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        final JsonNode tokens = body( handler.handle( request( HttpMethod.POST, "token",
+                                                               Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                       issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP, "token",
+                                                      UNRESTRICTED ) );
+        assertThat( tokens.get( "access_token" ).asText() ).isEqualTo( "access-1" );
+        assertThat( tokens.get( "expires_in" ).asLong() ).as( "no longer than the grant lives" ).isEqualTo( 30 );
+        assertThat( tokens.has( "refresh_token" ) ).as( "a refresh token the client may not use is not offered" ).isFalse();
+    }
+
+    @Test
+    void consent_counts_only_for_the_user_it_was_shown_to()
+        throws Exception
+    {
+        final PrincipalKey bob = PrincipalKey.ofUser( IDP, "bob" );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        final String userCode = issued.get( "user_code" ).asText();
+        final SessionMock browser = new SessionMock();
+        final String csrf = asUser( ALICE, RoleRestriction.none(), browser, () -> {
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), IDP, "device", UNRESTRICTED );
+            return (String) lastContext.get( "csrf" );
+        } );
+        final PortalRequest alicesForm = request( HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "true", "_csrf", csrf ) );
+        assertThatThrownBy( () -> asUser( bob, RoleRestriction.none(), browser, () -> handler.handle( alicesForm, IDP, "device", UNRESTRICTED ) ) )
+            .as( "the form was rendered for Alice; the session's secret alone is not a token" ).isInstanceOf( WebException.class )
+            .hasMessageContaining( "form token" );
+        final PortalRequest poll = request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                            issued.get( "device_code" ).asText(), "client_id", "cli" ) );
+        assertThat( body( handler.handle( poll, IDP, "token", UNRESTRICTED ) ).get( "error" ).asText() ).isEqualTo( "authorization_pending" );
+
+        final String bobsToken = asUser( bob, RoleRestriction.none(), browser, () -> {
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), IDP, "device", UNRESTRICTED );
+            return (String) lastContext.get( "csrf" );
+        } );
+        assertThat( bobsToken ).isNotEqualTo( csrf );
+        assertThatThrownBy( () -> asUser( bob, RoleRestriction.none(), browser, () -> handler.handle( alicesForm, IDP, "device", UNRESTRICTED ) ) )
+            .as( "showing Bob the page does not make Alice's form his" ).isInstanceOf( WebException.class );
+        final PortalRequest bobsForm = request( HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "true", "_csrf", bobsToken ) );
+        final PortalResponse done = asUser( bob, RoleRestriction.none(), browser, () -> handler.handle( bobsForm, IDP, "device", UNRESTRICTED ) );
+        assertThat( done.getBody() ).isEqualTo( "page:done" );
+        now = now.plusSeconds( 6 );
+        assertThat( body( handler.handle( poll, IDP, "token", UNRESTRICTED ) ).has( "access_token" ) ).isTrue();
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getSubject() ).isEqualTo( bob );
+    }
+
+    @Test
+    void a_page_shown_to_another_user_meanwhile_is_shown_afresh_before_a_decision_counts()
+        throws Exception
+    {
+        final PrincipalKey bob = PrincipalKey.ofUser( IDP, "bob" );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        final String userCode = issued.get( "user_code" ).asText();
+        final SessionMock alicesBrowser = new SessionMock();
+        final String alicesToken = asUser( ALICE, RoleRestriction.none(), alicesBrowser, () -> {
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), IDP, "device", UNRESTRICTED );
+            return (String) lastContext.get( "csrf" );
+        } );
+        asUser( bob, () -> handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), IDP, "device", UNRESTRICTED ) );
+
+        final PortalRequest approval = request( HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "true", "_csrf", alicesToken ) );
+        final PortalResponse again = asUser( ALICE, RoleRestriction.none(), alicesBrowser, () -> handler.handle( approval, IDP, "device", UNRESTRICTED ) );
+        assertThat( again.getBody() ).as( "shown to Bob since; Alice sees it afresh" ).isEqualTo( "page:confirm" );
+        assertThat( user( lastContext ) ).containsEntry( "key", ALICE.toString() );
+        final PortalResponse done = asUser( ALICE, RoleRestriction.none(), alicesBrowser, () -> handler.handle( approval, IDP, "device", UNRESTRICTED ) );
+        assertThat( done.getBody() ).isEqualTo( "page:done" );
+        now = now.plusSeconds( 6 );
+        handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                   issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP, "token",
+                        UNRESTRICTED );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getSubject() ).isEqualTo( ALICE );
+    }
+
+    @Test
     void device_code_grant_needs_the_device_flow_but_refresh_does_not()
         throws Exception
     {
@@ -759,7 +930,7 @@ class OAuthHandlerTest
     }
 
     @Test
-    void dropping_every_scope_leaves_no_roles()
+    void dropping_every_scope_denies_the_request()
         throws Exception
     {
         final VirtualHostIdProvider settings = withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
@@ -767,13 +938,39 @@ class OAuthHandlerTest
             request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read" ) ), IDP, "device/code",
             settings ) );
         approve( settings, issued.get( "user_code" ).asText() );
-        handler.handle( request( HttpMethod.POST, "token",
-                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
-                                         "client_id", "cli" ) ), IDP, "token", UNRESTRICTED );
+        assertThat( lastContext ).as( "a token with no permission is no token" ).containsEntry( "approved", false );
+        final PortalResponse denied = handler.handle( request( HttpMethod.POST, "token",
+                                                               Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                       issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP,
+                                                      "token", UNRESTRICTED );
+        assertThat( body( denied ).get( "error" ).asText() ).isEqualTo( "access_denied" );
+        verify( grantService, never() ).create( any() );
+    }
+
+    @Test
+    void a_stored_client_without_a_scope_list_may_ask_for_none_and_gets_full_membership()
+        throws Exception
+    {
+        final VirtualHostIdProvider settings = withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
+        final PortalResponse unknownClient =
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", settings );
+        assertThat( body( unknownClient ).get( "error" ).asText() ).as( "a client with no record must ask" ).isEqualTo( "invalid_scope" );
+
+        registered( cli() );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", settings ) );
+        approve( settings, issued.get( "user_code" ).asText() );
+        assertThat( lastContextOfConfirm ).containsEntry( "unrestricted", true );
+        assertThat( scopeIds( lastContextOfConfirm ) ).isEmpty();
+        final JsonNode token = body( handler.handle( request( HttpMethod.POST, "token",
+                                                              Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                      issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP, "token",
+                                                     UNRESTRICTED ) );
+        assertThat( token.has( "scope" ) ).isFalse();
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getScope() ).isEmpty();
-        assertThat( grant.getValue().getRestriction() ).as( "restricted, to nothing" ).isEqualTo( RoleRestriction.to() );
+        assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.none() );
     }
 
     @Test
@@ -831,6 +1028,199 @@ class OAuthHandlerTest
             assertThat( all ).as( "no resource: XP itself and everything served" ).containsExactlyInAnyOrder( "xp", "api", "management" );
             return null;
         } );
+    }
+
+    private Client registered( final Client.Builder client )
+    {
+        final Client built = client.idProvider( IDP ).build();
+        when( securityService.getClient( IDP, built.getId() ) ).thenReturn( Optional.of( built ) );
+        return built;
+    }
+
+    private static Client.Builder cli()
+    {
+        return Client.create().id( "cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE, GrantTypes.REFRESH_TOKEN ) );
+    }
+
+    @Test
+    void a_registered_clients_record_supplies_the_name_and_links_the_page_shows()
+        throws Exception
+    {
+        registered( cli().displayName( "Enonic CLI" ).uri( "https://enonic.com/cli" ).policyUri( "https://enonic.com/privacy" ) );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+
+        approve( issued.get( "user_code" ).asText() );
+
+        assertThat( lastContextOfConfirm ).containsEntry( "clientId", "cli" );
+        @SuppressWarnings("unchecked") final Map<String, Object> client = (Map<String, Object>) lastContextOfConfirm.get( "client" );
+        assertThat( client ).containsEntry( "id", "cli" )
+            .containsEntry( "displayName", "Enonic CLI" )
+            .containsEntry( "uri", "https://enonic.com/cli" )
+            .containsEntry( "policyUri", "https://enonic.com/privacy" )
+            .doesNotContainKey( "logoUri" )
+            .containsEntry( "registered", true );
+    }
+
+    @Test
+    void an_unregistered_client_has_its_id_as_its_name()
+        throws Exception
+    {
+        final JsonNode issued = body(
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "my-cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+
+        approve( issued.get( "user_code" ).asText() );
+
+        @SuppressWarnings("unchecked") final Map<String, Object> client = (Map<String, Object>) lastContextOfConfirm.get( "client" );
+        assertThat( client ).containsEntry( "id", "my-cli" ).containsEntry( "displayName", "my-cli" ).containsEntry( "registered", false );
+    }
+
+    @Test
+    void a_disabled_or_unentitled_client_is_refused_at_every_step()
+        throws Exception
+    {
+        registered( cli().enabled( false ) );
+        PortalResponse refused =
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED );
+        assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "unauthorized_client" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "disabled" );
+
+        refused = handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.REFRESH_TOKEN_GRANT,
+                                                                             "refresh_token", "r", "client_id", "cli" ) ), IDP, "token",
+                                  UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "unauthorized_client" );
+        verify( grantService, Mockito.never() ).redeem( any() );
+
+        registered( Client.create().id( "cli" ).grantTypes( List.of( GrantTypes.REFRESH_TOKEN ) ) );
+        refused = handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "unauthorized_client" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).contains( GrantTypes.DEVICE_CODE );
+    }
+
+    @Test
+    void a_client_disabled_after_approval_gets_no_grant()
+        throws Exception
+    {
+        registered( cli() );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        registered( cli().enabled( false ) );
+
+        final PortalResponse refused = handler.handle( request( HttpMethod.POST, "token",
+                                                                Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                        issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP,
+                                                       "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "unauthorized_client" );
+        verify( grantService, Mockito.never() ).create( any() );
+    }
+
+    @Test
+    void a_client_given_a_scope_list_after_approval_gets_no_grant()
+        throws Exception
+    {
+        registered( cli() );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        registered( cli().scope( Set.of( "content:read" ) ) );
+
+        final PortalResponse refused = handler.handle( request( HttpMethod.POST, "token",
+                                                                Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                        issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP,
+                                                       "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        verify( grantService, Mockito.never() ).create( any() );
+    }
+
+    @Test
+    void a_refresh_beyond_the_clients_lists_ends_the_grant()
+        throws Exception
+    {
+        final Grant grant = Grant.create()
+            .id( "grant-1" )
+            .subject( ALICE )
+            .clientId( "cli" )
+            .scope( Set.of( "content:read" ) )
+            .audience( Set.of( "api" ) )
+            .restriction( RoleRestriction.none() )
+            .createdAt( now )
+            .rotatedAt( now )
+            .expiresAt( now.plusSeconds( 3600 ) )
+            .build();
+        when( grantService.lookup( any() ) ).thenReturn( Optional.of( grant ) );
+        when( grantService.redeem( any() ) ).thenReturn( Optional.of( new GrantWithRefreshToken( grant, "refresh-2" ) ) );
+        registered( cli().resource( Set.of( "mgmt" ) ) );
+
+        final PortalResponse refused = handler.handle(
+            request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) ),
+            IDP, "token", UNRESTRICTED );
+        assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        verify( grantService ).revoke( ALICE, "grant-1" );
+        verify( accessTokenService, Mockito.never() ).issue( any() );
+        verify( grantService, never() ).redeem( any() );
+
+        registered( cli().resource( Set.of( "api", "mgmt" ) ).scope( Set.of( "content:read", "content:write" ) ) );
+        final PortalResponse ok = handler.handle(
+            request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) ),
+            IDP, "token", UNRESTRICTED );
+        assertThat( ok.getStatus() ).isEqualTo( HttpStatus.OK );
+    }
+
+    @Test
+    void a_clients_lists_cap_and_default_what_it_asks_for()
+        throws Exception
+    {
+        withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ), "content:write", PrincipalKeys.from( "role:cms.cm.app" ),
+                            "admin", PrincipalKeys.from( "role:system.admin" ) ) );
+        final VirtualHost api = mock( VirtualHost.class );
+        when( api.getAudience() ).thenReturn( Set.of( "api" ) );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( api ) );
+        registered( cli().scope( List.of( "content:read", "content:write" ) ).resource( List.of( "api" ) ) );
+
+        final PortalRequest beyondScope = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read admin" ) );
+        PortalResponse refused = handler.handle( beyondScope, IDP, "device/code", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_scope" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "beyond the client's" );
+
+        final PortalRequest beyondResource = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read" ) );
+        beyondResource.getParams().put( "resource", "xp" );
+        refused = handler.handle( beyondResource, IDP, "device/code", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_target" );
+
+        final JsonNode defaults =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        approve( defaults.get( "user_code" ).asText(), "content:read", "content:write" );
+        assertThat( scopeIds( lastContextOfConfirm ) ).as( "nothing asked: the client's list" ).containsExactly( "content:read", "content:write" );
+        assertThat( lastContextOfConfirm ).containsEntry( "audience", List.of( "api" ) );
+
+        final PortalRequest subset = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read" ) );
+        subset.getParams().put( "resource", "api" );
+        final JsonNode issued = body( handler.handle( subset, IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText(), "content:read" );
+        assertThat( scopeIds( lastContextOfConfirm ) ).containsExactly( "content:read" );
+    }
+
+    @Test
+    void the_issuer_may_be_named_as_a_resource_and_a_clients_lifetime_reaches_its_grant()
+        throws Exception
+    {
+        registered( cli().resource( List.of( "xp" ) ).grantTtl( Duration.ofDays( 7 ) ) );
+        final PortalRequest forXp = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        forXp.getParams().put( "resource", "xp" );
+        final JsonNode issued = body( handler.handle( forXp, IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        assertThat( lastContextOfConfirm ).containsEntry( "audience", List.of( "xp" ) );
+
+        handler.handle( request( HttpMethod.POST, "token",
+                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
+                                         "client_id", "cli" ) ), IDP, "token", UNRESTRICTED );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getTtl() ).isEqualTo( Duration.ofDays( 7 ) );
+        assertThat( grant.getValue().getAudience() ).containsExactly( "xp" );
     }
 
     @Test

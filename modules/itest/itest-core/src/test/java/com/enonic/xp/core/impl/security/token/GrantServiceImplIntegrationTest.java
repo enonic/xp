@@ -181,6 +181,28 @@ class GrantServiceImplIntegrationTest
     }
 
     @Test
+    void lookup_finds_what_a_redeem_would_without_rotating_or_acting_on_a_replay()
+    {
+        final GrantWithRefreshToken issued = grantForAlice();
+        now = now.plus( GrantServiceImpl.DEFAULT_ROTATE_AFTER ).plusSeconds( 1 );
+        final Node before = grantNode( issued );
+        assertThat( lookup( issued.refreshToken() ) ).map( Grant::getId ).contains( issued.grant().getId() );
+        assertThat( grantNode( issued ).getNodeVersionId() ).as( "no rotation" ).isEqualTo( before.getNodeVersionId() );
+        assertThat( service.lookup( RedeemRefreshTokenParams.create().refreshToken( issued.refreshToken() ).clientId( "other" ).build() ) )
+            .as( "the redeem's conditions" ).isEmpty();
+        assertThat( lookup( "not-a-token" ) ).isEmpty();
+
+        final GrantWithRefreshToken rotated = redeem( issued.refreshToken() ).orElseThrow();
+        now = now.plusSeconds( 10 );
+        assertThat( lookup( issued.refreshToken() ) ).as( "within grace" ).isPresent();
+        assertThat( lookup( rotated.refreshToken() ) ).isPresent();
+        now = now.plus( GrantServiceImpl.DEFAULT_REUSE_GRACE );
+        assertThat( lookup( issued.refreshToken() ) ).as( "past grace" ).isEmpty();
+        assertThat( service.list( ALICE ) ).as( "a replay is not acted on by a lookup" ).hasSize( 1 );
+        assertThat( lookup( rotated.refreshToken() ) ).isPresent();
+    }
+
+    @Test
     void rotation_retires_the_token_and_a_retry_within_grace_gets_the_same_successor_without_a_write()
     {
         final GrantWithRefreshToken issued = grantForAlice();
@@ -601,6 +623,11 @@ class GrantServiceImplIntegrationTest
     private Optional<GrantWithRefreshToken> redeem( final String refreshToken )
     {
         return service.redeem( RedeemRefreshTokenParams.create().refreshToken( refreshToken ).clientId( "cli" ).build() );
+    }
+
+    private Optional<Grant> lookup( final String refreshToken )
+    {
+        return service.lookup( RedeemRefreshTokenParams.create().refreshToken( refreshToken ).clientId( "cli" ).build() );
     }
 
     private Node grantNode( final GrantWithRefreshToken issued )

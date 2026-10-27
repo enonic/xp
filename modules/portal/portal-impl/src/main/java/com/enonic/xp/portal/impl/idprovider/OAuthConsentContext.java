@@ -10,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.token.Client;
 import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 
@@ -24,10 +25,13 @@ import com.enonic.xp.security.token.Scopes;
  *   error: "invalid_code",                 // enter: why the previous code was refused, if any; the page words it
  *   userCode: "BCDF-GHJK",                 // confirm
  *   clientId: "my-cli",                    // confirm
+ *   client: { id, displayName, uri, logoUri, policyUri, tosUri, registered },
+ *                                          // confirm: the client as registered with the id provider;
+ *                                          //          an unregistered one has its id as its name
  *   scope: [ { id, title, description, roles: [...], required } ],
  *                                          // confirm: the scopes asked for, each as the id provider
  *                                          //          defines it, and whether the user may drop it
- *   unrestricted: true | false,            // confirm: the id provider has no scopes, the token gets the user's full rights
+ *   unrestricted: true | false,            // confirm: the request carries no scope, the token gets the user's full rights
  *   audience: [ "api" ],                   // confirm
  *   csrf: "...",                           // confirm: the form must post it back as _csrf
  *   approved: true | false                 // done
@@ -61,9 +65,10 @@ sealed interface OAuthConsentContext
 
     /**
      * Approve or deny a pending request, keeping or dropping each requested scope. The client id is
-     * what the client called itself; nothing verifies it.
+     * what the client called itself; nothing verifies it. A registered client's record supplies
+     * the name and links the page shows.
      */
-    record Confirm(IdProviderKey idProvider, User user, String userCode, String clientId, List<RequestedScope> scope,
+    record Confirm(IdProviderKey idProvider, User user, String userCode, String clientId, ClientInfo client, List<RequestedScope> scope,
                    List<String> audience, boolean unrestricted, String csrf)
         implements OAuthConsentContext
     {
@@ -74,10 +79,12 @@ sealed interface OAuthConsentContext
         }
 
         /**
-         * @param known the id provider's scopes
+         * @param client    the client's record with the id provider, if it has one
+         * @param known     the id provider's scopes
          */
         static Confirm of( final IdProviderKey idProvider, final User user, final String userCode, final String clientId,
-                           final Set<String> scope, final Set<String> audience, final Scopes known, final String csrf )
+                           final @Nullable Client client, final Set<String> scope, final Set<String> audience,
+                           final Scopes known, final String csrf )
         {
             final List<RequestedScope> scopes = scope.stream().map( id -> {
                 final Scope found = known.get( id ).orElse( null );
@@ -86,7 +93,24 @@ sealed interface OAuthConsentContext
                     : new RequestedScope( id, found.getTitle(), found.getDescription(),
                                           found.getRoles().stream().map( PrincipalKey::toString ).toList(), found.isRequired() );
             } ).toList();
-            return new Confirm( idProvider, user, userCode, clientId, scopes, List.copyOf( audience ), known.isEmpty(), csrf );
+            return new Confirm( idProvider, user, userCode, clientId, ClientInfo.of( clientId, client ), scopes, List.copyOf( audience ),
+                                scope.isEmpty(), csrf );
+        }
+    }
+
+    /**
+     * The client as the page may present it: its registered name and links, or, unregistered, its
+     * id alone.
+     */
+    record ClientInfo(String id, String displayName, @Nullable String uri, @Nullable String logoUri, @Nullable String policyUri,
+                      @Nullable String tosUri, boolean registered)
+    {
+        static ClientInfo of( final String clientId, final @Nullable Client client )
+        {
+            return client == null
+                ? new ClientInfo( clientId, clientId, null, null, null, null, false )
+                : new ClientInfo( client.getId(), client.getDisplayName(), client.getUri(), client.getLogoUri(), client.getPolicyUri(),
+                                  client.getTosUri(), true );
         }
     }
 
@@ -114,6 +138,14 @@ sealed interface OAuthConsentContext
     {
     }
 
+    private static void putIfPresent( final Map<String, Object> map, final String key, final @Nullable String value )
+    {
+        if ( value != null )
+        {
+            map.put( key, value );
+        }
+    }
+
     /**
      * The plain-data form handed to an id provider's page function.
      */
@@ -131,11 +163,20 @@ sealed interface OAuthConsentContext
                     map.put( "error", error );
                 }
             }
-            case Confirm( _, _, var userCode, var clientId, var scope, var audience, var unrestricted, var csrf ) ->
+            case Confirm( _, _, var userCode, var clientId, var client, var scope, var audience, var unrestricted, var csrf ) ->
             {
                 map.put( "action", "confirm" );
                 map.put( "userCode", userCode );
                 map.put( "clientId", clientId );
+                final Map<String, Object> clientMap = new LinkedHashMap<>();
+                clientMap.put( "id", client.id() );
+                clientMap.put( "displayName", client.displayName() );
+                putIfPresent( clientMap, "uri", client.uri() );
+                putIfPresent( clientMap, "logoUri", client.logoUri() );
+                putIfPresent( clientMap, "policyUri", client.policyUri() );
+                putIfPresent( clientMap, "tosUri", client.tosUri() );
+                clientMap.put( "registered", client.registered() );
+                map.put( "client", clientMap );
                 map.put( "scope", scope.stream().<Map<String, Object>>map( s -> {
                     final Map<String, Object> entry = new LinkedHashMap<>();
                     entry.put( "id", s.id() );

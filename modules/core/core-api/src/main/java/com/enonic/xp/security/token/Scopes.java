@@ -84,18 +84,19 @@ public final class Scopes
 
     /**
      * The restriction a set of approved scopes implies: none when the id provider has no scopes at
-     * all, else exactly the union of the roles of the approved scopes among these. An id not among
-     * these implies nothing.
+     * all or when no scope was approved, since a token without scopes carries the user's full
+     * memberships; else exactly the union of the roles of the approved scopes among these. An id not
+     * among these implies nothing.
      *
      * @param approved the ids of the scopes granted
      */
     public RoleRestriction restrictionFor( final Collection<String> approved )
     {
-        if ( isEmpty() )
+        final Set<String> ids = Set.copyOf( approved );
+        if ( isEmpty() || ids.isEmpty() )
         {
             return RoleRestriction.none();
         }
-        final Set<String> ids = Set.copyOf( approved );
         return RoleRestriction.to( stream()
                                        .filter( scope -> ids.contains( scope.getId() ) )
                                        .flatMap( scope -> scope.getRoles().stream() )

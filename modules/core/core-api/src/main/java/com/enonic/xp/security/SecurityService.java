@@ -5,8 +5,12 @@ import java.util.Optional;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.security.token.Client;
+import com.enonic.xp.security.token.Clients;
+import com.enonic.xp.security.token.CreateClientParams;
 import com.enonic.xp.security.token.CreateScopeParams;
 import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.UpdateClientParams;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.security.token.UpdateScopeParams;
 
@@ -197,4 +201,39 @@ public interface SecurityService
      * scope keep it, with the restriction fixed when they were approved.
      */
     boolean deleteScope( IdProviderKey idProvider, String id );
+
+    /**
+     * Registers a client with an id provider: who it is to the user, which flows it may use, and
+     * the most it may ask for. Deleting the id provider deletes its clients. Reading needs no
+     * permission, since a client's record is what the consent page shows and what the client
+     * itself is told; writing needs the permission to administer the id provider.
+     *
+     * @throws com.enonic.xp.security.token.ClientAlreadyExistsException when the id provider has a client with that id
+     * @throws IdProviderNotFoundException                               when there is no such id provider
+     */
+    Client createClient( CreateClientParams params );
+
+    /**
+     * Changes a client. Empty when the id provider has no such client.
+     */
+    Optional<Client> updateClient( UpdateClientParams params );
+
+    /**
+     * The id provider's client with the given id.
+     */
+    Optional<Client> getClient( IdProviderKey idProvider, String id );
+
+    /**
+     * The id provider's clients, by id. Empty when it has none, or does not exist.
+     */
+    Clients getClients( IdProviderKey idProvider );
+
+    /**
+     * Removes a client; false when the id provider has no such client. Grants to the client stay
+     * and keep refreshing, as a client without a record may: to stop them, revoke them, or keep the
+     * client disabled instead of removing it.
+     *
+     * @throws IllegalArgumentException for a client XP registers itself, which can be disabled but not removed
+     */
+    boolean deleteClient( IdProviderKey idProvider, String id );
 }

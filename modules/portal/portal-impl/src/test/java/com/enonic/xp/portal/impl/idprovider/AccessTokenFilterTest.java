@@ -93,12 +93,17 @@ class AccessTokenFilterTest
 
     private Grant grant( final RoleRestriction restriction )
     {
+        return grant( restriction, Set.of( "api" ) );
+    }
+
+    private Grant grant( final RoleRestriction restriction, final Set<String> audience )
+    {
         return Grant.create()
             .id( "grant-1" )
             .subject( ALICE )
             .clientId( "my-cli" )
             .scope( Set.of( "content:read" ) )
-            .audience( Set.of( "api" ) )
+            .audience( audience )
             .restriction( restriction )
             .createdAt( now )
             .rotatedAt( now )
@@ -214,6 +219,22 @@ class AccessTokenFilterTest
         } );
         verify( chain ).doFilter( request, response );
         verify( accessTokenService, never() ).verify( any() );
+    }
+
+    @Test
+    void the_grants_audience_as_it_is_now_must_name_the_vhost_too()
+        throws Exception
+    {
+        when( grantService.get( ALICE, "grant-1" ) ).thenReturn(
+            Optional.of( grant( RoleRestriction.to( RoleKeys.ADMIN_LOGIN ), Set.of( "admin" ) ) ) );
+        run();
+        verify( response ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
+        verify( chain, never() ).doFilter( any(), any() );
+
+        vhost( Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ), Set.of( "admin" ) );
+        run();
+        verify( response, times( 2 ) ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
+        verify( chain, never() ).doFilter( any(), any() );
     }
 
     @Test
