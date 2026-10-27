@@ -26,7 +26,7 @@ class ScopeStoreTest
     {
         return Node.create()
             .id( NodeId.from( "scope-node" ) )
-            .name( scope.getId() )
+            .name( RegistryNodeNames.of( scope.getId() ) )
             .parentPath( ScopeNodes.scopesPath( IDP ) )
             .nodeType( ScopeNodes.SCOPE_TYPE )
             .data( ScopeNodes.toData( scope ) )

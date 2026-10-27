@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.security.token;
 
+import java.util.List;
+
 import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -96,8 +98,9 @@ class ScopeRegistryIntegrationTest
         assertThat( write.getRoles() ).isEqualTo( PrincipalKeys.from( "role:cms.cm.app", "role:cms.expert" ) );
         assertThat( write.isRequired() ).isFalse();
 
-        final Node node = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes/content:write" ) ) );
+        final Node node = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes/mnxw45dfnz2du53snf2gk" ) ) );
         assertThat( node.getNodeType() ).isEqualTo( ScopeNodes.SCOPE_TYPE );
+        assertThat( node.data().getString( "id" ) ).isEqualTo( "content:write" );
         assertThat( node.data().getString( "title" ) ).isEqualTo( "Edit content" );
         assertThat( node.data().getStrings( "roles" ) ).containsExactly( "role:cms.cm.app", "role:cms.expert" );
         final Node folder = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes" ) ) );
@@ -140,6 +143,24 @@ class ScopeRegistryIntegrationTest
     }
 
     @Test
+    void ids_a_node_name_cannot_hold_and_ids_differing_in_case_alone_are_stored_apart()
+    {
+        for ( String id : List.of( "content/read", "read", "Read", "https://api.example.com/calendar.read" ) )
+        {
+            asAdmin( () -> service.createScope( CreateScopeParams.create().idProvider( SYSTEM ).id( id ).title( id ).build() ) );
+        }
+        assertThat( service.getScopes( SYSTEM ) ).extracting( Scope::getId )
+            .containsExactly( "Read", "content/read", "https://api.example.com/calendar.read", "read" );
+        assertThat( service.getScope( SYSTEM, "Read" ).orElseThrow().getTitle() ).isEqualTo( "Read" );
+        assertThat( service.getScope( SYSTEM, "read" ).orElseThrow().getTitle() ).isEqualTo( "read" );
+        assertThat( service.getScope( SYSTEM, "READ" ) ).isEmpty();
+        assertThat( service.getScope( SYSTEM, "content\u012fread" ) ).as( "another spelling of the same node name is not the scope" ).isEmpty();
+        assertThat( asAdmin( () -> service.deleteScope( SYSTEM, "content\u012fread" ) ) ).isFalse();
+        assertThat( asAdmin( () -> service.deleteScope( SYSTEM, "Read" ) ) ).isTrue();
+        assertThat( service.getScopes( SYSTEM ) ).extracting( Scope::getId ).containsExactly( "content/read", "https://api.example.com/calendar.read", "read" );
+    }
+
+    @Test
     void duplicates_unknown_id_providers_and_bad_ids_are_refused()
     {
         asAdmin( () -> service.createScope( CreateScopeParams.create().idProvider( SYSTEM ).id( "profile" ).build() ) );
@@ -149,7 +170,7 @@ class ScopeRegistryIntegrationTest
         assertThatThrownBy(
             () -> asAdmin( () -> service.createScope( CreateScopeParams.create().idProvider( IdProviderKey.from( "nope" ) ).id( "profile" ).build() ) ) )
             .isInstanceOf( IdProviderNotFoundException.class );
-        assertThatThrownBy( () -> asAdmin( () -> service.createScope( CreateScopeParams.create().idProvider( SYSTEM ).id( "a/b" ).build() ) ) )
+        assertThatThrownBy( () -> asAdmin( () -> service.createScope( CreateScopeParams.create().idProvider( SYSTEM ).id( "a b" ).build() ) ) )
             .isInstanceOf( IllegalArgumentException.class );
         assertThat( asAdmin( () -> nodeService.nodeExists( new NodePath( "/identity/nope" ) ) ) ).isFalse();
     }
@@ -198,7 +219,7 @@ class ScopeRegistryIntegrationTest
     {
         final PrincipalKey manager = PrincipalKey.from( "user:system:manager" );
         asAdmin( () -> service.createScope( CreateScopeParams.create().idProvider( SYSTEM ).id( "profile" ).build() ) );
-        final Node before = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes/profile" ) ) );
+        final Node before = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes/obzg6ztjnrsq" ) ) );
         assertThat( before.getPermissions().isAllowedFor( manager, Permission.MODIFY ) ).isFalse();
 
         asAdmin( () -> service.updateIdProvider( UpdateIdProviderParams.create()
@@ -211,7 +232,7 @@ class ScopeRegistryIntegrationTest
                                                                        .build() )
                                                      .build() ) );
 
-        final Node after = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes/profile" ) ) );
+        final Node after = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes/obzg6ztjnrsq" ) ) );
         assertThat( after.getPermissions().isAllowedFor( manager, Permission.MODIFY ) ).isTrue();
         final Node folder = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/scopes" ) ) );
         assertThat( folder.getPermissions().isAllowedFor( manager, Permission.CREATE ) ).isTrue();

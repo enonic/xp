@@ -21,8 +21,10 @@ import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -90,7 +92,7 @@ public final class ScopeStore
         final NodePath path = ScopeNodes.scopePath( params.getIdProvider(), params.getId() );
         return asCaller( () -> {
             final Node node = nodeService.getByPath( path );
-            if ( node == null || !ScopeNodes.SCOPE_TYPE.equals( node.getNodeType() ) )
+            if ( node == null || !ScopeNodes.isScope( node, params.getId() ) )
             {
                 return Optional.empty();
             }
@@ -106,17 +108,9 @@ public final class ScopeStore
 
     public Optional<Scope> get( final IdProviderKey idProvider, final String id )
     {
-        final NodePath path;
-        try
-        {
-            path = ScopeNodes.scopePath( idProvider, id );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return Optional.empty();
-        }
+        final NodePath path = ScopeNodes.scopePath( idProvider, id );
         return asAdmin( () -> Optional.ofNullable( nodeService.getByPath( path ) )
-            .filter( node -> ScopeNodes.SCOPE_TYPE.equals( node.getNodeType() ) )
+            .filter( node -> ScopeNodes.isScope( node, id ) )
             .map( node -> ScopeNodes.fromNode( idProvider, node ) ) );
     }
 
@@ -128,8 +122,11 @@ public final class ScopeStore
             {
                 return Scopes.empty();
             }
-            return nodeService.getByIds( nodeService.findByQuery( NodeQuery.create().parent( scopes ).size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).build() )
-                                             .getNodeIds() )
+            final NodeIds ids = nodeService.list( ListNodesParams.create().parentPath( scopes ).build() )
+                .filter( entry -> scopes.equals( entry.nodePath().getParentPath() ) )
+                .map( NodeListEntry::nodeId )
+                .collect( NodeIds.collector() );
+            return nodeService.getByIds( ids )
                 .stream()
                 .filter( node -> ScopeNodes.SCOPE_TYPE.equals( node.getNodeType() ) )
                 .map( node -> ScopeNodes.fromNode( idProvider, node ) )
@@ -140,18 +137,10 @@ public final class ScopeStore
 
     public boolean delete( final IdProviderKey idProvider, final String id )
     {
-        final NodePath path;
-        try
-        {
-            path = ScopeNodes.scopePath( idProvider, id );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return false;
-        }
+        final NodePath path = ScopeNodes.scopePath( idProvider, id );
         return asCaller( () -> {
             final Node node = nodeService.getByPath( path );
-            if ( node == null || !ScopeNodes.SCOPE_TYPE.equals( node.getNodeType() ) )
+            if ( node == null || !ScopeNodes.isScope( node, id ) )
             {
                 return false;
             }
