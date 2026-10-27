@@ -476,25 +476,45 @@ public final class SecurityServiceImpl
     @Override
     public User createUser( final CreateUserParams createUser )
     {
+        if ( createUser.getEmail() == null )
+        {
+            return doCreateUser( createUser );
+        }
         return withLock( idProviderLocks, createUser.getKey().getIdProviderKey().toString(), () -> {
             duplicateEmailValidation( createUser.getKey(), createUser.getEmail() );
             return doCreateUser( createUser );
         } );
     }
 
+    @Override
+    public User updateUser( final UpdateUserParams updateUserParams )
+    {
+        final User existingUser = getExistingUser( updateUserParams.getKey() );
+        final String email = updateUserParams.update( existingUser ).getEmail();
+        if ( email == null || email.equals( existingUser.getEmail() ) )
+        {
+            return doUpdateUser( updateUserParams );
+        }
+        return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> {
+            final User userToUpdate = updateUserParams.update( getExistingUser( updateUserParams.getKey() ) );
+            duplicateEmailValidation( userToUpdate.getKey(), userToUpdate.getEmail() );
+            return doUpdateUser( updateUserParams );
+        } );
+    }
+
+    private User getExistingUser( final PrincipalKey key )
+    {
+        final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
+        if ( node == null )
+        {
+            throw new PrincipalNotFoundException( key );
+        }
+        return PrincipalNodeTranslator.userFromNode( node );
+    }
+
     private User doUpdateUser( final UpdateUserParams updateUserParams )
     {
         return callWithContext( () -> {
-
-            final Node node = this.nodeService.getByPath( updateUserParams.getKey().toPath() );
-            if ( node == null )
-            {
-                throw new PrincipalNotFoundException( updateUserParams.getKey() );
-            }
-
-            final User userToUpdate = updateUserParams.update( PrincipalNodeTranslator.userFromNode( node ) );
-            duplicateEmailValidation( userToUpdate.getKey(), userToUpdate.getEmail() );
-
             final Node updatedNode = nodeService.update(
                 PrincipalNodeTranslator.toUpdateNodeParams( updateUserParams.getKey(), PrincipalNodeTranslator::userFromNode,
                                                             updateUserParams::update ) );
@@ -504,13 +524,6 @@ public final class SecurityServiceImpl
 
             return updatedUser;
         } );
-
-    }
-
-    @Override
-    public User updateUser( final UpdateUserParams updateUserParams )
-    {
-        return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> doUpdateUser( updateUserParams ) );
     }
 
     private void duplicateEmailValidation( final PrincipalKey key, final String email )

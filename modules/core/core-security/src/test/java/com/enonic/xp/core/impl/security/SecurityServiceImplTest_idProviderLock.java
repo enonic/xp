@@ -40,8 +40,8 @@ import static org.mockito.Mockito.withSettings;
 
 /**
  * The email uniqueness check and the user write that follows it must happen under the id provider's lock,
- * so that two writers in the same id provider cannot both pass the check for the same email.
- * The shared map records whether its lock is held when the node store is called.
+ * so that two writers in the same id provider cannot both pass the check for the same email. A write that
+ * does not set an email needs neither. The shared map records whether its lock is held when the node store is called.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -78,6 +78,7 @@ class SecurityServiceImplTest_idProviderLock
         data.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, "USER" );
         data.setString( PrincipalPropertyNames.ID_PROVIDER_KEY, IDP.toString() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, "alice" );
+        data.setString( PrincipalPropertyNames.EMAIL_KEY, "alice@example.com" );
         data.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "Alice" );
         final Node alice = Node.create()
             .id( NodeId.from( "alice" ) )
@@ -116,13 +117,41 @@ class SecurityServiceImplTest_idProviderLock
     }
 
     @Test
-    void update_checks_the_email_and_writes_under_the_id_provider_lock()
+    void create_without_an_email_takes_no_lock()
     {
-        securityService.updateUser( UpdateUserParams.create().userKey( USER ).email( "alice@example.com" ).build() );
+        securityService.createUser( CreateUserParams.create().userKey( USER ).login( "alice" ).displayName( "Alice" ).build() );
+
+        assertThat( calls ).containsExactly( "create unlocked" );
+        assertThat( lockedKeys ).isEmpty();
+    }
+
+    @Test
+    void update_to_another_email_checks_it_and_writes_under_the_id_provider_lock()
+    {
+        securityService.updateUser( UpdateUserParams.create().userKey( USER ).email( "alice@new.example" ).build() );
 
         assertThat( calls ).containsExactly( "email check locked", "update locked" );
         assertThat( lockedKeys ).containsExactly( IDP.toString() );
         assertThat( locked ).as( "the lock is released afterwards" ).isFalse();
+    }
+
+    @Test
+    void update_through_an_editor_that_sets_another_email_takes_the_lock()
+    {
+        securityService.updateUser( UpdateUserParams.create().userKey( USER ).editor( editable -> editable.email = "alice@new.example" ).build() );
+
+        assertThat( calls ).containsExactly( "email check locked", "update locked" );
+        assertThat( lockedKeys ).containsExactly( IDP.toString() );
+    }
+
+    @Test
+    void update_that_leaves_the_email_takes_no_lock()
+    {
+        securityService.updateUser( UpdateUserParams.create().userKey( USER ).displayName( "Alice Smith" ).build() );
+        securityService.updateUser( UpdateUserParams.create().userKey( USER ).email( "alice@example.com" ).build() );
+
+        assertThat( calls ).containsExactly( "update unlocked", "update unlocked" );
+        assertThat( lockedKeys ).isEmpty();
     }
 
     /**
