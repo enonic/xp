@@ -41,7 +41,7 @@ class SnapshotServiceImplTest
 
     private RepositoryServiceImpl repositoryService;
 
-    public SnapshotServiceImplTest()
+    SnapshotServiceImplTest()
     {
         super( true );
     }

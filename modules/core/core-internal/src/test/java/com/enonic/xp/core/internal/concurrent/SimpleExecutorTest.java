@@ -2,7 +2,6 @@ package com.enonic.xp.core.internal.concurrent;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;

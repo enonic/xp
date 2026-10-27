@@ -12,7 +12,7 @@ class InputTypesTest
 {
     private final InputTypes types;
 
-    public InputTypesTest()
+    InputTypesTest()
     {
         this.types = InputTypes.BUILTIN;
     }

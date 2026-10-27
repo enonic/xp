@@ -28,7 +28,6 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;

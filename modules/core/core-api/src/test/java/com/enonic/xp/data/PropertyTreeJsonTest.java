@@ -22,7 +22,7 @@ class PropertyTreeJsonTest
 {
     private final JsonTestHelper jsonTestHelper;
 
-    public PropertyTreeJsonTest()
+    PropertyTreeJsonTest()
     {
         jsonTestHelper = new JsonTestHelper( this );
     }

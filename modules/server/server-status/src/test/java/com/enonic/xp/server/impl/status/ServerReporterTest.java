@@ -14,7 +14,7 @@ import com.enonic.xp.status.BaseReporterTest;
 class ServerReporterTest
     extends BaseReporterTest<ServerReporter>
 {
-    public ServerReporterTest()
+    ServerReporterTest()
     {
         super( "server", MediaType.JSON_UTF_8 );
     }

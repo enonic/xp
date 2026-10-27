@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class DeadlockReporterTest
     extends BaseReporterTest<DeadlockReporter>
 {
-    public DeadlockReporterTest()
+    DeadlockReporterTest()
     {
         super( "dump.deadlocks", MediaType.PLAIN_TEXT_UTF_8 );
     }

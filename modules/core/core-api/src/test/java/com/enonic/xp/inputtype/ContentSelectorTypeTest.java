@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ContentSelectorTypeTest
     extends BaseInputTypeTest
 {
-    public ContentSelectorTypeTest()
+    ContentSelectorTypeTest()
     {
         super( ContentSelectorType.INSTANCE );
     }

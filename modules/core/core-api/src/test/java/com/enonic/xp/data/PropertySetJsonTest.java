@@ -14,7 +14,7 @@ class PropertySetJsonTest
 {
     private final JsonTestHelper jsonTestHelper;
 
-    public PropertySetJsonTest()
+    PropertySetJsonTest()
     {
         jsonTestHelper = new JsonTestHelper( this );
     }
