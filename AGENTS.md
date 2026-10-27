@@ -18,3 +18,4 @@
 ## GitHub
 - Issue titles must not exceed 50 characters
 - PR title is the full issue title followed by the issue number: `Fix the thing #1234`
+- Open PRs as drafts
