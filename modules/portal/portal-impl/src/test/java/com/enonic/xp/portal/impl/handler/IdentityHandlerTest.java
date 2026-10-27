@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -363,7 +364,7 @@ class IdentityHandlerTest
         when( oauthHandler.handle( Mockito.any(), Mockito.eq( IdProviderKey.from( "myidprovider" ) ), Mockito.anyString(),
                                          Mockito.any() ) ).thenReturn( deviceResponse );
 
-        for ( String endpoint : new String[]{"device/code", "device", "token"} )
+        for ( String endpoint : new String[]{"device/code", "device", "authorize", "token"} )
         {
             this.request.setMethod( HttpMethod.POST );
             this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/" + endpoint );
@@ -371,8 +372,8 @@ class IdentityHandlerTest
             assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
         }
         final ArgumentCaptor<String> endpoints = ArgumentCaptor.forClass( String.class );
-        Mockito.verify( oauthHandler, Mockito.times( 3 ) ).handle( Mockito.any(), Mockito.any(), endpoints.capture(), Mockito.any() );
-        assertEquals( java.util.List.of( "device/code", "device", "token" ), endpoints.getAllValues() );
+        Mockito.verify( oauthHandler, Mockito.times( 4 ) ).handle( Mockito.any(), Mockito.any(), endpoints.capture(), Mockito.any() );
+        assertEquals( List.of( "device/code", "device", "authorize", "token" ), endpoints.getAllValues() );
         Mockito.verify( redirectChecksumService, Mockito.never() ).verifyChecksum( Mockito.any(), Mockito.any() );
     }
 
@@ -397,7 +398,13 @@ class IdentityHandlerTest
 
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/token" );
         ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-        assertEquals( "No token-issuing flow [device] is enabled for 'myidprovider' id provider", ex.getMessage() );
+        assertTrue( ex.getMessage().startsWith( "No token-issuing flow [" ), ex.getMessage() );
+        assertTrue( ex.getMessage().endsWith( "] is enabled for 'myidprovider' id provider" ), ex.getMessage() );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/authorize" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessage( "'code' flow is disabled for 'myidprovider' id provider" );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/token" );
         Mockito.verifyNoInteractions( oauthHandler );
 
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.DEVICE ) ) );

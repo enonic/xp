@@ -9,10 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OAuthEndpointsTest
 {
     @Test
-    void the_three_endpoints_and_nothing_else()
+    void the_four_endpoints_and_nothing_else()
     {
         assertThat( OAuthEndpoints.isEndpoint( "device/code" ) ).isTrue();
         assertThat( OAuthEndpoints.isEndpoint( "device" ) ).isTrue();
+        assertThat( OAuthEndpoints.isEndpoint( "authorize" ) ).isTrue();
         assertThat( OAuthEndpoints.isEndpoint( "token" ) ).isTrue();
         assertThat( OAuthEndpoints.isEndpoint( "login" ) ).isFalse();
         assertThat( OAuthEndpoints.isEndpoint( "device/" ) ).isFalse();
@@ -24,7 +25,8 @@ class OAuthEndpointsTest
     {
         assertThat( OAuthEndpoints.requiredFlow( "device/code" ) ).isEqualTo( IdProviderFlow.DEVICE );
         assertThat( OAuthEndpoints.requiredFlow( "device" ) ).isEqualTo( IdProviderFlow.DEVICE );
+        assertThat( OAuthEndpoints.requiredFlow( "authorize" ) ).isEqualTo( IdProviderFlow.CODE );
         assertThat( OAuthEndpoints.requiredFlow( "token" ) ).isNull();
-        assertThat( OAuthEndpoints.ISSUING_FLOWS ).containsExactly( IdProviderFlow.DEVICE );
+        assertThat( OAuthEndpoints.ISSUING_FLOWS ).containsExactlyInAnyOrder( IdProviderFlow.DEVICE, IdProviderFlow.CODE );
     }
 }

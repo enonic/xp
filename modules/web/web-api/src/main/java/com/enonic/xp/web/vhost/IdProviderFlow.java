@@ -11,8 +11,8 @@ import org.jspecify.annotations.NullMarked;
  * configured mapping serves only when its list names them. The default virtual host, used where no
  * mapping is configured, serves every flow.
  * <p>
- * {@link #LOGIN}, {@link #AUTOLOGIN}, {@link #LOGOUT} and {@link #DEVICE} are XP's. Any other name
- * is a flow of the id provider app itself.
+ * {@link #LOGIN}, {@link #AUTOLOGIN}, {@link #LOGOUT}, {@link #DEVICE} and {@link #CODE} are XP's.
+ * Any other name is a flow of the id provider app itself.
  */
 @NullMarked
 public final class IdProviderFlow
@@ -42,9 +42,16 @@ public final class IdProviderFlow
     public static final String DEVICE = "device";
 
     /**
+     * Authorization code with PKCE (RFC 6749, RFC 7636): XP serves the id provider's authorization
+     * endpoint, which shows the same consent page as device login, and accepts the authorization
+     * code grant at the token endpoint. Web endpoint only.
+     */
+    public static final String CODE = "code";
+
+    /**
      * The flows that issue tokens to clients: off on a configured mapping unless its list names them.
      */
-    public static final Set<String> TOKEN_FLOWS = Set.of( DEVICE );
+    public static final Set<String> TOKEN_FLOWS = Set.of( DEVICE, CODE );
 
     private IdProviderFlow()
     {

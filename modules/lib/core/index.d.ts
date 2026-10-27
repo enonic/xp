@@ -361,7 +361,12 @@ export interface OAuthConsentClient {
 
 export interface OAuthConsentConfirm extends OAuthConsentBase {
     action: 'confirm';
-    userCode: string;
+    /** Which flow asks: device login, or the authorization code flow sending the browser back to the client. */
+    flow: 'device' | 'code';
+    /** The device flow's user code; the form posts it back as user_code. */
+    userCode?: string;
+    /** The code flow's request id; the form posts it back as request. */
+    requestId?: string;
     /** How the client named itself; not a verified name. */
     clientId: string;
     /** The client's record, or its id alone when it has none. */
@@ -376,6 +381,7 @@ export interface OAuthConsentConfirm extends OAuthConsentBase {
 
 export interface OAuthConsentDone extends OAuthConsentBase {
     action: 'done';
+    flow: 'device';
     approved: boolean;
 }
 
@@ -384,8 +390,8 @@ export interface OAuthConsentWrongAccount extends OAuthConsentBase {
 }
 
 /**
- * The data the consent page renders, handed to an id provider's oauthConsent
- * function as request.oauthConsent.
+ * The data a consent page renders, handed to an id provider's oauthConsent function as
+ * request.oauthConsent, for device login and for the authorization code flow alike.
  */
 export type OAuthConsent = OAuthConsentEnter | OAuthConsentConfirm | OAuthConsentDone | OAuthConsentWrongAccount;
 
