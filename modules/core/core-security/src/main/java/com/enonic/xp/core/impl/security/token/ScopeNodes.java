@@ -59,17 +59,23 @@ final class ScopeNodes
         return new NodePath( idProviderPath( idProvider ), NodeName.from( SCOPES ) );
     }
 
-    /**
-     * @throws IllegalArgumentException when the id cannot be a node name
-     */
     static NodePath scopePath( final IdProviderKey idProvider, final String id )
     {
-        return new NodePath( scopesPath( idProvider ), NodeName.from( id ) );
+        return new NodePath( scopesPath( idProvider ), NodeName.from( RegistryNodeNames.of( id ) ) );
+    }
+
+    /**
+     * Whether the node is the scope's: of the type, and holding the id, since a node name spells an
+     * id out but a lookup may spell another.
+     */
+    static boolean isScope( final Node node, final String id )
+    {
+        return SCOPE_TYPE.equals( node.getNodeType() ) && id.equals( node.data().getString( "id" ) );
     }
 
     static Scope fromNode( final IdProviderKey idProvider, final Node node )
     {
-        return fromData( idProvider, node.name().toString(), node.data() );
+        return fromData( idProvider, node.data().getString( "id" ), node.data() );
     }
 
     static Scope fromData( final IdProviderKey idProvider, final String id, final PropertyTree tree )
@@ -91,6 +97,7 @@ final class ScopeNodes
     {
         final PropertyTree tree = new PropertyTree();
         final PropertySet data = tree.getRoot();
+        data.setString( "id", scope.getId() );
         data.setString( "title", scope.getTitle() );
         if ( scope.getDescription() != null )
         {
