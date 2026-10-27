@@ -45,6 +45,12 @@ public interface GrantService
     Optional<GrantWithRefreshToken> redeem( RedeemRefreshTokenParams params );
 
     /**
+     * The grant a redeem with these params would find, without redeeming: the token is neither
+     * rotated nor, if retired, acted on. Empty whenever the redeem would be.
+     */
+    Optional<Grant> lookup( RedeemRefreshTokenParams params );
+
+    /**
      * The user's current grants, newest first.
      */
     Grants list( PrincipalKey user );

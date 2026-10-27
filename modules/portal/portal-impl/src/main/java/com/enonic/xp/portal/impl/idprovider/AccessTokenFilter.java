@@ -118,6 +118,13 @@ public final class AccessTokenFilter
             reject( res, "The access token has been revoked" );
             return;
         }
+        if ( !virtualHost.acceptsAudience( grant.get().getAudience(), claims.getIssuer() ) )
+        {
+            LOG.debug( "Token [{}] not accepted on vhost [{}]: the grant's audience {} no longer names it", claims.getTokenId(),
+                       virtualHost.getName(), grant.get().getAudience() );
+            reject( res, "The access token is not accepted here" );
+            return;
+        }
 
         final AuthenticationInfo authInfo =
             securityService.authenticate( new VerifiedUserKeyAuthToken( claims.getSubject(), grant.get().getRestriction() ) );

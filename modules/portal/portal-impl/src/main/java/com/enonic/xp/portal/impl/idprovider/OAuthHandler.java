@@ -2,6 +2,8 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.util.Base64;
@@ -17,6 +19,7 @@ import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,15 +33,18 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenService;
+import com.enonic.xp.security.token.Client;
 import com.enonic.xp.security.token.CreateGrantParams;
 import com.enonic.xp.security.token.Grant;
 import com.enonic.xp.security.token.GrantService;
+import com.enonic.xp.security.token.GrantTypes;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.IssueAccessTokenParams;
 import com.enonic.xp.security.token.RedeemRefreshTokenParams;
@@ -54,6 +60,8 @@ import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostService;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Serves the OAuth endpoints under {@code /_/idprovider/<idp>/} for an id provider's users:
  * <ul>
@@ -63,16 +71,16 @@ import com.enonic.xp.web.vhost.VirtualHostService;
  * <li>{@code POST token}: tokens for a device code or a refresh token.</li>
  * </ul>
  * What may be asked for and granted is checked here: against the id provider's scopes, the
- * audiences XP serves, and the choice the user posted from the page (see
- * {@link OAuthConsentContext}). An id provider without {@code oauthConsent}
+ * client's record when it has one, the audiences XP serves, and the choice the user posted from
+ * the page (see {@link OAuthConsentContext}). An id provider without {@code oauthConsent}
  * answers 404 on these endpoints.
  */
 @Component(service = OAuthHandler.class)
 public class OAuthHandler
 {
-    static final String DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
+    static final String DEVICE_CODE_GRANT = GrantTypes.DEVICE_CODE;
 
-    static final String REFRESH_TOKEN_GRANT = "refresh_token";
+    static final String REFRESH_TOKEN_GRANT = GrantTypes.REFRESH_TOKEN;
 
     /**
      * The request attribute holding the {@link OAuthConsentContext} data for the consent page.
@@ -195,8 +203,18 @@ public class OAuthHandler
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing client_id" );
         }
+        final Optional<Client> client = securityService.getClient( idProvider, clientId );
+        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.DEVICE_CODE ) ).orElse( null );
+        if ( refused != null )
+        {
+            return refused;
+        }
         final Scopes known = securityService.getScopes( idProvider );
-        final Set<String> scope = scopes( param( request, "scope" ) );
+        final Set<String> scope = withinClient( scopes( param( request, "scope" ) ), client.map( Client::getScope ).orElse( Set.of() ) );
+        if ( scope == null )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope", "Scope beyond the client's: " + client.orElseThrow().getScope() );
+        }
         if ( known.isEmpty() )
         {
             if ( !scope.isEmpty() )
@@ -207,7 +225,7 @@ public class OAuthHandler
         }
         else
         {
-            if ( scope.isEmpty() )
+            if ( scope.isEmpty() && client.isEmpty() )
             {
                 return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope", "scope is required; known scopes: " + known.getIds() );
             }
@@ -220,7 +238,12 @@ public class OAuthHandler
             }
         }
         final Set<String> allowedAudience = servedAudiences();
-        final Set<String> requestedAudience = audience( request );
+        final Set<String> requestedAudience =
+            withinClient( audience( request ), client.map( Client::getResource ).orElse( Set.of() ) );
+        if ( requestedAudience == null )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_target", "Resource beyond the client's: " + client.orElseThrow().getResource() );
+        }
         final Set<String> audience;
         if ( requestedAudience.isEmpty() )
         {
@@ -277,9 +300,14 @@ public class OAuthHandler
             return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
         final DeviceCodeStore.Pending p = pending.get();
+        if ( !store.show( idProvider, userCode, user.get().getKey() ) )
+        {
+            return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
+        }
         return render( request, idProvider,
                        OAuthConsentContext.Confirm.of( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ), p.clientId(),
-                                                      p.scope(), p.audience(), securityService.getScopes( idProvider ), csrfToken() ) );
+                                                      securityService.getClient( idProvider, p.clientId() ).orElse( null ), p.scope(), p.audience(),
+                                                      securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
     }
 
     private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider )
@@ -290,7 +318,7 @@ public class OAuthHandler
         {
             return notSignedIn( request, idProvider );
         }
-        if ( !csrfToken().equals( param( request, "_csrf" ) ) )
+        if ( !csrfToken( user.get().getKey() ).equals( param( request, "_csrf" ) ) )
         {
             throw WebException.forbidden( "Invalid or missing form token" );
         }
@@ -313,15 +341,15 @@ public class OAuthHandler
         known.stream().filter( Scope::isRequired ).map( Scope::getId ).forEach( kept::add );
         kept.retainAll( pending.get().scope() );
         kept.retainAll( known.getIds() );
-        final boolean granted = approve && ( known.isNotEmpty() || pending.get().scope().isEmpty() );
+        final boolean granted = approve && ( pending.get().scope().isEmpty() || ( known.isNotEmpty() && !kept.isEmpty() ) );
         final RoleRestriction restriction =
             known.restrictionFor( kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
-        if ( !store.resolve( idProvider, userCode, granted, user.get().getKey(), kept, restriction ) )
+        return switch ( store.resolve( idProvider, userCode, granted, user.get().getKey(), kept, restriction ) )
         {
-            return render( request, idProvider,
-                           new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
-        }
-        return render( request, idProvider, new OAuthConsentContext.Done( idProvider, user.get(), granted ) );
+            case GONE -> render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
+            case SHOWN_TO_ANOTHER -> verificationPage( request, idProvider );
+            case RESOLVED -> render( request, idProvider, new OAuthConsentContext.Done( idProvider, user.get(), granted ) );
+        };
     }
 
     /**
@@ -394,14 +422,28 @@ public class OAuthHandler
             case DeviceCodeStore.Outcome.ClientMismatch _ -> oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "client_id mismatch" );
             case DeviceCodeStore.Outcome.Approved( var pending ) ->
             {
+                final Optional<Client> client = securityService.getClient( idProvider, clientId );
+                final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.DEVICE_CODE ) )
+                    .or( () -> client.map( c -> beyondClient( c, pending.approvedScope(), pending.audience() ) ) )
+                    .orElse( null );
+                if ( refused != null )
+                {
+                    yield refused;
+                }
+                final Set<String> audience = tokenAudience( request, pending.audience() );
+                if ( audience == null )
+                {
+                    yield beyondGrant( pending.audience() );
+                }
                 final GrantWithRefreshToken grant = grantService.create( CreateGrantParams.create()
                                                                              .subject( pending.subject() )
                                                                              .clientId( pending.clientId() )
                                                                              .scope( pending.approvedScope() )
                                                                              .audience( pending.audience() )
                                                                              .restriction( pending.approvedRestriction() )
+                                                                             .ttl( client.map( Client::getGrantTtl ).orElse( null ) )
                                                                              .build() );
-                yield tokenResponse( grant );
+                yield tokenResponse( grant, client.orElse( null ), audience );
             }
         };
     }
@@ -418,38 +460,158 @@ public class OAuthHandler
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing client_id" );
         }
-        final Optional<GrantWithRefreshToken> redeemed = grantService.redeem( RedeemRefreshTokenParams.create()
-                                                                                  .refreshToken( refreshToken.trim() )
-                                                                                  .idProvider( idProvider )
-                                                                                  .clientId( clientId )
-                                                                                  .build() );
+        final Optional<Client> client = securityService.getClient( idProvider, clientId );
+        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.REFRESH_TOKEN ) ).orElse( null );
+        if ( refused != null )
+        {
+            return refused;
+        }
+        final RedeemRefreshTokenParams params =
+            RedeemRefreshTokenParams.create().refreshToken( refreshToken.trim() ).idProvider( idProvider ).clientId( clientId ).build();
+        final Optional<Grant> found = grantService.lookup( params );
+        if ( found.isPresent() )
+        {
+            final PortalResponse refusedBefore = refusedAtRefresh( request, client.orElse( null ), found.get() );
+            if ( refusedBefore != null )
+            {
+                return refusedBefore;
+            }
+        }
+        final Optional<GrantWithRefreshToken> redeemed = grantService.redeem( params );
         if ( redeemed.isEmpty() )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "Invalid or expired refresh_token" );
         }
-        return tokenResponse( redeemed.get() );
+        final Grant grant = redeemed.get().grant();
+        final PortalResponse refusedAfter = refusedAtRefresh( request, client.orElse( null ), grant );
+        if ( refusedAfter != null )
+        {
+            return refusedAfter;
+        }
+        return tokenResponse( redeemed.get(), client.orElse( null ), requireNonNull( tokenAudience( request, grant.getAudience() ) ) );
     }
 
-    private PortalResponse tokenResponse( final GrantWithRefreshToken grant )
+    /**
+     * Why a refresh is refused for the grant as it is: beyond the client's lists, which ends the
+     * grant, or asking for a resource the grant does not hold. Checked before the refresh token is
+     * redeemed, so a refusal leaves it as it was, and again on the grant as redeemed, since the
+     * grant may have been changed in between.
+     */
+    private @Nullable PortalResponse refusedAtRefresh( final PortalRequest request, final @Nullable Client client, final Grant grant )
+    {
+        final PortalResponse beyond = client == null ? null : beyondClient( client, grant.getScope(), grant.getAudience() );
+        if ( beyond != null )
+        {
+            grantService.revoke( grant.getSubject(), grant.getId() );
+            return beyond;
+        }
+        return tokenAudience( request, grant.getAudience() ) == null ? beyondGrant( grant.getAudience() ) : null;
+    }
+
+    /**
+     * The audiences a token is for (RFC 8707): those asked for with {@code resource}, each one the
+     * grant holds, or all the grant's when none is asked for. Null when one is beyond the grant.
+     */
+    private static @Nullable Set<String> tokenAudience( final PortalRequest request, final Set<String> granted )
+    {
+        final Set<String> asked = audience( request );
+        if ( asked.isEmpty() )
+        {
+            return granted;
+        }
+        return granted.containsAll( asked ) ? asked : null;
+    }
+
+    private static PortalResponse beyondGrant( final Set<String> granted )
+    {
+        return oauthError( HttpStatus.BAD_REQUEST, "invalid_target", "Resource beyond the grant's: " + granted );
+    }
+
+    /**
+     * The token response: an access token for the audiences, ending with the grant at the latest,
+     * and the refresh token when the client may use one.
+     */
+    private PortalResponse tokenResponse( final GrantWithRefreshToken grant, final @Nullable Client client, final Set<String> audience )
     {
         final Grant g = grant.grant();
         final AccessToken accessToken = accessTokenService.issue( IssueAccessTokenParams.create()
                                                                       .subject( g.getSubject() )
-                                                                      .audience( g.getAudience() )
+                                                                      .audience( audience )
                                                                       .scope( g.getScope() )
                                                                       .clientId( g.getClientId() )
                                                                       .grantId( g.getId() )
+                                                                      .notAfter( g.getExpiresAt() )
                                                                       .build() );
         final Map<String, Object> body = new LinkedHashMap<>();
         body.put( "access_token", accessToken.value() );
         body.put( "token_type", "Bearer" );
         body.put( "expires_in", accessToken.claims().getExpiresAt().getEpochSecond() - accessToken.claims().getIssuedAt().getEpochSecond() );
-        body.put( "refresh_token", grant.refreshToken() );
+        if ( client == null || client.getGrantTypes().contains( GrantTypes.REFRESH_TOKEN ) )
+        {
+            body.put( "refresh_token", grant.refreshToken() );
+        }
         if ( !g.getScope().isEmpty() )
         {
             body.put( "scope", String.join( " ", g.getScope() ) );
         }
         return json( HttpStatus.OK, body );
+    }
+
+    /**
+     * Why a registered client may not use the grant type now, as an OAuth error, or null if it may.
+     */
+    private static @Nullable PortalResponse refusal( final Client client, final String grantType )
+    {
+        if ( !client.isEnabled() )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "unauthorized_client", "The client is disabled" );
+        }
+        if ( !client.getGrantTypes().contains( grantType ) )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "unauthorized_client", "The client may not use " + grantType );
+        }
+        return null;
+    }
+
+    /**
+     * Why a registered client may not hold a grant for these scopes and audiences now, as an OAuth
+     * error, or null if it may. A list on the client bounds its grants, those made before the list
+     * was set included; a grant for everything is beyond any list.
+     */
+    private static @Nullable PortalResponse beyondClient( final Client client, final Set<String> scope, final Set<String> audience )
+    {
+        if ( exceeds( scope, client.getScope() ) )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "The grant's scope is beyond the client's: " + client.getScope() );
+        }
+        if ( exceeds( audience, client.getResource() ) )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant",
+                               "The grant's audience is beyond the client's resources: " + client.getResource() );
+        }
+        return null;
+    }
+
+    private static boolean exceeds( final Set<String> granted, final Set<String> allowed )
+    {
+        return !allowed.isEmpty() && ( granted.isEmpty() || !allowed.containsAll( granted ) );
+    }
+
+    /**
+     * What the client asked for, held to its list: the list itself when it asked for nothing, or
+     * null when it asked beyond it. An empty list holds it to nothing.
+     */
+    private static @Nullable Set<String> withinClient( final Set<String> requested, final Set<String> allowed )
+    {
+        if ( allowed.isEmpty() )
+        {
+            return requested;
+        }
+        if ( requested.isEmpty() )
+        {
+            return new LinkedHashSet<>( allowed );
+        }
+        return allowed.containsAll( requested ) ? requested : null;
     }
 
     /**
@@ -493,22 +655,38 @@ public class OAuthHandler
      * A per-session token the approval form must echo, so another site cannot submit an approval
      * for a user code it knows.
      */
-    private static String csrfToken()
+    /**
+     * The consent form's token for the signed-in user: the session's secret, which a sign-in as
+     * another user on the same browser keeps, hashed with the user, so a form rendered for one
+     * user is no good to another.
+     */
+    private static String csrfToken( final PrincipalKey user )
     {
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         if ( session == null )
         {
             throw WebException.forbidden( "Device sign-in requires a session" );
         }
-        String token = (String) session.getAttribute( CSRF_SESSION_ATTRIBUTE );
-        if ( token == null )
+        String secret = (String) session.getAttribute( CSRF_SESSION_ATTRIBUTE );
+        if ( secret == null )
         {
             final byte[] bytes = new byte[24];
             RANDOM.nextBytes( bytes );
-            token = Base64.getUrlEncoder().withoutPadding().encodeToString( bytes );
-            session.setAttribute( CSRF_SESSION_ATTRIBUTE, token );
+            secret = Base64.getUrlEncoder().withoutPadding().encodeToString( bytes );
+            session.setAttribute( CSRF_SESSION_ATTRIBUTE, secret );
         }
-        return token;
+        try
+        {
+            final MessageDigest digest = MessageDigest.getInstance( "SHA-256" );
+            digest.update( secret.getBytes( StandardCharsets.UTF_8 ) );
+            digest.update( (byte) 0 );
+            digest.update( user.toString().getBytes( StandardCharsets.UTF_8 ) );
+            return Base64.getUrlEncoder().withoutPadding().encodeToString( digest.digest() );
+        }
+        catch ( NoSuchAlgorithmException e )
+        {
+            throw new IllegalStateException( e );
+        }
     }
 
     static Set<String> queryNames( final String query )
@@ -558,11 +736,13 @@ public class OAuthHandler
     }
 
     /**
-     * The audiences XP serves: the {@code audience} lists of all vhost mappings (RFC 8707).
+     * The audiences XP serves (RFC 8707): its issuer name, for XP as a whole, and the {@code audience}
+     * lists of all vhost mappings.
      */
     private Set<String> servedAudiences()
     {
         final Set<String> audiences = new LinkedHashSet<>();
+        audiences.add( accessTokenService.getIssuer() );
         for ( final VirtualHost virtualHost : virtualHostService.getVirtualHosts() )
         {
             audiences.addAll( virtualHost.getAudience() );

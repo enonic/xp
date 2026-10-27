@@ -239,6 +239,22 @@ exports.loginWithAccessToken = function () {
     t.assertTrue(result.authenticated);
 };
 
+exports.loginWithAccessTokenWithoutScopes = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        accessToken: {
+            issuer: 'https://issuer.example',
+            clientId: 'cli',
+            audience: ['xp-api']
+        }
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
 exports.loginWithAccessTokenAndRoles = function () {
     var result = auth.login({
         user: 'user1',

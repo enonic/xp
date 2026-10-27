@@ -1,6 +1,7 @@
 package com.enonic.xp.security.token;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
@@ -36,6 +37,8 @@ public final class IssueAccessTokenParams
 
     private final @Nullable Duration ttl;
 
+    private final @Nullable Instant notAfter;
+
     private IssueAccessTokenParams( final Builder builder )
     {
         this.subject = requireNonNull( builder.subject, "subject is required" );
@@ -48,6 +51,7 @@ public final class IssueAccessTokenParams
         checkArgument( !this.clientId.isBlank(), "clientId is required" );
         this.grantId = builder.grantId;
         this.ttl = builder.ttl;
+        this.notAfter = builder.notAfter;
         checkArgument( ttl == null || ( ttl.getNano() == 0 && ttl.getSeconds() >= 1 ), "ttl must be a whole number of seconds, at least one: %s",
                        ttl );
     }
@@ -109,6 +113,15 @@ public final class IssueAccessTokenParams
     }
 
     /**
+     * An instant the token is valid no later than, whatever its lifetime: for a token of a grant,
+     * when the grant ends. Null for none.
+     */
+    public @Nullable Instant getNotAfter()
+    {
+        return notAfter;
+    }
+
+    /**
      * A builder; the subject is required.
      */
     public static Builder create()
@@ -131,6 +144,8 @@ public final class IssueAccessTokenParams
         private @Nullable String grantId;
 
         private @Nullable Duration ttl;
+
+        private @Nullable Instant notAfter;
 
         private Builder()
         {
@@ -221,6 +236,16 @@ public final class IssueAccessTokenParams
         public Builder ttl( final @Nullable Duration ttl )
         {
             this.ttl = ttl;
+            return this;
+        }
+
+        /**
+         * An instant the token is valid no later than, whatever its lifetime; null (the default)
+         * for none.
+         */
+        public Builder notAfter( final @Nullable Instant notAfter )
+        {
+            this.notAfter = notAfter;
             return this;
         }
 

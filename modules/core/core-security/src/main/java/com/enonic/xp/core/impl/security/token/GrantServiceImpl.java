@@ -224,6 +224,30 @@ public class GrantServiceImpl
         } ) );
     }
 
+    @Override
+    public Optional<Grant> lookup( final RedeemRefreshTokenParams params )
+    {
+        final Optional<RefreshTokens.Parts> parsed = RefreshTokens.parse( params.getRefreshToken() );
+        if ( parsed.isEmpty() )
+        {
+            return Optional.empty();
+        }
+        final String presented = RefreshTokens.hash( params.getRefreshToken() );
+        return inSecurityRepo( () -> {
+            final Optional<GrantNode> found = grant( parsed.get().grantId() );
+            final Instant now = now();
+            if ( found.isEmpty() || !found.get().isLive( now ) || !meets( found.get(), params ) )
+            {
+                return Optional.<Grant>empty();
+            }
+            final GrantNode grant = found.get();
+            final GrantNodes.Grace grace = grant.grace();
+            final boolean current = presented.equals( grant.hash() );
+            final boolean withinGrace = grace != null && presented.equals( grace.hash() ) && now.isBefore( grace.until() );
+            return current || withinGrace ? Optional.of( grant.toGrant() ) : Optional.<Grant>empty();
+        } );
+    }
+
     /**
      * Whether the grant matches the redeem's conditions. Checked before anything is done with the
      * token, so a redeem at the wrong endpoint or by the wrong client leaves the grant untouched. The

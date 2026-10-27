@@ -39,6 +39,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.token.Client;
+import com.enonic.xp.security.token.CreateClientParams;
+import com.enonic.xp.security.token.GrantTypes;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
@@ -97,6 +100,23 @@ public final class SecurityInitializer
 
     private final NodeService nodeService;
 
+    /**
+     * The clients every installation has: the Enonic CLI, registered with the system id provider.
+     */
+    /**
+     * The Enonic CLI's client id: registered with the system id provider on every installation, and never removed.
+     */
+    public static final String ENONIC_CLI = "enonic-cli";
+
+    private static final List<CreateClientParams> CLIENTS_TO_CREATE = List.of( CreateClientParams.create()
+                                                                                   .idProvider( IdProviderKey.system() )
+                                                                                   .id( ENONIC_CLI )
+                                                                                   .displayName( "Enonic CLI" )
+                                                                                   .uri( "https://developer.enonic.com/docs/enonic-cli" )
+                                                                                   .grantTypes( List.of( GrantTypes.DEVICE_CODE,
+                                                                                                         GrantTypes.REFRESH_TOKEN ) )
+                                                                                   .build() );
+
     private SecurityInitializer( final Builder builder )
     {
         super( builder );
@@ -114,6 +134,7 @@ public final class SecurityInitializer
 
             initializeSystemIdProvider();
             initializeUsers();
+            initializeClients();
 
             initializeKeys();
         } );
@@ -124,7 +145,7 @@ public final class SecurityInitializer
     {
         return createAdminContext().callWith(
             () -> pathInitialized( IDENTITY_PATH ) && rolesInitialized() && systemIdProviderInitialized() && usersInitialized() &&
-                keysInitialized() );
+                clientsInitialized() && keysInitialized() );
     }
 
     @Override
@@ -284,6 +305,39 @@ public final class SecurityInitializer
             addUser( createUser );
         }
         addMember( RoleKeys.ADMIN, PrincipalKey.ofSuperUser() );
+    }
+
+    private void initializeClients()
+    {
+        for ( CreateClientParams createClient : CLIENTS_TO_CREATE )
+        {
+            final Client client = createClient.getClient();
+            try
+            {
+                if ( securityService.getClient( client.getIdProvider(), client.getId() ).isEmpty() )
+                {
+                    securityService.createClient( createClient );
+                    LOG.info( "Client created: {} in {}", client.getId(), client.getIdProvider() );
+                }
+            }
+            catch ( final Exception t )
+            {
+                LOG.error( "Unable to initialize client: {} in {}", client.getId(), client.getIdProvider(), t );
+            }
+        }
+    }
+
+    private boolean clientsInitialized()
+    {
+        for ( CreateClientParams createClient : CLIENTS_TO_CREATE )
+        {
+            final Client client = createClient.getClient();
+            if ( securityService.getClient( client.getIdProvider(), client.getId() ).isEmpty() )
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean usersInitialized()

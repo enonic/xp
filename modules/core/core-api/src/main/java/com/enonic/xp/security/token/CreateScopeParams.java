@@ -56,7 +56,7 @@ public final class CreateScopeParams
         }
 
         /**
-         * The scope's id. Required; a {@link Scopes scope name}.
+         * The scope's id. Required; a {@link ScopeNames scope name}.
          */
         public Builder id( final String id )
         {

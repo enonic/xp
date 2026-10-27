@@ -65,7 +65,7 @@ final class DeviceCodeStore
      */
     record Pending(IdProviderKey idProvider, String deviceCode, String userCode, String clientId, Set<String> scope, Set<String> audience,
                    Status status, PrincipalKey subject, Set<String> approvedScope, RoleRestriction approvedRestriction,
-                   long createdAt, long lastPolledAt)
+                   long createdAt, long lastPolledAt, PrincipalKey shownTo)
     {
         /**
          * The deadline advertised to the client. Fixed at creation; nothing extends it.
@@ -114,6 +114,7 @@ final class DeviceCodeStore
             } );
             value.put( "createdAt", createdAt );
             value.put( "lastPolledAt", lastPolledAt );
+            value.put( "shownTo", shownTo == null ? null : shownTo.toString() );
             return value;
         }
 
@@ -121,6 +122,7 @@ final class DeviceCodeStore
         private static Pending fromMap( final Map<String, Object> value )
         {
             final String subject = (String) value.get( "subject" );
+            final String shownTo = (String) value.get( "shownTo" );
             final List<String> approvedPrincipals = (List<String>) value.get( "approvedPrincipals" );
             return new Pending( IdProviderKey.from( (String) value.get( "idProvider" ) ), (String) value.get( "deviceCode" ),
                                 (String) value.get( "userCode" ), (String) value.get( "clientId" ),
@@ -131,7 +133,8 @@ final class DeviceCodeStore
                                     ? RoleRestriction.none()
                                     : RoleRestriction.to(
                                         approvedPrincipals.stream().map( PrincipalKey::from ).collect( PrincipalKeys.collector() ) ),
-                                (Long) value.get( "createdAt" ), (Long) value.get( "lastPolledAt" ) );
+                                (Long) value.get( "createdAt" ), (Long) value.get( "lastPolledAt" ),
+                                shownTo == null ? null : PrincipalKey.from( shownTo ) );
         }
     }
 
@@ -197,7 +200,8 @@ final class DeviceCodeStore
         final String deviceCode = newDeviceCode();
         final String userCode = newUserCode();
         final Pending pending =
-            new Pending( idProvider, deviceCode, userCode, clientId, scope, audience, Status.PENDING, null, Set.of(), RoleRestriction.none(), now, 0 );
+            new Pending( idProvider, deviceCode, userCode, clientId, scope, audience, Status.PENDING, null, Set.of(), RoleRestriction.none(), now, 0,
+                         null );
         map.set( key( idProvider, deviceCode ), pending.toMap(), CODE_TTL_SECONDS );
         final Map<String, Object> ref = new HashMap<>();
         ref.put( "deviceCode", deviceCode );
@@ -219,18 +223,36 @@ final class DeviceCodeStore
     }
 
     /**
-     * Records the user's decision, with the scopes kept and the restriction they imply; false if
-     * no request is pending for the user code. The restriction is fixed here, at consent.
+     * What came of a decision.
      */
-    boolean resolve( final IdProviderKey idProvider, final String userCode, final boolean approved, final PrincipalKey subject,
-                     final Set<String> approvedScope, final RoleRestriction approvedRestriction )
+    enum Resolution
+    {
+        /**
+         * The decision is recorded.
+         */
+        RESOLVED,
+        /**
+         * No request is pending for the user code.
+         */
+        GONE,
+        /**
+         * The request was last shown to another user, or to none: the decision does not count.
+         */
+        SHOWN_TO_ANOTHER
+    }
+
+    /**
+     * Records whom the request is being shown to for a decision, so that only that user's decision
+     * counts; false if no request is pending for the user code.
+     */
+    boolean show( final IdProviderKey idProvider, final String userCode, final PrincipalKey subject )
     {
         final Optional<Pending> found = findByUserCode( idProvider, userCode );
         if ( found.isEmpty() )
         {
             return false;
         }
-        final boolean[] resolved = new boolean[1];
+        final boolean[] shown = new boolean[1];
         map.modify( key( idProvider, found.get().deviceCode() ), value -> {
             if ( value == null )
             {
@@ -245,12 +267,52 @@ final class DeviceCodeStore
             {
                 return value;
             }
-            resolved[0] = true;
+            shown[0] = true;
+            final Map<String, Object> updated = new HashMap<>( value );
+            updated.put( "shownTo", subject.toString() );
+            return updated;
+        }, found.get().remainingSeconds( clock.millis() ) );
+        return shown[0];
+    }
+
+    /**
+     * Records the user's decision, with the scopes kept and the restriction they imply. The
+     * decision counts only for the user the request was last {@link #show shown} to. The
+     * restriction is fixed here, at consent.
+     */
+    Resolution resolve( final IdProviderKey idProvider, final String userCode, final boolean approved, final PrincipalKey subject,
+                        final Set<String> approvedScope, final RoleRestriction approvedRestriction )
+    {
+        final Optional<Pending> found = findByUserCode( idProvider, userCode );
+        if ( found.isEmpty() )
+        {
+            return Resolution.GONE;
+        }
+        final Resolution[] resolved = {Resolution.GONE};
+        map.modify( key( idProvider, found.get().deviceCode() ), value -> {
+            if ( value == null )
+            {
+                return null;
+            }
+            final Pending pending = Pending.fromMap( value );
+            if ( pending.isExpired( clock.millis() ) )
+            {
+                return null;
+            }
+            if ( pending.status() != Status.PENDING )
+            {
+                return value;
+            }
+            if ( !subject.equals( pending.shownTo() ) )
+            {
+                resolved[0] = Resolution.SHOWN_TO_ANOTHER;
+                return value;
+            }
+            resolved[0] = Resolution.RESOLVED;
             return new Pending( pending.idProvider(), pending.deviceCode(), pending.userCode(), pending.clientId(), pending.scope(),
                                 pending.audience(), approved ? Status.APPROVED : Status.DENIED, approved ? subject : null,
                                 approved ? approvedScope : Set.of(), approved ? approvedRestriction : RoleRestriction.none(),
-                                pending.createdAt(),
-                                pending.lastPolledAt() ).toMap();
+                                pending.createdAt(), pending.lastPolledAt(), pending.shownTo() ).toMap();
         }, found.get().remainingSeconds( clock.millis() ) );
         return resolved[0];
     }

@@ -221,6 +221,21 @@ class LoginHandlerTest
     }
 
     @Test
+    void testLoginWithAccessTokenWithoutScopesLeavesNoRestrictionWhereScopesExist()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutScopes" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+        assertEquals( Set.of(), ContextAccessor.current().getAuthInfo().getAccessToken().getScope() );
+    }
+
+    @Test
     void testLoginWithAccessTokenWithoutScopesLeavesNoRestriction()
     {
         serveVirtualHost( Set.of( "xp-api" ), null );

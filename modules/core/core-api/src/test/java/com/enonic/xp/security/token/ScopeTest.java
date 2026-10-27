@@ -71,7 +71,12 @@ class ScopeTest
     void unknown_and_label_scopes_imply_nothing()
     {
         assertThat( SCOPES.restrictionFor( List.of( "profile", "unknown" ) ) ).isEqualTo( RoleRestriction.to() );
-        assertThat( SCOPES.restrictionFor( Set.of() ) ).isEqualTo( RoleRestriction.to() );
+    }
+
+    @Test
+    void no_scope_approved_implies_no_restriction()
+    {
+        assertThat( SCOPES.restrictionFor( Set.of() ) ).isEqualTo( RoleRestriction.none() );
     }
 
     @Test

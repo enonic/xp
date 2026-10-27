@@ -407,6 +407,19 @@ class AccessTokenServiceImplTest
         assertThat( verified( verify( service, explicit.value() ) ) ).isEqualTo( explicit.claims() );
     }
 
+    @Test
+    void a_token_ends_no_later_than_told()
+    {
+        final AccessTokenServiceImpl service = service( Map.of( "token.ttl", "PT1H" ), now );
+        assertThat( service.issue( minimal().notAfter( now.plusSeconds( 30 ) ).build() ).claims().getExpiresAt() )
+            .as( "a grant ending sooner than the lifetime cuts the token short" ).isEqualTo( now.plusSeconds( 30 ) );
+        assertThat( service.issue( minimal().notAfter( now.plus( Duration.ofDays( 90 ) ) ).build() ).claims().getExpiresAt() )
+            .as( "a grant ending later leaves the lifetime alone" ).isEqualTo( now.plusSeconds( 3600 ) );
+        assertThat( service.issue( minimal().notAfter( now.plusMillis( 1500 ) ).build() ).claims().getExpiresAt() )
+            .as( "whole seconds" ).isEqualTo( now.plusSeconds( 1 ) );
+        assertThatThrownBy( () -> service.issue( minimal().notAfter( now ).build() ) ).isInstanceOf( IllegalArgumentException.class );
+    }
+
     private String claimsJson( final String extra )
     {
         return "{\"iss\":\"xp\",\"sub\":\"" + ALICE + "\",\"iat\":" + now.getEpochSecond() + ",\"exp\":" + now.plusSeconds( 3600 ).getEpochSecond() +

@@ -6,7 +6,9 @@ import java.util.List;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.token.CreateClientParams;
 import com.enonic.xp.security.token.CreateScopeParams;
+import com.enonic.xp.security.token.UpdateClientParams;
 import com.enonic.xp.security.token.UpdateScopeParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -320,6 +322,28 @@ class SecurityAuditLogSupportImplTest
         assertEquals( "system", params.getString( "idProvider" ) );
         assertEquals( "content:read", params.getString( "id" ) );
         assertEquals( "role:cms.cm.app", params.getString( "roles" ) );
+        assertEquals( AuditLogUris.from( "system" ), captor.getAllValues().get( 2 ).getObjectUris() );
+    }
+
+    @Test
+    void clientChangesAreLogged()
+    {
+        instance.createClient( CreateClientParams.create()
+                                   .idProvider( IdProviderKey.system() )
+                                   .id( "claude" )
+                                   .grantTypes( List.of( "authorization_code" ) )
+                                   .redirectUris( List.of( "https://claude.ai/callback" ) )
+                                   .build() );
+        instance.updateClient( UpdateClientParams.create().idProvider( IdProviderKey.system() ).id( "claude" ).editor( e -> e.enabled = false ).build() );
+        instance.removeClient( IdProviderKey.system(), "claude" );
+
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 3 ) ).log( captor.capture() );
+        assertEquals( List.of( "system.security.client.create", "system.security.client.update", "system.security.client.delete" ),
+                      captor.getAllValues().stream().map( LogAuditLogParams::getType ).toList() );
+        final PropertySet params = captor.getAllValues().get( 0 ).getData().getSet( "params" );
+        assertEquals( "claude", params.getString( "id" ) );
+        assertEquals( "https://claude.ai/callback", params.getString( "redirectUris" ) );
         assertEquals( AuditLogUris.from( "system" ), captor.getAllValues().get( 2 ).getObjectUris() );
     }
 }

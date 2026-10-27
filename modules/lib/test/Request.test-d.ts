@@ -847,6 +847,7 @@ const oauthConsentRequest: Request = new RequestImplementation({
         user: {key: 'user:system:alice', login: 'alice', displayName: 'Alice'},
         userCode: 'BCDF-GHJK',
         clientId: 'my-cli',
+        client: {id: 'my-cli', displayName: 'My CLI', registered: true},
         scope: [{id: 'content:read', title: 'Read content', roles: ['role:cms.project.site.viewer'], required: true}],
         unrestricted: false,
         audience: ['api'],
