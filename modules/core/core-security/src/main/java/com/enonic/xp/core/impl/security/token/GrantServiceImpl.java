@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -197,15 +198,14 @@ public class GrantServiceImpl
                 {
                     if ( grace != null && !now.isBefore( grace.until() ) )
                     {
-                        write( grant.withoutGrace() );
+                        change( grant.id(), GrantNode::withoutGrace );
                     }
                     return Optional.of( new GrantWithRefreshToken( grant.toGrant(), refreshToken ) );
                 }
                 final String next = RefreshTokens.newToken( grant.key(), grant.id(), grant.generation() + 1 );
                 final GrantNodes.Grace nextGrace = new GrantNodes.Grace( presented, now.plus( settings.reuseGrace() ),
                                                                          RefreshTokens.wrap( graceSecret(), refreshToken, next ) );
-                final GrantNode rotated = grant.rotated( RefreshTokens.hash( next ), now, nextGrace );
-                write( rotated );
+                final GrantNode rotated = change( grant.id(), g -> g.rotated( RefreshTokens.hash( next ), now, nextGrace ) );
                 return Optional.of( new GrantWithRefreshToken( rotated.toGrant(), next ) );
             }
             if ( grace != null && presented.equals( grace.hash() ) && now.isBefore( grace.until() ) )
@@ -269,11 +269,11 @@ public class GrantServiceImpl
             {
                 return Optional.empty();
             }
-            final GrantNode grant = current.get();
-            final GrantNode changed = grant.changed( params.getScope() != null ? params.getScope() : grant.scope(),
-                                                     params.getAudience() != null ? params.getAudience() : grant.audience(),
-                                                     params.getRestriction() != null ? params.getRestriction() : grant.restriction() );
-            write( changed );
+            final GrantNode changed = change( current.get().id(), g -> g.changed( params.getScope() != null ? params.getScope() : g.scope(),
+                                                                                  params.getAudience() != null ? params.getAudience() : g.audience(),
+                                                                                  params.getRestriction() != null
+                                                                                      ? params.getRestriction()
+                                                                                      : g.restriction() ) );
             return Optional.of( changed.toGrant() );
         } ) );
     }
@@ -380,9 +380,13 @@ public class GrantServiceImpl
             .toList();
     }
 
-    private void write( final GrantNode grant )
+    private GrantNode change( final String grantId, final UnaryOperator<GrantNode> change )
     {
-        nodeService.update( UpdateNodeParams.create().id( NodeId.from( grant.id() ) ).editor( editable -> editable.data = grant.toData() ).build() );
+        final Node node = nodeService.update( UpdateNodeParams.create()
+                                                  .id( NodeId.from( grantId ) )
+                                                  .editor( editable -> editable.data = change.apply( GrantNode.from( editable.build() ) ).toData() )
+                                                  .build() );
+        return GrantNode.from( node );
     }
 
     private void delete( final GrantNode grant )
