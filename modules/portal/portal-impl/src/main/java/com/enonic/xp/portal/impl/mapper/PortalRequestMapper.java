@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.mapper;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Objects;
 import java.util.function.Function;
@@ -70,9 +71,8 @@ public final class PortalRequestMapper
         {
             gen.map( "idProviderSettings" );
             final VirtualHost virtualHost = this.request.getVirtualHost();
-            final Set<String> audience = virtualHost.getAudience().isEmpty()
-                ? Set.of( virtualHost.identifier( this.request.getScheme(), this.request.getHost(), this.request.getPort() ) )
-                : virtualHost.getAudience();
+            final Set<String> audience = new LinkedHashSet<>( virtualHost.getAudience() );
+            audience.add( virtualHost.identifier( this.request.getScheme(), this.request.getHost(), this.request.getPort() ) );
             new IdProviderSettingsMapper( idProviderSettings, audience ).serialize( gen );
             gen.end();
         }

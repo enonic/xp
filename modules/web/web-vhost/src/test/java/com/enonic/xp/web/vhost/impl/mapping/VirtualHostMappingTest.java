@@ -84,7 +84,12 @@ class VirtualHostMappingTest
 
     private static VirtualHostMapping mapping( final String host, final String source )
     {
-        return new VirtualHostMapping( "m", host, source, "/", VirtualHostIdProvidersMapping.create().build(), 0 );
+        return mapping( host, source, "/" );
+    }
+
+    private static VirtualHostMapping mapping( final String host, final String source, final String target )
+    {
+        return new VirtualHostMapping( "m", host, source, target, VirtualHostIdProvidersMapping.create().build(), 0 );
     }
 
     @Test
@@ -100,13 +105,17 @@ class VirtualHostMappingTest
     }
 
     @Test
-    void a_host_declaring_audiences_matches_its_list_alone()
+    void a_host_declaring_audiences_matches_its_list_and_its_own_url_but_not_xp()
     {
         assertTrue( serving( "api", "mgmt" ).acceptsAudience( Set.of( "mgmt" ), "xp", HERE ) );
         assertTrue( serving( "api", "mgmt" ).acceptsAudience( Set.of( "other", "api" ), "xp", HERE ) );
+        assertTrue( serving( "api", "mgmt" ).acceptsAudience( Set.of( HERE ), "xp", HERE ) );
+        assertTrue( serving( "api", "mgmt" ).acceptsAudience( Set.of( HERE + "/api/mcp" ), "xp", HERE + "/api/mcp/tools" ) );
+        assertTrue( serving( "api", "mgmt" ).acceptsAudience( Set.of( HERE + "/api/mcp/" ), "xp", HERE + "/api/mcp/" ) );
+        assertTrue( serving( "api", "mgmt" ).acceptsAudience( Set.of( HERE + "/api/mcp/" ), "xp", HERE + "/api/mcp/tools" ) );
+        assertFalse( serving( "api", "mgmt" ).acceptsAudience( Set.of( HERE + "/api/mcp/" ), "xp", HERE + "/api/mcp" ) );
         assertFalse( serving( "api", "mgmt" ).acceptsAudience( Set.of( "other" ), "xp", HERE ) );
         assertFalse( serving( "api", "mgmt" ).acceptsAudience( Set.of( "xp" ), "xp", HERE ) );
-        assertFalse( serving( "api", "mgmt" ).acceptsAudience( Set.of( HERE ), "xp", HERE ) );
         assertFalse( serving( "api", "mgmt" ).acceptsAudience( Set.of(), "xp", HERE ) );
     }
 

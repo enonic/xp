@@ -19,7 +19,8 @@
       "basic"
     ],
     "audience": [
-      "api"
+      "api",
+      "http://localhost"
     ]
   },
   "params": {

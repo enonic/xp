@@ -123,6 +123,34 @@ class VirtualHostFilterTest
     }
 
     @Test
+    void only_a_canonical_path_is_kept_as_requested()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/rest/../rest/status" );
+        when( req.getPathInfo() ).thenReturn( "/rest/status" );
+
+        new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) ).doFilter( this.req, this.res, this.chain );
+
+        final ArgumentCaptor<Object> attributes = forClass( Object.class );
+        verify( req, times( 3 ) ).setAttribute( any(), attributes.capture() );
+        assertTrue( attributes.getAllValues().contains( null ), "no path as requested" );
+        assertTrue( attributes.getAllValues().stream().noneMatch( "/rest/../rest/status"::equals ) );
+
+        for ( String canonical : List.of( "/", "/a", "/a/b/", "/api/caf%C3%A9", "/a.b/..c" ) )
+        {
+            assertTrue( VirtualHostFilter.isCanonical( canonical ), canonical );
+        }
+        for ( String other : List.of( "", "a", "/a/../b", "/a/./b", "/a/..", "/a//b", "/a;x/b", "/a b", "/%" ) )
+        {
+            assertTrue( !VirtualHostFilter.isCanonical( other ), other );
+        }
+    }
+
+    @Test
     void testMapping_found()
         throws Exception
     {
@@ -137,6 +165,9 @@ class VirtualHostFilterTest
         filter.doFilter( this.req, this.res, this.chain );
 
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        final ArgumentCaptor<Object> attributes = forClass( Object.class );
+        verify( req, times( 3 ) ).setAttribute( any(), attributes.capture() );
+        assertTrue( attributes.getAllValues().contains( "/rest/status" ), "the path as requested travels with the request" );
         final ArgumentCaptor<HttpServletRequest> requestCaptor = forClass( HttpServletRequest.class );
         verify( this.chain ).doFilter( requestCaptor.capture(), eq( this.res ) );
         assertEquals( "/admin/rest/status", requestCaptor.getValue().getRequestURI() );
@@ -268,6 +299,40 @@ class VirtualHostFilterTest
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
         assertEquals( Set.of(), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).getFlows() );
         assertTrue( vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).serves( IdProviderFlow.DEVICE ) );
+    }
+
+    @Test
+    void testWellKnown_resolvedByTheDescribedPath_notRewritten()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/.well-known/oauth-protected-resource/rest/status" );
+        when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/rest/status" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( this.chain ).doFilter( eq( this.req ), eq( this.res ) );
+    }
+
+    @Test
+    void testWellKnown_nothingServedAtTheDescribedPath_notFound()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/.well-known/oauth-protected-resource/elsewhere" );
+        when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/elsewhere" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( this.res ).setStatus( 404 );
+        verify( this.chain, never() ).doFilter( any(), any() );
     }
 
     private void addMapping()

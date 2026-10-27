@@ -100,13 +100,15 @@ public interface VirtualHost
     boolean matchesHost( String serverName );
 
     /**
-     * Whether a token with the given audiences is accepted here: it names a declared audience, or,
-     * if none is declared, {@code self}, XP's issuer name, or {@code identifier}, this mapping's own.
+     * Whether a token with the given audiences is accepted here. The token must name one of the
+     * declared audiences, or XP's issuer name {@code self} where none is declared, or a resource
+     * under this mapping that the request is at or below: the mapping's own
+     * {@link #identifier identifier}, or that identifier with more of the request's path.
      *
      * @param self       XP's issuer name
-     * @param identifier the mapping's identifier for the request, see {@link #identifier}, or null when unknown
+     * @param requestUrl the external URL the request came to, without query, or null when unknown
      */
-    boolean acceptsAudience( Set<String> audience, String self, @Nullable String identifier );
+    boolean acceptsAudience( Set<String> audience, String self, @Nullable String requestUrl );
 
     /**
      * Returns the mapping's context attributes ({@code mapping.<name>.context.*}), copied into the

@@ -1027,8 +1027,7 @@ class OAuthHandlerTest
         final VirtualHost mgmt = mapping( "mgmt.example.com", "/", Set.of() );
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( api, mcp, mgmt ) );
 
-        for ( String unknown : List.of( "other", "https://mgmt.example.com/", "https://api.example.com", "https://x.example.com/api/mcp/tools",
-                                        "ftp://mgmt.example.com", "https://elsewhere.org" ) )
+        for ( String unknown : List.of( "other", "https://x.example.com/api/mcpx", "ftp://mgmt.example.com", "https://elsewhere.org" ) )
         {
             final PortalRequest request = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
             request.getParams().put( "resource", unknown );
@@ -1040,16 +1039,34 @@ class OAuthHandlerTest
         final PortalRequest several = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
         several.getParams().put( "resource", "api" );
         several.getParams().put( "resource", "https://x.example.com/api/mcp" );
-        several.getParams().put( "resource", "https://mgmt.example.com" );
+        several.getParams().put( "resource", "https://mgmt.example.com/" );
+        several.getParams().put( "resource", "https://x.example.com/api/mcp/tools/" );
+        several.getParams().put( "resource", "https://api.example.com" );
         several.getParams().put( "resource", "xp" );
         final JsonNode issued = body( handler.handle( several, IDP, "device/code", UNRESTRICTED ) );
         asAlice( () -> {
             handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issued.get( "user_code" ).asText() ) ), IDP, "device",
                             UNRESTRICTED );
             @SuppressWarnings("unchecked") final List<String> audience = (List<String>) lastContext.get( "audience" );
-            assertThat( audience ).containsExactlyInAnyOrder( "api", "https://x.example.com/api/mcp", "https://mgmt.example.com", "xp" );
+            assertThat( audience ).as( "a resource is kept as asked; a mapping is its own URL whatever it declares" )
+                .containsExactlyInAnyOrder( "api", "https://x.example.com/api/mcp", "https://mgmt.example.com/",
+                                            "https://x.example.com/api/mcp/tools/", "https://api.example.com", "xp" );
             return null;
         } );
+    }
+
+    @Test
+    void the_mapping_the_request_came_through_is_a_resource_where_nothing_is_configured()
+        throws Exception
+    {
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of() );
+        final PortalRequest request = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        request.setVirtualHost( mapping( "admin.example.com", "/", Set.of() ) );
+        request.getParams().put( "resource", "https://admin.example.com/api/mcp" );
+
+        final PortalResponse issued = handler.handle( request, IDP, "device/code", UNRESTRICTED );
+
+        assertThat( issued.getStatus() ).isEqualTo( HttpStatus.OK );
     }
 
     @Test
@@ -1327,6 +1344,26 @@ class OAuthHandlerTest
         final JsonNode issued = body( handler.handle( subset, IDP, "device/code", UNRESTRICTED ) );
         approve( issued.get( "user_code" ).asText(), "content:read" );
         assertThat( scopeIds( lastContextOfConfirm ) ).containsExactly( "content:read" );
+    }
+
+    @Test
+    void a_clients_resource_is_matched_as_registered_slash_and_all()
+        throws Exception
+    {
+        final String withSlash = "https://x.example.com/api/mcp/";
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( mapping( "~.*\\.example\\.com", "/api/mcp", Set.of() ) ) );
+        registered( cli().resource( List.of( withSlash ) ) );
+
+        final PortalRequest exact = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        exact.getParams().put( "resource", withSlash );
+        final JsonNode issued = body( handler.handle( exact, IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        assertThat( lastContextOfConfirm ).containsEntry( "audience", List.of( withSlash ) );
+
+        final PortalRequest without = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        without.getParams().put( "resource", "https://x.example.com/api/mcp" );
+        final PortalResponse refused = handler.handle( without, IDP, "device/code", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).as( "another name than the registered one" ).isEqualTo( "invalid_target" );
     }
 
     @Test

@@ -172,14 +172,23 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public boolean acceptsAudience( final Set<String> audience, final String self, final @Nullable String identifier )
+    public boolean acceptsAudience( final Set<String> audience, final String self, final @Nullable String requestUrl )
     {
         final Set<String> served = getAudience();
-        if ( !served.isEmpty() )
+        if ( served.isEmpty() ? audience.contains( self ) : audience.stream().anyMatch( served::contains ) )
         {
-            return audience.stream().anyMatch( served::contains );
+            return true;
         }
-        return audience.contains( self ) || ( identifier != null && audience.contains( identifier ) );
+        if ( requestUrl == null )
+        {
+            return false;
+        }
+        final int pathStart = requestUrl.indexOf( '/', requestUrl.indexOf( "://" ) + 3 );
+        final String origin = pathStart < 0 ? requestUrl : requestUrl.substring( 0, pathStart );
+        final String identifier = origin + ( "/".equals( getSource() ) ? "" : getSource() );
+        return audience.stream()
+            .anyMatch( aud -> ( aud.equals( identifier ) || aud.startsWith( identifier + "/" ) ) &&
+                ( requestUrl.equals( aud ) || requestUrl.startsWith( aud.endsWith( "/" ) ? aud : aud + "/" ) ) );
     }
 
     @Override

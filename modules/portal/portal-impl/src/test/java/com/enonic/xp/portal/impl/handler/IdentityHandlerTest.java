@@ -17,6 +17,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
+import com.enonic.xp.portal.impl.idprovider.OAuthMetadataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
@@ -51,6 +52,8 @@ class IdentityHandlerTest
 
     OAuthHandler oauthHandler;
 
+    OAuthMetadataService oauthMetadata;
+
     @BeforeEach
     public final void setup()
         throws Exception
@@ -78,7 +81,8 @@ class IdentityHandlerTest
         redirectChecksumService = mock( RedirectChecksumService.class );
         oauthHandler = mock( OAuthHandler.class );
 
-        this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService, oauthHandler );
+        this.oauthMetadata = mock( OAuthMetadataService.class );
+        this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService, oauthHandler, oauthMetadata );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider" );
@@ -100,7 +104,7 @@ class IdentityHandlerTest
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler = new IdentityHandler( idProviderControllerService, mock(), mock() );
+        this.handler = new IdentityHandler( idProviderControllerService, mock(), mock(), mock() );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -428,6 +432,37 @@ class IdentityHandlerTest
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
         final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        Mockito.verifyNoInteractions( oauthHandler );
+    }
+
+    @Test
+    void testAuthorizationServerMetadata_webConnectorOnly()
+    {
+        when( this.request.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        this.request.setMethod( HttpMethod.GET );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/.well-known/oauth-authorization-server" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessageContaining( "web endpoint only" );
+    }
+
+    @Test
+    void testAuthorizationServerMetadata_underTheIssuer()
+        throws Exception
+    {
+        when( this.request.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( oauthMetadata.authorizationServer( Mockito.any(), Mockito.eq( IdProviderKey.from( "myidprovider" ) ) ) )
+            .thenReturn( Map.of( "issuer", "x" ) );
+        for ( String document : new String[]{".well-known/openid-configuration", ".well-known/oauth-authorization-server"} )
+        {
+            this.request.setMethod( HttpMethod.GET );
+            this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/" + document );
+            final PortalResponse response = this.handler.handle( this.request );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+            assertEquals( Map.of( "issuer", "x" ), response.getBody() );
+        }
+        this.request.setMethod( HttpMethod.POST );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOfSatisfying( WebException.class, e -> assertEquals(
+            HttpStatus.METHOD_NOT_ALLOWED, e.getStatus() ) );
         Mockito.verifyNoInteractions( oauthHandler );
     }
 

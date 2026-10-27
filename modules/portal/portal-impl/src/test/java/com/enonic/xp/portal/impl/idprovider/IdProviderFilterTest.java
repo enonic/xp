@@ -309,6 +309,26 @@ class IdProviderFilterTest
     }
 
     @Test
+    void testAllowedPrincipals_discoveryDocumentsExempt()
+        throws Exception
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+        final FilterChain filterChain = Mockito.mock( FilterChain.class );
+
+        Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/api/mcp" );
+        final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
+        Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN_LOGIN ) );
+
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+
+        Mockito.verify( httpServletResponse, Mockito.times( 0 ) ).sendError( Mockito.anyInt() );
+        Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
     void testAllowedPrincipals_idProviderEndpointNotOnTargetNotExempt()
         throws Exception
     {

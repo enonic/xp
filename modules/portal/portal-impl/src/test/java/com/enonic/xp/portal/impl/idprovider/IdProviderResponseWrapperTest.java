@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,7 +23,10 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -58,10 +62,14 @@ class IdProviderResponseWrapperTest
         throws IOException
     {
         idProviderResponseWrapper.setStatus( 404 );
+        idProviderResponseWrapper.complete();
         Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
         idProviderResponseWrapper.setStatus( 403 );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        idProviderResponseWrapper.complete();
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
         idProviderResponseWrapper.setStatus( 403 );
+        idProviderResponseWrapper.complete();
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
@@ -157,6 +165,37 @@ class IdProviderResponseWrapperTest
     }
 
     @Test
+    void a_status_set_before_its_bearer_challenge_keeps_the_login_page_out()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider( IdProviderFlow.LOGIN ) ) );
+        Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
+        final Map<String, Object> attributes = new HashMap<>();
+        Mockito.doAnswer( i -> attributes.put( i.getArgument( 0 ), i.getArgument( 1 ) ) ).when( httpServletRequest ).setAttribute( Mockito.any(), Mockito.any() );
+        Mockito.when( httpServletRequest.getAttribute( Mockito.any() ) ).thenAnswer( i -> attributes.get( i.<String>getArgument( 0 ) ) );
+        VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
+        VirtualHostHelper.setRequestedPath( httpServletRequest, "/api/mcp" );
+        Mockito.when( httpServletRequest.getScheme() ).thenReturn( "https" );
+        Mockito.when( httpServletRequest.getServerName() ).thenReturn( "h" );
+        Mockito.when( httpServletRequest.getServerPort() ).thenReturn( 443 );
+        final IdProviderResponseWrapper wrapper =
+            new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
+
+        wrapper.setStatus( 401 );
+        wrapper.setHeader( "WWW-Authenticate", "Bearer" );
+        wrapper.complete();
+
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( httpServletResponse ).setStatus( 401 );
+        Mockito.verify( httpServletResponse ).setHeader( "WWW-Authenticate",
+                                                         "Bearer resource_metadata=\"https://h/.well-known/oauth-protected-resource/api/mcp\"" );
+    }
+
+    @Test
     void testGetWriter()
         throws IOException
     {
@@ -182,4 +221,42 @@ class IdProviderResponseWrapperTest
     }
 
 
+
+    @Test
+    void a_bearer_challenge_keeps_the_login_page_out_and_names_the_resource_metadata()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+        final VirtualHost virtualHost = new VirtualHostMapping( "m", "localhost", "/", "/", VirtualHostIdProvidersMapping.create()
+            .addIdProviderWithSettings( IdProviderKey.system(), idProvider() )
+            .build(), 0 );
+        final Map<String, Object> attributes = new HashMap<>();
+        Mockito.doAnswer( i -> attributes.put( i.getArgument( 0 ), i.getArgument( 1 ) ) ).when( httpServletRequest ).setAttribute( Mockito.any(), Mockito.any() );
+        Mockito.when( httpServletRequest.getAttribute( Mockito.any() ) ).thenAnswer( i -> attributes.get( i.<String>getArgument( 0 ) ) );
+        VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
+        VirtualHostHelper.setRequestedPath( httpServletRequest, "/api/mcp" );
+        Mockito.when( httpServletRequest.getScheme() ).thenReturn( "https" );
+        Mockito.when( httpServletRequest.getServerName() ).thenReturn( "example.com" );
+        Mockito.when( httpServletRequest.getServerPort() ).thenReturn( 443 );
+        final IdProviderResponseWrapper responseWrapper =
+            new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
+
+        responseWrapper.setHeader( "WWW-Authenticate", "Bearer" );
+        responseWrapper.sendError( 401 );
+
+        Mockito.verify( httpServletResponse ).setHeader( "WWW-Authenticate",
+                                                         "Bearer resource_metadata=\"https://example.com/.well-known/oauth-protected-resource/api/mcp\"" );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( httpServletResponse ).sendError( 401 );
+
+        final IdProviderResponseWrapper another =
+            new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
+        another.addHeader( "WWW-Authenticate", "Bearer realm=\"x\", resource_metadata=\"https://example.com/own\"" );
+        Mockito.verify( httpServletResponse ).addHeader( "WWW-Authenticate", "Bearer realm=\"x\", resource_metadata=\"https://example.com/own\"" );
+        another.setHeader( "WWW-Authenticate", "Basic realm=\"x\"" );
+        Mockito.verify( httpServletResponse ).setHeader( "WWW-Authenticate", "Basic realm=\"x\"" );
+        another.setStatus( 401 );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+    }
 }
