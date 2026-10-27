@@ -103,4 +103,18 @@ class JwsHs512Test
         final Optional<JwsHs512.Parsed> parsed = JwsHs512.parse( header + "." + payload + ".sig" );
         assertThat( parsed.orElseThrow().kid() ).isEmpty();
     }
+
+    @Test
+    void a_token_of_another_type_never_passes_as_an_access_token()
+    {
+        final String typed = JwsHs512.sign( KEY, "client-id+jwt", JwsHs512.newPayload().put( "client_name", "x" ) );
+        final JwsHs512.Parsed parsed = JwsHs512.parse( typed ).orElseThrow();
+
+        assertThat( parsed.header().get( "typ" ).asText() ).isEqualTo( "client-id+jwt" );
+        assertThat( JwsHs512.verify( parsed, KEY, "client-id+jwt" ) ).isTrue();
+        assertThat( JwsHs512.verify( parsed, KEY ) ).as( "not an access token" ).isFalse();
+        assertThat( JwsHs512.hasExpectedHeader( parsed ) ).isFalse();
+        assertThat( JwsHs512.verify( JwsHs512.parse( JwsHs512.sign( KEY, JwsHs512.newPayload() ) ).orElseThrow(), KEY, "client-id+jwt" ) )
+            .as( "nor the other way" ).isFalse();
+    }
 }

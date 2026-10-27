@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -54,6 +55,7 @@ import com.enonic.xp.security.token.GrantTypes;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.IssueAccessTokenParams;
 import com.enonic.xp.security.token.RedeemRefreshTokenParams;
+import com.enonic.xp.security.token.RegisterClientParams;
 import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.session.Session;
@@ -79,6 +81,7 @@ import static java.util.Objects.requireNonNull;
  * PKCE (RFC 6749, RFC 7636); the browser is then sent to a loopback or registered redirect URI with a
  * code, or with an error.</li>
  * <li>{@code POST token}: tokens for a device code, an authorization code or a refresh token.</li>
+ * <li>{@code POST register}: a signed client id carrying the client metadata posted (RFC 7591).</li>
  * </ul>
  * What may be asked for and granted is checked here: against the id provider's scopes, the
  * client's record when it has one, the audiences XP serves, and the choice the user posted from
@@ -128,6 +131,8 @@ public class OAuthHandler
 
     private final AuthorizationCodeStore codes;
 
+    private final Clock clock;
+
     @Activate
     public OAuthHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
                                @Reference final SecurityService securityService, @Reference final VirtualHostService virtualHostService,
@@ -149,6 +154,7 @@ public class OAuthHandler
         this.idProviderControllerService = idProviderControllerService;
         this.store = new DeviceCodeStore( sharedMapService, clock );
         this.codes = new AuthorizationCodeStore( sharedMapService, clock );
+        this.clock = clock;
     }
 
     /**
@@ -174,6 +180,7 @@ public class OAuthHandler
                 return deviceAuthorization( request, idProvider );
             } );
             case OAuthEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings ) );
+            case OAuthEndpoints.REGISTER -> requirePost( method, () -> registration( request, idProvider ) );
             case OAuthEndpoints.AUTHORIZE -> switch ( method )
             {
                 case GET, HEAD ->
@@ -235,8 +242,8 @@ public class OAuthHandler
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing client_id" );
         }
-        final Optional<Client> client = securityService.getClient( idProvider, clientId );
-        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.DEVICE_CODE ) ).orElse( null );
+        final Optional<Client> client = client( idProvider, clientId );
+        final PortalResponse refused = refusal( clientId, client, GrantTypes.DEVICE_CODE );
         if ( refused != null )
         {
             return refused;
@@ -298,7 +305,7 @@ public class OAuthHandler
         }
         else
         {
-            if ( scope.isEmpty() && client == null )
+            if ( scope.isEmpty() && ( client == null || accessTokenService.isSelfRegisteredClientId( client.getId() ) ) )
             {
                 return Asked.refused( "invalid_scope", "scope is required; known scopes: " + known.getIds() );
             }
@@ -369,7 +376,11 @@ public class OAuthHandler
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing redirect_uri" );
         }
-        final Optional<Client> client = securityService.getClient( idProvider, clientId );
+        final Optional<Client> client = client( idProvider, clientId );
+        if ( client.isEmpty() && accessTokenService.isSelfRegisteredClientId( clientId ) )
+        {
+            return registrationRunOut();
+        }
         if ( !redirectAllowed( redirectUri.trim(), client.orElse( null ) ) )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request",
@@ -442,7 +453,7 @@ public class OAuthHandler
             final AuthorizationCodeStore.PendingAuthorization p = reshown.get();
             return render( request, idProvider,
                            OAuthConsentContext.Confirm.forCode( idProvider, user.get(), p.id(), p.clientId(),
-                                                               securityService.getClient( idProvider, p.clientId() ).orElse( null ), p.scope(),
+                                                               client( idProvider, p.clientId() ).orElse( null ), p.scope(),
                                                                p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
         }
         final AuthorizationCodeStore.PendingAuthorization pending = taken.get();
@@ -489,8 +500,8 @@ public class OAuthHandler
                 return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing " + required.getKey() );
             }
         }
-        final Optional<Client> client = securityService.getClient( idProvider, clientId );
-        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.AUTHORIZATION_CODE ) ).orElse( null );
+        final Optional<Client> client = client( idProvider, clientId );
+        final PortalResponse refused = refusal( clientId, client, GrantTypes.AUTHORIZATION_CODE );
         if ( refused != null )
         {
             return refused;
@@ -525,6 +536,107 @@ public class OAuthHandler
                                                                      .ttl( client.map( Client::getGrantTtl ).orElse( null ) )
                                                                      .build() );
         return tokenResponse( grant, client.orElse( null ), audience );
+    }
+
+    /**
+     * {@code POST register}: reads the client metadata (RFC 7591) and answers with the client id
+     * that carries it. A client that wants a secret, or names a grant type or URI XP cannot take,
+     * is refused.
+     */
+    private PortalResponse registration( final PortalRequest request, final IdProviderKey idProvider )
+    {
+        final JsonNode metadata;
+        try
+        {
+            final Object body = request.getBody();
+            metadata = body == null ? null : MAPPER.readTree( body.toString() );
+        }
+        catch ( JsonProcessingException e )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_client_metadata", "The body is not JSON" );
+        }
+        if ( metadata == null || !metadata.isObject() )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_client_metadata", "The body must be a JSON object" );
+        }
+        final String authMethod = metadata.path( "token_endpoint_auth_method" ).asText( "none" );
+        if ( !"none".equals( authMethod ) )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_client_metadata",
+                               "Only public clients register here: token_endpoint_auth_method must be none" );
+        }
+        final List<String> grantTypes = strings( metadata, "grant_types" );
+        final Client registered;
+        try
+        {
+            registered = accessTokenService.registerClient( RegisterClientParams.create()
+                                                     .idProvider( idProvider )
+                                                     .displayName( text( metadata, "client_name" ) )
+                                                     .uri( text( metadata, "client_uri" ) )
+                                                     .logoUri( text( metadata, "logo_uri" ) )
+                                                     .policyUri( text( metadata, "policy_uri" ) )
+                                                     .tosUri( text( metadata, "tos_uri" ) )
+                                                     .grantTypes( grantTypes.isEmpty() ? List.of( GrantTypes.AUTHORIZATION_CODE ) : grantTypes )
+                                                     .redirectUris( strings( metadata, "redirect_uris" ) )
+                                                     .scope( scopes( text( metadata, "scope" ) ) )
+                                                     .resource( strings( metadata, "resource" ) )
+                                                     .build() );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            final boolean redirect = e.getMessage() != null && e.getMessage().contains( "redirectUri" );
+            return oauthError( HttpStatus.BAD_REQUEST, redirect ? "invalid_redirect_uri" : "invalid_client_metadata", e.getMessage() );
+        }
+        final Map<String, Object> body = new LinkedHashMap<>();
+        body.put( "client_id", registered.getId() );
+        body.put( "client_id_issued_at", clock.instant().getEpochSecond() );
+        body.put( "token_endpoint_auth_method", "none" );
+        body.put( "client_name", registered.getDisplayName() );
+        putIfPresent( body, "client_uri", registered.getUri() );
+        putIfPresent( body, "logo_uri", registered.getLogoUri() );
+        putIfPresent( body, "policy_uri", registered.getPolicyUri() );
+        putIfPresent( body, "tos_uri", registered.getTosUri() );
+        body.put( "grant_types", List.copyOf( registered.getGrantTypes() ) );
+        body.put( "redirect_uris", List.copyOf( registered.getRedirectUris() ) );
+        if ( !registered.getScope().isEmpty() )
+        {
+            body.put( "scope", String.join( " ", registered.getScope() ) );
+        }
+        if ( !registered.getResource().isEmpty() )
+        {
+            body.put( "resource", List.copyOf( registered.getResource() ) );
+        }
+        return json( HttpStatus.CREATED, body );
+    }
+
+    private static @Nullable String text( final JsonNode node, final String name )
+    {
+        final JsonNode value = node.get( name );
+        return value != null && value.isTextual() && !value.asText().isBlank() ? value.asText().trim() : null;
+    }
+
+    private static List<String> strings( final JsonNode node, final String name )
+    {
+        final List<String> values = new ArrayList<>();
+        final JsonNode array = node.get( name );
+        if ( array != null && array.isArray() )
+        {
+            array.forEach( value -> {
+                if ( value.isTextual() && !value.asText().isBlank() )
+                {
+                    values.add( value.asText().trim() );
+                }
+            } );
+        }
+        return values;
+    }
+
+    private static void putIfPresent( final Map<String, Object> map, final String key, final @Nullable String value )
+    {
+        if ( value != null )
+        {
+            map.put( key, value );
+        }
     }
 
     /**
@@ -634,7 +746,7 @@ public class OAuthHandler
         }
         return render( request, idProvider,
                        OAuthConsentContext.Confirm.forDevice( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ),
-                                                             p.clientId(), securityService.getClient( idProvider, p.clientId() ).orElse( null ),
+                                                             p.clientId(), client( idProvider, p.clientId() ).orElse( null ),
                                                              p.scope(), p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
     }
 
@@ -759,8 +871,8 @@ public class OAuthHandler
             case DeviceCodeStore.Outcome.ClientMismatch _ -> oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "client_id mismatch" );
             case DeviceCodeStore.Outcome.Approved( var pending ) ->
             {
-                final Optional<Client> client = securityService.getClient( idProvider, clientId );
-                final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.DEVICE_CODE ) )
+                final Optional<Client> client = client( idProvider, clientId );
+                final PortalResponse refused = Optional.ofNullable( refusal( clientId, client, GrantTypes.DEVICE_CODE ) )
                     .or( () -> client.map( c -> beyondClient( c, pending.approvedScope(), pending.audience() ) ) )
                     .orElse( null );
                 if ( refused != null )
@@ -797,8 +909,8 @@ public class OAuthHandler
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing client_id" );
         }
-        final Optional<Client> client = securityService.getClient( idProvider, clientId );
-        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.REFRESH_TOKEN ) ).orElse( null );
+        final Optional<Client> client = client( idProvider, clientId );
+        final PortalResponse refused = refusal( clientId, client, GrantTypes.REFRESH_TOKEN );
         if ( refused != null )
         {
             return refused;
@@ -898,6 +1010,25 @@ public class OAuthHandler
             body.put( "scope", String.join( " ", g.getScope() ) );
         }
         return json( HttpStatus.OK, body );
+    }
+
+    /**
+     * Why the client may not use the grant type now, as an OAuth error, or null if it may. An id the
+     * registration endpoint issued names no client once its registration has run out, and is refused
+     * as such rather than taken for a client with no record.
+     */
+    private @Nullable PortalResponse refusal( final String clientId, final Optional<Client> client, final String grantType )
+    {
+        if ( client.isEmpty() )
+        {
+            return accessTokenService.isSelfRegisteredClientId( clientId ) ? registrationRunOut() : null;
+        }
+        return refusal( client.get(), grantType );
+    }
+
+    private static PortalResponse registrationRunOut()
+    {
+        return oauthError( HttpStatus.BAD_REQUEST, "invalid_client", "The client's registration has run out; register again" );
     }
 
     /**
@@ -1077,10 +1208,16 @@ public class OAuthHandler
     }
 
     /**
-     * Whether XP serves the resource (RFC 8707): its issuer name, for XP as a whole; an audience a
-     * vhost mapping is configured with; or the identifier of a web mapping, the URL its source path
-     * is served at for a host it matches.
+     * The client's record: registered with the id provider, or carried by a self-registered id;
+     * empty for a client XP does not know.
      */
+    private Optional<Client> client( final IdProviderKey idProvider, final String clientId )
+    {
+        return accessTokenService.isSelfRegisteredClientId( clientId )
+            ? accessTokenService.getRegisteredClient( idProvider, clientId )
+            : securityService.getClient( idProvider, clientId );
+    }
+
     private boolean isServed( final String resource )
     {
         if ( accessTokenService.getIssuer().equals( resource ) )

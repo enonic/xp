@@ -19,7 +19,9 @@ import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 
 /**
  * JWS compact serialization with HMAC-SHA512, pinned to that one algorithm so a verifier cannot
- * be talked into {@code none} or a weaker MAC. Small enough that core needs no JWT library.
+ * be talked into {@code none} or a weaker MAC. Small enough that core needs no JWT library. The
+ * header names what the token is for ({@code typ}), and a verifier states what it expects, so a
+ * token of one kind never passes as another.
  */
 final class JwsHs512
 {
@@ -44,13 +46,21 @@ final class JwsHs512
     }
 
     /**
-     * Signs the payload under the key, naming it in the header.
+     * Signs an access token payload under the key, naming it in the header.
      */
     static String sign( final SigningKey key, final ObjectNode payload )
     {
+        return sign( key, TYP, payload );
+    }
+
+    /**
+     * Signs the payload under the key as a token of the given type, naming both in the header.
+     */
+    static String sign( final SigningKey key, final String typ, final ObjectNode payload )
+    {
         final ObjectNode header = MAPPER.createObjectNode();
         header.put( "alg", ALG );
-        header.put( "typ", TYP );
+        header.put( "typ", typ );
         header.put( "kid", key.kid() );
 
         final String signingInput = encode( header ) + "." + encode( payload );
@@ -95,25 +105,42 @@ final class JwsHs512
      */
     static boolean hasExpectedHeader( final Parsed parsed )
     {
-        final JsonNode alg = parsed.header().get( "alg" );
-        final JsonNode typ = parsed.header().get( "typ" );
-        return alg != null && alg.isTextual() && ALG.equals( alg.asText() ) && typ != null && typ.isTextual() &&
-            isAccessTokenType( typ.asText() ) && !parsed.header().has( "crit" );
-    }
-
-    private static boolean isAccessTokenType( final String typ )
-    {
-        final String type = typ.regionMatches( true, 0, "application/", 0, 12 ) ? typ.substring( 12 ) : typ;
-        return TYP.equalsIgnoreCase( type );
+        return hasExpectedHeader( parsed, TYP );
     }
 
     /**
-     * Checks the signature under the given key, in constant time. The header must also pass
-     * {@link #hasExpectedHeader}.
+     * Whether the header names HS512, the given type (any case, with or without the
+     * {@code application/} prefix) and no critical extension.
+     */
+    static boolean hasExpectedHeader( final Parsed parsed, final String expectedTyp )
+    {
+        final JsonNode alg = parsed.header().get( "alg" );
+        final JsonNode typ = parsed.header().get( "typ" );
+        return alg != null && alg.isTextual() && ALG.equals( alg.asText() ) && typ != null && typ.isTextual() &&
+            isType( typ.asText(), expectedTyp ) && !parsed.header().has( "crit" );
+    }
+
+    private static boolean isType( final String typ, final String expected )
+    {
+        final String type = typ.regionMatches( true, 0, "application/", 0, 12 ) ? typ.substring( 12 ) : typ;
+        return expected.equalsIgnoreCase( type );
+    }
+
+    /**
+     * Checks an access token's signature under the given key, in constant time. The header must
+     * also pass {@link #hasExpectedHeader(Parsed)}.
      */
     static boolean verify( final Parsed parsed, final SigningKey key )
     {
-        return hasExpectedHeader( parsed ) && MessageDigest.isEqual( mac( key, parsed.signingInput() ), parsed.signature() );
+        return verify( parsed, key, TYP );
+    }
+
+    /**
+     * Checks the signature of a token of the given type under the given key, in constant time.
+     */
+    static boolean verify( final Parsed parsed, final SigningKey key, final String typ )
+    {
+        return hasExpectedHeader( parsed, typ ) && MessageDigest.isEqual( mac( key, parsed.signingInput() ), parsed.signature() );
     }
 
     private static byte[] mac( final SigningKey key, final String signingInput )

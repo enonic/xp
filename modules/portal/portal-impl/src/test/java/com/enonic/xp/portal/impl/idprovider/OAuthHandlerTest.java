@@ -54,6 +54,7 @@ import com.enonic.xp.security.token.GrantService;
 import com.enonic.xp.security.token.GrantTypes;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.IssueAccessTokenParams;
+import com.enonic.xp.security.token.RegisterClientParams;
 import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.session.SessionMock;
@@ -1152,6 +1153,78 @@ class OAuthHandlerTest
     }
 
     @Test
+    void a_self_registered_id_whose_registration_ran_out_names_no_client()
+        throws Exception
+    {
+        final String ranOut = "eyJhbGciOiJIUzI1NiJ9.x.y";
+        when( accessTokenService.isSelfRegisteredClientId( ranOut ) ).thenReturn( true );
+        when( accessTokenService.getRegisteredClient( IDP, ranOut ) ).thenReturn( Optional.empty() );
+
+        PortalResponse refused =
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", ranOut ) ), IDP, "device/code", UNRESTRICTED );
+        assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "register again" );
+
+        final Map<String, String> authorize = authorizeParams( "http://127.0.0.1:7/cb" );
+        authorize.put( "client_id", ranOut );
+        refused = handler.handle( request( HttpMethod.GET, "authorize", authorize ), IDP, "authorize", UNRESTRICTED );
+        assertThat( refused.getStatus() ).as( "no redirect to a client nobody vouches for" ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+
+        refused = handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code", "c",
+                                                                             "client_id", ranOut, "redirect_uri", "http://127.0.0.1:7/cb",
+                                                                             "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+
+        refused = handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.REFRESH_TOKEN_GRANT, "refresh_token", "r",
+                                                                             "client_id", ranOut ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+        verifyNoInteractions( grantService );
+        verify( securityService, never() ).getClient( IDP, ranOut );
+    }
+
+    @Test
+    void a_self_registered_client_must_ask_for_scopes_once_there_are_any()
+        throws Exception
+    {
+        final VirtualHostIdProvider settings = withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
+        final Client registered = cli().id( "eyJhbGciOiJIUzI1NiJ9.x.y" ).idProvider( IDP ).build();
+        when( accessTokenService.isSelfRegisteredClientId( registered.getId() ) ).thenReturn( true );
+        when( accessTokenService.getRegisteredClient( IDP, registered.getId() ) ).thenReturn( Optional.of( registered ) );
+
+        final PortalResponse refused = handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", registered.getId() ) ),
+                                                       IDP, "device/code", settings );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_scope" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).startsWith( "scope is required" );
+
+        final JsonNode issued = body( handler.handle(
+            request( HttpMethod.POST, "device/code", Map.of( "client_id", registered.getId(), "scope", "content:read" ) ), IDP, "device/code",
+            settings ) );
+        assertThat( issued.has( "user_code" ) ).isTrue();
+    }
+
+    @Test
+    void a_registration_that_runs_out_after_approval_gets_no_grant()
+        throws Exception
+    {
+        final Client registered = cli().id( "eyJhbGciOiJIUzI1NiJ9.x.y" ).idProvider( IDP ).build();
+        when( accessTokenService.isSelfRegisteredClientId( registered.getId() ) ).thenReturn( true );
+        when( accessTokenService.getRegisteredClient( IDP, registered.getId() ) ).thenReturn( Optional.of( registered ) );
+        final JsonNode issued = body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", registered.getId() ) ), IDP,
+                                                      "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        when( accessTokenService.getRegisteredClient( IDP, registered.getId() ) ).thenReturn( Optional.empty() );
+
+        final PortalResponse refused = handler.handle( request( HttpMethod.POST, "token",
+                                                                Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                        issued.get( "device_code" ).asText(), "client_id", registered.getId() ) ),
+                                                       IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+        verify( grantService, never() ).create( any() );
+    }
+
+    @Test
     void a_client_disabled_after_approval_gets_no_grant()
         throws Exception
     {
@@ -1696,6 +1769,85 @@ class OAuthHandlerTest
         approve( issued.get( "user_code" ).asText() );
         assertThat( lastContextOfConfirm ).containsEntry( "flow", "device" ).containsKey( "userCode" ).doesNotContainKey( "requestId" );
         assertThat( lastContext ).containsEntry( "action", "done" ).containsEntry( "flow", "device" );
+    }
+
+    private static PortalRequest registration( final String json )
+    {
+        final PortalRequest request = request( HttpMethod.POST, "register", Map.of() );
+        request.setBody( json );
+        return request;
+    }
+
+    @Test
+    void a_client_registers_itself_and_gets_an_id_that_carries_its_record()
+        throws Exception
+    {
+        when( accessTokenService.registerClient( any() ) ).thenAnswer( i -> {
+            final Client declared = i.<RegisterClientParams>getArgument( 0 ).getClient();
+            return Client.create()
+                .idProvider( declared.getIdProvider() )
+                .id( "eyJ.signed.record" )
+                .displayName( declared.getDisplayName() )
+                .uri( declared.getUri() )
+                .grantTypes( declared.getGrantTypes() )
+                .redirectUris( declared.getRedirectUris() )
+                .scope( declared.getScope() )
+                .resource( declared.getResource() )
+                .build();
+        } );
+
+        final PortalResponse created = handler.handle( registration( """
+            {"client_name": "Claude", "client_uri": "https://claude.ai", "redirect_uris": ["https://claude.ai/api/mcp/auth_callback"],
+             "grant_types": ["authorization_code", "refresh_token"], "scope": "content:read profile",
+             "resource": ["https://example.com/api/mcp"], "token_endpoint_auth_method": "none", "response_types": ["code"]}
+            """ ), IDP, "register", UNRESTRICTED );
+
+        assertThat( created.getStatus() ).isEqualTo( HttpStatus.CREATED );
+        assertThat( created.getHeaders() ).containsEntry( "Cache-Control", "no-store" );
+        final JsonNode body = body( created );
+        assertThat( body.get( "client_id" ).asText() ).isEqualTo( "eyJ.signed.record" );
+        assertThat( body.get( "client_id_issued_at" ).asLong() ).isEqualTo( now.getEpochSecond() );
+        assertThat( body.get( "token_endpoint_auth_method" ).asText() ).isEqualTo( "none" );
+        assertThat( body.get( "client_name" ).asText() ).isEqualTo( "Claude" );
+        assertThat( body.get( "client_uri" ).asText() ).isEqualTo( "https://claude.ai" );
+        assertThat( body.get( "redirect_uris" ).get( 0 ).asText() ).isEqualTo( "https://claude.ai/api/mcp/auth_callback" );
+        assertThat( body.get( "scope" ).asText() ).isEqualTo( "content:read profile" );
+        assertThat( body.get( "resource" ).get( 0 ).asText() ).isEqualTo( "https://example.com/api/mcp" );
+        assertThat( body.has( "client_secret" ) ).isFalse();
+
+        final ArgumentCaptor<RegisterClientParams> params = ArgumentCaptor.forClass( RegisterClientParams.class );
+        verify( accessTokenService ).registerClient( params.capture() );
+        assertThat( params.getValue().getClient().getIdProvider() ).isEqualTo( IDP );
+        assertThat( params.getValue().getClient().getScope() ).containsExactly( "content:read", "profile" );
+    }
+
+    @Test
+    void registration_defaults_and_refusals()
+        throws Exception
+    {
+        when( accessTokenService.registerClient( any() ) ).thenAnswer( i -> {
+            final Client declared = i.<RegisterClientParams>getArgument( 0 ).getClient();
+            final String name = declared.getDisplayName().equals( declared.getId() ) ? null : declared.getDisplayName();
+            return Client.create().idProvider( IDP ).id( "eyJ.x.y" ).displayName( name ).grantTypes( declared.getGrantTypes() ).build();
+        } );
+
+        final JsonNode minimal = body( handler.handle( registration( "{}" ), IDP, "register", UNRESTRICTED ) );
+        assertThat( minimal.get( "grant_types" ).get( 0 ).asText() ).as( "RFC 7591 default" ).isEqualTo( GrantTypes.AUTHORIZATION_CODE );
+        assertThat( minimal.get( "client_name" ).asText() ).as( "named after its id" ).isEqualTo( "eyJ.x.y" );
+
+        for ( String refused : List.of( "not json", "[]", "{\"token_endpoint_auth_method\": \"client_secret_basic\"}",
+                                        "{\"grant_types\": [\"password\"]}", "{\"client_uri\": \"not a uri\"}" ) )
+        {
+            final PortalResponse response = handler.handle( registration( refused ), IDP, "register", UNRESTRICTED );
+            assertThat( response.getStatus() ).as( refused ).isEqualTo( HttpStatus.BAD_REQUEST );
+            assertThat( body( response ).get( "error" ).asText() ).as( refused ).isEqualTo( "invalid_client_metadata" );
+        }
+        final PortalResponse badRedirect =
+            handler.handle( registration( "{\"redirect_uris\": [\"https://a/cb#x\"]}" ), IDP, "register", UNRESTRICTED );
+        assertThat( body( badRedirect ).get( "error" ).asText() ).isEqualTo( "invalid_redirect_uri" );
+
+        assertThatThrownBy( () -> handler.handle( request( HttpMethod.GET, "register", Map.of() ), IDP, "register", UNRESTRICTED ) )
+            .isInstanceOf( WebException.class );
     }
 
     @Test

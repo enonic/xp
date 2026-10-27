@@ -18,6 +18,8 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.token.AccessToken;
+import com.enonic.xp.security.token.RegisterClientParams;
+import com.enonic.xp.security.token.Client;
 import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.security.token.AccessTokenVerification;
@@ -509,5 +511,29 @@ class AccessTokenServiceImplTest
                 }
             };
         }
+    }
+
+    @Test
+    void a_self_registered_client_reads_back_from_its_id_until_the_registration_runs_out()
+    {
+        final AccessTokenServiceImpl service = service( Map.of( "token.keys.a", SECRET_A ), now );
+        final RegisterClientParams params = RegisterClientParams.create()
+            .idProvider( IdProviderKey.system() )
+            .displayName( "Claude" )
+            .redirectUris( List.of( "https://claude.ai/api/mcp/auth_callback" ) )
+            .build();
+
+        final Client registered = service.registerClient( params );
+
+        assertThat( registered.getId() ).startsWith( "eyJ" );
+        assertThat( service.getRegisteredClient( IdProviderKey.system(), registered.getId() ) ).contains( registered );
+        assertThat( service.getRegisteredClient( IdProviderKey.from( "other" ), registered.getId() ) ).isEmpty();
+        assertThat( service.getRegisteredClient( IdProviderKey.system(), "enonic-cli" ) ).as( "a stored client's id is not a record" ).isEmpty();
+        final AccessTokenServiceImpl later =
+            service( Map.of( "token.keys.a", SECRET_A ), now.plus( Duration.ofDays( AccessTokenServiceImpl.REGISTRATION_DAYS ) ) );
+        assertThat( later.getRegisteredClient( IdProviderKey.system(), registered.getId() ) ).isEmpty();
+        assertThat( later.isSelfRegisteredClientId( registered.getId() ) ).as( "the id keeps its shape after the registration ran out" ).isTrue();
+        assertThat( later.isSelfRegisteredClientId( "enonic-cli" ) ).isFalse();
+        assertThat( later.isSelfRegisteredClientId( "eyJ" ) ).isFalse();
     }
 }

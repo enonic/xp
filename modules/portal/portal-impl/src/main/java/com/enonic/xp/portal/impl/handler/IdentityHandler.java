@@ -30,7 +30,7 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|authorize|token))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|authorize|token|register))?" );
 
     private final IdProviderControllerService idProviderControllerService;
 
