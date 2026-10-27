@@ -26,6 +26,7 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+import com.enonic.xp.web.vhost.WellKnownPaths;
 
 @Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-30)
@@ -83,7 +84,7 @@ public final class IdProviderFilter
             final String idProviderEndpoints =
                 ( "/".equals( virtualHost.getTarget() ) ? "" : virtualHost.getTarget() ) + "/_/idprovider/";
             final String path = req.getPathInfo();
-            if ( path == null || !path.startsWith( idProviderEndpoints ) )
+            if ( path == null || !( path.startsWith( idProviderEndpoints ) || WellKnownPaths.resourcePath( path ) != null ) )
             {
                 final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
                 if ( !authInfo.isAuthenticated() )
@@ -100,5 +101,9 @@ public final class IdProviderFilter
         }
 
         chain.doFilter( new IdProviderRequestWrapper( req ), response );
+        if ( response instanceof IdProviderResponseWrapper wrapper )
+        {
+            wrapper.complete();
+        }
     }
 }

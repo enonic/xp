@@ -8,6 +8,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
@@ -15,6 +17,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.impl.idprovider.OAuthEndpoints;
 import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
+import com.enonic.xp.portal.impl.idprovider.OAuthMetadataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
@@ -30,7 +33,7 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|authorize|token|register))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|authorize|token|register|\\.well-known/(?:openid-configuration|oauth-authorization-server)))?" );
 
     private final IdProviderControllerService idProviderControllerService;
 
@@ -38,14 +41,17 @@ public class IdentityHandler
 
     private final OAuthHandler oauthHandler;
 
+    private final OAuthMetadataService oauthMetadata;
+
     @Activate
     public IdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
                             @Reference final RedirectChecksumService redirectChecksumService,
-                            @Reference final OAuthHandler oauthHandler )
+                            @Reference final OAuthHandler oauthHandler, @Reference final OAuthMetadataService oauthMetadata )
     {
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
         this.oauthHandler = oauthHandler;
+        this.oauthMetadata = oauthMetadata;
     }
 
     public PortalResponse handle( final WebRequest webRequest )
@@ -86,6 +92,24 @@ public class IdentityHandler
         }
 
         String idProviderFunction = matcher.group( "fun" );
+
+        if ( idProviderFunction != null && idProviderFunction.startsWith( ".well-known/" ) )
+        {
+            if ( !DispatchConstants.WEB_CONNECTOR.equals( webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
+            {
+                throw WebException.notFound( "OAuth metadata is served on the web endpoint only" );
+            }
+            if ( webRequest.getMethod() != HttpMethod.GET && webRequest.getMethod() != HttpMethod.HEAD )
+            {
+                throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
+            }
+            return PortalResponse.create()
+                .status( HttpStatus.OK )
+                .contentType( MediaType.JSON_UTF_8 )
+                .header( "Cache-Control", "public, max-age=300" )
+                .body( oauthMetadata.authorizationServer( webRequest, idProviderKey ) )
+                .build();
+        }
 
         if ( OAuthEndpoints.isEndpoint( idProviderFunction ) )
         {

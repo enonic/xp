@@ -31,6 +31,10 @@ public class IdProviderResponseWrapper
 
     private boolean errorHandled;
 
+    private boolean bearerChallenged;
+
+    private int pendingStatus;
+
     public IdProviderResponseWrapper( final IdProviderControllerService idProviderControllerService, final HttpServletRequest request,
                                       final HttpServletResponse response )
     {
@@ -43,6 +47,25 @@ public class IdProviderResponseWrapper
     @Override
     public void setStatus( final int sc )
     {
+        pendingStatus = isUnauthorizedError( sc ) ? sc : 0;
+        if ( !errorHandled )
+        {
+            super.setStatus( sc );
+        }
+    }
+
+    /**
+     * Decides on the login page for a status set earlier, now that the headers set with it are known.
+     * The filter calls it once the application has answered; a body or a flush calls it before.
+     */
+    public void complete()
+    {
+        if ( pendingStatus == 0 )
+        {
+            return;
+        }
+        final int sc = pendingStatus;
+        pendingStatus = 0;
         try
         {
             handleError( sc );
@@ -51,17 +74,21 @@ public class IdProviderResponseWrapper
         {
             throw new UncheckedIOException( e );
         }
+    }
 
-        if ( !errorHandled )
-        {
-            super.setStatus( sc );
-        }
+    @Override
+    public void flushBuffer()
+        throws IOException
+    {
+        complete();
+        super.flushBuffer();
     }
 
     @Override
     public PrintWriter getWriter()
         throws IOException
     {
+        complete();
         if ( errorHandled )
         {
             return new PrintWriter( Writer.nullWriter() );
@@ -73,6 +100,7 @@ public class IdProviderResponseWrapper
     public ServletOutputStream getOutputStream()
         throws IOException
     {
+        complete();
         if ( errorHandled )
         {
             return new ServletOutputStream()
@@ -105,8 +133,31 @@ public class IdProviderResponseWrapper
     {
         if ( !errorHandled )
         {
-            super.setHeader( name, value );
+            super.setHeader( name, challenge( name, value ) );
         }
+    }
+
+    @Override
+    public void addHeader( final String name, final String value )
+    {
+        if ( !errorHandled )
+        {
+            super.addHeader( name, challenge( name, value ) );
+        }
+    }
+
+    /**
+     * A bearer challenge is the application's choice of a client at a machine, not a person at a
+     * browser: it is completed with the resource metadata URL and the login page stays out of it.
+     */
+    private String challenge( final String name, final String value )
+    {
+        if ( BearerChallenge.HEADER.equalsIgnoreCase( name ) && BearerChallenge.isBearer( value ) )
+        {
+            bearerChallenged = true;
+            return BearerChallenge.withResourceMetadata( value, request );
+        }
+        return value;
     }
 
     @Override
@@ -136,7 +187,8 @@ public class IdProviderResponseWrapper
     private void handleError( final int sc )
         throws IOException
     {
-        if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() && isInteractiveLoginEnabled() )
+        pendingStatus = 0;
+        if ( !errorHandled && !bearerChallenged && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() && isInteractiveLoginEnabled() )
         {
             final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
                 .functionName( "handle401" )

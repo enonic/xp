@@ -402,7 +402,7 @@ export type OAuthConsent = OAuthConsentEnter | OAuthConsentConfirm | OAuthConsen
 export interface IdProviderSettings {
     /** The flows the host serves for the ID provider, sorted. Empty means no restriction. */
     flows: string[];
-    /** The audiences the host serves, sorted: its configured list, or else its own identifier, the URL of the request's mapping. */
+    /** The audiences the host serves, sorted: its own identifier, the URL of the request's mapping, and its configured list. */
     audience: string[];
 }
 

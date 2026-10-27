@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -35,14 +36,17 @@ import com.enonic.xp.security.token.VerifyAccessTokenParams;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -124,7 +128,11 @@ class AccessTokenFilterTest
         when( request.getScheme() ).thenReturn( "https" );
         when( request.getServerName() ).thenReturn( "admin.example.com" );
         when( request.getServerPort() ).thenReturn( 443 );
-        when( request.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        final Map<String, Object> attributes = new HashMap<>();
+        doAnswer( i -> attributes.put( i.getArgument( 0 ), i.getArgument( 1 ) ) ).when( request ).setAttribute( any(), any() );
+        when( request.getAttribute( any() ) ).thenAnswer( i -> attributes.get( i.<String>getArgument( 0 ) ) );
+        VirtualHostHelper.setVirtualHost( request, virtualHost );
+        VirtualHostHelper.setRequestedPath( request, "/admin/tool" );
     }
 
     private void run()
@@ -247,7 +255,10 @@ class AccessTokenFilterTest
     {
         when( accessTokenService.verify( token( "xp-token" ) ) ).thenReturn( new AccessTokenVerification.Invalid() );
         run();
-        verify( response ).setHeader( org.mockito.ArgumentMatchers.eq( "WWW-Authenticate" ), org.mockito.ArgumentMatchers.contains( "invalid_token" ) );
+        final ArgumentCaptor<String> challenge = ArgumentCaptor.forClass( String.class );
+        verify( response ).setHeader( eq( "WWW-Authenticate" ), challenge.capture() );
+        assertThat( challenge.getValue() ).startsWith( "Bearer error=\"invalid_token\"" )
+            .contains( "resource_metadata=\"https://admin.example.com/.well-known/oauth-protected-resource/admin/tool\"" );
         verify( response ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
         verify( chain, never() ).doFilter( any(), any() );
     }
@@ -273,6 +284,40 @@ class AccessTokenFilterTest
         vhost( Map.of( IdProviderKey.system(), Set.of() ), Set.of( "admin", "api" ) );
         run();
         verify( chain ).doFilter( request, response );
+    }
+
+    @Test
+    void a_request_whose_path_is_not_canonical_gets_no_token_accepted()
+        throws Exception
+    {
+        VirtualHostHelper.setRequestedPath( request, null );
+        run();
+        verify( response ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
+        verify( chain, never() ).doFilter( any(), any() );
+    }
+
+    @Test
+    void the_resource_is_the_path_as_the_client_sent_it()
+        throws Exception
+    {
+        VirtualHostHelper.setRequestedPath( request, "/admin/caf%C3%A9" );
+        when( accessTokenService.verify( token( "xp-token" ) ) ).thenReturn( new AccessTokenVerification.Invalid() );
+        run();
+        final ArgumentCaptor<String> challenge = ArgumentCaptor.forClass( String.class );
+        verify( response ).setHeader( eq( "WWW-Authenticate" ), challenge.capture() );
+        assertThat( challenge.getValue() ).contains( "resource_metadata=\"https://admin.example.com/.well-known/oauth-protected-resource/admin/caf%C3%A9\"" );
+
+        final String encoded = "https://admin.example.com/admin/caf%C3%A9";
+        final AccessTokenClaims forEncoded = AccessTokenClaims.create()
+            .issuer( "xp" )
+            .subject( ALICE )
+            .audience( Set.of( encoded ) )
+            .clientId( "cli" )
+            .issuedAt( now )
+            .expiresAt( now.plusSeconds( 10 ) )
+            .tokenId( "j9" )
+            .build();
+        assertThat( AccessTokenFilter.refusal( forEncoded, vhostServing( Set.of() ), encoded ) ).as( "compared as sent, never decoded" ).isNull();
     }
 
     @Test
@@ -306,8 +351,9 @@ class AccessTokenFilterTest
             .tokenId( "j3" )
             .build();
         assertThat( AccessTokenFilter.refusal( forHere, unnamed, here ) ).as( "a token for this host alone" ).isNull();
-        assertThat( AccessTokenFilter.refusal( forHere, unnamed, "https://other.example.com" ) ).isNotNull();
-        assertThat( AccessTokenFilter.refusal( forHere, served, here ) ).as( "a configured list limits the host to it" ).isNotNull();
+        assertThat( AccessTokenFilter.refusal( forHere, unnamed, here + "/tool" ) ).as( "and for anything under it" ).isNull();
+        assertThat( AccessTokenFilter.refusal( forHere, unnamed, "https://other.example.com/admin" ) ).isNotNull();
+        assertThat( AccessTokenFilter.refusal( forHere, served, here ) ).as( "a configured list adds names; the host stays its own URL" ).isNull();
         final AccessTokenClaims forBoth = AccessTokenClaims.create()
             .issuer( "xp" )
             .subject( ALICE )
@@ -325,7 +371,7 @@ class AccessTokenFilterTest
     {
         final VirtualHostIdProvidersMapping idProviders =
             VirtualHostIdProvidersMapping.create().addIdProviderWithSettings( IdProviderKey.system(), VirtualHostIdProvider.create().build() ).build();
-        return new VirtualHostMapping( "test", "admin.example.com", "/", "/", idProviders, 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
+        return new VirtualHostMapping( "test", "admin.example.com", "/admin", "/", idProviders, 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
                                        PrincipalKeys.empty(), audience );
     }
 

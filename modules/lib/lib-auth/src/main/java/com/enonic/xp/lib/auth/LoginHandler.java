@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 
 import jakarta.servlet.http.HttpSession;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.portal.PortalRequest;
@@ -26,6 +28,7 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class LoginHandler
     implements ScriptBean
@@ -136,8 +139,7 @@ public final class LoginHandler
             final String self = this.accessTokenServiceSupplier.get().getIssuer();
             final boolean audienceAccepted = virtualHost == null
                 ? tokenAudience.contains( self )
-                : virtualHost.acceptsAudience( tokenAudience, self, virtualHost.identifier( portalRequest.getScheme(), portalRequest.getHost(),
-                                                                                             portalRequest.getPort() ) );
+                : virtualHost.acceptsAudience( tokenAudience, self, requestUrl( portalRequest ) );
             if ( !audienceAccepted )
             {
                 return new LoginResultMapper( AuthenticationInfo.unAuthenticated(), "Token audience not accepted here" );
@@ -261,6 +263,21 @@ public final class LoginHandler
                 httpSession.setMaxInactiveInterval( this.sessionTimeout );
             }
         }
+    }
+
+    /**
+     * The URL the request came to, as the client holds it, or null outside a request.
+     */
+    private static @Nullable String requestUrl( final PortalRequest request )
+    {
+        final String path = request.getRawRequest() == null ? null : VirtualHostHelper.getRequestedPath( request.getRawRequest() );
+        if ( path == null )
+        {
+            return null;
+        }
+        final int port = request.getPort();
+        final boolean defaultPort = port <= 0 || ( "https".equals( request.getScheme() ) ? port == 443 : "http".equals( request.getScheme() ) && port == 80 );
+        return request.getScheme() + "://" + request.getHost() + ( defaultPort ? "" : ":" + port ) + path;
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -345,7 +346,7 @@ public class OAuthHandler
             final Set<String> unknown = new LinkedHashSet<>();
             for ( final String resource : requestedAudience )
             {
-                if ( !isServed( resource ) )
+                if ( !isServed( request, resource ) )
                 {
                     unknown.add( resource );
                 }
@@ -1218,13 +1219,19 @@ public class OAuthHandler
             : securityService.getClient( idProvider, clientId );
     }
 
-    private boolean isServed( final String resource )
+    /**
+     * Whether XP serves the resource (RFC 8707): its issuer name, for XP as a whole; an audience a
+     * vhost mapping is configured with; or a URL under a web mapping, at or below the URL its
+     * source path is served at for a host it matches.
+     */
+    private boolean isServed( final PortalRequest request, final String resource )
     {
         if ( accessTokenService.getIssuer().equals( resource ) )
         {
             return true;
         }
-        final List<VirtualHost> mappings = virtualHostService.getVirtualHosts();
+        final List<VirtualHost> mappings =
+            Stream.concat( Stream.ofNullable( request.getVirtualHost() ), virtualHostService.getVirtualHosts().stream() ).toList();
         if ( mappings.stream().anyMatch( mapping -> mapping.getAudience().contains( resource ) ) )
         {
             return true;
@@ -1245,9 +1252,12 @@ public class OAuthHandler
             return false;
         }
         return mappings.stream()
-            .filter( mapping -> DispatchConstants.WEB_CONNECTOR.equals( mapping.getConnector() ) && mapping.getAudience().isEmpty() )
+            .filter( mapping -> DispatchConstants.WEB_CONNECTOR.equals( mapping.getConnector() ) )
             .filter( mapping -> mapping.matchesHost( host ) )
-            .anyMatch( mapping -> resource.equals( mapping.identifier( scheme, host, uri.getPort() ) ) );
+            .anyMatch( mapping -> {
+                final String identifier = mapping.identifier( scheme, host, uri.getPort() );
+                return resource.equals( identifier ) || resource.startsWith( identifier + "/" );
+            } );
     }
 
     /**

@@ -332,8 +332,9 @@ class LoginHandlerTest
         this.portalRequest.setScheme( "https" );
         this.portalRequest.setHost( "localhost" );
         this.portalRequest.setPort( 443 );
+        this.portalRequest.setRawPath( "/portal" );
         this.portalRequest.setVirtualHost(
-            new VirtualHostMapping( "m", "localhost", "/portal", "/", idProviders.build(), 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
+            new VirtualHostMapping( "m", "localhost", "/", "/", idProviders.build(), 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
                                     PrincipalKeys.empty(), audience ) );
     }
 
