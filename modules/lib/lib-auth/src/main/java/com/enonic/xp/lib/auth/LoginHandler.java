@@ -134,8 +134,10 @@ public final class LoginHandler
             final PortalRequest portalRequest = this.portalRequestSupplier.get();
             final VirtualHost virtualHost = portalRequest == null ? null : portalRequest.getVirtualHost();
             final String self = this.accessTokenServiceSupplier.get().getIssuer();
-            final boolean audienceAccepted =
-                virtualHost == null ? tokenAudience.contains( self ) : virtualHost.acceptsAudience( tokenAudience, self );
+            final boolean audienceAccepted = virtualHost == null
+                ? tokenAudience.contains( self )
+                : virtualHost.acceptsAudience( tokenAudience, self, virtualHost.identifier( portalRequest.getScheme(), portalRequest.getHost(),
+                                                                                             portalRequest.getPort() ) );
             if ( !audienceAccepted )
             {
                 return new LoginResultMapper( AuthenticationInfo.unAuthenticated(), "Token audience not accepted here" );

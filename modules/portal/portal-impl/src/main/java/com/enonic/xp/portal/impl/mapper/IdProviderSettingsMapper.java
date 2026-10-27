@@ -9,7 +9,8 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 /**
  * {@code request.idProviderSettings}: the id provider's settings on the request's virtual host,
- * that is its flows and the host's audience. Collections are sorted so the output is stable.
+ * that is its flows and the audiences the host serves, configured or its own identifier.
+ * Collections are sorted so the output is stable.
  */
 final class IdProviderSettingsMapper
     implements MapSerializable

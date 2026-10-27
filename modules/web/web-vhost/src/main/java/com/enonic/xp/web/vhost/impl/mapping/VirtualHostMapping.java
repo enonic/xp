@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.Nullable;
 
@@ -144,6 +145,41 @@ public final class VirtualHostMapping
     public Set<String> getAudience()
     {
         return audience;
+    }
+
+    @Override
+    public String identifier( final String scheme, final String host, final int port )
+    {
+        final boolean defaultPort = port <= 0 || ( "https".equals( scheme ) ? port == 443 : "http".equals( scheme ) && port == 80 );
+        final String source = getSource();
+        return scheme + "://" + host + ( defaultPort ? "" : ":" + port ) + ( "/".equals( source ) ? "" : source );
+    }
+
+    @Override
+    public boolean matchesHost( final String serverName )
+    {
+        for ( final String host : getHost().split( " ", -1 ) )
+        {
+            final String candidate = host.trim();
+            if ( candidate.startsWith( "~" )
+                ? Pattern.compile( candidate.substring( 1 ), Pattern.CASE_INSENSITIVE ).matcher( serverName ).matches()
+                : candidate.equalsIgnoreCase( serverName ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean acceptsAudience( final Set<String> audience, final String self, final @Nullable String identifier )
+    {
+        final Set<String> served = getAudience();
+        if ( !served.isEmpty() )
+        {
+            return audience.stream().anyMatch( served::contains );
+        }
+        return audience.contains( self ) || ( identifier != null && audience.contains( identifier ) );
     }
 
     @Override

@@ -28,8 +28,10 @@ import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
-import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -322,11 +324,17 @@ class LoginHandlerTest
 
     private void serveVirtualHost( final Set<String> audience, final VirtualHostIdProvider enonic )
     {
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getAudience() ).thenReturn( audience );
-        Mockito.when( virtualHost.acceptsAudience( Mockito.any(), Mockito.any() ) ).thenCallRealMethod();
-        Mockito.when( virtualHost.getIdProviders() ).thenReturn( enonic == null ? Map.of() : Map.of( IdProviderKey.from( "enonic" ), enonic ) );
-        this.portalRequest.setVirtualHost( virtualHost );
+        final VirtualHostIdProvidersMapping.Builder idProviders = VirtualHostIdProvidersMapping.create();
+        if ( enonic != null )
+        {
+            idProviders.addIdProviderWithSettings( IdProviderKey.from( "enonic" ), enonic );
+        }
+        this.portalRequest.setScheme( "https" );
+        this.portalRequest.setHost( "localhost" );
+        this.portalRequest.setPort( 443 );
+        this.portalRequest.setVirtualHost(
+            new VirtualHostMapping( "m", "localhost", "/portal", "/", idProviders.build(), 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
+                                    PrincipalKeys.empty(), audience ) );
     }
 
     @Test

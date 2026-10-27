@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.time.Instant;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +17,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -32,9 +32,12 @@ import com.enonic.xp.security.token.AccessTokenVerification;
 import com.enonic.xp.security.token.Grant;
 import com.enonic.xp.security.token.GrantService;
 import com.enonic.xp.security.token.VerifyAccessTokenParams;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -113,13 +116,14 @@ class AccessTokenFilterTest
 
     private void vhost( final Map<IdProviderKey, Set<String>> idProviders, final Set<String> audience )
     {
-        final VirtualHost virtualHost = mock( VirtualHost.class );
-        final Map<IdProviderKey, VirtualHostIdProvider> mapped = new LinkedHashMap<>();
-        idProviders.forEach( ( key, flows ) -> mapped.put( key, VirtualHostIdProvider.create().flows( flows ).build() ) );
-        when( virtualHost.getIdProviders() ).thenReturn( mapped );
-        when( virtualHost.getAudience() ).thenReturn( audience );
-        when( virtualHost.acceptsAudience( any(), any() ) ).thenCallRealMethod();
-        when( virtualHost.getName() ).thenReturn( "test" );
+        final VirtualHostIdProvidersMapping.Builder mapped = VirtualHostIdProvidersMapping.create();
+        idProviders.forEach( ( key, flows ) -> mapped.addIdProviderWithSettings( key, VirtualHostIdProvider.create().flows( flows ).build() ) );
+        final VirtualHost virtualHost =
+            new VirtualHostMapping( "test", "admin.example.com", "/admin", "/", mapped.build(), 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
+                                    PrincipalKeys.empty(), audience );
+        when( request.getScheme() ).thenReturn( "https" );
+        when( request.getServerName() ).thenReturn( "admin.example.com" );
+        when( request.getServerPort() ).thenReturn( 443 );
         when( request.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
     }
 
@@ -283,14 +287,27 @@ class AccessTokenFilterTest
             .expiresAt( now.plusSeconds( 10 ) )
             .tokenId( "j" )
             .build();
+        final String here = "https://admin.example.com/admin";
         final VirtualHost served = vhostServing( Set.of( "api" ) );
-        assertThat( AccessTokenFilter.refusal( forXp, served ) ).as( "a declared list is matched alone" ).isNotNull();
+        assertThat( AccessTokenFilter.refusal( forXp, served, here ) ).as( "a declared list is matched alone" ).isNotNull();
 
         final VirtualHost unnamed = vhostServing( Set.of() );
-        assertThat( AccessTokenFilter.refusal( forXp, unnamed ) ).isNull();
-        assertThat( AccessTokenFilter.refusal( claims, unnamed ) ).as( "a token for an audience needs a vhost serving it" )
+        assertThat( AccessTokenFilter.refusal( forXp, unnamed, here ) ).isNull();
+        assertThat( AccessTokenFilter.refusal( claims, unnamed, here ) ).as( "a token for an audience needs a vhost serving it" )
             .isNotNull()
-            .contains( "does not name this XP" );
+            .contains( "names neither this XP" );
+        final AccessTokenClaims forHere = AccessTokenClaims.create()
+            .issuer( "xp" )
+            .subject( ALICE )
+            .audience( Set.of( here ) )
+            .clientId( "cli" )
+            .issuedAt( now )
+            .expiresAt( now.plusSeconds( 10 ) )
+            .tokenId( "j3" )
+            .build();
+        assertThat( AccessTokenFilter.refusal( forHere, unnamed, here ) ).as( "a token for this host alone" ).isNull();
+        assertThat( AccessTokenFilter.refusal( forHere, unnamed, "https://other.example.com" ) ).isNotNull();
+        assertThat( AccessTokenFilter.refusal( forHere, served, here ) ).as( "a configured list limits the host to it" ).isNotNull();
         final AccessTokenClaims forBoth = AccessTokenClaims.create()
             .issuer( "xp" )
             .subject( ALICE )
@@ -300,17 +317,16 @@ class AccessTokenFilterTest
             .expiresAt( now.plusSeconds( 10 ) )
             .tokenId( "j2" )
             .build();
-        assertThat( AccessTokenFilter.refusal( forBoth, served ) ).as( "a token for everything is good on both" ).isNull();
-        assertThat( AccessTokenFilter.refusal( forBoth, unnamed ) ).isNull();
+        assertThat( AccessTokenFilter.refusal( forBoth, served, here ) ).as( "a token for everything is good on both" ).isNull();
+        assertThat( AccessTokenFilter.refusal( forBoth, unnamed, here ) ).isNull();
     }
 
     private static VirtualHost vhostServing( final Set<String> audience )
     {
-        final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), VirtualHostIdProvider.create().build() ) );
-        when( virtualHost.getAudience() ).thenReturn( audience );
-        when( virtualHost.acceptsAudience( any(), any() ) ).thenCallRealMethod();
-        return virtualHost;
+        final VirtualHostIdProvidersMapping idProviders =
+            VirtualHostIdProvidersMapping.create().addIdProviderWithSettings( IdProviderKey.system(), VirtualHostIdProvider.create().build() ).build();
+        return new VirtualHostMapping( "test", "admin.example.com", "/", "/", idProviders, 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
+                                       PrincipalKeys.empty(), audience );
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.mapper;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,12 +24,15 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -116,10 +120,11 @@ class PortalRequestMapperTest
     {
         this.portalRequest.setIdProvider( idProvider );
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), settings ) );
-        Mockito.when( virtualHost.getAudience() ).thenReturn( audience );
-        this.portalRequest.setVirtualHost( virtualHost );
+        final VirtualHostIdProvidersMapping idProviders =
+            VirtualHostIdProvidersMapping.create().addIdProviderWithSettings( IdProviderKey.system(), settings ).build();
+        this.portalRequest.setVirtualHost(
+            new VirtualHostMapping( "m", "localhost", "/", "/", idProviders, 0, Map.of(), DispatchConstants.WEB_CONNECTOR, PrincipalKeys.empty(),
+                                    audience ) );
     }
 
     @Test
@@ -150,9 +155,9 @@ class PortalRequestMapperTest
         context.put( "userCode", "BCDF-GHJK" );
         final Map<String, Object> scope = new java.util.LinkedHashMap<>();
         scope.put( "id", "content:read" );
-        scope.put( "roles", java.util.List.of( "role:cms.cm.app" ) );
+        scope.put( "roles", List.of( "role:cms.cm.app" ) );
         scope.put( "required", true );
-        context.put( "scope", java.util.List.of( scope ) );
+        context.put( "scope", List.of( scope ) );
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
         Mockito.when( rawRequest.getAttribute( OAuthHandler.CONTEXT_ATTRIBUTE ) ).thenReturn( context );
         this.portalRequest.setRawRequest( rawRequest );

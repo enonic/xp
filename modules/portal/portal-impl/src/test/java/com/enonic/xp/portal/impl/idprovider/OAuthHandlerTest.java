@@ -55,8 +55,11 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostService;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -66,6 +69,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -634,7 +638,7 @@ class OAuthHandlerTest
             .subject( ALICE )
             .clientId( "cli" )
             .scope( Set.of() )
-            .audience( Set.of( "api", "mgmt" ) )
+            .audience( Set.of( "api", "mgmt", "https://x.example.com/api/mcp" ) )
             .restriction( RoleRestriction.none() )
             .createdAt( now )
             .rotatedAt( now )
@@ -652,14 +656,21 @@ class OAuthHandlerTest
         assertThat( token.getValue().getAudience() ).as( "the token is for what was asked" ).containsExactly( "api" );
         assertThat( token.getValue().getNotAfter() ).as( "and ends with the grant at the latest" ).isEqualTo( grant.getExpiresAt() );
 
+        final PortalRequest under = request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) );
+        under.getParams().put( "resource", "https://x.example.com/api/mcp/tools" );
+        assertThat( handler.handle( under, IDP, "token", UNRESTRICTED ).getStatus() ).as( "a URL under one the grant holds" ).isEqualTo( HttpStatus.OK );
+        final ArgumentCaptor<IssueAccessTokenParams> narrowed = ArgumentCaptor.forClass( IssueAccessTokenParams.class );
+        verify( accessTokenService, times( 2 ) ).issue( narrowed.capture() );
+        assertThat( narrowed.getValue().getAudience() ).containsExactly( "https://x.example.com/api/mcp/tools" );
+
         final PortalRequest beyond = request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) );
         beyond.getParams().put( "resource", "api" );
-        beyond.getParams().put( "resource", "other" );
+        beyond.getParams().put( "resource", "https://x.example.com/api/mcpx" );
         final PortalResponse refused = handler.handle( beyond, IDP, "token", UNRESTRICTED );
         assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_target" );
         verify( grantService, never() ).revoke( any(), any() );
         verify( grantService, never() ).update( any() );
-        verify( grantService, Mockito.times( 1 ) ).redeem( any() );
+        verify( grantService, Mockito.times( 2 ) ).redeem( any() );
     }
 
     @Test
@@ -973,6 +984,12 @@ class OAuthHandlerTest
         assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.none() );
     }
 
+    private static VirtualHost mapping( final String host, final String source, final Set<String> audience )
+    {
+        return new VirtualHostMapping( "m", host, source, "/", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
+                                       DispatchConstants.WEB_CONNECTOR, PrincipalKeys.empty(), audience );
+    }
+
     @Test
     void a_request_for_scopes_is_denied_once_the_id_provider_has_none()
         throws Exception
@@ -995,37 +1012,67 @@ class OAuthHandlerTest
     }
 
     @Test
-    void audiences_are_what_the_vhosts_serve()
+    void a_resource_is_a_mappings_identifier_a_configured_audience_or_xp_itself()
         throws Exception
     {
-        final VirtualHost api = mock( VirtualHost.class );
-        when( api.getAudience() ).thenReturn( Set.of( "api" ) );
-        final VirtualHost mgmt = mock( VirtualHost.class );
-        when( mgmt.getAudience() ).thenReturn( Set.of( "management" ) );
-        final VirtualHost plain = mock( VirtualHost.class );
-        when( plain.getAudience() ).thenReturn( Set.of() );
-        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( api, mgmt, plain ) );
+        final VirtualHost api = mapping( "api.example.com", "/", Set.of( "api" ) );
+        final VirtualHost mcp = mapping( "~.*\\.example\\.com", "/api/mcp", Set.of() );
+        final VirtualHost mgmt = mapping( "mgmt.example.com", "/", Set.of() );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( api, mcp, mgmt ) );
 
-        final PortalRequest unknown = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
-        unknown.getParams().put( "resource", "api" );
-        unknown.getParams().put( "resource", "other" );
-        final PortalResponse refused = handler.handle( unknown, IDP, "device/code", UNRESTRICTED );
-        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_target" );
-        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "other" ).doesNotContain( "api" );
+        for ( String unknown : List.of( "other", "https://mgmt.example.com/", "https://api.example.com", "https://x.example.com/api/mcp/tools",
+                                        "ftp://mgmt.example.com", "https://elsewhere.org" ) )
+        {
+            final PortalRequest request = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+            request.getParams().put( "resource", unknown );
+            final PortalResponse refused = handler.handle( request, IDP, "device/code", UNRESTRICTED );
+            assertThat( body( refused ).get( "error" ).asText() ).as( unknown ).isEqualTo( "invalid_target" );
+            assertThat( body( refused ).get( "error_description" ).asText() ).contains( unknown );
+        }
 
-        final PortalRequest one = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
-        one.getParams().put( "resource", "api" );
-        final JsonNode issuedOne = body( handler.handle( one, IDP, "device/code", UNRESTRICTED ) );
-        final JsonNode issuedAll = body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP,
-                                                         "device/code", UNRESTRICTED ) );
+        final PortalRequest several = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        several.getParams().put( "resource", "api" );
+        several.getParams().put( "resource", "https://x.example.com/api/mcp" );
+        several.getParams().put( "resource", "https://mgmt.example.com" );
+        several.getParams().put( "resource", "xp" );
+        final JsonNode issued = body( handler.handle( several, IDP, "device/code", UNRESTRICTED ) );
         asAlice( () -> {
-            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issuedOne.get( "user_code" ).asText() ) ), IDP,
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issued.get( "user_code" ).asText() ) ), IDP, "device",
+                            UNRESTRICTED );
+            @SuppressWarnings("unchecked") final List<String> audience = (List<String>) lastContext.get( "audience" );
+            assertThat( audience ).containsExactlyInAnyOrder( "api", "https://x.example.com/api/mcp", "https://mgmt.example.com", "xp" );
+            return null;
+        } );
+    }
+
+    @Test
+    void naming_no_resource_gets_xp_itself_and_the_mapping_the_request_came_through()
+        throws Exception
+    {
+        final PortalRequest outside = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        final JsonNode issuedOutside = body( handler.handle( outside, IDP, "device/code", UNRESTRICTED ) );
+
+        final PortalRequest viaMapping = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        viaMapping.setVirtualHost( mapping( "admin.example.com", "/admin", Set.of() ) );
+        viaMapping.setPort( 443 );
+        final JsonNode issuedViaMapping = body( handler.handle( viaMapping, IDP, "device/code", UNRESTRICTED ) );
+
+        final PortalRequest viaConfigured = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        viaConfigured.setVirtualHost( mapping( "admin.example.com", "/", Set.of( "management", "ops" ) ) );
+        final JsonNode issuedViaConfigured = body( handler.handle( viaConfigured, IDP, "device/code", UNRESTRICTED ) );
+
+        asAlice( () -> {
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issuedOutside.get( "user_code" ).asText() ) ), IDP,
                             "device", UNRESTRICTED );
-            assertThat( lastContext ).containsEntry( "audience", List.of( "api" ) );
-            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issuedAll.get( "user_code" ).asText() ) ), IDP,
+            assertThat( lastContext ).containsEntry( "audience", List.of( "xp" ) );
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issuedViaMapping.get( "user_code" ).asText() ) ), IDP,
                             "device", UNRESTRICTED );
-            @SuppressWarnings("unchecked") final List<String> all = (List<String>) lastContext.get( "audience" );
-            assertThat( all ).as( "no resource: XP itself and everything served" ).containsExactlyInAnyOrder( "xp", "api", "management" );
+            @SuppressWarnings("unchecked") final List<String> own = (List<String>) lastContext.get( "audience" );
+            assertThat( own ).containsExactlyInAnyOrder( "xp", "https://admin.example.com/admin" );
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issuedViaConfigured.get( "user_code" ).asText() ) ), IDP,
+                            "device", UNRESTRICTED );
+            @SuppressWarnings("unchecked") final List<String> configured = (List<String>) lastContext.get( "audience" );
+            assertThat( configured ).containsExactlyInAnyOrder( "xp", "management", "ops" );
             return null;
         } );
     }

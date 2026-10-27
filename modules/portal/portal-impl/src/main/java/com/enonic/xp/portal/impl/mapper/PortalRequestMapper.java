@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.mapper;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.auth.AccessTokenInfo;
+import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 public final class PortalRequestMapper
@@ -67,7 +69,11 @@ public final class PortalRequestMapper
         if ( idProviderSettings != null )
         {
             gen.map( "idProviderSettings" );
-            new IdProviderSettingsMapper( idProviderSettings, this.request.getVirtualHost().getAudience() ).serialize( gen );
+            final VirtualHost virtualHost = this.request.getVirtualHost();
+            final Set<String> audience = virtualHost.getAudience().isEmpty()
+                ? Set.of( virtualHost.identifier( this.request.getScheme(), this.request.getHost(), this.request.getPort() ) )
+                : virtualHost.getAudience();
+            new IdProviderSettingsMapper( idProviderSettings, audience ).serialize( gen );
             gen.end();
         }
 
