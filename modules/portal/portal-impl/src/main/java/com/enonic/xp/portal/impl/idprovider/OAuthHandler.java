@@ -157,7 +157,7 @@ public class OAuthHandler
                 requireSupport( idProvider );
                 return deviceAuthorization( request, idProvider, settings.getScopes() );
             } );
-            case OAuthEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings.getFlows() ) );
+            case OAuthEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings ) );
             case OAuthEndpoints.DEVICE -> switch ( method )
             {
                 case GET, HEAD ->
@@ -368,12 +368,12 @@ public class OAuthHandler
         }
     }
 
-    private PortalResponse token( final PortalRequest request, final IdProviderKey idProvider, final Set<String> flows )
+    private PortalResponse token( final PortalRequest request, final IdProviderKey idProvider, final VirtualHostIdProvider settings )
     {
         final String grantType = param( request, "grant_type" );
         if ( DEVICE_CODE_GRANT.equals( grantType ) )
         {
-            if ( !flows.isEmpty() && !flows.contains( IdProviderFlow.DEVICE ) )
+            if ( !settings.serves( IdProviderFlow.DEVICE ) )
             {
                 return oauthError( HttpStatus.BAD_REQUEST, "unauthorized_client", "The device flow is disabled here" );
             }

@@ -1,8 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,9 +87,6 @@ public class IdentityHandler
 
         String idProviderFunction = matcher.group( "fun" );
 
-        // Custom endpoints are always dispatched: the id provider app gates them itself, guided by
-        // the vhost's flow list on the request.
-        final Set<String> flows = idProvider.getFlows();
         if ( OAuthEndpoints.isEndpoint( idProviderFunction ) )
         {
             if ( !DispatchConstants.WEB_CONNECTOR.equals( webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
@@ -101,9 +96,9 @@ public class IdentityHandler
             final String requiredFlow = OAuthEndpoints.requiredFlow( idProviderFunction );
             if ( requiredFlow != null )
             {
-                requireFlow( flows, requiredFlow, idProviderKey );
+                requireFlow( idProvider, requiredFlow, idProviderKey );
             }
-            else if ( !flows.isEmpty() && Collections.disjoint( flows, OAuthEndpoints.ISSUING_FLOWS ) )
+            else if ( OAuthEndpoints.ISSUING_FLOWS.stream().noneMatch( idProvider::serves ) )
             {
                 throw WebException.forbidden(
                     String.format( "No token-issuing flow %s is enabled for '%s' id provider", OAuthEndpoints.ISSUING_FLOWS,
@@ -114,7 +109,7 @@ public class IdentityHandler
 
         if ( idProviderFunction != null )
         {
-            requireFlow( flows, "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN, idProviderKey );
+            requireFlow( idProvider, "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN, idProviderKey );
         }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
@@ -122,9 +117,9 @@ public class IdentityHandler
         return doHandle( idProviderKey, idProviderFunction, portalRequest );
     }
 
-    private static void requireFlow( final Set<String> flows, final String requiredFlow, final IdProviderKey idProviderKey )
+    private static void requireFlow( final VirtualHostIdProvider settings, final String requiredFlow, final IdProviderKey idProviderKey )
     {
-        if ( !flows.isEmpty() && !flows.contains( requiredFlow ) )
+        if ( !settings.serves( requiredFlow ) )
         {
             throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
         }

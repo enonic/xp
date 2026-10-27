@@ -19,6 +19,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
@@ -87,9 +88,10 @@ public final class VirtualHostFilter
                                                  final String connector )
         throws Exception
     {
-        // No flow restriction: interactive login exists on the web connector only, structurally.
-        final VirtualHostIdProvidersMapping idProvidersMapping =
-            VirtualHostIdProvidersMapping.create().setDefaultIdProvider( IdProviderKey.system() ).build();
+        final VirtualHostIdProvidersMapping idProvidersMapping = VirtualHostIdProvidersMapping.create()
+            .addIdProviderWithSettings( IdProviderKey.system(), VirtualHostIdProvider.create().allFlows().build() )
+            .setDefaultIdProvider( IdProviderKey.system() )
+            .build();
 
         final String serverName = req.getServerName();
         VirtualHostHelper.setVirtualHost( req, new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping,

@@ -1,11 +1,15 @@
 package com.enonic.xp.web.vhost;
 
+import java.util.Set;
+
 import org.jspecify.annotations.NullMarked;
 
 /**
  * The authentication flows an id provider may serve on a virtual host, configured per id provider
  * in the vhost mapping, for example {@code idProvider.<name>.flows = login,autologin}. Without a
- * flow list the id provider serves whatever flows it supports.
+ * flow list the id provider serves whatever flows it supports, except {@link #TOKEN_FLOWS}, which a
+ * configured mapping serves only when its list names them. The default virtual host, used where no
+ * mapping is configured, serves every flow.
  * <p>
  * {@link #LOGIN}, {@link #AUTOLOGIN}, {@link #LOGOUT} and {@link #DEVICE} are XP's. Any other name
  * is a flow of the id provider app itself.
@@ -36,6 +40,11 @@ public final class IdProviderFlow
      * verification page, and accepts the device-code grant at the token endpoint. Web endpoint only.
      */
     public static final String DEVICE = "device";
+
+    /**
+     * The flows that issue tokens to clients: off on a configured mapping unless its list names them.
+     */
+    public static final Set<String> TOKEN_FLOWS = Set.of( DEVICE );
 
     private IdProviderFlow()
     {
