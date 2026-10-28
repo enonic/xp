@@ -123,6 +123,10 @@ class OAuthHandlerTest
         when( idProviderControllerService.hasFunction( any(), eq( OAuthHandler.CONSENT_FUNCTION ) ) ).thenReturn( true );
         when( idProviderControllerService.execute( any() ) ).thenAnswer( i -> {
             final IdProviderControllerExecutionParams params = i.getArgument( 0 );
+            if ( OAuthHandler.LOGIN_FUNCTION.equals( params.getFunctionName() ) )
+            {
+                return PortalResponse.create().status( HttpStatus.UNAUTHORIZED ).contentType( MediaType.HTML_UTF_8 ).body( "login" ).build();
+            }
             @SuppressWarnings("unchecked") final Map<String, Object> context =
                 (Map<String, Object>) params.getPortalRequest().getRawRequest().getAttribute( OAuthHandler.CONTEXT_ATTRIBUTE );
             lastContext = context;
@@ -323,8 +327,9 @@ class OAuthHandlerTest
         assertThat( body( handler.handle( poll, IDP, "token", UNRESTRICTED ) ).get( "error" ).asText() ).isEqualTo( "slow_down" );
 
         final PortalRequest page = request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) );
-        assertThat( handler.handle( page, IDP, "device", UNRESTRICTED ).getStatus() ).isEqualTo( HttpStatus.UNAUTHORIZED );
-        verify( idProviderControllerService, Mockito.never() ).execute( any() );
+        final PortalResponse login = handler.handle( page, IDP, "device", UNRESTRICTED );
+        assertThat( login.getStatus() ).isEqualTo( HttpStatus.UNAUTHORIZED );
+        assertThat( login.getBody() ).isEqualTo( "login" );
 
         final String[] csrf = new String[1];
         asAlice( () -> {
@@ -511,6 +516,51 @@ class OAuthHandlerTest
             "token", UNRESTRICTED );
         assertThat( body( refresh ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
         verify( idProviderControllerService, Mockito.never() ).execute( any() );
+    }
+
+    @Test
+    void not_signed_in_gets_the_id_providers_login_page()
+        throws Exception
+    {
+        final PortalRequest page = request( HttpMethod.GET, "device", Map.of() );
+        final PortalResponse response = handler.handle( page, IDP, "device", UNRESTRICTED );
+
+        assertThat( response.getStatus() ).isEqualTo( HttpStatus.UNAUTHORIZED );
+        assertThat( response.getBody() ).isEqualTo( "login" );
+        final ArgumentCaptor<IdProviderControllerExecutionParams> params = ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
+        verify( idProviderControllerService ).execute( params.capture() );
+        assertThat( params.getValue().getFunctionName() ).isEqualTo( "handle401" );
+        assertThat( params.getValue().getIdProviderKey() ).isEqualTo( IDP );
+        assertThat( params.getValue().getPortalRequest() ).isSameAs( page );
+        assertThat( page.getRawRequest().getAttribute( "error.handled" ) ).isEqualTo( Boolean.TRUE );
+    }
+
+    @Test
+    void not_signed_in_where_login_is_not_served_gets_a_bare_401()
+        throws Exception
+    {
+        final VirtualHostIdProvider deviceOnly = VirtualHostIdProvider.create().flows( Set.of( "device" ) ).build();
+        final PortalRequest page = request( HttpMethod.GET, "device", Map.of() );
+        final PortalResponse response = handler.handle( page, IDP, "device", deviceOnly );
+
+        assertThat( response.getStatus() ).isEqualTo( HttpStatus.UNAUTHORIZED );
+        assertThat( response.getBody() ).isNull();
+        verify( idProviderControllerService, never() ).execute( any() );
+        assertThat( page.getRawRequest().getAttribute( "error.handled" ) ).isNull();
+    }
+
+    @Test
+    void not_signed_in_without_a_login_page_gets_a_bare_401()
+        throws Exception
+    {
+        doAnswer( i -> null ).when( idProviderControllerService )
+            .execute( argThat( p -> OAuthHandler.LOGIN_FUNCTION.equals( p.getFunctionName() ) ) );
+        final PortalRequest page = request( HttpMethod.GET, "device", Map.of() );
+        final PortalResponse response = handler.handle( page, IDP, "device", UNRESTRICTED );
+
+        assertThat( response.getStatus() ).isEqualTo( HttpStatus.UNAUTHORIZED );
+        assertThat( response.getBody() ).isNull();
+        assertThat( page.getRawRequest().getAttribute( "error.handled" ) ).isNull();
     }
 
     @Test
@@ -1596,9 +1646,9 @@ class OAuthHandlerTest
     {
         final String redirectUri = "http://127.0.0.1:51234/callback";
         final PortalRequest anonymous = request( HttpMethod.GET, "authorize", authorizeParams( redirectUri ) );
-        assertThat( handler.handle( anonymous, IDP, "authorize", UNRESTRICTED ).getStatus() ).as( "the vhost's login takes over" )
-            .isEqualTo( HttpStatus.UNAUTHORIZED );
-        verify( idProviderControllerService, Mockito.never() ).execute( any() );
+        final PortalResponse login = handler.handle( anonymous, IDP, "authorize", UNRESTRICTED );
+        assertThat( login.getStatus() ).isEqualTo( HttpStatus.UNAUTHORIZED );
+        assertThat( login.getBody() ).isEqualTo( "login" );
 
         final PortalResponse back = decide( authorizeParams( redirectUri ), true );
 
