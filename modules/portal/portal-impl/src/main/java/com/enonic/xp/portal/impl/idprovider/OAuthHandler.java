@@ -107,6 +107,8 @@ public class OAuthHandler
 
     static final String CONSENT_FUNCTION = "oauthConsent";
 
+    static final String LOGIN_FUNCTION = "handle401";
+
     private static final String CSRF_SESSION_ATTRIBUTE = "com.enonic.xp.portal.idprovider.device.csrf";
 
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
@@ -187,12 +189,12 @@ public class OAuthHandler
                 case GET, HEAD ->
                 {
                     requireSupport( idProvider );
-                    yield authorizationRequest( request, idProvider );
+                    yield authorizationRequest( request, idProvider, settings );
                 }
                 case POST ->
                 {
                     requireSupport( idProvider );
-                    yield authorizationSubmit( request, idProvider );
+                    yield authorizationSubmit( request, idProvider, settings );
                 }
                 default -> throw methodNotAllowed( method );
             };
@@ -201,12 +203,12 @@ public class OAuthHandler
                 case GET, HEAD ->
                 {
                     requireSupport( idProvider );
-                    yield verificationPage( request, idProvider );
+                    yield verificationPage( request, idProvider, settings );
                 }
                 case POST ->
                 {
                     requireSupport( idProvider );
-                    yield verificationSubmit( request, idProvider );
+                    yield verificationSubmit( request, idProvider, settings );
                 }
                 default -> throw methodNotAllowed( method );
             };
@@ -365,7 +367,8 @@ public class OAuthHandler
      * A request with a redirect URI the client may not use is answered here; any other fault is
      * reported to the client at its redirect URI, with the state it sent.
      */
-    private PortalResponse authorizationRequest( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse authorizationRequest( final PortalRequest request, final IdProviderKey idProvider,
+                                                  final VirtualHostIdProvider settings )
     {
         final String clientId = clientId( request );
         if ( clientId == null )
@@ -411,7 +414,7 @@ public class OAuthHandler
         final Optional<User> user = signedInUserOf( idProvider );
         if ( user.isEmpty() )
         {
-            return notSignedIn( request, idProvider );
+            return notSignedIn( request, idProvider, settings );
         }
         final AuthorizationCodeStore.PendingAuthorization pending =
             codes.createRequest( idProvider, clientId, redirectUri.trim(), state, codeChallenge, asked.scope(), asked.audience(),
@@ -424,13 +427,14 @@ public class OAuthHandler
     /**
      * {@code POST authorize}: records the decision and sends the browser back to the client.
      */
-    private PortalResponse authorizationSubmit( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse authorizationSubmit( final PortalRequest request, final IdProviderKey idProvider,
+                                                 final VirtualHostIdProvider settings )
     {
         requireInteractiveSignIn( request );
         final Optional<User> user = signedInUserOf( idProvider );
         if ( user.isEmpty() )
         {
-            return notSignedIn( request, idProvider );
+            return notSignedIn( request, idProvider, settings );
         }
         if ( !csrfToken( user.get().getKey() ).equals( param( request, "_csrf" ) ) )
         {
@@ -722,13 +726,14 @@ public class OAuthHandler
         }
     }
 
-    private PortalResponse verificationPage( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse verificationPage( final PortalRequest request, final IdProviderKey idProvider,
+                                              final VirtualHostIdProvider settings )
     {
         requireInteractiveSignIn( request );
         final Optional<User> user = signedInUserOf( idProvider );
         if ( user.isEmpty() )
         {
-            return notSignedIn( request, idProvider );
+            return notSignedIn( request, idProvider, settings );
         }
         final String userCode = param( request, "user_code" );
         if ( userCode == null || userCode.isBlank() )
@@ -751,13 +756,14 @@ public class OAuthHandler
                                                              p.scope(), p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
     }
 
-    private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider,
+                                                final VirtualHostIdProvider settings )
     {
         requireInteractiveSignIn( request );
         final Optional<User> user = signedInUserOf( idProvider );
         if ( user.isEmpty() )
         {
-            return notSignedIn( request, idProvider );
+            return notSignedIn( request, idProvider, settings );
         }
         if ( !csrfToken( user.get().getKey() ).equals( param( request, "_csrf" ) ) )
         {
@@ -788,7 +794,7 @@ public class OAuthHandler
         return switch ( store.resolve( idProvider, userCode, granted, user.get().getKey(), kept, restriction ) )
         {
             case GONE -> render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
-            case SHOWN_TO_ANOTHER -> verificationPage( request, idProvider );
+            case SHOWN_TO_ANOTHER -> verificationPage( request, idProvider, settings );
             case RESOLVED -> render( request, idProvider, new OAuthConsentContext.Done( idProvider, user.get(), granted ) );
         };
     }
@@ -1121,14 +1127,44 @@ public class OAuthHandler
         }
     }
 
-    private PortalResponse notSignedIn( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse notSignedIn( final PortalRequest request, final IdProviderKey idProvider,
+                                        final VirtualHostIdProvider settings )
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         if ( authInfo.isAuthenticated() )
         {
             return render( request, idProvider, new OAuthConsentContext.WrongAccount( idProvider, authInfo.getUser() ) );
         }
+        if ( settings.serves( IdProviderFlow.LOGIN ) )
+        {
+            final PortalResponse loginPage = loginPage( request, idProvider );
+            if ( loginPage != null )
+            {
+                return loginPage;
+            }
+        }
         return PortalResponse.create().status( HttpStatus.UNAUTHORIZED ).build();
+    }
+
+    private @Nullable PortalResponse loginPage( final PortalRequest request, final IdProviderKey idProvider )
+    {
+        try
+        {
+            final PortalResponse page = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
+                                                                                 .idProviderKey( idProvider )
+                                                                                 .functionName( LOGIN_FUNCTION )
+                                                                                 .portalRequest( request )
+                                                                                 .build() );
+            if ( page != null && request.getRawRequest() != null )
+            {
+                request.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+            }
+            return page;
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     /**
