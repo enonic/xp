@@ -50,16 +50,12 @@ public final class ApplicationServiceImpl
 
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
-    private final ApplicationGeneration applicationGeneration;
-
     @Activate
     public ApplicationServiceImpl( @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
                                    @Reference final AppFilterService appFilterService,
-                                   @Reference final ApplicationAuditLogSupport applicationAuditLogSupport,
-                                   @Reference final ApplicationGeneration applicationGeneration )
+                                   @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
-        this.applicationGeneration = applicationGeneration;
         this.registry = applicationRegistry;
         this.repoService = repoService;
         this.eventPublisher = eventPublisher;
@@ -253,7 +249,6 @@ public final class ApplicationServiceImpl
             }
 
             this.repoService.deleteApplicationNode( key );
-            this.applicationGeneration.bump( key );
             this.applicationAuditLogSupport.uninstallApplication( key );
 
             // published once the nodes are gone: a listener listing the applications on this event no longer finds it
@@ -297,7 +292,6 @@ public final class ApplicationServiceImpl
         // cluster node as well as on the others receiving the install event. Whatever an earlier version persisted
         // (a schema the new version no longer ships, for instance) is replaced.
         repoService.persistApplicationSchema( applicationKey, prepared.schemaResources() );
-        this.applicationGeneration.bump( applicationKey );
 
         this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
 
@@ -460,7 +454,6 @@ public final class ApplicationServiceImpl
     private Application doInstallApplication( final ByteSource byteSource, final ApplicationKey applicationKey, final boolean local )
     {
         final Application application = this.registry.install( applicationKey, byteSource, local );
-        this.applicationGeneration.bump( applicationKey );
         this.eventPublisher.publish( ApplicationEvents.installed( applicationKey ) );
         return application;
     }
@@ -468,21 +461,18 @@ public final class ApplicationServiceImpl
     private void doUninstallApplication( final ApplicationKey applicationKey )
     {
         registry.uninstall( applicationKey );
-        this.applicationGeneration.bump( applicationKey );
         this.eventPublisher.publish( ApplicationEvents.uninstalled( applicationKey ) );
     }
 
     private void doStartApplication( final ApplicationKey applicationKey )
     {
         this.registry.start( applicationKey );
-        this.applicationGeneration.bump( applicationKey );
         this.eventPublisher.publish( ApplicationEvents.started( applicationKey ) );
     }
 
     private void doStopApplication( final ApplicationKey applicationKey )
     {
         this.registry.stop( applicationKey );
-        this.applicationGeneration.bump( applicationKey );
         this.eventPublisher.publish( ApplicationEvents.stopped( applicationKey ) );
     }
 
@@ -551,7 +541,6 @@ public final class ApplicationServiceImpl
                             {
                                 this.registry.uninstall( applicationKey );
                             }
-                            this.applicationGeneration.bump( applicationKey );
                             this.eventPublisher.publish( ApplicationEvents.uninstalled( applicationKey ) );
                         } );
                         break;

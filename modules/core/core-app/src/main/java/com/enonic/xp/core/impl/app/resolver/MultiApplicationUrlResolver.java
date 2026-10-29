@@ -39,4 +39,11 @@ public final class MultiApplicationUrlResolver
     {
         return Arrays.stream( this.list ).allMatch( ApplicationUrlResolver::isStable );
     }
+
+    @Override
+    public Object revision()
+    {
+        // the revisions of the parts in their order, those without one as null
+        return Arrays.stream( this.list ).map( ApplicationUrlResolver::revision ).toList();
+    }
 }

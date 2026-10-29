@@ -1,9 +1,12 @@
 package com.enonic.xp.core.impl.app;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,6 +116,8 @@ class ApplicationRepoServiceImplTest
 
         assertEquals( "app-descriptor", edited.getString( SchemaNodePropertyNames.DESCRIPTOR ) );
         assertNull( edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
+        // the schema as shipped: no revision since
+        assertEquals( 0, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
 
         final ArgumentCaptor<CreateNodeParams> captor = ArgumentCaptor.forClass( CreateNodeParams.class );
         Mockito.verify( this.nodeService, Mockito.times( 4 ) ).create( captor.capture() );
@@ -188,13 +193,15 @@ class ApplicationRepoServiceImplTest
         // the application node is the only node written: no cms marker for an application without a schema
         Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
 
+        // the application node is written twice: the descriptor with the icon, then the revision
         final ArgumentCaptor<UpdateNodeParams> captor = ArgumentCaptor.forClass( UpdateNodeParams.class );
-        Mockito.verify( this.nodeService ).update( captor.capture() );
-        assertEquals( APP_PATH, captor.getValue().getPath() );
+        Mockito.verify( this.nodeService, Mockito.times( 2 ) ).update( captor.capture() );
+        assertEquals( APP_PATH, captor.getAllValues().get( 0 ).getPath() );
         assertEquals( "app-descriptor", edited.getString( SchemaNodePropertyNames.DESCRIPTOR ) );
         assertEquals( SVG_ICON, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
-        assertEquals( 1, captor.getValue().getBinaryAttachments().getSize() );
-        assertNotNull( captor.getValue().getBinaryAttachments().get( SVG_ICON ) );
+        assertEquals( 0, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        assertEquals( 1, captor.getAllValues().get( 0 ).getBinaryAttachments().getSize() );
+        assertNotNull( captor.getAllValues().get( 0 ).getBinaryAttachments().get( SVG_ICON ) );
     }
 
     @Test
@@ -259,9 +266,9 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService ).delete( deleteCaptor.capture() );
         assertEquals( CMS_PATH, deleteCaptor.getValue().getNodePath() );
         Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
-        // nothing on the application node to remove: its only update marks the schema changed
+        // nothing on the application node to remove: its only update marks the schema persisted
         Mockito.verify( this.nodeService ).update( Mockito.any( UpdateNodeParams.class ) );
-        assertEquals( 1, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        assertEquals( 0, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
         Mockito.verify( this.nodeService ).refresh( RefreshMode.ALL );
     }
 
@@ -296,20 +303,27 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService, Mockito.never() ).refresh( Mockito.any() );
     }
 
+    // a schema persisted anew replaces the revision counted up by the schema API: removed with the old schema, zero is written
+    // once the new one is, and the application node gets a new version from a value it did not hold
     @Test
-    void delete_schema_removes_persisted_nodes()
+    void persist_schema_resets_the_revision_written_last()
     {
         Mockito.when( this.nodeService.nodeExists( CMS_PATH ) ).thenReturn( true );
-        final PropertyTree edited = stubApplicationNode( descriptorData( "old", SchemaResourcePaths.SVG_MIME_TYPE ) );
+        final PropertyTree data = descriptorData( "old", null );
+        data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 3L );
+        final List<Long> revisions = new ArrayList<>();
+        final PropertyTree edited = stubApplicationNode( data, after -> revisions.add( after.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
+        stubCreate();
 
-        this.service.deleteApplicationSchema( ApplicationKey.from( "myBundle" ) );
+        this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ),
+                                               Map.of( "cms/cms.yaml", ByteSource.wrap( "cms".getBytes( StandardCharsets.UTF_8 ) ) ) );
 
-        final ArgumentCaptor<DeleteNodeParams> deleteCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
-        Mockito.verify( this.nodeService ).delete( deleteCaptor.capture() );
-        assertEquals( CMS_PATH, deleteCaptor.getValue().getNodePath() );
-        assertNull( edited.getString( SchemaNodePropertyNames.DESCRIPTOR ) );
-        assertNull( edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
-        Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
+        // removed with the old schema, written as zero after the new one
+        assertEquals( Arrays.asList( null, 0L ), revisions );
+        assertEquals( 0, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        final InOrder inOrder = Mockito.inOrder( this.nodeService );
+        inOrder.verify( this.nodeService, Mockito.times( 2 ) ).create( Mockito.any( CreateNodeParams.class ) );
+        inOrder.verify( this.nodeService ).update( Mockito.any( UpdateNodeParams.class ) );
     }
 
     @Test
@@ -325,20 +339,10 @@ class ApplicationRepoServiceImplTest
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), resources );
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), resources );
 
-        // the descriptor, then the revision, once per persist
-        Mockito.verify( this.nodeService, Mockito.times( 4 ) ).update( Mockito.any( UpdateNodeParams.class ) );
-        assertEquals( 2, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
-    }
-
-    @Test
-    void delete_schema_without_persisted_schema_is_noop()
-    {
-        stubApplicationNode( new PropertyTree() );
-
-        this.service.deleteApplicationSchema( ApplicationKey.from( "myBundle" ) );
-
-        Mockito.verify( this.nodeService, Mockito.never() ).delete( Mockito.any( DeleteNodeParams.class ) );
-        Mockito.verify( this.nodeService, Mockito.never() ).update( Mockito.any( UpdateNodeParams.class ) );
+        // the descriptor, then the revision, once per persist; the second persist removes both first: the schema is the shipped
+        // one, no revision since
+        Mockito.verify( this.nodeService, Mockito.times( 5 ) ).update( Mockito.any( UpdateNodeParams.class ) );
+        assertEquals( 0, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
     }
 
     @Test
@@ -354,6 +358,8 @@ class ApplicationRepoServiceImplTest
         assertEquals( "myapp", captor.getValue().getName().toString() );
         assertEquals( ApplicationRepoServiceImpl.APPLICATIONS_ROOT, captor.getValue().getParent() );
         assertNotNull( captor.getValue().getData().getInstant( "modifiedTime" ) );
+        // created without a schema: nothing changed since
+        assertEquals( 0, captor.getValue().getData().getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
         assertNull( captor.getValue().getData().getBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
         assertEquals( 0, captor.getValue().getBinaryAttachments().getSize() );
     }
@@ -501,12 +507,22 @@ class ApplicationRepoServiceImplTest
      */
     private PropertyTree stubApplicationNode( final PropertyTree data )
     {
+        return stubApplicationNode( data, after -> {
+        } );
+    }
+
+    /**
+     * @param afterUpdate told the data as edited after every update of the node
+     */
+    private PropertyTree stubApplicationNode( final PropertyTree data, final Consumer<PropertyTree> afterUpdate )
+    {
         final Node node = applicationNode( data );
         final EditableNode editable = new EditableNode( node );
-        Mockito.when( this.nodeService.getByPath( APP_PATH ) ).thenReturn( node );
+        Mockito.when( this.nodeService.getByPath( APP_PATH ) ).thenAnswer( invocation -> applicationNode( editable.data ) );
         Mockito.when( this.nodeService.nodeExists( APP_PATH ) ).thenReturn( true );
         Mockito.when( this.nodeService.update( Mockito.any( UpdateNodeParams.class ) ) ).thenAnswer( invocation -> {
             invocation.getArgument( 0, UpdateNodeParams.class ).getEditor().edit( editable );
+            afterUpdate.accept( editable.data );
             return node;
         } );
         return editable.data;

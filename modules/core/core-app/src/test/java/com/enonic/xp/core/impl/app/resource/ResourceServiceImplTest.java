@@ -23,9 +23,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
-import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
@@ -40,6 +38,7 @@ import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.Repository;
@@ -59,6 +58,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -74,8 +74,6 @@ class ResourceServiceImplTest
     ResourceServiceImpl resourceService;
 
     ApplicationFactoryService applicationFactoryService;
-
-    ApplicationGeneration applicationGeneration;
 
     Bundle bundle;
 
@@ -103,8 +101,7 @@ class ResourceServiceImplTest
         when( applicationFactoryService.findResolver( appKey, null ) ).thenReturn( Optional.of( app.getUrlResolver() ) );
         when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( bundle ) );
 
-        applicationGeneration = new ApplicationGeneration( mock( NodeService.class ) );
-        resourceService = new ResourceServiceImpl( applicationFactoryService, applicationGeneration );
+        resourceService = new ResourceServiceImpl( applicationFactoryService );
     }
 
     private Bundle newBundle( final long bundleId )
@@ -177,37 +174,37 @@ class ResourceServiceImplTest
         assertEquals( "myapp:/a.txt->5", value5 );
     }
 
+    // the application node is read on every use of a persisted application, hit or miss: its version is the stamp of the value
     @Test
-    void applicationNode_checkedOnceWithinTheInterval()
-        throws Exception
+    void applicationNode_readOnEveryUse()
     {
-        newFile( "a.txt" );
-        final NodeService nodeService = mock( NodeService.class );
-        resourceService = new ResourceServiceImpl( applicationFactoryService, new ApplicationGeneration( nodeService ) );
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
 
-        processResource( "segment1", "a.txt", "1" );
-        processResource( "segment1", "a.txt", "2" );
-        this.resourceService.findFiles( this.appKey, ".+" );
+        processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp" ) );
 
-        // read on first use, the interval not passed since
-        verify( nodeService, times( 1 ) ).getByPath( any() );
+        processResource( "segment1", "cms/parts/my-part.yaml", "2" );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp" ) );
     }
 
-    // the service does not know what an application is served from: a local one is checked the same way and finds no node
+    // an application served from its bundle alone (a local one, a system one) has no node to read: the resolver knows its source
     @Test
-    void applicationNode_checkedForLocalApplicationTheSameWay()
+    void applicationNode_notReadForBundleResolver()
         throws Exception
     {
         newFile( "a.txt" );
-        when( bundle.getLocation() ).thenReturn( "local:myapp" );
         final NodeService nodeService = mock( NodeService.class );
-        resourceService = new ResourceServiceImpl( applicationFactoryService, new ApplicationGeneration( nodeService ) );
+        final MockApplication app = new MockApplication();
+        app.setBundle( bundle );
+        app.setResourcePath( appDir );
+        when( applicationFactoryService.findResolver( appKey, null ) ).thenReturn( Optional.of( app.getUrlResolver() ) );
 
         assertEquals( "myapp:/a.txt->1", processResource( "segment1", "a.txt", "1" ) );
         assertEquals( "myapp:/a.txt->1", processResource( "segment1", "a.txt", "2" ) );
         this.resourceService.findFiles( this.appKey, ".+" );
 
-        verify( nodeService, times( 1 ) ).getByPath( any() );
+        verify( nodeService, never() ).getByPath( any() );
     }
 
     @Test
@@ -466,7 +463,7 @@ class ResourceServiceImplTest
     }
 
     @Test
-    void nodeResolver_generationBumpRecomputes()
+    void nodeResolver_newApplicationNodeVersionRecomputes()
     {
         final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
         doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
@@ -474,16 +471,16 @@ class ResourceServiceImplTest
         final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
         assertEquals( "myapp:/cms/parts/my-part.yaml->1", value1 );
 
-        // a write of the schema moves the generation, whatever the timestamp of the node
-        applicationGeneration.bump( appKey );
+        // a write of the schema moves the version of the application node, whatever the timestamps of the nodes
+        stubPartNode( nodeService, Instant.parse( "2021-12-03T10:15:30.00Z" ), NodeVersionId.from( "v2" ) );
 
         final String value2 = processResource( "segment1", "cms/parts/my-part.yaml", "2" );
         assertEquals( "myapp:/cms/parts/my-part.yaml->2", value2 );
         verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
 
-        // another application is untouched
-        applicationGeneration.bump( ApplicationKey.from( "other" ) );
+        // the same version again is a hit
         assertEquals( value2, processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
     }
 
     @Test
@@ -494,11 +491,11 @@ class ResourceServiceImplTest
 
         final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
 
-        // a node rewritten under the same generation is not seen until the generation moves: writers always bump
+        // a node rewritten under the same version of the application node is not seen until the version moves: writers move it
         stubPartNode( nodeService, Instant.parse( "2022-01-01T00:00:00.00Z" ) );
         assertEquals( value1, processResource( "segment1", "cms/parts/my-part.yaml", "2" ) );
 
-        applicationGeneration.bump( appKey );
+        stubPartNode( nodeService, Instant.parse( "2022-01-01T00:00:00.00Z" ), NodeVersionId.from( "v2" ) );
         assertEquals( "myapp:/cms/parts/my-part.yaml->3", processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
     }
 
@@ -515,10 +512,6 @@ class ResourceServiceImplTest
 
         Files.setLastModifiedTime( appDir.resolve( "a.txt" ), FileTime.fromMillis( System.currentTimeMillis() + 10_000 ) );
         assertEquals( "myapp:/a.txt->3", processResource( "segment1", "a.txt", "3" ) );
-
-        // and the generation moves it as well
-        applicationGeneration.bump( appKey );
-        assertEquals( "myapp:/a.txt->4", processResource( "segment1", "a.txt", "4" ) );
     }
 
     @Test
@@ -697,7 +690,7 @@ class ResourceServiceImplTest
     }
 
     @Test
-    void findFiles_nodeResolverListedOncePerGeneration()
+    void findFiles_nodeResolverListedOncePerApplicationNodeVersion()
     {
         final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
         final ApplicationUrlResolver resolver = spy( nodeResolver( nodeService ) );
@@ -709,7 +702,7 @@ class ResourceServiceImplTest
             .containsExactly( "myapp:/cms/parts/my-part.yaml" );
         verify( resolver, times( 1 ) ).findFiles();
 
-        applicationGeneration.bump( appKey );
+        stubPartNode( nodeService, Instant.parse( "2021-12-03T10:15:30.00Z" ), NodeVersionId.from( "v2" ) );
         this.resourceService.findFiles( appKey, ".+" );
         verify( resolver, times( 2 ) ).findFiles();
     }
@@ -749,10 +742,16 @@ class ResourceServiceImplTest
 
     private void stubPartNode( final NodeService nodeService, final Instant timestamp )
     {
+        stubPartNode( nodeService, timestamp, NodeVersionId.from( "v1" ) );
+    }
+
+    // the version is that of the application node, the revision of the resolver
+    private void stubPartNode( final NodeService nodeService, final Instant timestamp, final NodeVersionId version )
+    {
         final PropertyTree data = new PropertyTree();
         data.setString( "resource", "kind: Part" );
-        final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree() );
-        final Node partSchemaNode = createNode( "part:my-part", new NodePath( "/myapp/cms" ), timestamp, data );
+        final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree(), version );
+        final Node partSchemaNode = createNode( "part:my-part", new NodePath( "/myapp/cms" ), timestamp, data, version );
         when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
         when( nodeService.getByPath( new NodePath( "/myapp/cms/part:my-part" ) ) ).thenReturn( partSchemaNode );
         when( nodeService.list( any( ListNodesParams.class ) ) ).thenAnswer(
@@ -762,6 +761,19 @@ class ResourceServiceImplTest
 
     private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data )
     {
-        return Node.create().id( NodeId.from( name ) ).name( NodeName.from( name ) ).parentPath( root ).timestamp( timestamp ).data( data ).build();
+        return createNode( name, root, timestamp, data, null );
+    }
+
+    private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data,
+                             final NodeVersionId version )
+    {
+        return Node.create()
+            .id( NodeId.from( name ) )
+            .name( NodeName.from( name ) )
+            .parentPath( root )
+            .timestamp( timestamp )
+            .data( data )
+            .nodeVersionId( version )
+            .build();
     }
 }

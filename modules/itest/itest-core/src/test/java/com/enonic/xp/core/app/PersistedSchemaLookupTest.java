@@ -32,12 +32,12 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
-import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.ApplicationBundleException;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
+import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
@@ -109,13 +109,14 @@ class PersistedSchemaLookupTest
 
     private ApplicationRegistryImpl applicationRegistry;
 
+    private ApplicationRepoServiceImpl repoService;
+
     private Felix felix;
 
     @BeforeEach
     void setUp()
         throws Exception
     {
-        final ApplicationGeneration applicationGeneration = new ApplicationGeneration( nodeService );
         final Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
         final Map<String, Object> config = new HashMap<>();
@@ -126,14 +127,14 @@ class PersistedSchemaLookupTest
 
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
-        final ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
+        this.repoService = new ApplicationRepoServiceImpl( nodeService );
 
         final BundleContext bundleContext = felix.getBundleContext();
 
         this.applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
-        this.resourceService = new ResourceServiceImpl( applicationFactoryService, applicationGeneration );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         auditLogSupport.activate( appConfig );
@@ -141,8 +142,7 @@ class PersistedSchemaLookupTest
         this.applicationRegistry = new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
         this.applicationService = new ApplicationServiceImpl( applicationRegistry, repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
-                                                              new AppFilterServiceImpl( appConfig ), auditLogSupport,
-                                                              applicationGeneration );
+                                                              new AppFilterServiceImpl( appConfig ), auditLogSupport );
 
         this.contentTypeService =
             new ContentTypeServiceImpl( resourceService, applicationService, new CmsFormFragmentServiceImpl( resourceService ) );
@@ -150,8 +150,7 @@ class PersistedSchemaLookupTest
         this.schemaAuditLogSupport = new DynamicSchemaAuditLogSupportImpl( mock( AuditLogService.class ) );
         schemaAuditLogSupport.activate( mock( SchemaConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
         this.dynamicSchemaService =
-            new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, mock( EventPublisher.class ), applicationRegistry,
-                                          applicationGeneration );
+            new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, mock( EventPublisher.class ), applicationRegistry );
     }
 
     @AfterEach
@@ -208,6 +207,8 @@ class PersistedSchemaLookupTest
 
             final ContentType after = contentTypeService.getByName( GetContentTypeParams.from( typeName ) );
             assertEquals( List.of( "street", "city" ), inputNames( after ) );
+            // one change of the schema since the install
+            assertEquals( 1, schemaRevision( "staticapp" ) );
 
             // and the content type itself, written through the schema service, replaces the one shipped by the bundle
             dynamicSchemaService.createOrUpdateContentType( CreateOrUpdateContentSchemaParams.create()
@@ -216,7 +217,25 @@ class PersistedSchemaLookupTest
                                                                 .build() );
             assertEquals( "Rewritten", contentTypeService.getByName( GetContentTypeParams.from( typeName ) ).getTitle() );
             assertTrue( inputNames( contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) ).isEmpty() );
+            assertEquals( 2, schemaRevision( "staticapp" ) );
+
+            // a new version of the bundle ships its schema anew: nothing changed since
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", "kind: \"CMS\"", //
+                "cms/form-fragments/address.yaml", FRAGMENT_V1, //
+                "cms/content-types/withfragment.yaml", CONTENT_TYPE_WITH_FRAGMENT ) ) );
+            assertEquals( 0, schemaRevision( "staticapp" ) );
+            assertEquals( List.of( "street" ), inputNames( contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) ) );
         } );
+    }
+
+    // how many times the schema of the application was changed through the schema service since its install
+    private long schemaRevision( final String appName )
+    {
+        return ApplicationHelper.runAsAdmin( () -> repoService.getApplicationNode( ApplicationKey.from( appName ) ) )
+            .data()
+            .getLong( "schemaRevision" );
     }
 
     // a fragment the form includes but which the application does not have: the content type installs, reading it reports the
@@ -246,7 +265,7 @@ class PersistedSchemaLookupTest
     }
 
     // another node of the cluster writes a fragment and its event never arrives: the version of the application node, moved by the
-    // write, is what tells this node that the content type it cached is stale
+    // write and read from the shared storage on every use, is what tells this node that the content type it cached is stale
     @Test
     void change_written_on_another_node_is_seen_without_the_event()
     {
@@ -259,34 +278,24 @@ class PersistedSchemaLookupTest
                 "cms/form-fragments/address.yaml", FRAGMENT_V1, //
                 "cms/content-types/withfragment.yaml", CONTENT_TYPE_WITH_FRAGMENT ) ) );
 
-            final ContentTypeService checkingOnEveryRead = contentTypeService( 0 );
-            final ContentTypeService trustingForAnHour = contentTypeService( 3_600_000 );
-            assertEquals( List.of( "street" ), inputNames( checkingOnEveryRead.getByName( GetContentTypeParams.from( typeName ) ) ) );
-            assertEquals( List.of( "street" ), inputNames( trustingForAnHour.getByName( GetContentTypeParams.from( typeName ) ) ) );
+            final ContentTypeService thisNode = contentTypeService();
+            assertEquals( List.of( "street" ), inputNames( thisNode.getByName( GetContentTypeParams.from( typeName ) ) ) );
 
             final DynamicSchemaService otherNode =
-                new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, mock( EventPublisher.class ), applicationRegistry,
-                                              new ApplicationGeneration( nodeService ) );
+                new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, mock( EventPublisher.class ), applicationRegistry );
             otherNode.createOrUpdateFormFragment( CreateOrUpdateContentSchemaParams.create()
                                                       .name( FormFragmentName.from( "staticapp:address" ) )
                                                       .resource( FRAGMENT_V2 )
                                                       .build() );
 
-            assertEquals( List.of( "street", "city" ),
-                          inputNames( checkingOnEveryRead.getByName( GetContentTypeParams.from( typeName ) ) ) );
-            // within its interval the cache is trusted: the version is the only signal there was
-            assertEquals( List.of( "street" ), inputNames( trustingForAnHour.getByName( GetContentTypeParams.from( typeName ) ) ) );
+            assertEquals( List.of( "street", "city" ), inputNames( thisNode.getByName( GetContentTypeParams.from( typeName ) ) ) );
         } );
     }
 
-    // the services of a cluster node of its own, caching the schema and checking the application node every checkIntervalMillis
-    private ContentTypeService contentTypeService( final long checkIntervalMillis )
+    // the services of a cluster node of its own, caching the schema it reads
+    private ContentTypeService contentTypeService()
     {
-        final SchemaConfig config = mock( SchemaConfig.class, invocation -> "cache_checkInterval".equals( invocation.getMethod().getName() )
-            ? checkIntervalMillis
-            : invocation.getMethod().getDefaultValue() );
-        final ResourceService resourceService =
-            new ResourceServiceImpl( applicationFactoryService, new ApplicationGeneration( nodeService, config ) );
+        final ResourceService resourceService = new ResourceServiceImpl( applicationFactoryService );
         return new ContentTypeServiceImpl( resourceService, applicationService, new CmsFormFragmentServiceImpl( resourceService ) );
     }
 

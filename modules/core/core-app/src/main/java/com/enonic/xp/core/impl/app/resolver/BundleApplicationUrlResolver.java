@@ -64,4 +64,11 @@ public final class BundleApplicationUrlResolver
         // the bundle is immutable: a new bundle is a new stamp
         return true;
     }
+
+    @Override
+    public Object revision()
+    {
+        // the incarnation of the bundle is the revision, the stamp of the application carries it
+        return null;
+    }
 }

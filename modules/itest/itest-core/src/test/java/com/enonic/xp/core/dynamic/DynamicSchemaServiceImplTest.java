@@ -27,7 +27,6 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.core.impl.app.ApplicationRegistry;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
@@ -279,13 +278,11 @@ class DynamicSchemaServiceImplTest
 
         this.applicationEvents.clear();
         final EventPublisher applicationEventPublisher = mock( EventPublisher.class );
-        final ApplicationGeneration applicationGeneration = new ApplicationGeneration( nodeService );
         doAnswer( invocation -> applicationEvents.add( invocation.getArgument( 0 ) ) ).when( applicationEventPublisher ).publish( any() );
 
         this.applicationRegistry = mock( ApplicationRegistry.class );
         this.dynamicSchemaService =
-            new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, applicationEventPublisher, applicationRegistry,
-                                          applicationGeneration );
+            new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, applicationEventPublisher, applicationRegistry );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
             .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );

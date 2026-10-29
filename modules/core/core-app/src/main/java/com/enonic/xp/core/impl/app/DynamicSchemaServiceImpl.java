@@ -84,21 +84,17 @@ public class DynamicSchemaServiceImpl
 
     private final ApplicationRegistry applicationRegistry;
 
-    private final ApplicationGeneration applicationGeneration;
-
     @Activate
     public DynamicSchemaServiceImpl( @Reference final NodeService nodeService,
                                      @Reference final DynamicSchemaAuditLogSupport auditLogSupport,
                                      @Reference final EventPublisher eventPublisher,
-                                     @Reference final ApplicationRegistry applicationRegistry,
-                                     @Reference final ApplicationGeneration applicationGeneration )
+                                     @Reference final ApplicationRegistry applicationRegistry )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService );
         this.dynamicResourceParser = new DynamicResourceParser();
         this.auditLogSupport = auditLogSupport;
         this.eventPublisher = eventPublisher;
         this.applicationRegistry = applicationRegistry;
-        this.applicationGeneration = applicationGeneration;
     }
 
     // the generic methods of the 8.1 API dispatch by the type of the params to the method of the kind
@@ -759,18 +755,16 @@ public class DynamicSchemaServiceImpl
         return deleted;
     }
 
-    // the definition of the application changed: this node stops serving what it cached before the change, synchronously, so a
-    // read following the write sees it; the other nodes of the cluster are told once per call, after the change is written
+    // the definition of the application changed: told to the whole cluster once per call, after the change is written. What is
+    // cached from the definition needs no telling: the write moved the version of the application node, checked on every read
     private void publishUpdated( final ApplicationKey applicationKey, final Kind kind, final String name, final boolean created )
     {
-        applicationGeneration.bump( applicationKey );
         eventPublisher.publish( ApplicationEvents.updated( applicationKey, kind.kindName(), name,
                                                            created ? ApplicationEvents.ACTION_CREATED : ApplicationEvents.ACTION_UPDATED ) );
     }
 
     private void publishDeleted( final ApplicationKey applicationKey, final Kind kind, final String name )
     {
-        applicationGeneration.bump( applicationKey );
         eventPublisher.publish( ApplicationEvents.updated( applicationKey, kind.kindName(), name, ApplicationEvents.ACTION_DELETED ) );
     }
 

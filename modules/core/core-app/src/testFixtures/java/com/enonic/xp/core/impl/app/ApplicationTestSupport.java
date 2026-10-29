@@ -51,7 +51,7 @@ public abstract class ApplicationTestSupport
             return Optional.ofNullable( apps.get( argument ) ).map( MockApplication::getUrlResolver );
         } );
 
-        this.resourceService = new ResourceServiceImpl( applicationFactoryService, new ApplicationGeneration( mock( NodeService.class ) ) );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
         initialize();
     }

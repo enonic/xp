@@ -24,7 +24,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
-import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.resource.MultiResourceProcessor;
@@ -40,10 +39,12 @@ import com.enonic.xp.vfs.VirtualFile;
  * Serves the resources of applications and caches what is derived from them.
  * <p>
  * A cached value is stamped with the {@link CacheStamp} of its application: the incarnation of the bundle and the
- * {@link ApplicationGeneration generation}, which every change of the persisted descriptor or schema moves. While the stamp holds and
- * the resolver is {@link ApplicationUrlResolver#isStable() stable}, a hit costs nothing: neither the key translation nor the
- * resource is looked at again. An unstable resolver (the classloader of an application in development) has the revision of its
- * resource, as the resolver reports it, checked on every use, as the files change under it without any signal.
+ * {@link ApplicationUrlResolver#revision() revision} of the resolver, the version of the application node for persisted resources,
+ * which every write of the persisted descriptor or schema moves. The stamp is read on every use, so a change written on another
+ * node of the cluster is seen by the next read without any event. While the stamp holds and the resolver is
+ * {@link ApplicationUrlResolver#isStable() stable}, a hit costs the stamp alone: neither the key translation nor the resource is
+ * looked at again. An unstable resolver (the classloader of an application in development) has the revision of its resource, as
+ * the resolver reports it, checked on every use, as the files change under it without any signal.
  * <p>
  * A value is computed outside of any lock and put in the cache afterwards: a processor may itself read other resources through this
  * service (a content type inlining its form fragments), and two threads computing the same value at once just agree on it. The
@@ -69,14 +70,10 @@ public final class ResourceServiceImpl
 
     private final ApplicationFactoryService applicationFactoryService;
 
-    private final ApplicationGeneration applicationGeneration;
-
     @Activate
-    public ResourceServiceImpl( @Reference final ApplicationFactoryService applicationFactoryService,
-                                @Reference final ApplicationGeneration applicationGeneration )
+    public ResourceServiceImpl( @Reference final ApplicationFactoryService applicationFactoryService )
     {
         this.applicationFactoryService = applicationFactoryService;
-        this.applicationGeneration = applicationGeneration;
     }
 
     // bounded so that a key nobody reads any more (an application uninstalled, a descriptor removed) is let go of eventually
@@ -118,13 +115,13 @@ public final class ResourceServiceImpl
         final FilesKey filesKey = new FilesKey( effectiveKey( key ), resolverSource() );
         final FilesEntry cached = filesCache.getIfPresent( filesKey );
         // the stamp is read before the files: a change racing in-between costs a listing, never staleness
-        final CacheStamp stamp = stamp( key );
+        final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( key );
+        final CacheStamp stamp = stamp( key, urlResolver );
         if ( cached != null && cached.stamp().equals( stamp ) )
         {
             return cached.files();
         }
 
-        final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( key );
         final Set<String> files = urlResolver.map( ApplicationUrlResolver::findFiles ).map( Set::copyOf ).orElse( Set.of() );
         if ( isStable( urlResolver ) )
         {
@@ -156,12 +153,11 @@ public final class ResourceServiceImpl
         return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key ) ? ApplicationHelper.SYSTEM_APPLICATION_KEY : key;
     }
 
-    // the incarnation of the bundle and the generation of the application, whatever it is served from: the service does not know
-    private CacheStamp stamp( final ApplicationKey key )
+    // the incarnation of the bundle and the revision of the resolver: what the resources are served from is the resolver's to know
+    private CacheStamp stamp( final ApplicationKey key, final Optional<ApplicationUrlResolver> urlResolver )
     {
-        final ApplicationKey effectiveKey = effectiveKey( key );
-        return new CacheStamp( applicationFactoryService.findActiveBundle( effectiveKey ).map( BundleStamp::from ).orElse( null ),
-                               applicationGeneration.of( effectiveKey ) );
+        return new CacheStamp( applicationFactoryService.findActiveBundle( effectiveKey( key ) ).map( BundleStamp::from ).orElse( null ),
+                               urlResolver.map( ApplicationUrlResolver::revision ).orElse( null ) );
     }
 
     @Override
@@ -183,8 +179,8 @@ public final class ResourceServiceImpl
 
         // the stamp is read before the resource: a change racing in-between costs a recompute, never staleness
         final ResourceKey resourceKey = processor.toResourceKey();
-        final CacheStamp stamp = stamp( resourceKey.getApplicationKey() );
         final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( resourceKey.getApplicationKey() );
+        final CacheStamp stamp = stamp( resourceKey.getApplicationKey(), urlResolver );
         final Resource resource = findResource( urlResolver, resourceKey );
         final boolean stable = isStable( urlResolver );
 
@@ -214,17 +210,19 @@ public final class ResourceServiceImpl
     private boolean isCurrent( final ProcessingEntry entry )
     {
         final ApplicationKey applicationKey = entry.resource().resourceKey().getApplicationKey();
-        if ( !entry.stamp().equals( stamp( applicationKey ) ) )
+        final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( applicationKey );
+        if ( !entry.stamp().equals( stamp( applicationKey, urlResolver ) ) )
         {
             return false;
         }
         if ( entry.stable() )
         {
-            // resources come straight from the immutable bundle or from nodes every write of which moves the generation:
-            // the stamp is the only signal that they may be new - timestamps prove nothing (constant with reproducible builds)
+            // resources come straight from the immutable bundle or from nodes every write of which moves the version of the
+            // application node: the stamp is the only signal that they may be new - timestamps prove nothing (constant with
+            // reproducible builds)
             return true;
         }
-        final Resource resource = findResource( findApplicationUrlResolver( applicationKey ), entry.resource().resourceKey() );
+        final Resource resource = findResource( urlResolver, entry.resource().resourceKey() );
         return resource.exists() && entry.resource().isCurrent( resource ) && dependenciesCurrent( entry.dependencies() );
     }
 
@@ -248,14 +246,14 @@ public final class ResourceServiceImpl
         // stamps are read before the resources: a change racing in-between costs a recompute, never staleness
         final List<ResourceKey> resourceKeys = processor.toResourceKeys();
         final List<ApplicationKey> applicationKeys = applicationKeys( resourceKeys );
-        final List<CacheStamp> stamps = applicationKeys.stream().map( this::stamp ).toList();
-
         final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
+        final List<CacheStamp> stamps = new ArrayList<>();
         boolean stable = true;
         for ( final ApplicationKey applicationKey : applicationKeys )
         {
             final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( applicationKey );
             urlResolvers.put( applicationKey, urlResolver );
+            stamps.add( stamp( applicationKey, urlResolver ) );
             stable = stable && isStable( urlResolver );
         }
 
@@ -281,7 +279,7 @@ public final class ResourceServiceImpl
             return null;
         }
         this.multiCache.put( cacheKey, new MultiProcessingEntry( value, selves, dependencies == null ? List.of() : List.copyOf( dependencies ),
-                                                                 stamps, stable ) );
+                                                                 List.copyOf( stamps ), stable ) );
         return value;
     }
 
@@ -289,7 +287,15 @@ public final class ResourceServiceImpl
     {
         final List<ApplicationKey> applicationKeys =
             applicationKeys( entry.resources().stream().map( Dependency::resourceKey ).toList() );
-        if ( !entry.stamps().equals( applicationKeys.stream().map( this::stamp ).toList() ) )
+        final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
+        final List<CacheStamp> stamps = new ArrayList<>();
+        for ( final ApplicationKey applicationKey : applicationKeys )
+        {
+            final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( applicationKey );
+            urlResolvers.put( applicationKey, urlResolver );
+            stamps.add( stamp( applicationKey, urlResolver ) );
+        }
+        if ( !entry.stamps().equals( stamps ) )
         {
             return false;
         }
@@ -297,14 +303,11 @@ public final class ResourceServiceImpl
         {
             return true;
         }
-        final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
         for ( final Dependency resource : entry.resources() )
         {
             final ResourceKey resourceKey = resource.resourceKey();
-            final Optional<ApplicationUrlResolver> urlResolver =
-                urlResolvers.computeIfAbsent( resourceKey.getApplicationKey(), this::findApplicationUrlResolver );
             // missing resources are part of the value as well: one appearing is a change
-            if ( !resource.isCurrent( findResource( urlResolver, resourceKey ) ) )
+            if ( !resource.isCurrent( findResource( urlResolvers.get( resourceKey.getApplicationKey() ), resourceKey ) ) )
             {
                 return false;
             }

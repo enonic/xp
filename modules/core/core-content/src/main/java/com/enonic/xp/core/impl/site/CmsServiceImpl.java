@@ -106,7 +106,7 @@ public class CmsServiceImpl
         final CmsDescriptor descriptor = YmlCmsDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
-        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
         return CmsDescriptor.copyOf( descriptor ).form( formFragmentService.inlineFormItems( descriptor.getForm() ) ).build();
     }
 

@@ -229,6 +229,12 @@ class ApplicationDescriptorBuilderTest
             {
                 return true;
             }
+
+            @Override
+            public Object revision()
+            {
+                return null;
+            }
         };
     }
 }

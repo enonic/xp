@@ -1,8 +1,6 @@
 package com.enonic.xp.perftest.content;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
-import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.ApplicationRegistry;
 import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
@@ -22,27 +20,11 @@ final class SchemaServices
 
     final DynamicSchemaService dynamicSchemaService;
 
-    private final ApplicationGeneration applicationGeneration;
-
-    /**
-     * @param checkNodeService the node service the generation checks the application node through, counting the reads apart
-     */
     SchemaServices( final ApplicationFactoryService applicationFactoryService, final ApplicationRegistry applicationRegistry,
-                    final NodeService nodeService, final NodeService checkNodeService,
-                    final DynamicSchemaAuditLogSupportImpl auditLogSupport, final EventPublisher eventPublisher )
+                    final NodeService nodeService, final DynamicSchemaAuditLogSupportImpl auditLogSupport,
+                    final EventPublisher eventPublisher )
     {
-        // the generation is shared: a write through the schema service moves what the resource service caches under
-        this.applicationGeneration = new ApplicationGeneration( checkNodeService );
-        this.resourceService = new ResourceServiceImpl( applicationFactoryService, applicationGeneration );
-        this.dynamicSchemaService =
-            new DynamicSchemaServiceImpl( nodeService, auditLogSupport, eventPublisher, applicationRegistry, applicationGeneration );
-    }
-
-    /**
-     * Makes everything cached for the application stale: its generation moves.
-     */
-    void invalidate( final ApplicationKey applicationKey )
-    {
-        applicationGeneration.bump( applicationKey );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
+        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, auditLogSupport, eventPublisher, applicationRegistry );
     }
 }

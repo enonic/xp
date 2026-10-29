@@ -86,7 +86,8 @@ final class DynamicResourceManager
         } );
     }
 
-    // the schema of the application was written: the application node tells the rest of the cluster, see ApplicationGeneration
+    // the schema of the application was written: the version of the application node moves, what every read of the schema cached
+    // on any node of the cluster is checked against, see ApplicationRepoServiceImpl.markSchemaChanged
     private <T> T changed( final ApplicationKey applicationKey, final T result )
     {
         ApplicationRepoServiceImpl.markSchemaChanged( nodeService, applicationKey );

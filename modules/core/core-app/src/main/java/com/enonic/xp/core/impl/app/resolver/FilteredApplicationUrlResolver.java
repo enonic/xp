@@ -39,4 +39,10 @@ public final class FilteredApplicationUrlResolver
     {
         return delegate.isStable();
     }
+
+    @Override
+    public Object revision()
+    {
+        return delegate.revision();
+    }
 }

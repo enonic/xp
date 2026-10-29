@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -255,6 +256,19 @@ class NodeResourceApplicationUrlResolverTest
         assertEquals( appNode.getNodeVersionId(), revision( "/enonic.svg" ) );
         assertEquals( schemaNode.getNodeVersionId(), revision( "/cms/content-types/mytype.yaml" ) );
         assertEquals( schemaNode.getNodeVersionId(), revision( "/cms/content-types/mytype.svg" ) );
+    }
+
+    // the revision of the resolver is the version of the application node, read anew on every call; none without the node
+    @Test
+    void revision_is_the_version_of_the_application_node_read_on_every_call()
+    {
+        final Node appNode = applicationNode( "kind: \"Application\"", null );
+        when( this.nodeService.getByPath( APP_PATH ) ).thenReturn( null, appNode );
+
+        final NodeResourceApplicationUrlResolver resolver = resolver();
+        assertNull( resolver.revision() );
+        assertEquals( appNode.getNodeVersionId(), resolver.revision() );
+        verify( this.nodeService, times( 2 ) ).getByPath( APP_PATH );
     }
 
     private Object revision( final String path )

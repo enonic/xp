@@ -34,8 +34,8 @@ final class ContentTypeLoader
         builder.modifiedTime( modifiedTime );
         builder.createdTime( modifiedTime );
 
-        // the form fragments are inlined here, into the value cached: a change of a fragment moves the generation of the
-        // application, which recomputes the content type
+        // the form fragments are inlined here, into the value cached: a change of a fragment moves the version of the
+        // application node, which recomputes the content type
         final ContentType contentType = builder.build();
         return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
     }

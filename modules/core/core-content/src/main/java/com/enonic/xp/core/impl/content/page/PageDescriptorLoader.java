@@ -68,7 +68,7 @@ public class PageDescriptorLoader
             .key( key )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
-        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
         return PageDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 

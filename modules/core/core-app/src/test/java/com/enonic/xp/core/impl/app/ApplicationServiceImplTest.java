@@ -73,14 +73,11 @@ class ApplicationServiceImplTest
 
     private EventPublisher eventPublisher;
 
-    private ApplicationGeneration applicationGeneration;
-
     private AppFilterService appFilterService;
 
     @BeforeEach
     void initService()
     {
-        this.applicationGeneration = mock( ApplicationGeneration.class );
         final BundleContext bundleContext = getBundleContext();
 
         this.applicationRegistry =
@@ -97,8 +94,7 @@ class ApplicationServiceImplTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
         auditLogSupport.activate( appConfig );
 
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, auditLogSupport,
-                                                   applicationGeneration );
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, auditLogSupport );
     }
 
     @Test
@@ -274,7 +270,6 @@ class ApplicationServiceImplTest
         this.service.uninstallApplication( applicationKey );
 
         verify( this.repoService ).deleteApplicationNode( applicationKey );
-        verify( this.applicationGeneration ).bump( applicationKey );
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( applicationKey ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
@@ -336,10 +331,7 @@ class ApplicationServiceImplTest
         this.service.startApplication( applicationKey );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
 
-        // what was cached for the stopped application is stale: the generation moves before the event is published
-        final InOrder inOrder = Mockito.inOrder( this.applicationGeneration, this.eventPublisher );
-        inOrder.verify( this.applicationGeneration ).bump( applicationKey );
-        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.started( applicationKey ) ) ) );
+        verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.started( applicationKey ) ) ) );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
@@ -435,8 +427,6 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         this.service.stopApplication( applicationKey );
         assertEquals( Bundle.RESOLVED, bundle.getState() );
-
-        verify( this.applicationGeneration ).bump( applicationKey );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
@@ -568,9 +558,6 @@ class ApplicationServiceImplTest
         verifyInstallEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyInstalledEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyStartedEvent( application.getKey(), times( 1 ) );
-
-        // once the schema is persisted, once the bundle is installed, once it is started
-        verify( this.applicationGeneration, times( 3 ) ).bump( application.getKey() );
     }
 
     @Test
@@ -598,7 +585,6 @@ class ApplicationServiceImplTest
                 "<svg/>".equals( readResource( resources, "cms/content-types/mytype.svg" ) ) &&
                 MACRO.equals( readResource( resources, "cms/macros/mymacro.yaml" ) ) &&
                 "phrases".equals( readResource( resources, "cms/i18n/phrases/phrases_en.properties" ) ) ) );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
 
         // the schema is persisted before the bundle is installed (install event published, bundle tracked)
         final InOrder inOrder = Mockito.inOrder( this.repoService, this.eventPublisher );
@@ -630,7 +616,6 @@ class ApplicationServiceImplTest
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
             resources -> resources.size() == 2 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
                 "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) ) );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
     }
 
     @Test
@@ -724,7 +709,6 @@ class ApplicationServiceImplTest
         // nothing of the application is persisted: no node writes, no events, no bundle
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.eventPublisher, never() ).publish( any() );
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
     }
@@ -772,7 +756,6 @@ class ApplicationServiceImplTest
         // schema extraction fails before anything is changed: no node writes, no events, no bundle
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.eventPublisher, never() ).publish( any() );
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
     }
@@ -788,7 +771,6 @@ class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
     }
 

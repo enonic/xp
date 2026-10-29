@@ -80,12 +80,9 @@ class ApplicationDescriptorServiceImplTest
 
     private EventPublisher eventPublisher;
 
-    private ApplicationGeneration applicationGeneration;
-
     @BeforeEach
     void setup()
     {
-        this.applicationGeneration = Mockito.mock( ApplicationGeneration.class );
         RunModeSupport.set( RunMode.PROD );
         resourceTestHelper = new ResourceTestHelper( this );
 
@@ -102,7 +99,7 @@ class ApplicationDescriptorServiceImplTest
         repoService = Mockito.mock( ApplicationRepoService.class );
         auditLogSupport = Mockito.mock( DynamicSchemaAuditLogSupport.class );
         eventPublisher = Mockito.mock( EventPublisher.class );
-        appDescriptorService = new ApplicationDescriptorServiceImpl( nodeService, repoService, auditLogSupport, eventPublisher, applicationGeneration );
+        appDescriptorService = new ApplicationDescriptorServiceImpl( nodeService, repoService, auditLogSupport, eventPublisher );
     }
 
     @Test
@@ -197,11 +194,6 @@ class ApplicationDescriptorServiceImplTest
         verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( IconUpdate.KEEP ) );
         assertEquals( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"My App\"\nvendorName: \"Enonic\"\nconfig:\n  flag: true\n",
                       persisted.get() );
-
-        // nothing cached before the write is served: the generation moves right after it
-        final InOrder written = Mockito.inOrder( repoService, applicationGeneration );
-        written.verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( IconUpdate.KEEP ) );
-        written.verify( applicationGeneration ).bump( MYAPP );
 
         assertEquals( "My App", result.getTitle() );
         assertEquals( "Enonic", result.getVendorName() );

@@ -93,4 +93,11 @@ public final class ClassLoaderApplicationUrlResolver
         // files on disk change without any signal
         return false;
     }
+
+    @Override
+    public Object revision()
+    {
+        // the files are checked one by one, by the revision of each resource
+        return null;
+    }
 }

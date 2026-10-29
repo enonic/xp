@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -29,6 +30,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationRegistry;
+import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.SchemaConfig;
@@ -40,7 +42,9 @@ import com.enonic.xp.core.impl.content.schema.CmsFormFragmentServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.icon.IconUpdate;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.CreateOrUpdateComponentParams;
@@ -57,8 +61,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 /**
  * An application with the services reading and writing its schema, shared by the schema benchmarks: 3 form fragments,
  * {@code contentTypes} content types half of which include two fragments, and a part per five content types, half of which include
- * a fragment. The resolvers read through a node service counting the reads, the check of the application node by the generation
- * through one counting them apart ({@code check:*}).
+ * a fragment. The resolvers read through a node service counting the reads, the application node among them: its version is the
+ * stamp of what is cached, read on every use.
  * <p>
  * The application is persisted as nodes, as a globally installed one is, or, {@code local}, shipped by a local application bundle
  * only: no node of it exists, it is served from the bundle alone and its schema is not written.
@@ -91,6 +95,14 @@ final class SchemaFixture
 
     private SchemaServices services;
 
+    private ApplicationFactoryServiceImpl applicationFactoryService;
+
+    private DynamicSchemaAuditLogSupportImpl auditLogSupport;
+
+    private ApplicationRepoServiceImpl repoService;
+
+    private final AtomicLong invalidations = new AtomicLong();
+
     // the schema as written, by the path a bundle ships it at
     private final Map<String, String> bundleResources = new LinkedHashMap<>();
 
@@ -117,16 +129,30 @@ final class SchemaFixture
         felix.start();
 
         // the resolvers read through a node service counting the reads, the schema is written through the plain one
-        final ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( felix.getBundleContext(), counting( bs.nodeService, "" ) );
+        applicationFactoryService = new ApplicationFactoryServiceImpl( felix.getBundleContext(), counting( bs.nodeService, "" ) );
         applicationFactoryService.activate();
 
-        final DynamicSchemaAuditLogSupportImpl auditLogSupport = new DynamicSchemaAuditLogSupportImpl( Bootstrap.noOp( AuditLogService.class ) );
+        auditLogSupport = new DynamicSchemaAuditLogSupportImpl( Bootstrap.noOp( AuditLogService.class ) );
         auditLogSupport.activate( Bootstrap.annotationDefaults( SchemaConfig.class ) );
+        repoService = new ApplicationRepoServiceImpl( bs.nodeService );
 
+        wire();
+
+        adminContext().runWith( () -> createApplication( contentTypes, repoService ) );
+        bs.refresh();
+
+        if ( local )
+        {
+            felix.getBundleContext().installBundle( "local:" + APP, new ByteArrayInputStream( localBundle() ) ).start();
+        }
+    }
+
+    // the services reading the schema, with empty caches
+    private void wire()
+    {
         // the registry answers no application for any key: the benchmark app is never a system bundle
         services = new SchemaServices( applicationFactoryService, Bootstrap.noOp( ApplicationRegistry.class ), bs.nodeService,
-                                       counting( bs.nodeService, "check:" ), auditLogSupport, bs.eventPublisher );
+                                       auditLogSupport, bs.eventPublisher );
         resourceService = services.resourceService;
         dynamicSchemaService = services.dynamicSchemaService;
 
@@ -136,22 +162,26 @@ final class SchemaFixture
         final DescriptorServiceImpl descriptorService = new DescriptorServiceImpl( new DescriptorFacetFactoryImpl( null, resourceService ) );
         descriptorService.addLoader( new PartDescriptorLoader( resourceService, formFragmentService ) );
         partDescriptorService = new PartDescriptorServiceImpl( descriptorService );
-
-        adminContext().runWith( () -> createApplication( contentTypes, new ApplicationRepoServiceImpl( bs.nodeService ) ) );
-        bs.refresh();
-
-        if ( local )
-        {
-            felix.getBundleContext().installBundle( "local:" + APP, new ByteArrayInputStream( localBundle() ) ).start();
-        }
     }
 
     /**
-     * Makes everything cached for the application stale, as a change of its definition does, without changing anything.
+     * Makes everything cached for the application stale, as a change of its definition does, without changing the schema: the
+     * version of the application node moves, as every write of the schema moves it. A local application has no node and nothing
+     * but a new bundle makes its cache stale: its services are wired anew, with empty caches.
      */
     void invalidate()
     {
-        services.invalidate( APP );
+        if ( local )
+        {
+            wire();
+            return;
+        }
+        final Node applicationNode = repoService.getApplicationNode( APP );
+        ApplicationHelper.runAsAdmin( () -> bs.nodeService.update( UpdateNodeParams.create()
+                                                                      .id( applicationNode.id() )
+                                                                      .editor( toBeEdited -> toBeEdited.data.setLong( "invalidations",
+                                                                                                                         invalidations.incrementAndGet() ) )
+                                                                      .build() ) );
     }
 
     private byte[] localBundle()

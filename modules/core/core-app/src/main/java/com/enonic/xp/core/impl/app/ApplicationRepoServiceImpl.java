@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.google.common.io.ByteSource;
 
@@ -62,6 +63,7 @@ public class ApplicationRepoServiceImpl
         return ApplicationHelper.runAsAdmin( () -> {
             final PropertyTree data = new PropertyTree();
             data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
+            data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 0L );
             return this.nodeService.create( CreateNodeParams.create()
                                                 .parent( APPLICATIONS_ROOT )
                                                 .name( applicationKey.getName() )
@@ -126,7 +128,8 @@ public class ApplicationRepoServiceImpl
         ApplicationHelper.runAsAdmin( () -> {
             final NodePath appPath = applicationNodePath( applicationKey );
 
-            final boolean cmsDeleted = deletePersistedSchema( appPath );
+            // the old schema goes with its revision: the revision written last is new to the node, whatever the old one was
+            deletePersistedSchema( appPath );
             final Map<NodePath, PersistedNode> nodes;
 
             try
@@ -162,7 +165,7 @@ public class ApplicationRepoServiceImpl
                 try
                 {
                     deletePersistedSchema( appPath );
-                    markSchemaChanged( this.nodeService, applicationKey );
+                    markSchemaPersisted( applicationKey );
                 }
                 catch ( Exception cleanupFailure )
                 {
@@ -171,11 +174,7 @@ public class ApplicationRepoServiceImpl
                 throw e;
             }
 
-            // a write of the descriptor alone moves the version of the application node by itself
-            if ( cmsDeleted || !nodes.isEmpty() )
-            {
-                markSchemaChanged( this.nodeService, applicationKey );
-            }
+            markSchemaPersisted( applicationKey );
             this.nodeService.refresh( RefreshMode.ALL );
         } );
     }
@@ -245,24 +244,31 @@ public class ApplicationRepoServiceImpl
         this.nodeService.create( params.data( data ).build() );
     }
 
-    @Override
-    public void deleteApplicationSchema( final ApplicationKey applicationKey )
+    /**
+     * The persisted schema of the application was changed through the schema API: one more revision since the install, and the
+     * version of the application node moves. The schema lives in nodes below the application node, which a write of does not move
+     * it, and the version is what every node of the cluster checks its cached schema against on every read (the revision of
+     * {@code NodeResourceApplicationUrlResolver}). Called after the write, never before: a node seeing the new version reads the
+     * new schema. Must run in the context of the application repository.
+     */
+    static void markSchemaChanged( final NodeService nodeService, final ApplicationKey applicationKey )
     {
-        ApplicationHelper.runAsAdmin( () -> {
-            if ( deletePersistedSchema( applicationNodePath( applicationKey ) ) )
-            {
-                markSchemaChanged( this.nodeService, applicationKey );
-            }
-        } );
+        writeSchemaRevision( nodeService, applicationKey, revision -> revision == null ? 1 : revision + 1 );
     }
 
     /**
-     * Moves the version of the application node once its persisted schema has been written: the version is what the other nodes of
-     * the cluster check their cached schema against when the event telling about the change does not reach them, see
-     * {@link ApplicationGeneration}. Called after the write, never before: a node seeing the new version reads the new schema.
-     * Must run in the context of the application repository.
+     * The persisted schema of the application is the one its bundle ships, written on install: no revision since. The version of
+     * the application node moves as {@link #markSchemaChanged} moves it, after the schema is written: the old revision was removed
+     * with the old schema up front, so the node does not hold a revision at this point and zero is new to it. A node edited to
+     * what it already holds would keep its version.
      */
-    static void markSchemaChanged( final NodeService nodeService, final ApplicationKey applicationKey )
+    private void markSchemaPersisted( final ApplicationKey applicationKey )
+    {
+        writeSchemaRevision( this.nodeService, applicationKey, revision -> 0L );
+    }
+
+    private static void writeSchemaRevision( final NodeService nodeService, final ApplicationKey applicationKey,
+                                             final Function<Long, Long> revision )
     {
         final NodePath appPath = applicationNodePath( applicationKey );
         if ( !nodeService.nodeExists( appPath ) )
@@ -270,8 +276,8 @@ public class ApplicationRepoServiceImpl
             return;
         }
         nodeService.update( UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
-            final Long revision = toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION );
-            toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, revision == null ? 1 : revision + 1 );
+            toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION,
+                                     revision.apply( toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
         } ).build() );
     }
 
@@ -342,29 +348,28 @@ public class ApplicationRepoServiceImpl
     }
 
     /**
-     * Removes the {@code cms} subtree and the descriptor and icon from the application node, whichever of them exist.
-     *
-     * @return whether there was a {@code cms} subtree to remove
+     * Removes the persisted schema for one to be persisted anew: the {@code cms} subtree, and the descriptor, icon and schema
+     * revision from the application node, whichever of them exist.
      */
-    private boolean deletePersistedSchema( final NodePath appPath )
+    private void deletePersistedSchema( final NodePath appPath )
     {
         final NodePath cmsPath = new NodePath( appPath, SchemaNodeLayout.CMS_NODE_PATH.getName() );
-        final boolean cmsExists = this.nodeService.nodeExists( cmsPath );
-        if ( cmsExists )
+        if ( this.nodeService.nodeExists( cmsPath ) )
         {
             this.nodeService.delete( DeleteNodeParams.create().nodePath( cmsPath ).refresh( RefreshMode.ALL ).build() );
         }
 
         final Node appNode = this.nodeService.getByPath( appPath );
         if ( appNode != null && ( appNode.data().getString( SchemaNodePropertyNames.DESCRIPTOR ) != null ||
-            appNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) != null ) )
+            appNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) != null ||
+            appNode.data().getLong( ApplicationPropertyNames.SCHEMA_REVISION ) != null ) )
         {
             this.nodeService.update( UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
                 toBeEdited.data.removeProperties( SchemaNodePropertyNames.DESCRIPTOR );
                 toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
+                toBeEdited.data.removeProperties( ApplicationPropertyNames.SCHEMA_REVISION );
             } ).refresh( RefreshMode.ALL ).build() );
         }
-        return cmsExists;
     }
 
     private static String readString( final ByteSource content )

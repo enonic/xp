@@ -40,7 +40,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
-import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
@@ -59,6 +58,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -90,13 +90,14 @@ class ApplicationServiceTest
 
     private ApplicationDescriptorServiceImpl applicationDescriptorService;
 
+    private ApplicationFactoryServiceImpl applicationFactoryService;
+
     private Felix felix;
 
     @BeforeEach
     void setUp()
         throws Exception
     {
-        final ApplicationGeneration applicationGeneration = new ApplicationGeneration( nodeService );
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
         this.felix = createFelixInstance( cacheDir );
@@ -108,17 +109,16 @@ class ApplicationServiceTest
 
         BundleContext bundleContext = felix.getBundleContext();
 
-        ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        this.applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
-        this.resourceService = new ResourceServiceImpl( applicationFactoryService, applicationGeneration );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
         final ComponentContext componentContext = mock( ComponentContext.class );
         when( componentContext.getBundleContext() ).thenReturn( bundleContext );
         this.applicationDescriptorService =
             new ApplicationDescriptorServiceImpl( nodeService, repoService, mock( DynamicSchemaAuditLogSupport.class ),
-                                                  mock( EventPublisher.class ), applicationGeneration );
+                                                  mock( EventPublisher.class ) );
         this.applicationDescriptorService.start( componentContext );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -127,7 +127,7 @@ class ApplicationServiceTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
-            applicationAuditLogSupport, applicationGeneration );
+            applicationAuditLogSupport );
     }
 
     @AfterEach
@@ -189,6 +189,8 @@ class ApplicationServiceTest
             final Node applicationNode = appNode( "staticapp" );
             assertEquals( APP_DESCRIPTOR, applicationNode.data().getString( "descriptor" ) );
             assertEquals( BinaryReference.from( "enonic.svg" ), applicationNode.data().getBinaryReference( "icon" ) );
+            // the schema is the shipped one: nothing changed through the schema API since the install
+            assertEquals( 0, applicationNode.data().getLong( "schemaRevision" ) );
             assertNotNull( applicationNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
             assertNull( appChildNode( "staticapp", "enonic.yaml" ) );
             assertNull( appChildNode( "staticapp", "enonic.svg" ) );
@@ -484,6 +486,50 @@ class ApplicationServiceTest
             assertEquals( "<svg>again</svg>",
                           new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
         } );
+    }
+
+    // the descriptor and icon live on the application node: a write of either moves its version, what every value cached from
+    // them on any node of the cluster is checked against on every read, no event needed
+    @Test
+    void editedApplicationDescriptorAndIconReachTheCacheOfAnotherNode()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n", //
+                "enonic.svg", "<svg>app</svg>" ) ) );
+
+            final ResourceService otherNode = new ResourceServiceImpl( applicationFactoryService );
+            assertTrue( processed( otherNode, appKey, "/enonic.yaml" ).contains( "Shipped" ) );
+            assertEquals( "<svg>app</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+            assertEquals( "<svg>app</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Edited" ).build() );
+            assertTrue( processed( otherNode, appKey, "/enonic.yaml" ).contains( "Edited" ) );
+
+            applicationDescriptorService.createOrUpdate( CreateOrUpdateApplicationDescriptorParams.create()
+                                                             .key( appKey )
+                                                             .editor( edit -> edit.icon = Icon.from( "<svg>edited</svg>".getBytes(
+                                                                 StandardCharsets.UTF_8 ), "image/svg+xml", Instant.now() ) )
+                                                             .build() );
+            assertEquals( "<svg>edited</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.icon = null ).build() );
+            assertNull( processed( otherNode, appKey, "/enonic.svg" ) );
+        } );
+    }
+
+    // the content of the resource as the service caches it, null when the resource does not exist
+    private static String processed( final ResourceService resourceService, final ApplicationKey appKey, final String path )
+    {
+        return resourceService.processResource( new ResourceProcessor.Builder<String, String>().key( path )
+                                                    .segment( "test" )
+                                                    .keyTranslator( p -> ResourceKey.from( appKey, p ) )
+                                                    .processor( resource -> resource.exists() ? resource.readString() : null )
+                                                    .build() );
     }
 
     @Test

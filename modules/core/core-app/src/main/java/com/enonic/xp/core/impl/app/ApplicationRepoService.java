@@ -38,11 +38,6 @@ public interface ApplicationRepoService
     void persistApplicationSchema( ApplicationKey applicationKey, Map<String, ByteSource> resources );
 
     /**
-     * Removes the schema persisted for the application (the application descriptor with its icon and the {@code cms} subtree), if any.
-     */
-    void deleteApplicationSchema( ApplicationKey applicationKey );
-
-    /**
      * {@code true} when the application descriptor ({@code enonic.yaml}) is persisted on the application node.
      */
     boolean hasApplicationDescriptor( ApplicationKey applicationKey );

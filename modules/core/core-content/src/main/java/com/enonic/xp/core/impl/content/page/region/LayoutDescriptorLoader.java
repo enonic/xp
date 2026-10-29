@@ -68,7 +68,7 @@ public class LayoutDescriptorLoader
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .key( key )
             .build();
-        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
         return LayoutDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 

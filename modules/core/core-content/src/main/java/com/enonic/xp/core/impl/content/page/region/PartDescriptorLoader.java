@@ -70,7 +70,7 @@ public class PartDescriptorLoader
             .icon( loadIcon( key, resource ) )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
-        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
         return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
