@@ -50,7 +50,10 @@ public interface ApplicationRepoService
 
     /**
      * Writes the application descriptor ({@code enonic.yaml}) on the application node, which must exist. The icon attached to it
-     * is kept, removed or replaced as told by {@code iconUpdate}.
+     * is kept, removed or replaced as told by {@code iconUpdate}. Written over a descriptor the node holds, this is a change of the
+     * application since its install or creation and counts up its schema revision; the first descriptor of a node is part of its
+     * creation and counts nothing. Every application bundle ships a descriptor, so the descriptor of an installed application is
+     * always there to be written over.
      *
      * @return the application node as written
      */

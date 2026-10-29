@@ -412,7 +412,24 @@ class ApplicationRepoServiceImplTest
         assertEquals( PNG_ICON, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
         assertNotNull( captor.getValue().getBinaryAttachments().get( PNG_ICON ) );
         assertNull( captor.getValue().getBinaryAttachments().get( SVG_ICON ) );
+        // the first descriptor of the node is part of its creation, not a change
+        assertNull( edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
         Mockito.verify( this.nodeService ).refresh( RefreshMode.ALL );
+    }
+
+    // written over the descriptor the node holds, the descriptor is a change of the application: counted in the same write
+    @Test
+    void upsert_descriptor_over_an_existing_one_counts_a_revision()
+    {
+        final PropertyTree data = descriptorData( "old", null );
+        data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 2L );
+        final PropertyTree edited = stubUpdate( data );
+
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", IconUpdate.KEEP );
+
+        Mockito.verify( this.nodeService ).update( Mockito.any( UpdateNodeParams.class ) );
+        assertEquals( "new", edited.getString( SchemaNodePropertyNames.DESCRIPTOR ) );
+        assertEquals( 3, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
     }
 
     @Test
@@ -428,6 +445,8 @@ class ApplicationRepoServiceImplTest
         assertEquals( "new", edited.getString( SchemaNodePropertyNames.DESCRIPTOR ) );
         assertEquals( SVG_ICON, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
         assertEquals( 0, captor.getValue().getBinaryAttachments().getSize() );
+        // a node installed without a revision counts its first change from zero
+        assertEquals( 1, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
     }
 
     @Test

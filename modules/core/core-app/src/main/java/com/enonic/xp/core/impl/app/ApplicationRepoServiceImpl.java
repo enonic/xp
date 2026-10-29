@@ -145,7 +145,8 @@ public class ApplicationRepoServiceImpl
                         : YmlApplicationDescriptorSerializer.serialize( ApplicationDescriptor.create().key( applicationKey ).build() );
                     final IconUpdate iconUpdate =
                         application.icon != null ? IconUpdate.replace( application.icon, application.iconMimeType ) : IconUpdate.KEEP;
-                    writeApplicationDescriptor( appPath, yaml, iconUpdate );
+                    // the descriptor as shipped: written to a node the old one was removed from, nothing to count
+                    writeApplicationDescriptor( appPath, yaml, iconUpdate, false );
                 }
 
                 if ( !nodes.isEmpty() )
@@ -253,7 +254,13 @@ public class ApplicationRepoServiceImpl
      */
     static void markSchemaChanged( final NodeService nodeService, final ApplicationKey applicationKey )
     {
-        writeSchemaRevision( nodeService, applicationKey, revision -> revision == null ? 1 : revision + 1 );
+        writeSchemaRevision( nodeService, applicationKey, ApplicationRepoServiceImpl::nextRevision );
+    }
+
+    // one more change since the install or creation; a node without a revision counts from zero
+    private static long nextRevision( final Long revision )
+    {
+        return revision == null ? 1 : revision + 1;
     }
 
     /**
@@ -303,7 +310,7 @@ public class ApplicationRepoServiceImpl
             {
                 throw new NodeNotFoundException( String.format( "Application node [%s] not found", appPath ) );
             }
-            final Node node = writeApplicationDescriptor( appPath, descriptor, iconUpdate );
+            final Node node = writeApplicationDescriptor( appPath, descriptor, iconUpdate, true );
             this.nodeService.refresh( RefreshMode.ALL );
             return node;
         } );
@@ -313,12 +320,21 @@ public class ApplicationRepoServiceImpl
      * The descriptor is a property of the application node, the icon a binary of it named by its format ({@code enonic.svg} or
      * {@code enonic.png}), whatever the bundle shipped it as. A binary attached under the previous name (svg replaced by png) is no
      * longer referenced and dropped by the update.
+     *
+     * @param change whether a descriptor written over one the node holds is a change of the application, counted in its schema
+     *               revision in the same write; the first descriptor of a node never is, it is part of its creation
      */
-    private Node writeApplicationDescriptor( final NodePath appPath, final String descriptor, final IconUpdate iconUpdate )
+    private Node writeApplicationDescriptor( final NodePath appPath, final String descriptor, final IconUpdate iconUpdate,
+                                             final boolean change )
     {
         final BinaryReference iconReference = iconUpdate instanceof IconUpdate.Replace replace ? appIconReference( replace ) : null;
 
         final UpdateNodeParams.Builder params = UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
+            if ( change && toBeEdited.data.getString( SchemaNodePropertyNames.DESCRIPTOR ) != null )
+            {
+                toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION,
+                                         nextRevision( toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
+            }
             toBeEdited.data.setString( SchemaNodePropertyNames.DESCRIPTOR, descriptor );
             switch ( iconUpdate )
             {
