@@ -331,6 +331,8 @@ class ApplicationServiceImplTest
         this.service.startApplication( applicationKey );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
 
+        verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.started( applicationKey ) ) ) );
+
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
@@ -583,7 +585,6 @@ class ApplicationServiceImplTest
                 "<svg/>".equals( readResource( resources, "cms/content-types/mytype.svg" ) ) &&
                 MACRO.equals( readResource( resources, "cms/macros/mymacro.yaml" ) ) &&
                 "phrases".equals( readResource( resources, "cms/i18n/phrases/phrases_en.properties" ) ) ) );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
 
         // the schema is persisted before the bundle is installed (install event published, bundle tracked)
         final InOrder inOrder = Mockito.inOrder( this.repoService, this.eventPublisher );
@@ -615,7 +616,6 @@ class ApplicationServiceImplTest
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
             resources -> resources.size() == 2 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
                 "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) ) );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
     }
 
     @Test
@@ -709,7 +709,6 @@ class ApplicationServiceImplTest
         // nothing of the application is persisted: no node writes, no events, no bundle
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.eventPublisher, never() ).publish( any() );
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
     }
@@ -757,7 +756,6 @@ class ApplicationServiceImplTest
         // schema extraction fails before anything is changed: no node writes, no events, no bundle
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.eventPublisher, never() ).publish( any() );
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
     }
@@ -773,7 +771,6 @@ class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
     }
 

@@ -127,12 +127,14 @@ public final class NodeResourceApplicationUrlResolver
             {
                 return null;
             }
-            return new NodeValueResource( resourceKey, nodeService.getBinary( appNode.id(), reference ), appNode.getTimestamp() );
+            return new NodeValueResource( resourceKey, nodeService.getBinary( appNode.id(), reference ), appNode.getTimestamp(),
+                                          appNode.getNodeVersionId() );
         }
         final String descriptor = appNode.data().getString( SchemaNodePropertyNames.DESCRIPTOR );
         return descriptor == null
             ? null
-            : new NodeValueResource( resourceKey, ByteSource.wrap( descriptor.getBytes( StandardCharsets.UTF_8 ) ), appNode.getTimestamp() );
+            : new NodeValueResource( resourceKey, ByteSource.wrap( descriptor.getBytes( StandardCharsets.UTF_8 ) ), appNode.getTimestamp(),
+                                     appNode.getNodeVersionId() );
     }
 
     private Resource findSchemaResource( final String path, final SchemaNodeLayout.Location location )
@@ -150,7 +152,8 @@ public final class NodeResourceApplicationUrlResolver
             {
                 return null;
             }
-            return new NodeValueResource( resourceKey, nodeService.getBinary( schemaNode.id(), reference ), schemaNode.getTimestamp() );
+            return new NodeValueResource( resourceKey, nodeService.getBinary( schemaNode.id(), reference ), schemaNode.getTimestamp(),
+                                          schemaNode.getNodeVersionId() );
         }
         return new NodeValueResource( resourceKey, schemaNode );
     }
@@ -158,5 +161,26 @@ public final class NodeResourceApplicationUrlResolver
     private NodePath cmsNodePath()
     {
         return new NodePath( appNodePath, SchemaNodeLayout.CMS_NODE_PATH.getName() );
+    }
+
+    @Override
+    public boolean isStable()
+    {
+        // every write of the persisted resources moves the version of the application node, the revision of this resolver
+        return true;
+    }
+
+    /**
+     * The version of the application node, read on every call: every write of the descriptor, the icon or the schema moves it,
+     * a write below the node by way of {@code schemaRevision} (see {@code ApplicationRepoServiceImpl.markSchemaChanged}). It is
+     * read from the storage shared by the cluster, so a change written on another node is seen whether or not its event arrives.
+     */
+    @Override
+    public Object revision()
+    {
+        return contextSupplier.get().callWith( () -> {
+            final Node appNode = nodeService.getByPath( appNodePath );
+            return appNode == null ? null : appNode.getNodeVersionId();
+        } );
     }
 }

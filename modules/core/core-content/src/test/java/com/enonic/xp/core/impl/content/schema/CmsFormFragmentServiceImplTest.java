@@ -61,6 +61,19 @@ class CmsFormFragmentServiceImplTest
         assertNotNull( inlinedForm.getInput( "text4" ) );
     }
 
+    // two fragments, each valid, that both contribute an item of the same name: the expanded form is invalid, and that is reported
+    @Test
+    void inlineFormItemsReportsInvalidExpandedForm()
+    {
+        final Form form = Form.create()
+            .addFormItem( FormFragment.create().formFragment( FormFragmentName.from( "myapp2:address" ) ).build() )
+            .addFormItem( FormFragment.create().formFragment( FormFragmentName.from( "myapp2:address2" ) ).build() )
+            .build();
+
+        final IllegalArgumentException e = assertThrows( IllegalArgumentException.class, () -> service.inlineFormItems( form ) );
+        assertTrue( e.getMessage().contains( "Multiple entries with same key: address=address" ), e.getMessage() );
+    }
+
     @Test
     void invalidInlineFormItems()
     {

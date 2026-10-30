@@ -53,4 +53,13 @@ class FilteredApplicationUrlResolverTest
         assertNull( resolver.findResource( "/b.yaml" ) );
         verify( delegate, never() ).findResource( "/b.yaml" );
     }
+
+    @Test
+    void revision_is_the_delegates()
+    {
+        final ApplicationUrlResolver delegate = mock( ApplicationUrlResolver.class );
+        when( delegate.revision() ).thenReturn( "v1" );
+
+        assertEquals( "v1", new FilteredApplicationUrlResolver( delegate, () -> path -> true ).revision() );
+    }
 }

@@ -8,7 +8,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,10 +30,16 @@ import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -43,9 +52,16 @@ import com.enonic.xp.resource.ResourceProcessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ResourceServiceImplTest
@@ -156,6 +172,39 @@ class ResourceServiceImplTest
 
         final String value5 = processResource( "segment2", "a.txt", "5" );
         assertEquals( "myapp:/a.txt->5", value5 );
+    }
+
+    // the application node is read on every use of a persisted application, hit or miss: its version is the stamp of the value
+    @Test
+    void applicationNode_readOnEveryUse()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp" ) );
+
+        processResource( "segment1", "cms/parts/my-part.yaml", "2" );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp" ) );
+    }
+
+    // an application served from its bundle alone (a local one, a system one) has no node to read: the resolver knows its source
+    @Test
+    void applicationNode_notReadForBundleResolver()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        final NodeService nodeService = mock( NodeService.class );
+        final MockApplication app = new MockApplication();
+        app.setBundle( bundle );
+        app.setResourcePath( appDir );
+        when( applicationFactoryService.findResolver( appKey, null ) ).thenReturn( Optional.of( app.getUrlResolver() ) );
+
+        assertEquals( "myapp:/a.txt->1", processResource( "segment1", "a.txt", "1" ) );
+        assertEquals( "myapp:/a.txt->1", processResource( "segment1", "a.txt", "2" ) );
+        this.resourceService.findFiles( this.appKey, ".+" );
+
+        verify( nodeService, never() ).getByPath( any() );
     }
 
     @Test
@@ -395,8 +444,398 @@ class ResourceServiceImplTest
         assertEquals( "myapp:/a.txt->3", value3 );
     }
 
+    @Test
+    void nodeResolver_hitCostsNoNodeRead()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final AtomicInteger translations = new AtomicInteger();
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1", translations );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->1", value1 );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // the persisted resources are stable under the generation: neither the key translation nor the node is looked at again
+        final String value2 = processResource( "segment1", "cms/parts/my-part.yaml", "2", translations );
+        assertEquals( value1, value2 );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+        assertEquals( 1, translations.get() );
+    }
+
+    @Test
+    void nodeResolver_newApplicationNodeVersionRecomputes()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->1", value1 );
+
+        // a write of the schema moves the version of the application node, whatever the timestamps of the nodes
+        stubPartNode( nodeService, Instant.parse( "2021-12-03T10:15:30.00Z" ), NodeVersionId.from( "v2" ) );
+
+        final String value2 = processResource( "segment1", "cms/parts/my-part.yaml", "2" );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->2", value2 );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // the same version again is a hit
+        assertEquals( value2, processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+    }
+
+    @Test
+    void nodeResolver_timestampChangeAloneIsNoSignal()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+
+        // a node rewritten under the same version of the application node is not seen until the version moves: writers move it
+        stubPartNode( nodeService, Instant.parse( "2022-01-01T00:00:00.00Z" ) );
+        assertEquals( value1, processResource( "segment1", "cms/parts/my-part.yaml", "2" ) );
+
+        stubPartNode( nodeService, Instant.parse( "2022-01-01T00:00:00.00Z" ), NodeVersionId.from( "v2" ) );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->3", processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
+    }
+
+    @Test
+    void classLoaderResolver_staysChecked()
+        throws Exception
+    {
+        // the application in development is served by its classloader: files change without any signal
+        newFile( "a.txt" );
+
+        final String value1 = processResource( "segment1", "a.txt", "1" );
+        assertEquals( "myapp:/a.txt->1", value1 );
+        assertEquals( value1, processResource( "segment1", "a.txt", "2" ) );
+
+        Files.setLastModifiedTime( appDir.resolve( "a.txt" ), FileTime.fromMillis( System.currentTimeMillis() + 10_000 ) );
+        assertEquals( "myapp:/a.txt->3", processResource( "segment1", "a.txt", "3" ) );
+    }
+
+    // the key translation of a schema prefers .yaml to .yml: in development, a .yaml appearing beside the cached .yml is seen
+    @Test
+    void classLoaderResolver_descriptorAppearingWhereTheTranslationLooksFirstRecomputes()
+        throws Exception
+    {
+        newFile( "a.yml" );
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( "a" )
+            .segment( "segment1" )
+            .keyTranslator( name -> {
+                final ResourceKey yaml = ResourceKey.from( "myapp:/" + name + ".yaml" );
+                return this.resourceService.getResource( yaml ).exists() ? yaml : ResourceKey.from( "myapp:/" + name + ".yml" );
+            } )
+            .processor( res -> {
+                computed.incrementAndGet();
+                return res.getKey().toString();
+            } )
+            .build();
+
+        assertEquals( "myapp:/a.yml", this.resourceService.processResource( processor ) );
+        assertEquals( "myapp:/a.yml", this.resourceService.processResource( processor ) );
+        assertEquals( 1, computed.get() );
+
+        newFile( "a.yaml" );
+
+        assertEquals( "myapp:/a.yaml", this.resourceService.processResource( processor ) );
+        assertEquals( 2, computed.get() );
+        assertEquals( "myapp:/a.yaml", this.resourceService.processResource( processor ) );
+        assertEquals( 2, computed.get() );
+    }
+
+    // a descriptor reads its icon next to it directly, not through another processor: in development, the icon added is seen
+    @Test
+    void classLoaderResolver_resourceReadDirectlyIsADependency()
+        throws Exception
+    {
+        newFile( "a.yaml" );
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( "a" )
+            .segment( "segment1" )
+            .keyTranslator( name -> ResourceKey.from( "myapp:/" + name + ".yaml" ) )
+            .processor( res -> {
+                computed.incrementAndGet();
+                return "icon:" + this.resourceService.getResource( ResourceKey.from( "myapp:/a.svg" ) ).exists();
+            } )
+            .build();
+
+        assertEquals( "icon:false", this.resourceService.processResource( processor ) );
+        assertEquals( "icon:false", this.resourceService.processResource( processor ) );
+        assertEquals( 1, computed.get() );
+
+        newFile( "a.svg" );
+
+        assertEquals( "icon:true", this.resourceService.processResource( processor ) );
+        assertEquals( 2, computed.get() );
+
+        touch( "a.svg" );
+
+        assertEquals( "icon:true", this.resourceService.processResource( processor ) );
+        assertEquals( 3, computed.get() );
+    }
+
+    @Test
+    void processor_readsOtherResourcesThroughTheService()
+    {
+        // a content type inlining its form fragments reads them through this service while being computed itself
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final ResourceProcessor<String, String> outer = new ResourceProcessor.Builder<String, String>().key( "outer" )
+            .segment( "segment1" )
+            .keyTranslator( name -> ResourceKey.from( "myapp:/cms/parts/my-part.yaml" ) )
+            .processor( res -> "outer(" + processResource( "segment1", "cms/parts/my-part.yaml", "inner" ) + ")" )
+            .build();
+
+        // computed: both values read the node, the outer and the inner one
+        assertEquals( "outer(myapp:/cms/parts/my-part.yaml->inner)", this.resourceService.processResource( outer ) );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // stable: what the outer value read is not looked at again on a hit
+        assertEquals( "outer(myapp:/cms/parts/my-part.yaml->inner)", this.resourceService.processResource( outer ) );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+    }
+
+    @Test
+    void classLoaderResolver_nestedResourceChangeRecomputes()
+        throws Exception
+    {
+        // a content type inlining a fragment, in development: an edit of the fragment alone reaches the content type
+        newFile( "outer.txt" );
+        newFile( "inner.txt" );
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> outer = nesting( "outer.txt", computed, () -> processResource( "inner", "inner.txt", "i" ) );
+
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( 1, computed.get() );
+
+        touch( "inner.txt" );
+
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( 2, computed.get() );
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( 2, computed.get() );
+    }
+
+    @Test
+    void classLoaderResolver_dependenciesAreTransitive()
+        throws Exception
+    {
+        // a fragment including a fragment: the innermost one is a dependency of the outermost value too, also when the middle one
+        // is a cache hit while the outer value is computed
+        newFile( "outer.txt" );
+        newFile( "middle.txt" );
+        newFile( "inner.txt" );
+        final AtomicInteger middleComputed = new AtomicInteger();
+        final AtomicInteger outerComputed = new AtomicInteger();
+        final ResourceProcessor<String, String> middle =
+            nesting( "middle.txt", middleComputed, () -> processResource( "inner", "inner.txt", "i" ) );
+        final ResourceProcessor<String, String> outer =
+            nesting( "outer.txt", outerComputed, () -> this.resourceService.processResource( middle ) );
+
+        this.resourceService.processResource( middle );
+        assertEquals( "outer(middle(myapp:/inner.txt->i))", this.resourceService.processResource( outer ) );
+        assertEquals( 1, middleComputed.get() );
+        assertEquals( 1, outerComputed.get() );
+
+        touch( "inner.txt" );
+
+        assertEquals( "outer(middle(myapp:/inner.txt->i))", this.resourceService.processResource( outer ) );
+        assertEquals( 2, middleComputed.get() );
+        assertEquals( 2, outerComputed.get() );
+    }
+
+    @Test
+    void classLoaderResolver_nestedReadsOfMultiResourceProcessorAreDependencies()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        newFile( "inner.txt" );
+        final AtomicInteger computed = new AtomicInteger();
+        final MultiResourceProcessor<String, String> processor = new MultiResourceProcessor.Builder<String, String>().key( "multi" )
+            .segment( "segment1" )
+            .keysTranslator( k -> List.of( ResourceKey.from( "myapp:/a.txt" ) ) )
+            .processor( resources -> {
+                computed.incrementAndGet();
+                return processResource( "inner", "inner.txt", "i" );
+            } )
+            .build();
+
+        this.resourceService.processResources( processor );
+        this.resourceService.processResources( processor );
+        assertEquals( 1, computed.get() );
+
+        touch( "inner.txt" );
+
+        this.resourceService.processResources( processor );
+        assertEquals( 2, computed.get() );
+    }
+
+    // the revision of a file is its modification time as the file system keeps it, not rounded to milliseconds: a fragment saved
+    // twice within the same millisecond, with a read in between, is seen by the content type inlining it
+    @Test
+    void classLoaderResolver_editWithinTheSameMillisecondIsSeen()
+        throws Exception
+    {
+        newFile( "outer.txt" );
+        newFile( "inner.txt" );
+        final Path inner = appDir.resolve( "inner.txt" );
+        final FileTime saved = FileTime.from( Instant.parse( "2026-01-01T10:15:30.123456000Z" ) );
+        Files.setLastModifiedTime( inner, saved );
+        assumeTrue( saved.equals( Files.getLastModifiedTime( inner ) ), "the file system keeps sub-millisecond modification times" );
+
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> outer = nesting( "outer.txt", computed, () -> processResource( "inner", "inner.txt", "i" ) );
+
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( 1, computed.get() );
+
+        Files.setLastModifiedTime( inner, FileTime.from( saved.toInstant().plusNanos( 1_000 ) ) );
+
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( 2, computed.get() );
+        assertEquals( "outer(myapp:/inner.txt->i)", this.resourceService.processResource( outer ) );
+        assertEquals( 2, computed.get() );
+    }
+
+    @Test
+    void failedComputationLeavesNoDependencyBehind()
+        throws Exception
+    {
+        newFile( "outer.txt" );
+        newFile( "inner.txt" );
+        final ResourceProcessor<String, String> failing = nesting( "outer.txt", new AtomicInteger(), () -> {
+            processResource( "inner", "inner.txt", "i" );
+            throw new IllegalStateException( "fragment missing" );
+        } );
+
+        assertThrows( IllegalStateException.class, () -> this.resourceService.processResource( failing ) );
+
+        // a later value computed on this thread collects its own reads only, and is cached
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> outer =
+            nesting( "outer.txt", computed, () -> processResource( "inner", "inner.txt", "i" ), "other" );
+        this.resourceService.processResource( outer );
+        this.resourceService.processResource( outer );
+        assertEquals( 1, computed.get() );
+    }
+
+    private ResourceProcessor<String, String> nesting( final String name, final AtomicInteger computed,
+                                                       final Supplier<String> nested )
+    {
+        return nesting( name, computed, nested, name );
+    }
+
+    private ResourceProcessor<String, String> nesting( final String name, final AtomicInteger computed,
+                                                       final Supplier<String> nested, final String key )
+    {
+        return new ResourceProcessor.Builder<String, String>().key( key )
+            .segment( "nesting" )
+            .keyTranslator( k -> ResourceKey.from( "myapp:/" + name ) )
+            .processor( res -> {
+                computed.incrementAndGet();
+                return name.replace( ".txt", "" ) + "(" + nested.get() + ")";
+            } )
+            .build();
+    }
+
+    // an edit some time later: the modification time moves on
+    private void touch( final String name )
+        throws Exception
+    {
+        final Path file = appDir.resolve( name );
+        Files.setLastModifiedTime( file, FileTime.fromMillis( Files.getLastModifiedTime( file ).toMillis() + 10_000 ) );
+    }
+
+    @Test
+    void findFiles_nodeResolverListedOncePerApplicationNodeVersion()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        final ApplicationUrlResolver resolver = spy( nodeResolver( nodeService ) );
+        doReturn( Optional.of( resolver ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        assertThat( this.resourceService.findFiles( appKey, "\\.yaml$" ) ).map( Objects::toString )
+            .containsExactly( "myapp:/cms/parts/my-part.yaml" );
+        assertThat( this.resourceService.findFiles( appKey, "parts" ) ).map( Objects::toString )
+            .containsExactly( "myapp:/cms/parts/my-part.yaml" );
+        verify( resolver, times( 1 ) ).findFiles();
+
+        stubPartNode( nodeService, Instant.parse( "2021-12-03T10:15:30.00Z" ), NodeVersionId.from( "v2" ) );
+        this.resourceService.findFiles( appKey, ".+" );
+        verify( resolver, times( 2 ) ).findFiles();
+    }
+
+    @Test
+    void findFiles_classLoaderResolverListedEveryTime()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        assertThat( this.resourceService.findFiles( appKey, ".+" ) ).map( Objects::toString ).containsExactly( "myapp:/a.txt" );
+
+        newFile( "b.txt" );
+        assertThat( this.resourceService.findFiles( appKey, ".+" ) ).map( Objects::toString )
+            .containsExactlyInAnyOrder( "myapp:/a.txt", "myapp:/b.txt" );
+    }
+
+    private String processResource( final String segment, final String key, final String suffix, final AtomicInteger translations )
+    {
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( key )
+            .segment( segment )
+            .keyTranslator( name -> {
+                translations.incrementAndGet();
+                return ResourceKey.from( "myapp:/" + name );
+            } )
+            .processor( res -> res.getKey().toString() + "->" + suffix )
+            .build();
+        return this.resourceService.processResource( processor );
+    }
+
+    // "myapp" stored as nodes: the application node and one part below cms
+    private NodeService stubPartNode( final Instant timestamp )
+    {
+        final NodeService nodeService = mock( NodeService.class );
+        stubPartNode( nodeService, timestamp );
+        return nodeService;
+    }
+
+    private void stubPartNode( final NodeService nodeService, final Instant timestamp )
+    {
+        stubPartNode( nodeService, timestamp, NodeVersionId.from( "v1" ) );
+    }
+
+    // the version is that of the application node, the revision of the resolver
+    private void stubPartNode( final NodeService nodeService, final Instant timestamp, final NodeVersionId version )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "resource", "kind: Part" );
+        final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree(), version );
+        final Node partSchemaNode = createNode( "part:my-part", new NodePath( "/myapp/cms" ), timestamp, data, version );
+        when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
+        when( nodeService.getByPath( new NodePath( "/myapp/cms/part:my-part" ) ) ).thenReturn( partSchemaNode );
+        when( nodeService.list( any( ListNodesParams.class ) ) ).thenAnswer(
+            invocation -> Stream.of( new NodeListEntry( partSchemaNode.id(), partSchemaNode.path(), timestamp ) ) );
+        when( nodeService.getByIds( any( NodeIds.class ) ) ).thenReturn( Nodes.from( partSchemaNode ) );
+    }
+
     private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data )
     {
-        return Node.create().name( NodeName.from( name ) ).parentPath( root ).timestamp( timestamp ).data( data ).build();
+        return createNode( name, root, timestamp, data, null );
+    }
+
+    private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data,
+                             final NodeVersionId version )
+    {
+        return Node.create()
+            .id( NodeId.from( name ) )
+            .name( NodeName.from( name ) )
+            .parentPath( root )
+            .timestamp( timestamp )
+            .data( data )
+            .nodeVersionId( version )
+            .build();
     }
 }

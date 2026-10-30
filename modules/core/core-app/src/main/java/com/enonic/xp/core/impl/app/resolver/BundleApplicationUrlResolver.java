@@ -57,4 +57,18 @@ public final class BundleApplicationUrlResolver
             ? null
             : new UrlResource( ResourceKey.from( ApplicationHelper.getApplicationKey( bundle ), path ), url, "bundle" );
     }
+
+    @Override
+    public boolean isStable()
+    {
+        // the bundle is immutable: a new bundle is a new stamp
+        return true;
+    }
+
+    @Override
+    public Object revision()
+    {
+        // the incarnation of the bundle is the revision, the stamp of the application carries it
+        return null;
+    }
 }

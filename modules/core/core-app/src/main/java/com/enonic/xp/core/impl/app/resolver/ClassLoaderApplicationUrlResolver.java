@@ -60,18 +60,17 @@ public final class ClassLoaderApplicationUrlResolver
         }
         else if ( "file".equalsIgnoreCase( url.getProtocol() ) )
         {
+            final Path file;
             try
             {
-                if ( Files.isDirectory( Path.of( url.toURI() ) ) )
-                {
-                    return null;
-                }
+                file = Path.of( url.toURI() );
             }
             catch ( URISyntaxException e )
             {
                 return null;
             }
-            return new UrlResource( ResourceKey.from( applicationKey, path ), url, "file" );
+            // a file on disk: served with its modification time as the revision of its content, see FileResource
+            return Files.isDirectory( file ) ? null : new FileResource( ResourceKey.from( applicationKey, path ), file );
         }
         else if ( url.getPath().endsWith( "/" ) )
         {
@@ -86,5 +85,19 @@ public final class ClassLoaderApplicationUrlResolver
     private static String normalizePath( final String path )
     {
         return path.startsWith( "/" ) ? path.substring( 1 ) : path;
+    }
+
+    @Override
+    public boolean isStable()
+    {
+        // files on disk change without any signal
+        return false;
+    }
+
+    @Override
+    public Object revision()
+    {
+        // the files are checked one by one, by the revision of each resource
+        return null;
     }
 }
