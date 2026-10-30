@@ -93,6 +93,10 @@ public class SearchRequestBuilderFactory
         {
             searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
         }
+        else
+        {
+            searchRequestBuilder.setFetchSource( false );
+        }
 
         if ( query.getHighlight() != null )
         {
