@@ -44,7 +44,9 @@ final class ContentTypeLoader
 
         // the form fragments are inlined here, into the value cached: a change of a fragment moves the version of the
         // application node, which recomputes the content type. A failure of the expansion is the caller's to see
-        return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
+        return ContentType.create( contentType )
+            .form( FormFragmentInlining.inline( formFragmentService, contentType.getForm(), "content type [" + name + "]" ) )
+            .build();
     }
 
     private ContentType parse( final ContentTypeName name, final Resource resource )

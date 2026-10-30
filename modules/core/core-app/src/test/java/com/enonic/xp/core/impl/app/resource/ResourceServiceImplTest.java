@@ -514,6 +514,68 @@ class ResourceServiceImplTest
         assertEquals( "myapp:/a.txt->3", processResource( "segment1", "a.txt", "3" ) );
     }
 
+    // the key translation of a schema prefers .yaml to .yml: in development, a .yaml appearing beside the cached .yml is seen
+    @Test
+    void classLoaderResolver_descriptorAppearingWhereTheTranslationLooksFirstRecomputes()
+        throws Exception
+    {
+        newFile( "a.yml" );
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( "a" )
+            .segment( "segment1" )
+            .keyTranslator( name -> {
+                final ResourceKey yaml = ResourceKey.from( "myapp:/" + name + ".yaml" );
+                return this.resourceService.getResource( yaml ).exists() ? yaml : ResourceKey.from( "myapp:/" + name + ".yml" );
+            } )
+            .processor( res -> {
+                computed.incrementAndGet();
+                return res.getKey().toString();
+            } )
+            .build();
+
+        assertEquals( "myapp:/a.yml", this.resourceService.processResource( processor ) );
+        assertEquals( "myapp:/a.yml", this.resourceService.processResource( processor ) );
+        assertEquals( 1, computed.get() );
+
+        newFile( "a.yaml" );
+
+        assertEquals( "myapp:/a.yaml", this.resourceService.processResource( processor ) );
+        assertEquals( 2, computed.get() );
+        assertEquals( "myapp:/a.yaml", this.resourceService.processResource( processor ) );
+        assertEquals( 2, computed.get() );
+    }
+
+    // a descriptor reads its icon next to it directly, not through another processor: in development, the icon added is seen
+    @Test
+    void classLoaderResolver_resourceReadDirectlyIsADependency()
+        throws Exception
+    {
+        newFile( "a.yaml" );
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( "a" )
+            .segment( "segment1" )
+            .keyTranslator( name -> ResourceKey.from( "myapp:/" + name + ".yaml" ) )
+            .processor( res -> {
+                computed.incrementAndGet();
+                return "icon:" + this.resourceService.getResource( ResourceKey.from( "myapp:/a.svg" ) ).exists();
+            } )
+            .build();
+
+        assertEquals( "icon:false", this.resourceService.processResource( processor ) );
+        assertEquals( "icon:false", this.resourceService.processResource( processor ) );
+        assertEquals( 1, computed.get() );
+
+        newFile( "a.svg" );
+
+        assertEquals( "icon:true", this.resourceService.processResource( processor ) );
+        assertEquals( 2, computed.get() );
+
+        touch( "a.svg" );
+
+        assertEquals( "icon:true", this.resourceService.processResource( processor ) );
+        assertEquals( 3, computed.get() );
+    }
+
     @Test
     void processor_readsOtherResourcesThroughTheService()
     {

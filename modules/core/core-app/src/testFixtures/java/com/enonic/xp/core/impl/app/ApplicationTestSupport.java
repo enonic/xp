@@ -2,16 +2,17 @@ package com.enonic.xp.core.impl.app;
 
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.ResourceService;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -73,6 +74,12 @@ public abstract class ApplicationTestSupport
         app.setKey( ApplicationKey.from( key ) );
         app.setStarted( true );
 
+        // the bundle names the application the resources are served for: without one they would be served as the system
+        // application's, and what is cached of them never found current again
+        final Bundle bundle = mock( Bundle.class );
+        when( bundle.getSymbolicName() ).thenReturn( key );
+        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
+        app.setBundle( bundle );
         app.setResourcePath( resourcePath );
 
         this.apps.put( app.getKey(), app );

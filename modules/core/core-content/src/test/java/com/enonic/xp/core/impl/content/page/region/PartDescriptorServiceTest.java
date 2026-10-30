@@ -51,7 +51,7 @@ class PartDescriptorServiceTest
 
         final IllegalArgumentException e =
             assertThrows( IllegalArgumentException.class, () -> this.service.getByKey( DescriptorKey.from( "myapp1:mypart" ) ) );
-        assertEquals( "Form fragment [myapp1:missing] not found", e.getMessage() );
+        assertEquals( "Form fragments of part [myapp1:mypart] cannot be inlined: Form fragment [myapp1:missing] not found", e.getMessage() );
     }
 
     @Test

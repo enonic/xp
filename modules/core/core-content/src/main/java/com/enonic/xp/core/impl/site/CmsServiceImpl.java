@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlCmsDescriptorParser;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -107,7 +108,10 @@ public class CmsServiceImpl
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
         // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
-        return CmsDescriptor.copyOf( descriptor ).form( formFragmentService.inlineFormItems( descriptor.getForm() ) ).build();
+        return CmsDescriptor.copyOf( descriptor )
+            .form( FormFragmentInlining.inline( formFragmentService, descriptor.getForm(),
+                                                "cms descriptor of application [" + resource.getKey().getApplicationKey() + "]" ) )
+            .build();
     }
 
     private ResourceKey toResourceKey( final ApplicationKey applicationKey )

@@ -25,7 +25,9 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,6 +82,9 @@ class DevModeSchemaTest
     void content_type_follows_an_edited_form_fragment()
     {
         assertEquals( List.of( "street" ), inputNames() );
+        // nothing changed: the value cached is served, the same instance
+        assertSame( contentTypeService.getByName( GetContentTypeParams.from( TYPE_NAME ) ),
+                    contentTypeService.getByName( GetContentTypeParams.from( TYPE_NAME ) ) );
 
         write( FRAGMENT, fragment( "street", "city" ) );
 
@@ -107,6 +112,31 @@ class DevModeSchemaTest
         assertEquals( List.of(), inputNames() );
     }
 
+    // the content type is in the folder structure; a flat descriptor, which wins over it, appears beside it without the folder
+    // one changing: the next read selects the flat one
+    @Test
+    void content_type_follows_a_flat_descriptor_appearing_beside_the_folder_one()
+    {
+        assertEquals( "With fragment", contentTypeService.getByName( GetContentTypeParams.from( TYPE_NAME ) ).getTitle() );
+
+        write( "cms/content-types/withfragment.yaml",
+               "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"Flat\"\nform: []\n" );
+
+        assertEquals( "Flat", contentTypeService.getByName( GetContentTypeParams.from( TYPE_NAME ) ).getTitle() );
+        assertEquals( List.of(), inputNames() );
+    }
+
+    // the icon is read next to the descriptor, not through another cached value: one added is seen by the next read
+    @Test
+    void content_type_follows_an_added_icon()
+    {
+        assertNull( contentTypeService.getByName( GetContentTypeParams.from( TYPE_NAME ) ).getIcon() );
+
+        write( "cms/content-types/withfragment/withfragment.svg", "<svg xmlns=\"http://www.w3.org/2000/svg\"/>" );
+
+        assertNotNull( contentTypeService.getByName( GetContentTypeParams.from( TYPE_NAME ) ).getIcon() );
+    }
+
     // two fragments, each valid, both contributing an input named street: the content type is invalid once expanded, and the
     // failure is the caller's to see, not logged and left out as a content type that fails to parse
     @Test
@@ -117,7 +147,8 @@ class DevModeSchemaTest
             "form:\n  - include: \"address\"\n  - include: \"address2\"\n" );
 
         final IllegalArgumentException e = assertThrows( IllegalArgumentException.class, this::inputNames );
-        assertTrue( e.getMessage().contains( "Multiple entries with same key: street=street" ), e.getMessage() );
+        assertEquals( "Form fragments of content type [devapp:withfragment] cannot be inlined: " +
+                          "Multiple entries with same key: street=street and street=street", e.getMessage() );
     }
 
     // the same through the descriptor facet: the part is reported invalid, not replaced by the default descriptor
@@ -128,7 +159,8 @@ class DevModeSchemaTest
         write( PART, "kind: \"Part\"\ntitle:\n  text: \"Hero\"\nform:\n  - include: \"address\"\n  - include: \"address2\"\n" );
 
         final IllegalArgumentException e = assertThrows( IllegalArgumentException.class, this::partInputNames );
-        assertTrue( e.getMessage().contains( "Multiple entries with same key: street=street" ), e.getMessage() );
+        assertEquals( "Form fragments of part [devapp:hero] cannot be inlined: Multiple entries with same key: street=street and street=street",
+                      e.getMessage() );
     }
 
     // a content type that fails to parse is still logged and left out

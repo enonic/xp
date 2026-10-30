@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -77,7 +78,9 @@ public class PartDescriptorLoader
     @Override
     public PartDescriptor postProcess( final PartDescriptor descriptor )
     {
-        return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
+        return PartDescriptor.copyOf( descriptor )
+            .config( FormFragmentInlining.inline( this.formFragmentService, descriptor.getConfig(), "part [" + descriptor.getKey() + "]" ) )
+            .build();
     }
 
     @Override

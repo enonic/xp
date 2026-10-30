@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.core.internal.Millis;
@@ -75,7 +76,9 @@ public class PageDescriptorLoader
     @Override
     public PageDescriptor postProcess( final PageDescriptor descriptor )
     {
-        return PageDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
+        return PageDescriptor.copyOf( descriptor )
+            .config( FormFragmentInlining.inline( this.formFragmentService, descriptor.getConfig(), "page [" + descriptor.getKey() + "]" ) )
+            .build();
     }
 
     @Override

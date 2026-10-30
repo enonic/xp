@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
 import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -75,7 +76,9 @@ public class LayoutDescriptorLoader
     @Override
     public LayoutDescriptor postProcess( final LayoutDescriptor descriptor )
     {
-        return LayoutDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
+        return LayoutDescriptor.copyOf( descriptor )
+            .config( FormFragmentInlining.inline( this.formFragmentService, descriptor.getConfig(), "layout [" + descriptor.getKey() + "]" ) )
+            .build();
     }
 
     @Override

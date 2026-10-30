@@ -229,6 +229,47 @@ class PersistedSchemaLookupTest
         } );
     }
 
+    // a local application redeployed from the deploy directory (edit, gradle deploy): the jar is a new bundle, and the content
+    // types read from the old one are read anew, both when the new jar is installed over the old one and when the old one is
+    // uninstalled first, as the deploy watcher does for a modified jar
+    @Test
+    void local_application_redeployed_serves_its_new_schema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "localapp" );
+        final ContentTypeName typeName = ContentTypeName.from( "localapp:myarticle" );
+        final String v1 = "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"Title 1\"\n";
+        final String v2 = v1.replace( "Title 1", "Title 2" );
+        final String v3 = v1.replace( "Title 1", "Title 3" );
+
+        adminContext().runWith( () -> {
+            applicationService.installLocalApplication( createAppSource( "localapp", "1.0.0-SNAPSHOT", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", "kind: \"CMS\"", //
+                "cms/content-types/myarticle/myarticle.yml", v1 ) ) );
+            assertTrue( applicationService.isLocalApplication( appKey ) );
+            assertEquals( "Title 1", contentTypeService.getByName( GetContentTypeParams.from( typeName ) ).getTitle() );
+            assertEquals( "Title 1", contentTypeService.getByName( GetContentTypeParams.from( typeName ) ).getTitle() );
+            assertEquals( "Title 1", contentTypeService.getByApplication( appKey ).get( 0 ).getTitle() );
+
+            // installed over the running one
+            applicationService.installLocalApplication( createAppSource( "localapp", "1.0.0-SNAPSHOT", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", "kind: \"CMS\"", //
+                "cms/content-types/myarticle/myarticle.yml", v2 ) ) );
+            assertEquals( "Title 2", contentTypeService.getByName( GetContentTypeParams.from( typeName ) ).getTitle() );
+            assertEquals( "Title 2", contentTypeService.getByApplication( appKey ).get( 0 ).getTitle() );
+
+            // uninstalled and installed again, as the deploy watcher does for a modified jar
+            applicationService.uninstallLocalApplication( appKey );
+            applicationService.installLocalApplication( createAppSource( "localapp", "1.0.0-SNAPSHOT", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", "kind: \"CMS\"", //
+                "cms/content-types/myarticle/myarticle.yml", v3 ) ) );
+            assertEquals( "Title 3", contentTypeService.getByName( GetContentTypeParams.from( typeName ) ).getTitle() );
+            assertEquals( "Title 3", contentTypeService.getByApplication( appKey ).get( 0 ).getTitle() );
+        } );
+    }
+
     // how many times the schema of the application was changed through the schema service since its install
     private long schemaRevision( final String appName )
     {
@@ -252,7 +293,8 @@ class PersistedSchemaLookupTest
 
             final IllegalArgumentException e = assertThrows( IllegalArgumentException.class,
                                                           () -> contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) );
-            assertEquals( "Form fragment [staticapp:address] not found", e.getMessage() );
+            assertEquals( "Form fragments of content type [staticapp:withfragment] cannot be inlined: Form fragment [staticapp:address] not found",
+                          e.getMessage() );
 
             // written afterwards, the fragment makes the content type readable: nothing of the failed read was cached
             dynamicSchemaService.createOrUpdateFormFragment( CreateOrUpdateContentSchemaParams.create()

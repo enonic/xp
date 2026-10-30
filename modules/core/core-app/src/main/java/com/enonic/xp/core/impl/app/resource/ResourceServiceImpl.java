@@ -49,10 +49,13 @@ import com.enonic.xp.vfs.VirtualFile;
  * A value is computed outside of any lock and put in the cache afterwards: a processor may itself read other resources through this
  * service (a content type inlining its form fragments), and two threads computing the same value at once just agree on it. The
  * caches are bounded in size and by last access only so that a key nobody reads any more does not hold its value forever; currency
- * is never a matter of age, it is checked on every hit. What a
- * processor reads that way is recorded with the value as its {@link Dependency dependencies}: for an unstable resolver they are
- * checked on every use as the resource of the value itself is, so an edit of a fragment alone reaches the content types inlining it.
- * A stable resolver needs no such record: a value only reads resources of its own application, all guarded by the same stamp.
+ * is never a matter of age, it is checked on every hit. What a processor reads that way, through {@link #processResource} or
+ * {@link #getResource}, is recorded with the value as its {@link Dependency dependencies}, and so are the resources its key
+ * translation looked for, found or not: for an unstable resolver they are checked on every use as the resource of the value itself
+ * is, so an edit of a fragment alone reaches the content types inlining it, an icon added next to a descriptor reaches the
+ * descriptor, and a descriptor appearing where the translation looks first ({@code .yaml} beside a {@code .yml}) is selected by the
+ * next read. A stable resolver needs no such record: a value only reads resources of its own application, all guarded by the same
+ * stamp.
  */
 @Component(immediate = true)
 public final class ResourceServiceImpl
@@ -85,7 +88,14 @@ public final class ResourceServiceImpl
     @Override
     public Resource getResource( final ResourceKey key )
     {
-        return findResource( findApplicationUrlResolver( key.getApplicationKey() ), key );
+        final Resource resource = findResource( findApplicationUrlResolver( key.getApplicationKey() ), key );
+        // read while a value is computed, by its processor or its key translation: the value depends on it, present or not
+        final List<Dependency> outer = outerDependencies();
+        if ( outer != null )
+        {
+            outer.add( Dependency.of( resource ) );
+        }
+        return resource;
     }
 
     private static Resource findResource( final Optional<ApplicationUrlResolver> urlResolver, final ResourceKey key )
@@ -177,15 +187,17 @@ public final class ResourceServiceImpl
             return (V) cached.value();
         }
 
+        // the resources the translation looks for are recorded as well: a descriptor appearing where it looks first is a change
+        final List<Dependency> probed = new ArrayList<>();
+        final ResourceKey resourceKey = compute( probed, processor::toResourceKey );
         // the stamp is read before the resource: a change racing in-between costs a recompute, never staleness
-        final ResourceKey resourceKey = processor.toResourceKey();
         final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( resourceKey.getApplicationKey() );
         final CacheStamp stamp = stamp( resourceKey.getApplicationKey(), urlResolver );
         final Resource resource = findResource( urlResolver, resourceKey );
         final boolean stable = isStable( urlResolver );
 
         // what an unstable value reads while computed is recorded with it; a stable one has its stamp for a signal and records nothing
-        final List<Dependency> dependencies = stable ? null : new ArrayList<>();
+        final List<Dependency> dependencies = stable ? null : probed;
         final V value = compute( dependencies, () -> processor.process( resource ) );
         final Dependency self = Dependency.of( resource );
         final List<Dependency> outer = outerDependencies();
@@ -243,8 +255,9 @@ public final class ResourceServiceImpl
             return (V) cached.value();
         }
 
+        final List<Dependency> probed = new ArrayList<>();
+        final List<ResourceKey> resourceKeys = compute( probed, processor::toResourceKeys );
         // stamps are read before the resources: a change racing in-between costs a recompute, never staleness
-        final List<ResourceKey> resourceKeys = processor.toResourceKeys();
         final List<ApplicationKey> applicationKeys = applicationKeys( resourceKeys );
         final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
         final List<CacheStamp> stamps = new ArrayList<>();
@@ -261,7 +274,7 @@ public final class ResourceServiceImpl
             .map( resourceKey -> findResource( urlResolvers.get( resourceKey.getApplicationKey() ), resourceKey ) )
             .toList();
 
-        final List<Dependency> dependencies = stable ? null : new ArrayList<>();
+        final List<Dependency> dependencies = stable ? null : probed;
         final V value = compute( dependencies, () -> processor.process( resources ) );
         final List<Dependency> selves = resources.stream().map( Dependency::of ).toList();
         final List<Dependency> outer = outerDependencies();
