@@ -64,11 +64,17 @@ public class PageDescriptorLoader
     @Override
     public PageDescriptor load( final DescriptorKey key, final Resource resource )
     {
-        final PageDescriptor descriptor = YmlPageDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+        return YmlPageDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .key( key )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
-        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
+    }
+
+    // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node.
+    // A failure of the expansion is the caller's to see, unlike a descriptor that fails to parse
+    @Override
+    public PageDescriptor postProcess( final PageDescriptor descriptor )
+    {
         return PageDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 

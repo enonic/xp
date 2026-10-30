@@ -25,6 +25,9 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * An application in development is served from its source files through its classloader: the files change under it without any
@@ -38,6 +41,8 @@ class DevModeSchemaTest
     private static final String CONTENT_TYPE = "cms/content-types/withfragment/withfragment.yaml";
 
     private static final String PART = "cms/parts/hero/hero.yaml";
+
+    private static final String OTHER_FRAGMENT = "cms/form-fragments/address2/address2.yaml";
 
     private static final ContentTypeName TYPE_NAME = ContentTypeName.from( "devapp:withfragment" );
 
@@ -100,6 +105,40 @@ class DevModeSchemaTest
         write( CONTENT_TYPE, "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"Without fragment\"\nform: []\n" );
 
         assertEquals( List.of(), inputNames() );
+    }
+
+    // two fragments, each valid, both contributing an input named street: the content type is invalid once expanded, and the
+    // failure is the caller's to see, not logged and left out as a content type that fails to parse
+    @Test
+    void content_type_with_conflicting_fragments_is_reported_on_read()
+    {
+        write( OTHER_FRAGMENT, fragment( "street" ) );
+        write( CONTENT_TYPE, "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"With fragments\"\n" +
+            "form:\n  - include: \"address\"\n  - include: \"address2\"\n" );
+
+        final IllegalArgumentException e = assertThrows( IllegalArgumentException.class, this::inputNames );
+        assertTrue( e.getMessage().contains( "Multiple entries with same key: street=street" ), e.getMessage() );
+    }
+
+    // the same through the descriptor facet: the part is reported invalid, not replaced by the default descriptor
+    @Test
+    void part_with_conflicting_fragments_is_reported_on_read()
+    {
+        write( OTHER_FRAGMENT, fragment( "street" ) );
+        write( PART, "kind: \"Part\"\ntitle:\n  text: \"Hero\"\nform:\n  - include: \"address\"\n  - include: \"address2\"\n" );
+
+        final IllegalArgumentException e = assertThrows( IllegalArgumentException.class, this::partInputNames );
+        assertTrue( e.getMessage().contains( "Multiple entries with same key: street=street" ), e.getMessage() );
+    }
+
+    // a content type that fails to parse is still logged and left out
+    @Test
+    void content_type_that_fails_to_parse_is_left_out()
+    {
+        write( CONTENT_TYPE, "kind: \"ContentType\"\ndisplayName: \"Unknown property\"\n" );
+
+        assertNull( contentTypeService.getByName( GetContentTypeParams.from( TYPE_NAME ) ) );
+        assertTrue( contentTypeService.getByApplication( TYPE_NAME.getApplicationKey() ).isEmpty() );
     }
 
     private List<String> inputNames()

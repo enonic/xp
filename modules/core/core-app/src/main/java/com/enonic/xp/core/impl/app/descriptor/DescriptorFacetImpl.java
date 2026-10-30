@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.internal.form.FormFragmentException;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -43,13 +42,7 @@ final class DescriptorFacetImpl<T extends Descriptor>
     {
         final ResourceProcessor<DescriptorKey, T> processor = newProcessor( key );
         final T descriptor = this.resourceService.processResource( processor );
-
-        if ( descriptor == null )
-        {
-            return this.loader.createDefault( key );
-        }
-
-        return this.loader.postProcess( descriptor );
+        return descriptor == null ? this.loader.createDefault( key ) : descriptor;
     }
 
     @Override
@@ -94,7 +87,11 @@ final class DescriptorFacetImpl<T extends Descriptor>
         return new ResourceProcessor.Builder<DescriptorKey, T>().key( key )
             .segment( this.type.getName() )
             .keyTranslator( this.loader::toResource )
-            .processor( resource -> doLoad( key, resource ) )
+            .processor( resource -> {
+                final T descriptor = doLoad( key, resource );
+                // post-processed into the value cached; unlike a descriptor that fails to parse, a failure here is the caller's to see
+                return descriptor == null ? null : this.loader.postProcess( descriptor );
+            } )
             .build();
     }
 
@@ -103,11 +100,6 @@ final class DescriptorFacetImpl<T extends Descriptor>
         try
         {
             return this.loader.load( key, resource );
-        }
-        catch ( final FormFragmentException e )
-        {
-            // a fragment missing or cyclic is the caller's to see, the descriptor itself is sound
-            throw e;
         }
         catch ( final Exception e )
         {

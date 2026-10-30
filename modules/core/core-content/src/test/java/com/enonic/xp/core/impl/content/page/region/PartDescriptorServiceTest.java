@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
-import com.enonic.xp.core.internal.form.FormFragmentException;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
@@ -48,10 +47,10 @@ class PartDescriptorServiceTest
     void missing_form_fragment_is_reported()
     {
         when( this.formFragmentService.inlineFormItems( any() ) ).thenThrow(
-            new FormFragmentException( "Form fragment [myapp1:missing] not found" ) );
+            new IllegalArgumentException( "Form fragment [myapp1:missing] not found" ) );
 
-        final FormFragmentException e =
-            assertThrows( FormFragmentException.class, () -> this.service.getByKey( DescriptorKey.from( "myapp1:mypart" ) ) );
+        final IllegalArgumentException e =
+            assertThrows( IllegalArgumentException.class, () -> this.service.getByKey( DescriptorKey.from( "myapp1:mypart" ) ) );
         assertEquals( "Form fragment [myapp1:missing] not found", e.getMessage() );
     }
 

@@ -65,12 +65,18 @@ public class PartDescriptorLoader
     public PartDescriptor load( final DescriptorKey key, final Resource resource )
         throws Exception
     {
-        final PartDescriptor descriptor = YmlPartDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+        return YmlPartDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .key( key )
             .icon( loadIcon( key, resource ) )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
-        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
+    }
+
+    // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node.
+    // A failure of the expansion is the caller's to see, unlike a descriptor that fails to parse
+    @Override
+    public PartDescriptor postProcess( final PartDescriptor descriptor )
+    {
         return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 

@@ -2,6 +2,9 @@ package com.enonic.xp.core.impl.content.schema;
 
 import java.time.Instant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.schema.SchemaLoader;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -14,6 +17,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 final class ContentTypeLoader
     extends SchemaLoader<ContentTypeName, ContentType>
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ContentTypeLoader.class );
+
     private final CmsFormFragmentService formFragmentService;
 
     ContentTypeLoader( final ResourceService resourceService, final CmsFormFragmentService formFragmentService )
@@ -25,6 +30,25 @@ final class ContentTypeLoader
     @Override
     protected ContentType load( final ContentTypeName name, final Resource resource )
     {
+        final ContentType contentType;
+        try
+        {
+            contentType = parse( name, resource );
+        }
+        catch ( final Exception e )
+        {
+            // a content type that fails to parse is logged and left out
+            LOG.error( "Error loading content type: '{}'", name, e );
+            return null;
+        }
+
+        // the form fragments are inlined here, into the value cached: a change of a fragment moves the version of the
+        // application node, which recomputes the content type. A failure of the expansion is the caller's to see
+        return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
+    }
+
+    private ContentType parse( final ContentTypeName name, final Resource resource )
+    {
         final ContentType.Builder builder = YmlContentTypeParser.parse( resource.readString(), name.getApplicationKey() );
 
         builder.name( name );
@@ -34,10 +58,7 @@ final class ContentTypeLoader
         builder.modifiedTime( modifiedTime );
         builder.createdTime( modifiedTime );
 
-        // the form fragments are inlined here, into the value cached: a change of a fragment moves the version of the
-        // application node, which recomputes the content type
-        final ContentType contentType = builder.build();
-        return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
+        return builder.build();
     }
 
     @Override

@@ -49,7 +49,6 @@ import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.content.schema.CmsFormFragmentServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
-import com.enonic.xp.core.internal.form.FormFragmentException;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.resource.CreateOrUpdateContentSchemaParams;
@@ -251,7 +250,7 @@ class PersistedSchemaLookupTest
                 "cms/cms.yaml", "kind: \"CMS\"", //
                 "cms/content-types/withfragment.yaml", CONTENT_TYPE_WITH_FRAGMENT ) ) );
 
-            final FormFragmentException e = assertThrows( FormFragmentException.class,
+            final IllegalArgumentException e = assertThrows( IllegalArgumentException.class,
                                                           () -> contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) );
             assertEquals( "Form fragment [staticapp:address] not found", e.getMessage() );
 

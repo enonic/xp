@@ -64,11 +64,17 @@ public class LayoutDescriptorLoader
     public LayoutDescriptor load( final DescriptorKey key, final Resource resource )
         throws Exception
     {
-        final LayoutDescriptor descriptor = YmlLayoutDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+        return YmlLayoutDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .key( key )
             .build();
-        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
+    }
+
+    // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node.
+    // A failure of the expansion is the caller's to see, unlike a descriptor that fails to parse
+    @Override
+    public LayoutDescriptor postProcess( final LayoutDescriptor descriptor )
+    {
         return LayoutDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
