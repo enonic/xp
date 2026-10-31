@@ -18,6 +18,7 @@ import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
+import com.enonic.xp.web.HttpStatus;
 
 import static java.util.Objects.requireNonNullElse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VirtualHostResolverImplTest
 {
@@ -373,14 +373,14 @@ class VirtualHostResolverImplTest
     }
 
     @Test
-    void testMatches_keepsHideDenied()
+    void testMatches_keepsDeniedStatus()
     {
         final VirtualHostMapping plain =
             new VirtualHostMapping( "plain", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(), null, null,
-                                    null, true );
+                                    null, HttpStatus.NOT_FOUND, HttpStatus.PAYMENT_REQUIRED );
         final VirtualHostMapping pattern =
             new VirtualHostMapping( "pattern", "~bar\\.no", "/", "/b", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(), null,
-                                    null, null, true );
+                                    null, null, HttpStatus.NOT_FOUND, HttpStatus.PAYMENT_REQUIRED );
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( plain, pattern ) );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
@@ -392,7 +392,9 @@ class VirtualHostResolverImplTest
             when( req.getServerName() ).thenReturn( serverName );
             when( req.getPathInfo() ).thenReturn( "/c" );
 
-            assertTrue( virtualHostResolver.resolveVirtualHost( req ).isHideDenied() );
+            final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
+            assertEquals( HttpStatus.NOT_FOUND, virtualHost.getAnonymousDeniedStatus() );
+            assertEquals( HttpStatus.PAYMENT_REQUIRED, virtualHost.getAuthenticatedDeniedStatus() );
         }
     }
 }

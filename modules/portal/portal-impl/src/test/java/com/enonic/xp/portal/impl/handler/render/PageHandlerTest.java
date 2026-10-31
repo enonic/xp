@@ -50,6 +50,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.Mockito.mock;
 
 class PageHandlerTest
@@ -410,9 +411,9 @@ class PageHandlerTest
     }
 
     @Test
-    void getContentExistsButHiddenFromAnonymous()
+    void getContentDeniedToAnonymousWithConfiguredStatus()
     {
-        hideDeniedContent();
+        denyContent( HttpStatus.NOT_FOUND, HttpStatus.PAYMENT_REQUIRED );
 
         assertThatThrownBy( () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ).isInstanceOfSatisfying(
             WebException.class, e -> {
@@ -422,21 +423,20 @@ class PageHandlerTest
     }
 
     @Test
-    void getContentExistsButHiddenFromAuthenticated()
+    void getContentDeniedToAuthenticatedWithConfiguredStatus()
     {
-        hideDeniedContent();
+        denyContent( HttpStatus.NOT_FOUND, HttpStatus.PAYMENT_REQUIRED );
         final Context authenticatedContext = ContextBuilder.from( ContextAccessor.current() )
             .authInfo( AuthenticationInfo.create().user( User.anonymous() ).build() )
             .build();
 
-        assertThatThrownBy( () -> authenticatedContext.callWith(
-            () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ) ).isInstanceOfSatisfying( WebException.class,
-                                                                                                                      e -> assertEquals(
-                                                                                                                          HttpStatus.NOT_FOUND,
-                                                                                                                          e.getStatus() ) );
+        final WebException e = catchThrowableOfType( WebException.class, () -> authenticatedContext.callWith(
+            () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ) );
+        assertEquals( HttpStatus.PAYMENT_REQUIRED, e.getStatus() );
+        assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
     }
 
-    private void hideDeniedContent()
+    private void denyContent( final HttpStatus anonymousStatus, final HttpStatus authenticatedStatus )
     {
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
         final Content content = Content.create()
@@ -451,7 +451,8 @@ class PageHandlerTest
             .build();
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.isHideDenied() ).thenReturn( true );
+        when( virtualHost.getAnonymousDeniedStatus() ).thenReturn( anonymousStatus );
+        when( virtualHost.getAuthenticatedDeniedStatus() ).thenReturn( authenticatedStatus );
 
         this.request.setVirtualHost( virtualHost );
         this.request.setContent( content );

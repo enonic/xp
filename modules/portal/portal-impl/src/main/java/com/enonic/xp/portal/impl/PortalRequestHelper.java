@@ -9,6 +9,7 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -74,9 +75,14 @@ public final class PortalRequestHelper
     public static WebException denied( final WebRequest request, final String notFoundMessage, final String forbiddenMessage )
     {
         final VirtualHost virtualHost = request.getVirtualHost();
-        return virtualHost != null && virtualHost.isHideDenied()
-            ? WebException.notFound( notFoundMessage )
-            : WebException.forbidden( forbiddenMessage );
+        if ( virtualHost == null )
+        {
+            return WebException.forbidden( forbiddenMessage );
+        }
+        final HttpStatus status = ContextAccessor.current().getAuthInfo().isAuthenticated()
+            ? virtualHost.getAuthenticatedDeniedStatus()
+            : virtualHost.getAnonymousDeniedStatus();
+        return new WebException( status, status == HttpStatus.NOT_FOUND ? notFoundMessage : forbiddenMessage );
     }
 
     public static boolean isReadable( final Content content )

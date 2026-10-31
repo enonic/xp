@@ -85,7 +85,8 @@ public class VirtualHostResolverImpl
                                                    matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping(),
                                                    virtualHost.getOrder(), virtualHost.getContext(), virtualHost.getConnector(),
                                                    virtualHost.getAllowedPrincipals(), virtualHost.getAudience(),
-                                                   virtualHost.isHideDenied() );
+                                                   virtualHost.getAnonymousDeniedStatus(),
+                                                   virtualHost.getAuthenticatedDeniedStatus() );
                 }
             }
             else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( pathInfo ) )
@@ -93,7 +94,7 @@ public class VirtualHostResolverImpl
                 return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(), virtualHost.getTarget(),
                                                createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext(),
                                                virtualHost.getConnector(), virtualHost.getAllowedPrincipals(), virtualHost.getAudience(),
-                                               virtualHost.isHideDenied() );
+                                               virtualHost.getAnonymousDeniedStatus(), virtualHost.getAuthenticatedDeniedStatus() );
             }
             return null;
         }

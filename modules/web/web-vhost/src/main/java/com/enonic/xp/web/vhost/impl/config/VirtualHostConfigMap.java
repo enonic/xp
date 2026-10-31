@@ -17,6 +17,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -36,6 +37,9 @@ final class VirtualHostConfigMap
     private static final String API_CONTEXT_PREFIX = "api.";
 
     private static final String API_REST_ENABLED = "rest.enabled";
+
+    private static final List<HttpStatus> DENIED_STATUSES =
+        List.of( HttpStatus.UNAUTHORIZED, HttpStatus.PAYMENT_REQUIRED, HttpStatus.FORBIDDEN, HttpStatus.NOT_FOUND );
 
     private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.(?<name>[^.]+)\\..+" );
 
@@ -81,10 +85,25 @@ final class VirtualHostConfigMap
         final String connector = getConnector( prefix );
         final PrincipalKeys allowedPrincipals = getAllowedPrincipals( prefix );
         final Set<String> audience = getAudience( prefix );
-        final boolean hideDenied = getBoolean( prefix + "hideDenied", false );
+        final HttpStatus anonymousDeniedStatus = getDeniedStatus( prefix + "deniedStatus.anonymous", HttpStatus.UNAUTHORIZED );
+        final HttpStatus authenticatedDeniedStatus = getDeniedStatus( prefix + "deniedStatus.authenticated", HttpStatus.FORBIDDEN );
 
         return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals,
-                                       audience, hideDenied );
+                                       audience, anonymousDeniedStatus, authenticatedDeniedStatus );
+    }
+
+    private HttpStatus getDeniedStatus( final String key, final HttpStatus defaultStatus )
+    {
+        final String value = getString( key );
+        if ( value == null )
+        {
+            return defaultStatus;
+        }
+        return DENIED_STATUSES.stream()
+            .filter( status -> Integer.toString( status.value() ).equals( value ) )
+            .findFirst()
+            .orElseThrow( () -> new IllegalArgumentException(
+                "Invalid value [" + value + "] for [" + key + "] in vhost mapping, must be one of 401, 402, 403 or 404" ) );
     }
 
     private Set<String> getAudience( final String mappingPrefix )

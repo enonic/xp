@@ -13,6 +13,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class VirtualHostConfigMapTest
 {
@@ -473,19 +475,36 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testHideDenied()
+    void testDeniedStatus()
     {
         map.put( "mapping.myapp1.host", "example.com" );
-        map.put( "mapping.myapp1.hideDenied", "true" );
+        map.put( "mapping.myapp1.deniedStatus.anonymous", "404" );
+        map.put( "mapping.myapp1.deniedStatus.authenticated", "402" );
 
-        assertTrue( new VirtualHostConfigMap( map ).buildMappings().get( 0 ).isHideDenied() );
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( HttpStatus.NOT_FOUND, virtualHost.getAnonymousDeniedStatus() );
+        assertEquals( HttpStatus.PAYMENT_REQUIRED, virtualHost.getAuthenticatedDeniedStatus() );
     }
 
     @Test
-    void testHideDenied_absentMeansShown()
+    void testDeniedStatus_defaults()
     {
         map.put( "mapping.myapp1.host", "example.com" );
 
-        assertFalse( new VirtualHostConfigMap( map ).buildMappings().get( 0 ).isHideDenied() );
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( HttpStatus.UNAUTHORIZED, virtualHost.getAnonymousDeniedStatus() );
+        assertEquals( HttpStatus.FORBIDDEN, virtualHost.getAuthenticatedDeniedStatus() );
+    }
+
+    @Test
+    void testDeniedStatus_invalid()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.deniedStatus.anonymous", "500" );
+
+        assertThatThrownBy( () -> new VirtualHostConfigMap( map ).buildMappings() ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "mapping.myapp1.deniedStatus.anonymous" );
     }
 }

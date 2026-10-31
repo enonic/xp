@@ -27,6 +27,7 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -258,5 +259,28 @@ class IdProviderResponseWrapperTest
         Mockito.verify( httpServletResponse ).setHeader( "WWW-Authenticate", "Basic realm=\"x\"" );
         another.setStatus( 401 );
         Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+    }
+
+    @Test
+    void testAnonymous403_notInterceptedWhenVhostRefusesAnonymous()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider() ) );
+        Mockito.when( virtualHost.getAnonymousDeniedStatus() ).thenReturn( HttpStatus.FORBIDDEN );
+        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final IdProviderResponseWrapper responseWrapper =
+            new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
+
+        responseWrapper.sendError( 403 );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( httpServletResponse ).sendError( 403 );
+
+        responseWrapper.sendError( 401 );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 }

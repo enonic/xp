@@ -325,14 +325,14 @@ class AttachmentMediaHandlerTest
     }
 
     @Test
-    void testAttachmentDeniedHidden()
+    void testAttachmentDeniedWithConfiguredStatus()
     {
         final ContentId id = ContentId.from( "123456" );
         when( this.contentService.getById( id ) ).thenThrow( ContentNotFoundException.class );
         when( this.contentService.contentExists( id ) ).thenReturn( true );
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.isHideDenied() ).thenReturn( true );
+        when( virtualHost.getAnonymousDeniedStatus() ).thenReturn( HttpStatus.NOT_FOUND );
 
         final WebRequest request = new WebRequest();
         request.setMethod( HttpMethod.GET );

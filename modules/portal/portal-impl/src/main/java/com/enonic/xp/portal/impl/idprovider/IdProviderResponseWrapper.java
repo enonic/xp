@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -205,7 +206,13 @@ public class IdProviderResponseWrapper
 
     private boolean isUnauthorizedError( final int sc )
     {
-        return 401 == sc || 403 == sc && !ContextAccessor.current().getAuthInfo().isAuthenticated();
+        return 401 == sc || 403 == sc && !ContextAccessor.current().getAuthInfo().isAuthenticated() && !refusesAnonymous();
+    }
+
+    private boolean refusesAnonymous()
+    {
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
+        return virtualHost != null && virtualHost.getAnonymousDeniedStatus() == HttpStatus.FORBIDDEN;
     }
 
     // handle401 targets the default id provider: the first one of the vhost.

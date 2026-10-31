@@ -228,7 +228,7 @@ public final class ExceptionRendererImpl
 
     private PortalResponse renderIdProviderError( final PortalRequest req, final WebException cause )
     {
-        if ( isUnauthorizedError( cause.getStatus() ) )
+        if ( isUnauthorizedError( cause.getStatus(), req.getVirtualHost() ) )
         {
             final IdProviderControllerExecutionParams executionParams =
                 IdProviderControllerExecutionParams.create().functionName( "handle401" ).portalRequest( req ).build();
@@ -256,9 +256,10 @@ public final class ExceptionRendererImpl
         }
     }
 
-    private boolean isUnauthorizedError( final HttpStatus httpStatus )
+    private boolean isUnauthorizedError( final HttpStatus httpStatus, final VirtualHost virtualHost )
     {
-        return HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus && !isAuthenticated() );
+        return HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus && !isAuthenticated() &&
+            ( virtualHost == null || virtualHost.getAnonymousDeniedStatus() != HttpStatus.FORBIDDEN ) );
     }
 
     private boolean isAuthenticated()

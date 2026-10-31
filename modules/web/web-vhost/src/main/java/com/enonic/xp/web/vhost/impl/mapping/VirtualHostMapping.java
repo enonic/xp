@@ -11,6 +11,7 @@ import org.jspecify.annotations.Nullable;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -41,7 +42,9 @@ public final class VirtualHostMapping
 
     private final Set<String> audience;
 
-    private final boolean hideDenied;
+    private final HttpStatus anonymousDeniedStatus;
+
+    private final HttpStatus authenticatedDeniedStatus;
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
@@ -75,14 +78,15 @@ public final class VirtualHostMapping
                                @Nullable final Map<String, String> context, @Nullable final String connector,
                                @Nullable final PrincipalKeys allowedPrincipals, @Nullable final Set<String> audience )
     {
-        this( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals, audience, false );
+        this( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals, audience,
+              HttpStatus.UNAUTHORIZED, HttpStatus.FORBIDDEN );
     }
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order,
                                @Nullable final Map<String, String> context, @Nullable final String connector,
                                @Nullable final PrincipalKeys allowedPrincipals, @Nullable final Set<String> audience,
-                               final boolean hideDenied )
+                               final HttpStatus anonymousDeniedStatus, final HttpStatus authenticatedDeniedStatus )
     {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
@@ -100,7 +104,8 @@ public final class VirtualHostMapping
         this.connector = requireNonNullElse( connector, DispatchConstants.WEB_CONNECTOR );
         this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
         this.audience = Set.copyOf( requireNonNullElse( audience, Set.of() ) );
-        this.hideDenied = hideDenied;
+        this.anonymousDeniedStatus = requireNonNull( anonymousDeniedStatus );
+        this.authenticatedDeniedStatus = requireNonNull( authenticatedDeniedStatus );
     }
 
     @Override
@@ -222,8 +227,14 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public boolean isHideDenied()
+    public HttpStatus getAnonymousDeniedStatus()
     {
-        return hideDenied;
+        return anonymousDeniedStatus;
+    }
+
+    @Override
+    public HttpStatus getAuthenticatedDeniedStatus()
+    {
+        return authenticatedDeniedStatus;
     }
 }

@@ -45,6 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class ExceptionRendererImplTest
 {
@@ -395,5 +396,21 @@ class ExceptionRendererImplTest
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
         return site.build();
+    }
+
+    @Test
+    void testRenderForbiddenToAnonymousWithoutLoginWhenVhostRefusesAnonymous()
+    {
+        this.renderer = new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, idProviderControllerService, postProcessor,
+                                                   new ExceptionMapperImpl() );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getAnonymousDeniedStatus() ).thenReturn( HttpStatus.FORBIDDEN );
+        request.setVirtualHost( virtualHost );
+
+        final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, "Custom message" ) );
+
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.FORBIDDEN );
+        verifyNoInteractions( idProviderControllerService );
     }
 }

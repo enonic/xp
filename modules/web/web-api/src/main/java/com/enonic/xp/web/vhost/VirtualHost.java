@@ -9,6 +9,7 @@ import org.jspecify.annotations.Nullable;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.HttpStatus;
 
 /**
  * A virtual host mapping, as configured in {@code com.enonic.xp.web.vhost.cfg}.
@@ -117,14 +118,27 @@ public interface VirtualHost
     Map<String, String> getContext();
 
     /**
-     * Whether content the visitor may not read is hidden on this vhost (the mapping's
-     * {@code hideDenied} setting): such content responds {@code 404 Not Found}, as if it did not
-     * exist, instead of {@code 401 Unauthorized} or {@code 403 Forbidden}, and the id provider is
-     * not asked to log the visitor in. Use it on public sites where a login prompt would only reveal
-     * that the content exists.
+     * The status an anonymous visitor gets for content they may not read (the mapping's
+     * {@code deniedStatus.anonymous} setting): {@code 401 Unauthorized} by default, which asks the
+     * vhost's id provider to log them in. {@code 403 Forbidden} refuses without a login prompt;
+     * on such a vhost no {@code 403} sent to an anonymous visitor brings up the login page.
+     * {@code 402 Payment Required} leaves the response to the site's error handler, and
+     * {@code 404 Not Found} answers as if the content did not exist.
      */
-    default boolean isHideDenied()
+    default HttpStatus getAnonymousDeniedStatus()
     {
-        return false;
+        return HttpStatus.UNAUTHORIZED;
+    }
+
+    /**
+     * The status a signed-in visitor gets for content they may not read (the mapping's
+     * {@code deniedStatus.authenticated} setting): {@code 403 Forbidden} by default.
+     * {@code 401 Unauthorized} asks the vhost's id provider to log them in again, for instance as
+     * another user, {@code 402 Payment Required} leaves the response to the site's error handler,
+     * and {@code 404 Not Found} answers as if the content did not exist.
+     */
+    default HttpStatus getAuthenticatedDeniedStatus()
+    {
+        return HttpStatus.FORBIDDEN;
     }
 }

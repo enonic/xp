@@ -916,7 +916,7 @@ class MappingHandlerTest
     }
 
     @Test
-    void executeScript_noContent_siteNotReadable_hidden()
+    void executeScript_noContent_siteNotReadable_configuredStatus()
         throws Exception
     {
         final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
@@ -934,7 +934,7 @@ class MappingHandlerTest
         this.request.setContent( null );
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.isHideDenied() ).thenReturn( true );
+        when( virtualHost.getAnonymousDeniedStatus() ).thenReturn( HttpStatus.NOT_FOUND );
         this.request.setVirtualHost( virtualHost );
 
         this.request.setBaseUri( "/site" );
