@@ -383,6 +383,7 @@ export interface CreateUserParams {
     displayName?: string;
     idProvider: string;
     email?: string;
+    disabled?: boolean;
 }
 
 interface CreateUserHandler {
@@ -393,6 +394,8 @@ interface CreateUserHandler {
     setDisplayName(value: string | null): void;
 
     setEmail(value: string | null): void;
+
+    setDisabled(value: boolean | null): void;
 
     createUser(): User;
 }
@@ -407,6 +410,7 @@ interface CreateUserHandler {
  * @param {string} params.name User login name to set.
  * @param {string} [params.displayName] User display name.
  * @param {string} [params.email] User email.
+ * @param {boolean} [params.disabled=false] Whether the user is disabled. A disabled user cannot log in.
  * @returns {User} The created user.
  */
 export function createUser(params: CreateUserParams): User {
@@ -419,6 +423,7 @@ export function createUser(params: CreateUserParams): User {
     bean.setName(name);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setEmail(__.nullOrValue(params.email));
+    bean.setDisabled(__.nullOrValue(params.disabled));
 
     return __.toNativeObject(bean.createUser());
 }
@@ -443,7 +448,8 @@ interface ModifyUserHandler {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user to modify.
- * @param {function} params.editor User editor function to apply to user.
+ * @param {function} params.editor User editor function to apply to user. It may change
+ * `displayName`, `email` and `disabled`; a disabled user cannot log in.
  * @returns {User | null} The updated user, or null if user not found.
  */
 export function modifyUser(params: ModifyUserParams): User | null {

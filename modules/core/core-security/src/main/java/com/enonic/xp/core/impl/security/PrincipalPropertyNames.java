@@ -16,6 +16,8 @@ interface PrincipalPropertyNames
     
     String LOGIN_KEY = "login";
 
+    String DISABLED_KEY = "disabled";
+
     String MEMBER_KEY = "member";
 
     String AUTHENTICATION_HASH_KEY = "authenticationHash";

@@ -19,6 +19,8 @@ public final class CreateUserParams
 
     private final String password;
 
+    private final boolean disabled;
+
     private CreateUserParams( final Builder builder )
     {
         this.key = requireNonNull( builder.principalKey, "userKey is required for a user" );
@@ -30,6 +32,7 @@ public final class CreateUserParams
         this.email = builder.email;
         this.login = requireNonNull( builder.login, "login is required for a user" );
         this.password = builder.password;
+        this.disabled = builder.disabled;
     }
 
     public PrincipalKey getKey()
@@ -57,6 +60,16 @@ public final class CreateUserParams
         return login;
     }
 
+    /**
+     * Whether the user is created disabled. A disabled user cannot authenticate.
+     *
+     * @return {@code true} if the user is created disabled
+     */
+    public boolean isDisabled()
+    {
+        return disabled;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -73,6 +86,8 @@ public final class CreateUserParams
         private String login;
 
         private String password;
+
+        private boolean disabled;
 
         private Builder()
         {
@@ -106,6 +121,18 @@ public final class CreateUserParams
         public Builder password( final String value )
         {
             this.password = value;
+            return this;
+        }
+
+        /**
+         * Sets whether the user is created disabled. A disabled user cannot authenticate. Defaults to {@code false}.
+         *
+         * @param value {@code true} to create the user disabled
+         * @return this builder
+         */
+        public Builder disabled( final boolean value )
+        {
+            this.disabled = value;
             return this;
         }
 

@@ -69,6 +69,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
+import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
@@ -787,6 +788,60 @@ class SecurityServiceImplTest
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
+        } );
+    }
+
+    @Test
+    void testDisabledUserIsPersisted()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
+            securityService.createUser( CreateUserParams.create()
+                                            .userKey( userKey )
+                                            .displayName( "User 1" )
+                                            .login( "User1" )
+                                            .disabled( true )
+                                            .build() );
+            assertTrue( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.loginDisabled = false ).build() );
+            assertFalse( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).disabled( true ).build() );
+            assertTrue( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).displayName( "Renamed" ).build() );
+            assertTrue( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+        } );
+    }
+
+    @Test
+    void testAuthenticateDisabledUser()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
+            securityService.createUser( CreateUserParams.create()
+                                            .userKey( userKey )
+                                            .displayName( "User 1" )
+                                            .email( "user1@enonic.com" )
+                                            .login( "User1" )
+                                            .password( "password" )
+                                            .build() );
+
+            assertTrue( securityService.authenticate( new UsernamePasswordAuthToken( SYSTEM, "user1", "password" ) ).isAuthenticated() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.loginDisabled = true ).build() );
+
+            assertFalse( securityService.authenticate( new UsernamePasswordAuthToken( SYSTEM, "user1", "password" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com", "password" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new VerifiedUsernameAuthToken( SYSTEM, "user1" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new VerifiedEmailAuthToken( SYSTEM, "user1@enonic.com" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new VerifiedUserKeyAuthToken( userKey ) ).isAuthenticated() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.loginDisabled = false ).build() );
+
+            assertTrue( securityService.authenticate( new UsernamePasswordAuthToken( SYSTEM, "user1", "password" ) ).isAuthenticated() );
+            assertTrue( securityService.authenticate( new VerifiedUserKeyAuthToken( userKey ) ).isAuthenticated() );
         } );
     }
 

@@ -30,3 +30,17 @@ exports.modifyUser = function () {
     t.assertJsonEquals(expectedJson, result);
 
 };
+
+exports.modifyUserDisabled = function () {
+
+    var result = auth.modifyUser({
+        key: 'user:myIdProvider:userId',
+        editor: function (c) {
+            c.disabled = true;
+            return c;
+        }
+    });
+
+    t.assertEquals(true, result.disabled);
+    t.assertEquals('User 1', result.displayName);
+};
