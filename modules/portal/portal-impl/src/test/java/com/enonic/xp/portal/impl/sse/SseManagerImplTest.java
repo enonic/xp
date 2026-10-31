@@ -139,15 +139,15 @@ class SseManagerImplTest
 
         final InOrder inOrder = inOrder( res );
         inOrder.verify( res ).setHeader( "Cache-Control", "no-store" );
-        inOrder.verify( res ).setHeader( "Cache-Control", "private" );
+        inOrder.verify( res ).setHeader( "cache-control", "private" );
         inOrder.verify( res ).flushBuffer();
 
-        verify( res ).setHeader( "X-Custom", "value" );
+        verify( res ).setHeader( "x-custom", "value" );
         verify( res ).addCookie( cookie );
         verify( res ).setContentType( "text/event-stream" );
         verify( res, never() ).setHeader( eq( "content-type" ), anyString() );
-        verify( res, never() ).setHeader( eq( "Content-Length" ), anyString() );
-        verify( res, never() ).setHeader( eq( "Transfer-Encoding" ), anyString() );
+        verify( res, never() ).setHeader( eq( "content-length" ), anyString() );
+        verify( res, never() ).setHeader( eq( "transfer-encoding" ), anyString() );
         verify( res ).setStatus( HttpServletResponse.SC_OK );
     }
 
