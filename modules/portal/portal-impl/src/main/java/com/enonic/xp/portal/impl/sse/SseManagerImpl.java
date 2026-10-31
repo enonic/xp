@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.jspecify.annotations.NullMarked;
@@ -24,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.sse.SseEndpoint;
 import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseEventType;
@@ -34,6 +37,13 @@ import com.enonic.xp.web.sse.SseMessage;
 public final class SseManagerImpl
     implements SseManager, ServiceTrackerCustomizer<Application, Application>
 {
+    private static final Set<String> IGNORED_HEADERS = new TreeSet<>( String.CASE_INSENSITIVE_ORDER );
+
+    static
+    {
+        IGNORED_HEADERS.addAll( List.of( "Content-Type", "Content-Length", "Transfer-Encoding" ) );
+    }
+
     private final SseRegistry registry;
 
     private final BundleContext context;
@@ -78,7 +88,7 @@ public final class SseManagerImpl
     }
 
     @Override
-    public UUID setupSse( final WebRequest request, final SseEndpoint endpoint )
+    public UUID setupSse( final WebRequest request, final WebResponse webResponse, final SseEndpoint endpoint )
     {
         final HttpServletRequest rawRequest = request.getRawRequest();
 
@@ -89,6 +99,12 @@ public final class SseManagerImpl
         response.setContentType( "text/event-stream" );
         response.setCharacterEncoding( StandardCharsets.UTF_8 );
         response.setHeader( "Cache-Control", "no-store" );
+        webResponse.getHeaders()
+            .entrySet()
+            .stream()
+            .filter( header -> !IGNORED_HEADERS.contains( header.getKey() ) )
+            .forEach( header -> response.setHeader( header.getKey(), header.getValue() ) );
+        webResponse.getCookies().forEach( response::addCookie );
         response.setStatus( HttpServletResponse.SC_OK );
 
         final PrintWriter writer;

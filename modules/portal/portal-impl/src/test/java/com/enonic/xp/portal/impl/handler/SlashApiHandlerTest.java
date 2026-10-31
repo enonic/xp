@@ -75,6 +75,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -836,7 +837,7 @@ class SlashApiHandlerTest
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertNotNull( response.getSse() );
 
-        verify( sseManager ).setupSse( any( WebRequest.class ), any( SseEndpoint.class ) );
+        verify( sseManager ).setupSse( any( WebRequest.class ), same( response ), any( SseEndpoint.class ) );
     }
 
     @Test
@@ -852,14 +853,14 @@ class SlashApiHandlerTest
             .build();
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
-        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
-            PortalResponse.create().sse( SseConfig.empty() ).build() );
+        final PortalResponse portalResponse = PortalResponse.create().sse( SseConfig.empty() ).build();
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( portalResponse );
 
         final WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertNotNull( response.getSse() );
 
-        verify( sseManager ).setupSse( any( WebRequest.class ), any( SseEndpoint.class ) );
+        verify( sseManager ).setupSse( any( WebRequest.class ), same( portalResponse ), any( SseEndpoint.class ) );
     }
 
     @Test

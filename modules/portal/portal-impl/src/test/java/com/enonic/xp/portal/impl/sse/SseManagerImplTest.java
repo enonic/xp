@@ -10,9 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.mockito.InOrder;
 import org.osgi.framework.ServiceReference;
 
 import jakarta.servlet.AsyncContext;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -25,6 +27,7 @@ import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseMessage;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.sse.SseConfig;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -34,8 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -101,6 +106,50 @@ class SseManagerImplTest
             verify( res ).setHeader( "Cache-Control", "no-store" );
 
             verify( endpoint ).onEvent( any( SseEvent.class ) );
+        } );
+    }
+
+    @Test
+    void setupSse_appliesResponseHeadersAndCookies()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final WebRequest webReq = new WebRequest();
+        webReq.setRawRequest( req );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final AsyncContext asyncContext = mock( AsyncContext.class );
+        when( req.startAsync() ).thenReturn( asyncContext );
+        when( asyncContext.getResponse() ).thenReturn( res );
+        when( res.getWriter() ).thenReturn( new PrintWriter( new StringWriter() ) );
+
+        final SseEndpoint endpoint = mock( SseEndpoint.class );
+        when( endpoint.getConfig() ).thenReturn( SseConfig.empty() );
+
+        final Cookie cookie = new Cookie( "session", "abc" );
+        final WebResponse webRes = WebResponse.create()
+            .header( "X-Custom", "value" )
+            .header( "Cache-Control", "private" )
+            .header( "content-type", "text/html" )
+            .header( "Content-Length", "10" )
+            .header( "Transfer-Encoding", "identity" )
+            .cookie( cookie )
+            .build();
+
+        ContextBuilder.create().build().runWith( () -> {
+            manager.setupSse( webReq, webRes, endpoint );
+
+            final InOrder inOrder = inOrder( res );
+            inOrder.verify( res ).setHeader( "Cache-Control", "no-store" );
+            inOrder.verify( res ).setHeader( "Cache-Control", "private" );
+            inOrder.verify( res ).flushBuffer();
+
+            verify( res ).setHeader( "X-Custom", "value" );
+            verify( res ).addCookie( cookie );
+            verify( res ).setContentType( "text/event-stream" );
+            verify( res, never() ).setHeader( eq( "content-type" ), anyString() );
+            verify( res, never() ).setHeader( eq( "Content-Length" ), anyString() );
+            verify( res, never() ).setHeader( eq( "Transfer-Encoding" ), anyString() );
+            verify( res ).setStatus( HttpServletResponse.SC_OK );
         } );
     }
 

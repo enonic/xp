@@ -77,7 +77,7 @@ final class MappingHandlerWorker
         {
             final SseEndpointImpl sseEndpoint =
                 new SseEndpointImpl( sseConfig, boundScript, mappingDescriptor.getController().getApplicationKey() );
-            this.sseManager.setupSse( this.request, sseEndpoint );
+            this.sseManager.setupSse( this.request, portalResponse, sseEndpoint );
         }
 
         return portalResponse;
