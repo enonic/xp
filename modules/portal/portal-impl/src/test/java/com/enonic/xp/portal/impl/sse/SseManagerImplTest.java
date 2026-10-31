@@ -135,22 +135,20 @@ class SseManagerImplTest
             .cookie( cookie )
             .build();
 
-        ContextBuilder.create().build().runWith( () -> {
-            manager.setupSse( webReq, webRes, endpoint );
+        ContextBuilder.create().build().runWith( () -> manager.setupSse( webReq, webRes, endpoint ) );
 
-            final InOrder inOrder = inOrder( res );
-            inOrder.verify( res ).setHeader( "Cache-Control", "no-store" );
-            inOrder.verify( res ).setHeader( "Cache-Control", "private" );
-            inOrder.verify( res ).flushBuffer();
+        final InOrder inOrder = inOrder( res );
+        inOrder.verify( res ).setHeader( "Cache-Control", "no-store" );
+        inOrder.verify( res ).setHeader( "Cache-Control", "private" );
+        inOrder.verify( res ).flushBuffer();
 
-            verify( res ).setHeader( "X-Custom", "value" );
-            verify( res ).addCookie( cookie );
-            verify( res ).setContentType( "text/event-stream" );
-            verify( res, never() ).setHeader( eq( "content-type" ), anyString() );
-            verify( res, never() ).setHeader( eq( "Content-Length" ), anyString() );
-            verify( res, never() ).setHeader( eq( "Transfer-Encoding" ), anyString() );
-            verify( res ).setStatus( HttpServletResponse.SC_OK );
-        } );
+        verify( res ).setHeader( "X-Custom", "value" );
+        verify( res ).addCookie( cookie );
+        verify( res ).setContentType( "text/event-stream" );
+        verify( res, never() ).setHeader( eq( "content-type" ), anyString() );
+        verify( res, never() ).setHeader( eq( "Content-Length" ), anyString() );
+        verify( res, never() ).setHeader( eq( "Transfer-Encoding" ), anyString() );
+        verify( res ).setStatus( HttpServletResponse.SC_OK );
     }
 
     @Test
