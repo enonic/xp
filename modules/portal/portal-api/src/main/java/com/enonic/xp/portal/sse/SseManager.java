@@ -21,7 +21,9 @@ public interface SseManager
      * @param request the request to answer with an event stream
      * @param endpoint receives the connection's lifecycle events
      * @return the id of the new client connection
+     * @deprecated use {@link #setupSse(WebRequest, WebResponse, SseEndpoint)} to send response headers and cookies
      */
+    @Deprecated
     UUID setupSse( WebRequest request, SseEndpoint endpoint );
 
     /**

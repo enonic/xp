@@ -88,6 +88,7 @@ public final class SseManagerImpl
     }
 
     @Override
+    @Deprecated
     public UUID setupSse( final WebRequest request, final SseEndpoint endpoint )
     {
         return setupSse( request, WebResponse.create().build(), endpoint );
