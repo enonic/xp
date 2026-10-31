@@ -17,6 +17,8 @@ public final class UpdateUserParams
 
     private final String login;
 
+    private final Boolean disabled;
+
     private final UserEditor editor;
 
     private UpdateUserParams( final Builder builder )
@@ -29,6 +31,7 @@ public final class UpdateUserParams
         }
         this.email = builder.email;
         this.login = builder.login;
+        this.disabled = builder.disabled;
         this.editor = builder.editor;
     }
 
@@ -50,6 +53,11 @@ public final class UpdateUserParams
     public String getLogin()
     {
         return login;
+    }
+
+    public Boolean getDisabled()
+    {
+        return disabled;
     }
 
     public UserEditor getEditor()
@@ -79,6 +87,10 @@ public final class UpdateUserParams
         {
             result.login( this.getLogin() );
         }
+        if ( this.disabled != null )
+        {
+            result.disabled( this.disabled );
+        }
         return result.build();
     }
 
@@ -102,6 +114,8 @@ public final class UpdateUserParams
 
         private String login;
 
+        private Boolean disabled;
+
         private UserEditor editor;
 
         private Builder()
@@ -114,6 +128,7 @@ public final class UpdateUserParams
             this.displayName = user.getDisplayName();
             this.email = user.getEmail();
             this.login = user.getLogin();
+            this.disabled = user.isDisabled();
         }
 
         public Builder userKey( final PrincipalKey value )
@@ -138,6 +153,12 @@ public final class UpdateUserParams
         public Builder email( final String value )
         {
             this.email = value;
+            return this;
+        }
+
+        public Builder disabled( final Boolean value )
+        {
+            this.disabled = value;
             return this;
         }
 

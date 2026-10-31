@@ -72,6 +72,12 @@ public final class ModifyUserHandler
         {
             target.email = email;
         }
+
+        final Boolean disabled = Converters.convert( map.get( "disabled" ), Boolean.class );
+        if ( disabled != null )
+        {
+            target.loginDisabled = disabled;
+        }
     }
 
     @Override

@@ -230,6 +230,7 @@ abstract class PrincipalNodeTranslator
     {
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
+        data.setBoolean( PrincipalPropertyNames.DISABLED_KEY, user.isDisabled() );
         data.resetString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
         data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot().copy( data.getTree() ) );
     }
@@ -253,6 +254,7 @@ abstract class PrincipalNodeTranslator
         final User.Builder user = User.create().
             email( nodeAsTree.getString( PrincipalPropertyNames.EMAIL_KEY ) ).
             login( nodeAsTree.getString( PrincipalPropertyNames.LOGIN_KEY ) ).
+            disabled( Boolean.TRUE.equals( nodeAsTree.getBoolean( PrincipalPropertyNames.DISABLED_KEY ) ) ).
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );

@@ -15,7 +15,9 @@ import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserNodeTranslatorTest
 {
@@ -40,7 +42,8 @@ class UserNodeTranslatorTest
         assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "displayname", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertNotNull( rootDataSet );
-        assertEquals( 7, rootDataSet.getTotalSize() );
+        assertEquals( false, rootDataSet.getBoolean( PrincipalPropertyNames.DISABLED_KEY ) );
+        assertEquals( 8, rootDataSet.getTotalSize() );
     }
 
 
@@ -68,5 +71,28 @@ class UserNodeTranslatorTest
         assertEquals( "rmy@enonic.com", user.getEmail() );
         assertEquals( userKey, user.getKey() );
         assertEquals( "clear:password", user.getAuthenticationHash() );
+        assertFalse( user.isDisabled() );
+    }
+
+    @Test
+    void disabledRoundTrip()
+    {
+        final User user = User.create()
+            .displayName( "displayname" )
+            .login( "login" )
+            .key( PrincipalKey.ofUser( IdProviderKey.system(), "rmy" ) )
+            .disabled( true )
+            .build();
+
+        final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
+        assertEquals( true, createNodeParams.getData().getBoolean( PrincipalPropertyNames.DISABLED_KEY ) );
+
+        final Node node = Node.create()
+            .id( NodeId.from( "id" ) )
+            .name( PrincipalKeyNodeTranslator.toNodeName( user.getKey() ) )
+            .data( createNodeParams.getData() )
+            .build();
+
+        assertTrue( PrincipalNodeTranslator.userFromNode( node ).isDisabled() );
     }
 }

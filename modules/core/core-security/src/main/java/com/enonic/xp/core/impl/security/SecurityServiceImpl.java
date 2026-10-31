@@ -466,6 +466,7 @@ public final class SecurityServiceImpl
             .login( createUser.getLogin() )
             .email( createUser.getEmail() )
             .displayName( createUser.getDisplayName() )
+            .disabled( createUser.isDisabled() )
             .modifiedTime( Millis.now() )
             .build();
 

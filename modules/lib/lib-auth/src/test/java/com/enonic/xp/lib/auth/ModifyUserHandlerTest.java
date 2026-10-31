@@ -54,6 +54,18 @@ class ModifyUserHandlerTest
         runFunction( "/test/modifyUser-test.js", "modifyUser" );
     }
 
+    @Test
+    void testModifyUserDisabled()
+    {
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( PrincipalKey.from( "user:myIdProvider:userId" ) ) )
+            .thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
+
+        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ) ) );
+
+        runFunction( "/test/modifyUser-test.js", "modifyUserDisabled" );
+    }
+
     private User invokeUpdate( final UpdateUserParams params )
     {
         final UserEditor editor = params.getEditor();

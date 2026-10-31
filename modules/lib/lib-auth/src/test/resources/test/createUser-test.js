@@ -49,6 +49,15 @@ exports.createUserNoEmail = function () {
 
 };
 
+exports.createUserDisabled = function () {
+
+    auth.createUser({
+        idProvider: 'myIdProvider',
+        name: 'userId',
+        disabled: true
+    });
+};
+
 exports.createUserWithMissingArg = function () {
 
     auth.createUser({
