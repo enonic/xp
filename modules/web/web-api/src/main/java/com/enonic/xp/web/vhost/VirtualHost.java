@@ -115,4 +115,16 @@ public interface VirtualHost
      * request's execution context.
      */
     Map<String, String> getContext();
+
+    /**
+     * Whether content the visitor may not read is hidden on this vhost (the mapping's
+     * {@code hideDenied} setting): such content responds {@code 404 Not Found}, as if it did not
+     * exist, instead of {@code 401 Unauthorized} or {@code 403 Forbidden}, and the id provider is
+     * not asked to log the visitor in. Use it on public sites where a login prompt would only reveal
+     * that the content exists.
+     */
+    default boolean isHideDenied()
+    {
+        return false;
+    }
 }

@@ -38,6 +38,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,6 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 class PageHandlerTest
     extends RenderBaseHandlerTest
@@ -404,5 +407,54 @@ class PageHandlerTest
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "content rendered", res.getBody() );
+    }
+
+    @Test
+    void getContentExistsButHiddenFromAnonymous()
+    {
+        hideDeniedContent();
+
+        assertThatThrownBy( () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ).isInstanceOfSatisfying(
+            WebException.class, e -> {
+                assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+                assertEquals( "Page [/site/somepath/content] not found", e.getMessage() );
+            } );
+    }
+
+    @Test
+    void getContentExistsButHiddenFromAuthenticated()
+    {
+        hideDeniedContent();
+        final Context authenticatedContext = ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.create().user( User.anonymous() ).build() )
+            .build();
+
+        assertThatThrownBy( () -> authenticatedContext.callWith(
+            () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                                      e -> assertEquals(
+                                                                                                                          HttpStatus.NOT_FOUND,
+                                                                                                                          e.getStatus() ) );
+    }
+
+    private void hideDeniedContent()
+    {
+        final ContentPath path = ContentPath.from( "/site/somepath/content" );
+        final Content content = Content.create()
+            .id( ContentId.from( "id" ) )
+            .path( path )
+            .displayName( "My Content" )
+            .type( ContentTypeName.shortcut() )
+            .data( new PropertyTree() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                              .build() )
+            .build();
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.isHideDenied() ).thenReturn( true );
+
+        this.request.setVirtualHost( virtualHost );
+        this.request.setContent( content );
+        this.request.setContentPath( path );
     }
 }

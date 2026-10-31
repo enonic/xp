@@ -93,7 +93,8 @@ class MappingHandlerHelper
         final Content content = request.getContent() == null ? null : PortalRequestHelper.getContentOrElseThrow( request );
         if ( content == null && site != null && !PortalRequestHelper.isReadable( site ) )
         {
-            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", request.getContentPath() ) );
+            throw PortalRequestHelper.denied( request, String.format( "Page [%s] not found", request.getContentPath() ),
+                                              String.format( "You don't have permission to access [%s]", request.getContentPath() ) );
         }
 
         final List<ControllerMappingDescriptor> matchingMappings =

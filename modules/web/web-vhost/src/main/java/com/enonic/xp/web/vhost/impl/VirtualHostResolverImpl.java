@@ -84,14 +84,16 @@ public class VirtualHostResolverImpl
                     return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(),
                                                    matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping(),
                                                    virtualHost.getOrder(), virtualHost.getContext(), virtualHost.getConnector(),
-                                                   virtualHost.getAllowedPrincipals(), virtualHost.getAudience() );
+                                                   virtualHost.getAllowedPrincipals(), virtualHost.getAudience(),
+                                                   virtualHost.isHideDenied() );
                 }
             }
             else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( pathInfo ) )
             {
                 return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(), virtualHost.getTarget(),
                                                createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext(),
-                                               virtualHost.getConnector(), virtualHost.getAllowedPrincipals(), virtualHost.getAudience() );
+                                               virtualHost.getConnector(), virtualHost.getAllowedPrincipals(), virtualHost.getAudience(),
+                                               virtualHost.isHideDenied() );
             }
             return null;
         }

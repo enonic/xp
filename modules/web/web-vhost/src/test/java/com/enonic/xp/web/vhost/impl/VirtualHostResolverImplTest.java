@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VirtualHostResolverImplTest
 {
@@ -371,4 +372,27 @@ class VirtualHostResolverImplTest
         return createVirtualHostMapping( name, host, source, target, order, null );
     }
 
+    @Test
+    void testMatches_keepsHideDenied()
+    {
+        final VirtualHostMapping plain =
+            new VirtualHostMapping( "plain", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(), null, null,
+                                    null, true );
+        final VirtualHostMapping pattern =
+            new VirtualHostMapping( "pattern", "~bar\\.no", "/", "/b", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(), null,
+                                    null, null, true );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( plain, pattern ) );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+
+        for ( final String serverName : List.of( "foo.no", "bar.no" ) )
+        {
+            final HttpServletRequest req = mock( HttpServletRequest.class );
+            when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+            when( req.getServerName() ).thenReturn( serverName );
+            when( req.getPathInfo() ).thenReturn( "/c" );
+
+            assertTrue( virtualHostResolver.resolveVirtualHost( req ).isHideDenied() );
+        }
+    }
 }

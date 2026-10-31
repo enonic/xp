@@ -81,9 +81,10 @@ final class VirtualHostConfigMap
         final String connector = getConnector( prefix );
         final PrincipalKeys allowedPrincipals = getAllowedPrincipals( prefix );
         final Set<String> audience = getAudience( prefix );
+        final boolean hideDenied = getBoolean( prefix + "hideDenied", false );
 
         return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals,
-                                       audience );
+                                       audience, hideDenied );
     }
 
     private Set<String> getAudience( final String mappingPrefix )

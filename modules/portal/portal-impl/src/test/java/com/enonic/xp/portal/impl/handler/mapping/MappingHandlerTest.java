@@ -65,6 +65,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -79,6 +80,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MappingHandlerTest
 {
@@ -911,5 +913,38 @@ class MappingHandlerTest
             .regions( RegionDescriptors.create().build() )
             .key( DescriptorKey.from( "module:landing-page" ) )
             .build();
+    }
+
+    @Test
+    void executeScript_noContent_siteNotReadable_hidden()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( "/.*" ).build();
+
+        setupContentAndSite( mapping, false );
+
+        final Site restrictedSite = Site.create( this.request.getSite() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                              .build() )
+            .build();
+        this.request.setSite( restrictedSite );
+        this.request.setContent( null );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.isHideDenied() ).thenReturn( true );
+        this.request.setVirtualHost( virtualHost );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/missing" ) );
+
+        assertThatThrownBy( () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ).isInstanceOfSatisfying(
+            WebException.class, e -> {
+                assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+                assertEquals( "Page [/site/somesite/missing] not found", e.getMessage() );
+            } );
+        verifyNoInteractions( rendererDelegate );
     }
 }

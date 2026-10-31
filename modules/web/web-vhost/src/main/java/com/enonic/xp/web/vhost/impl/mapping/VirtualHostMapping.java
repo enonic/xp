@@ -41,6 +41,8 @@ public final class VirtualHostMapping
 
     private final Set<String> audience;
 
+    private final boolean hideDenied;
+
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
     {
@@ -73,6 +75,15 @@ public final class VirtualHostMapping
                                @Nullable final Map<String, String> context, @Nullable final String connector,
                                @Nullable final PrincipalKeys allowedPrincipals, @Nullable final Set<String> audience )
     {
+        this( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals, audience, false );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order,
+                               @Nullable final Map<String, String> context, @Nullable final String connector,
+                               @Nullable final PrincipalKeys allowedPrincipals, @Nullable final Set<String> audience,
+                               final boolean hideDenied )
+    {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
         requireNonNull( source, "source must be set" );
@@ -89,6 +100,7 @@ public final class VirtualHostMapping
         this.connector = requireNonNullElse( connector, DispatchConstants.WEB_CONNECTOR );
         this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
         this.audience = Set.copyOf( requireNonNullElse( audience, Set.of() ) );
+        this.hideDenied = hideDenied;
     }
 
     @Override
@@ -207,5 +219,11 @@ public final class VirtualHostMapping
     public Map<String, String> getContext()
     {
         return context;
+    }
+
+    @Override
+    public boolean isHideDenied()
+    {
+        return hideDenied;
     }
 }

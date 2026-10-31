@@ -471,4 +471,21 @@ class VirtualHostConfigMapTest
 
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
     }
+
+    @Test
+    void testHideDenied()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.hideDenied", "true" );
+
+        assertTrue( new VirtualHostConfigMap( map ).buildMappings().get( 0 ).isHideDenied() );
+    }
+
+    @Test
+    void testHideDenied_absentMeansShown()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+
+        assertFalse( new VirtualHostConfigMap( map ).buildMappings().get( 0 ).isHideDenied() );
+    }
 }

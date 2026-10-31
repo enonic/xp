@@ -37,6 +37,8 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,6 +49,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AttachmentMediaHandlerTest
 {
@@ -305,4 +308,40 @@ class AttachmentMediaHandlerTest
             .build();
     }
 
+    @Test
+    void testAttachmentDenied()
+    {
+        final ContentId id = ContentId.from( "123456" );
+        when( this.contentService.getById( id ) ).thenThrow( ContentNotFoundException.class );
+        when( this.contentService.contentExists( id ) ).thenReturn( true );
+
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/api/media:attachment/myproject/123456/logo.png" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                         e -> assertEquals( HttpStatus.UNAUTHORIZED,
+                                                                                                            e.getStatus() ) );
+    }
+
+    @Test
+    void testAttachmentDeniedHidden()
+    {
+        final ContentId id = ContentId.from( "123456" );
+        when( this.contentService.getById( id ) ).thenThrow( ContentNotFoundException.class );
+        when( this.contentService.contentExists( id ) ).thenReturn( true );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.isHideDenied() ).thenReturn( true );
+
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/api/media:attachment/myproject/123456/logo.png" );
+        request.setVirtualHost( virtualHost );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOfSatisfying( WebException.class, e -> {
+            assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+            assertEquals( "Content with id [123456] not found", e.getMessage() );
+        } );
+    }
 }

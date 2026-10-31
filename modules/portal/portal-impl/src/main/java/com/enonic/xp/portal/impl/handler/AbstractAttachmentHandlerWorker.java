@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.ImageScaling;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
@@ -180,13 +181,15 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         }
         catch ( final Exception e )
         {
+            final String notFoundMessage = String.format( "Content with id [%s] not found", contentId );
             if ( this.contentService.contentExists( contentId ) )
             {
-                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", contentId ) );
+                throw PortalRequestHelper.denied( request, notFoundMessage,
+                                                  String.format( "You don't have permission to access [%s]", contentId ) );
             }
             else
             {
-                throw WebException.notFound( String.format( "Content with id [%s] not found", contentId.toString() ) );
+                throw WebException.notFound( notFoundMessage );
             }
         }
     }

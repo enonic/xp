@@ -11,6 +11,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.vhost.VirtualHost;
 
 public final class PortalRequestHelper
 {
@@ -59,7 +60,8 @@ public final class PortalRequestHelper
         {
             if ( !isReadable( content ) )
             {
-                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", portalRequest.getContentPath() ) );
+                throw denied( portalRequest, String.format( "Page [%s] not found", portalRequest.getContentPath() ),
+                              String.format( "You don't have permission to access [%s]", portalRequest.getContentPath() ) );
             }
             return content;
         }
@@ -67,6 +69,14 @@ public final class PortalRequestHelper
         {
             throw WebException.notFound( String.format( "Page [%s] not found", portalRequest.getContentPath() ) );
         }
+    }
+
+    public static WebException denied( final WebRequest request, final String notFoundMessage, final String forbiddenMessage )
+    {
+        final VirtualHost virtualHost = request.getVirtualHost();
+        return virtualHost != null && virtualHost.isHideDenied()
+            ? WebException.notFound( notFoundMessage )
+            : WebException.forbidden( forbiddenMessage );
     }
 
     public static boolean isReadable( final Content content )
