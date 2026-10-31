@@ -125,10 +125,7 @@ public interface VirtualHost
      * {@code 402 Payment Required} leaves the response to the site's error handler, and
      * {@code 404 Not Found} answers as if the content did not exist.
      */
-    default HttpStatus getAnonymousDeniedStatus()
-    {
-        return HttpStatus.UNAUTHORIZED;
-    }
+    HttpStatus getAnonymousDeniedStatus();
 
     /**
      * The status a signed-in visitor gets for content they may not read (the mapping's
@@ -137,8 +134,5 @@ public interface VirtualHost
      * another user, {@code 402 Payment Required} leaves the response to the site's error handler,
      * and {@code 404 Not Found} answers as if the content did not exist.
      */
-    default HttpStatus getAuthenticatedDeniedStatus()
-    {
-        return HttpStatus.FORBIDDEN;
-    }
+    HttpStatus getAuthenticatedDeniedStatus();
 }
