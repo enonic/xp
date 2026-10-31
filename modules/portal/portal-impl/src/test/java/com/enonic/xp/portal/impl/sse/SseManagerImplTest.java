@@ -98,7 +98,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( config );
 
         ContextBuilder.create().build().runWith( () -> {
-            final UUID id = manager.setupSse( webReq, WebResponse.create().build(), endpoint );
+            final UUID id = manager.setupSse( webReq, endpoint );
             assertNotNull( id );
 
             verify( res ).setContentType( "text/event-stream" );
@@ -171,7 +171,7 @@ class SseManagerImplTest
         doThrow( new RuntimeException( "open failed" ) ).when( endpoint ).onEvent( any( SseEvent.class ) );
 
         ContextBuilder.create().build().runWith( () -> {
-            assertThrows( RuntimeException.class, () -> manager.setupSse( webReq, WebResponse.create().build(), endpoint ) );
+            assertThrows( RuntimeException.class, () -> manager.setupSse( webReq, endpoint ) );
             // a failed open must not leave a zombie connection idling on the infinite default
             // timeout: completing it is the only way the client ever learns
             verify( asyncContext ).complete();
@@ -211,7 +211,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( SseConfig.empty() );
         when( endpoint.getApplication() ).thenReturn( applicationKey );
 
-        ContextBuilder.create().build().runWith( () -> manager.setupSse( webReq, WebResponse.create().build(), endpoint ) );
+        ContextBuilder.create().build().runWith( () -> manager.setupSse( webReq, endpoint ) );
         return asyncContext;
     }
 
@@ -234,7 +234,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( config );
 
         ContextBuilder.create().build().runWith( () -> {
-            final UUID id = manager.setupSse( webReq, WebResponse.create().build(), endpoint );
+            final UUID id = manager.setupSse( webReq, endpoint );
             manager.addToGroup( "testGroup", id );
 
             assertEquals( 1, manager.getGroupSize( "testGroup" ) );
@@ -264,7 +264,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( config );
 
         ContextBuilder.create().build().runWith( () -> {
-            final UUID id = manager.setupSse( webReq, WebResponse.create().build(), endpoint );
+            final UUID id = manager.setupSse( webReq, endpoint );
             manager.addToGroup( "g1", id );
 
             assertEquals( 1, manager.getGroupSize( "g1" ) );
@@ -293,7 +293,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( config );
 
         ContextBuilder.create().build().runWith( () -> {
-            final UUID id = manager.setupSse( webReq, WebResponse.create().build(), endpoint );
+            final UUID id = manager.setupSse( webReq, endpoint );
             manager.close( id );
 
             verify( asyncContext ).complete();
@@ -322,7 +322,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( config );
 
         ContextBuilder.create().build().runWith( () -> {
-            manager.setupSse( webReq, WebResponse.create().build(), endpoint );
+            manager.setupSse( webReq, endpoint );
             assertEquals( "retry:" + thirtyDaysMs + "\n\n", sw.toString() );
         } );
     }
@@ -346,7 +346,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( config );
 
         ContextBuilder.create().build().runWith( () -> {
-            manager.setupSse( webReq, WebResponse.create().build(), endpoint );
+            manager.setupSse( webReq, endpoint );
             assertEquals( "", sw.toString() );
         } );
     }
@@ -369,7 +369,7 @@ class SseManagerImplTest
         when( endpoint.getConfig() ).thenReturn( SseConfig.empty() );
 
         ContextBuilder.create().build().runWith( () -> {
-            final UUID id = manager.setupSse( webReq, WebResponse.create().build(), endpoint );
+            final UUID id = manager.setupSse( webReq, endpoint );
             sw.getBuffer().setLength( 0 );
 
             manager.send( id, SseMessage.create().event( "update" ).data( "hello" ).build() );

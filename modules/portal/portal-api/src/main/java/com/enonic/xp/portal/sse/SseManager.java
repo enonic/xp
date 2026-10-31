@@ -16,6 +16,15 @@ import com.enonic.xp.web.sse.SseMessage;
 public interface SseManager
 {
     /**
+     * Turns the request into an open SSE connection without extra response headers or cookies.
+     *
+     * @param request the request to answer with an event stream
+     * @param endpoint receives the connection's lifecycle events
+     * @return the id of the new client connection
+     */
+    UUID setupSse( WebRequest request, SseEndpoint endpoint );
+
+    /**
      * Turns the request into an open SSE connection and sends the headers and cookies of the given response with it.
      * <p>
      * The status is always 200 and the content type is always {@code text/event-stream}; {@code Content-Type},

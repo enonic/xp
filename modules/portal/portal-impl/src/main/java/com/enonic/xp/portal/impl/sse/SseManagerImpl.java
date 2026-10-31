@@ -88,6 +88,12 @@ public final class SseManagerImpl
     }
 
     @Override
+    public UUID setupSse( final WebRequest request, final SseEndpoint endpoint )
+    {
+        return setupSse( request, WebResponse.create().build(), endpoint );
+    }
+
+    @Override
     public UUID setupSse( final WebRequest request, final WebResponse webResponse, final SseEndpoint endpoint )
     {
         final HttpServletRequest rawRequest = request.getRawRequest();
