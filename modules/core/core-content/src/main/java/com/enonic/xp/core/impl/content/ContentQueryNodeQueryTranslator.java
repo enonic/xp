@@ -26,6 +26,8 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 
 class ContentQueryNodeQueryTranslator
 {
+    private static final FieldExpr PATH_HIERARCHY = FieldExpr.from( NodeIndexPath.PATH.getPath() + "._path" );
+
     public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
         return translate( contentQuery, null );
@@ -103,7 +105,9 @@ class ContentQueryNodeQueryTranslator
         // every content lives below the content root, and a recursive parent is simply a narrower prefix of that same path constraint
         final NodePath pathPrefix =
             parent != null && contentQuery.isRecursive() ? parent.nodePath() : ContentNodeHelper.getContentRoot();
-        final CompareExpr pathPrefixExpr = CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( pathPrefix + "/*" ) );
+        final ConstraintExpr pathPrefixExpr = LogicalExpr.and( CompareExpr.eq( PATH_HIERARCHY, ValueExpr.string( pathPrefix.toString() ) ),
+                                                               CompareExpr.neq( FieldExpr.from( NodeIndexPath.PATH ),
+                                                                                ValueExpr.string( pathPrefix.toString() ) ) );
 
         final ConstraintExpr constraintExpr = queryExpr != null && queryExpr.getConstraint() != null
             ? LogicalExpr.and( queryExpr.getConstraint(), pathPrefixExpr )

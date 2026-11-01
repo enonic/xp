@@ -58,7 +58,7 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build(), parent ).build();
 
         assertEquals( new NodePath( "/content/mysite/articles" ), nodeQuery.getParent() );
-        assertEquals( "_path LIKE '/content/*'", nodeQuery.getQuery().getConstraint().toString() );
+        assertEquals( "(_path._path = '/content' AND _path != '/content')", nodeQuery.getQuery().getConstraint().toString() );
     }
 
     @Test
@@ -71,7 +71,8 @@ class ContentQueryNodeQueryTranslatorTest
 
         // matched by a path prefix instead of the _parentPath term filter, so descendants at any depth are included
         assertNull( nodeQuery.getParent() );
-        assertEquals( "_path LIKE '/content/mysite/articles/*'", nodeQuery.getQuery().getConstraint().toString() );
+        assertEquals( "(_path._path = '/content/mysite/articles' AND _path != '/content/mysite/articles')",
+                      nodeQuery.getQuery().getConstraint().toString() );
     }
 
     @Test
