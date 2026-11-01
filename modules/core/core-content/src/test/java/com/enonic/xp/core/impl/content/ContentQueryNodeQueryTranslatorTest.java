@@ -19,6 +19,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,7 +47,9 @@ class ContentQueryNodeQueryTranslatorTest
     {
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build();
 
-        assertNull( nodeQuery.getParent() );
+        assertEquals( new NodePath( "/content" ), nodeQuery.getParent() );
+        assertTrue( nodeQuery.isRecursive() );
+        assertNull( nodeQuery.getQuery().getConstraint() );
         assertTrue( nodeQuery.getQuery().getOrderList().isEmpty() );
     }
 
@@ -58,7 +61,8 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build(), parent ).build();
 
         assertEquals( new NodePath( "/content/mysite/articles" ), nodeQuery.getParent() );
-        assertEquals( "(_path._path = '/content' AND _path != '/content')", nodeQuery.getQuery().getConstraint().toString() );
+        assertFalse( nodeQuery.isRecursive() );
+        assertNull( nodeQuery.getQuery().getConstraint() );
     }
 
     @Test
@@ -69,10 +73,9 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate(
             ContentQuery.create().parentPath( ContentPath.from( "/mysite/articles" ) ).recursive( true ).build(), parent ).build();
 
-        // matched by a path prefix instead of the _parentPath term filter, so descendants at any depth are included
-        assertNull( nodeQuery.getParent() );
-        assertEquals( "(_path._path = '/content/mysite/articles' AND _path != '/content/mysite/articles')",
-                      nodeQuery.getQuery().getConstraint().toString() );
+        assertEquals( new NodePath( "/content/mysite/articles" ), nodeQuery.getParent() );
+        assertTrue( nodeQuery.isRecursive() );
+        assertNull( nodeQuery.getQuery().getConstraint() );
     }
 
     @Test

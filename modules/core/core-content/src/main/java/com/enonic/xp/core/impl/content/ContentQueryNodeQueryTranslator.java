@@ -10,15 +10,9 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.ConstraintExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -26,8 +20,6 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 
 class ContentQueryNodeQueryTranslator
 {
-    private static final FieldExpr PATH_HIERARCHY = FieldExpr.from( NodeIndexPath.PATH.getPath() + "._path" );
-
     public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
         return translate( contentQuery, null );
@@ -53,10 +45,13 @@ class ContentQueryNodeQueryTranslator
         // already checked against ContentQuery.SUPPORTED_RETURN_FIELDS, which names content fields rather than node fields
         builder.returnFields( contentQuery.getReturnFields().toArray( IndexPath[]::new ) );
 
-        // a recursive parent is matched by the path prefix built into the query expression instead, see buildNodeQueryExpr
         if ( parent != null && !contentQuery.isRecursive() )
         {
             builder.parent( parent.nodePath() );
+        }
+        else
+        {
+            builder.parent( parent != null ? parent.nodePath() : ContentNodeHelper.getContentRoot() ).recursive( true );
         }
 
         processContentTypesNames( contentQuery, builder );
@@ -102,17 +97,6 @@ class ContentQueryNodeQueryTranslator
     {
         final QueryExpr queryExpr = contentQuery.getQueryExpr();
 
-        // every content lives below the content root, and a recursive parent is simply a narrower prefix of that same path constraint
-        final NodePath pathPrefix =
-            parent != null && contentQuery.isRecursive() ? parent.nodePath() : ContentNodeHelper.getContentRoot();
-        final ConstraintExpr pathPrefixExpr = LogicalExpr.and( CompareExpr.eq( PATH_HIERARCHY, ValueExpr.string( pathPrefix.toString() ) ),
-                                                               CompareExpr.neq( FieldExpr.from( NodeIndexPath.PATH ),
-                                                                                ValueExpr.string( pathPrefix.toString() ) ) );
-
-        final ConstraintExpr constraintExpr = queryExpr != null && queryExpr.getConstraint() != null
-            ? LogicalExpr.and( queryExpr.getConstraint(), pathPrefixExpr )
-            : pathPrefixExpr;
-
         // the child order of the parent is resolved only when the query brings no order expressions of its own
         final Iterable<OrderExpr> orderList;
         if ( parent != null && parent.childOrder() != null )
@@ -124,6 +108,6 @@ class ContentQueryNodeQueryTranslator
             orderList = queryExpr != null ? queryExpr.getOrderList() : List.of();
         }
 
-        return QueryExpr.from( constraintExpr, orderList );
+        return QueryExpr.from( queryExpr != null ? queryExpr.getConstraint() : null, orderList );
     }
 }
