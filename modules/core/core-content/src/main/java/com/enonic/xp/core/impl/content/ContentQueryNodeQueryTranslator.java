@@ -21,6 +21,8 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 
 class ContentQueryNodeQueryTranslator
 {
+    private static final FieldExpr PATH_HIERARCHY = FieldExpr.from( NodeIndexPath.PATH.getPath() + "._path" );
+
     public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
         final NodeQuery.Builder builder = NodeQuery.create();
@@ -80,8 +82,10 @@ class ContentQueryNodeQueryTranslator
     private static QueryExpr buildNodeQueryExpr( final ContentQuery contentQuery )
     {
         final QueryExpr queryExpr = contentQuery.getQueryExpr();
-        final CompareExpr contentPathRootExpr =
-            CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( ContentNodeHelper.getContentRoot() + "/*" ) );
+        final String contentRoot = ContentNodeHelper.getContentRoot().toString();
+        final ConstraintExpr contentPathRootExpr = LogicalExpr.and( CompareExpr.eq( PATH_HIERARCHY, ValueExpr.string( contentRoot ) ),
+                                                                    CompareExpr.neq( FieldExpr.from( NodeIndexPath.PATH ),
+                                                                                     ValueExpr.string( contentRoot ) ) );
 
         if ( queryExpr != null )
         {
