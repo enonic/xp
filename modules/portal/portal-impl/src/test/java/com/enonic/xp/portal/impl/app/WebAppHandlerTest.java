@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -212,11 +213,12 @@ class WebAppHandlerTest
         final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
-        when( script.execute( any() ) ).thenReturn( PortalResponse.create().sse( SseConfig.empty() ).build() );
+        final PortalResponse portalResponse = PortalResponse.create().sse( SseConfig.empty() ).header( "X-Custom", "value" ).build();
+        when( script.execute( any() ) ).thenReturn( portalResponse );
 
         this.handler.doHandle( this.request, null, this.chain );
 
-        verify( this.sseManager ).setupSse( any( WebRequest.class ), any( SseEndpoint.class ) );
+        verify( this.sseManager ).setupSse( any( WebRequest.class ), same( portalResponse ), any( SseEndpoint.class ) );
     }
 }
 

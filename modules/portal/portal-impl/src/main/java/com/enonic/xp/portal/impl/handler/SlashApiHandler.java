@@ -384,7 +384,7 @@ public class SlashApiHandler
         if ( sseConfig != null )
         {
             final SseApiEndpointImpl sseEndpoint = new SseApiEndpointImpl( sseConfig, () -> dynamicApiHandler, req.getApplicationKey() );
-            this.sseManager.setupSse( req, sseEndpoint );
+            this.sseManager.setupSse( req, res, sseEndpoint );
         }
 
         return res;
@@ -411,7 +411,7 @@ public class SlashApiHandler
         if ( sseConfig != null )
         {
             final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript, descriptorKey.getApplicationKey() );
-            this.sseManager.setupSse( req, sseEndpoint );
+            this.sseManager.setupSse( req, res, sseEndpoint );
         }
 
         return res;
