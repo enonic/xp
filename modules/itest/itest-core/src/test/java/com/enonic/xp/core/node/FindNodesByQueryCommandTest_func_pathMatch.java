@@ -70,4 +70,15 @@ class FindNodesByQueryCommandTest_func_pathMatch
 
         assertThat( result.getNodeIds() ).containsExactly( node1_1_1.id(), node1_1.id(), node1.id() );
     }
+
+    @Test
+    void keeps_accents()
+    {
+        final Node plain = createNode( CreateNodeParams.create().name( "cafe" ).parent( NodePath.ROOT ).build() );
+        final Node accented = createNode( CreateNodeParams.create().name( "café" ).parent( NodePath.ROOT ).build() );
+        nodeService.refresh( RefreshMode.ALL );
+
+        assertThat( doQuery( "pathMatch('_path', '/café')" ).getNodeIds() ).containsExactly( accented.id() );
+        assertThat( doQuery( "pathMatch('_path', '/cafe')" ).getNodeIds() ).containsExactly( plain.id() );
+    }
 }
