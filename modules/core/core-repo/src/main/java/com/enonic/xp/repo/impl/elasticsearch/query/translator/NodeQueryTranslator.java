@@ -20,15 +20,10 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
-import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 class NodeQueryTranslator
     implements QueryTypeTranslator
 {
-    private static final FieldExpr PATH_HIERARCHY = FieldExpr.from(
-        NodeIndexPath.PATH.getPath() + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.PATH.getPostfix() );
-
     private final QueryFieldNameResolver fieldNameResolver = SearchQueryFieldNameResolver.INSTANCE;
 
     private final NodeQuery nodeQuery;
@@ -79,10 +74,9 @@ class NodeQueryTranslator
         }
 
         final NodePath parent = nodeQuery.getParent();
-        final ConstraintExpr descendantsExpr = parent.isRoot()
+        final CompareExpr descendantsExpr = parent.isRoot()
             ? CompareExpr.neq( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( NodePath.ROOT.toString() ) )
-            : LogicalExpr.and( CompareExpr.eq( PATH_HIERARCHY, ValueExpr.string( parent.toString() ) ),
-                               CompareExpr.neq( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( parent.toString() ) ) );
+            : CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( parent + "/*" ) );
 
         final ConstraintExpr constraintExpr = queryExpr != null && queryExpr.getConstraint() != null
             ? LogicalExpr.and( queryExpr.getConstraint(), descendantsExpr )
