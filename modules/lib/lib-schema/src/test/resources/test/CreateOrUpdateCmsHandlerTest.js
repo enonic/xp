@@ -16,3 +16,10 @@ exports.createSystemCms = function () {
         resource: `kind: "CMS"`
     }));
 };
+
+exports.createLocalCms = function () {
+    assert.assertThrows(() => schemaLib.createOrUpdateCms({
+        application: 'com.enonic.app.local',
+        resource: `kind: "CMS"`
+    }));
+};

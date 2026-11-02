@@ -147,6 +147,12 @@ public class MockApplication
     }
 
     @Override
+    public boolean isLocal()
+    {
+        return false;
+    }
+
+    @Override
     public Set<String> getCapabilities()
     {
         return Set.of();
