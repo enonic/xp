@@ -23,7 +23,7 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate(
             ContentQuery.create().queryExpr( QueryParser.parse( "displayName = 'a' ORDER BY _path ASC" ) ).build() ).build();
 
-        assertEquals( "displayName = 'a'", nodeQuery.getQuery().getConstraint().toString() );
+        assertEquals( "displayname = 'a'", nodeQuery.getQuery().getConstraint().toString() );
         assertEquals( "_path ASC", nodeQuery.getQuery().getOrderList().get( 0 ).toString() );
         assertContentRootFilter( nodeQuery );
     }
