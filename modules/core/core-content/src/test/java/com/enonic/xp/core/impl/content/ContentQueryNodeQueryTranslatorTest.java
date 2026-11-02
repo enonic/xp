@@ -6,9 +6,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.Value;
@@ -52,7 +54,7 @@ class ContentQueryNodeQueryTranslatorTest
         assertNull( nodeQuery.getParent() );
         assertNull( nodeQuery.getQuery().getConstraint() );
         assertTrue( nodeQuery.getQuery().getOrderList().isEmpty() );
-        assertContentRootFilter( nodeQuery );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
     @Test
@@ -64,7 +66,7 @@ class ContentQueryNodeQueryTranslatorTest
 
         assertEquals( new NodePath( "/content/mysite/articles" ), nodeQuery.getParent() );
         assertNull( nodeQuery.getQuery().getConstraint() );
-        assertContentRootFilter( nodeQuery );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
     @Test
@@ -78,7 +80,7 @@ class ContentQueryNodeQueryTranslatorTest
         // matched by a path prefix instead of the _parentPath term filter, so descendants at any depth are included
         assertNull( nodeQuery.getParent() );
         assertEquals( "_path LIKE '/content/mysite/articles/*'", nodeQuery.getQuery().getConstraint().toString() );
-        assertContentRootFilter( nodeQuery );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
     @Test
@@ -120,7 +122,20 @@ class ContentQueryNodeQueryTranslatorTest
         assertEquals( OrderExpr.Direction.ASC, ( (FieldOrderExpr) orderList.get( 0 ) ).getDirection() );
     }
 
-    private static void assertContentRootFilter( final NodeQuery nodeQuery )
+    @Test
+    void contentRootFilterFollowsContextOfEachQuery()
+    {
+        final NodeQuery archived = ContextBuilder.from( ContextAccessor.current() )
+            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, ArchiveConstants.ARCHIVE_ROOT_PATH )
+            .build()
+            .callWith( () -> ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build() );
+        final NodeQuery content = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build();
+
+        assertContentRootFilter( archived, "/archive" );
+        assertContentRootFilter( content, "/content" );
+    }
+
+    private static void assertContentRootFilter( final NodeQuery nodeQuery, final String root )
     {
         final BooleanFilter filter = nodeQuery.getQueryFilters()
             .stream()
@@ -130,9 +145,9 @@ class ContentQueryNodeQueryTranslatorTest
             .orElseThrow();
         final ValueFilter hierarchy = (ValueFilter) filter.getMust().get( 0 );
         assertEquals( "_path._path", hierarchy.getFieldName() );
-        assertEquals( List.of( "/content" ), hierarchy.getValues().stream().map( Value::asString ).toList() );
-        final ValueFilter root = (ValueFilter) filter.getMustNot().get( 0 );
-        assertEquals( "_path", root.getFieldName() );
-        assertEquals( List.of( "/content" ), root.getValues().stream().map( Value::asString ).toList() );
+        assertEquals( List.of( root ), hierarchy.getValues().stream().map( Value::asString ).toList() );
+        final ValueFilter contentRoot = (ValueFilter) filter.getMustNot().get( 0 );
+        assertEquals( "_path", contentRoot.getFieldName() );
+        assertEquals( List.of( root ), contentRoot.getValues().stream().map( Value::asString ).toList() );
     }
 }
