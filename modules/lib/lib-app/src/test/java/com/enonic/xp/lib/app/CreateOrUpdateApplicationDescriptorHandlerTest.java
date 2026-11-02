@@ -175,6 +175,15 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
     }
 
     @Test
+    void rejectsLocalApplication()
+    {
+        when( applicationDescriptorService.createOrUpdate( isA( CreateOrUpdateApplicationDescriptorParams.class ) ) ).thenThrow(
+            new IllegalArgumentException( "Cannot modify local application: com.enonic.app.local" ) );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "rejectLocalApplication" );
+    }
+
+    @Test
     void requiresKeyAndEditor()
     {
         runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "requireKeyAndEditor" );

@@ -185,6 +185,14 @@ public final class ApplicationHelper
         }
     }
 
+    static void requireNonLocalApplication( final ApplicationKey key, final boolean local )
+    {
+        if ( local )
+        {
+            throw new IllegalArgumentException( "Cannot modify local application: " + key );
+        }
+    }
+
     public static <T> T runAsAdmin( final Callable<T> callable )
     {
         return createAdminContext().callWith( callable );
