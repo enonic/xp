@@ -6,16 +6,21 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +52,9 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build();
 
         assertNull( nodeQuery.getParent() );
+        assertNull( nodeQuery.getQuery().getConstraint() );
         assertTrue( nodeQuery.getQuery().getOrderList().isEmpty() );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
     @Test
@@ -58,7 +65,8 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build(), parent ).build();
 
         assertEquals( new NodePath( "/content/mysite/articles" ), nodeQuery.getParent() );
-        assertEquals( "_path LIKE '/content/*'", nodeQuery.getQuery().getConstraint().toString() );
+        assertNull( nodeQuery.getQuery().getConstraint() );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
     @Test
@@ -72,6 +80,7 @@ class ContentQueryNodeQueryTranslatorTest
         // matched by a path prefix instead of the _parentPath term filter, so descendants at any depth are included
         assertNull( nodeQuery.getParent() );
         assertEquals( "_path LIKE '/content/mysite/articles/*'", nodeQuery.getQuery().getConstraint().toString() );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
     @Test
@@ -111,5 +120,34 @@ class ContentQueryNodeQueryTranslatorTest
         assertEquals( 1, orderList.size() );
         assertEquals( "_path", ( (FieldOrderExpr) orderList.get( 0 ) ).getField().getFieldPath() );
         assertEquals( OrderExpr.Direction.ASC, ( (FieldOrderExpr) orderList.get( 0 ) ).getDirection() );
+    }
+
+    @Test
+    void contentRootFilterFollowsContextOfEachQuery()
+    {
+        final NodeQuery archived = ContextBuilder.from( ContextAccessor.current() )
+            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, ArchiveConstants.ARCHIVE_ROOT_PATH )
+            .build()
+            .callWith( () -> ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build() );
+        final NodeQuery content = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build();
+
+        assertContentRootFilter( archived, "/archive" );
+        assertContentRootFilter( content, "/content" );
+    }
+
+    private static void assertContentRootFilter( final NodeQuery nodeQuery, final String root )
+    {
+        final BooleanFilter filter = nodeQuery.getQueryFilters()
+            .stream()
+            .filter( BooleanFilter.class::isInstance )
+            .map( BooleanFilter.class::cast )
+            .findFirst()
+            .orElseThrow();
+        final ValueFilter hierarchy = (ValueFilter) filter.getMust().get( 0 );
+        assertEquals( "_path._path", hierarchy.getFieldName() );
+        assertEquals( List.of( root ), hierarchy.getValues().stream().map( Value::asString ).toList() );
+        final ValueFilter contentRoot = (ValueFilter) filter.getMustNot().get( 0 );
+        assertEquals( "_path", contentRoot.getFieldName() );
+        assertEquals( List.of( root ), contentRoot.getValues().stream().map( Value::asString ).toList() );
     }
 }
