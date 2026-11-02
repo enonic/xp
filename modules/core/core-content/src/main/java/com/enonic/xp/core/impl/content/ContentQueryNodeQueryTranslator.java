@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -19,6 +18,7 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -26,6 +26,8 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 
 class ContentQueryNodeQueryTranslator
 {
+    private static final String PATH_HIERARCHY = NodeIndexPath.PATH.getPath() + "._path";
+
     public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
         return translate( contentQuery, null );
@@ -46,6 +48,7 @@ class ContentQueryNodeQueryTranslator
             .addAggregationQueries( contentQuery.getAggregationQueries() )
             .addQueryFilters( contentQuery.getQueryFilters() )
             .addQueryFilter( contentCollectionFilter )
+            .addQueryFilter( contentRootFilter() )
             .highlight( contentQuery.getHighlight() );
 
         // already checked against ContentQuery.SUPPORTED_RETURN_FIELDS, which names content fields rather than node fields
@@ -61,6 +64,15 @@ class ContentQueryNodeQueryTranslator
         processReferenceIds( contentQuery, builder );
 
         return builder;
+    }
+
+    private static BooleanFilter contentRootFilter()
+    {
+        final String contentRoot = ContentNodeHelper.getContentRoot().toString();
+        return BooleanFilter.create()
+            .must( ValueFilter.create().fieldName( PATH_HIERARCHY ).addValue( ValueFactory.newString( contentRoot ) ).build() )
+            .mustNot( ValueFilter.create().fieldName( NodeIndexPath.PATH.getPath() ).addValue( ValueFactory.newString( contentRoot ) ).build() )
+            .build();
     }
 
     private static void processContentTypesNames( final ContentQuery contentQuery, final NodeQuery.Builder builder )
@@ -100,14 +112,18 @@ class ContentQueryNodeQueryTranslator
     {
         final QueryExpr queryExpr = contentQuery.getQueryExpr();
 
-        // every content lives below the content root, and a recursive parent is simply a narrower prefix of that same path constraint
-        final NodePath pathPrefix =
-            parent != null && contentQuery.isRecursive() ? parent.nodePath() : ContentNodeHelper.getContentRoot();
-        final CompareExpr pathPrefixExpr = CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( pathPrefix + "/*" ) );
-
-        final ConstraintExpr constraintExpr = queryExpr != null && queryExpr.getConstraint() != null
-            ? LogicalExpr.and( queryExpr.getConstraint(), pathPrefixExpr )
-            : pathPrefixExpr;
+        final ConstraintExpr queryConstraint = queryExpr != null ? queryExpr.getConstraint() : null;
+        final ConstraintExpr constraintExpr;
+        if ( parent != null && contentQuery.isRecursive() )
+        {
+            final CompareExpr pathPrefixExpr =
+                CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( parent.nodePath() + "/*" ) );
+            constraintExpr = queryConstraint != null ? LogicalExpr.and( queryConstraint, pathPrefixExpr ) : pathPrefixExpr;
+        }
+        else
+        {
+            constraintExpr = queryConstraint;
+        }
 
         // the child order of the parent is resolved only when the query brings no order expressions of its own
         final Iterable<OrderExpr> orderList;
