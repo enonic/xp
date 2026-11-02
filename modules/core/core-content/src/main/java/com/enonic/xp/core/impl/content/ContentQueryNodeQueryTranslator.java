@@ -8,12 +8,8 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.ConstraintExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -21,7 +17,18 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 
 class ContentQueryNodeQueryTranslator
 {
-    private static final FieldExpr PATH_HIERARCHY = FieldExpr.from( NodeIndexPath.PATH.getPath() + "._path" );
+    private static final String PATH_HIERARCHY = NodeIndexPath.PATH.getPath() + "._path";
+
+    private static final BooleanFilter CONTENT_ROOT_FILTER = BooleanFilter.create()
+        .must( ValueFilter.create()
+                   .fieldName( PATH_HIERARCHY )
+                   .addValue( ValueFactory.newString( ContentNodeHelper.getContentRoot().toString() ) )
+                   .build() )
+        .mustNot( ValueFilter.create()
+                      .fieldName( NodeIndexPath.PATH.getPath() )
+                      .addValue( ValueFactory.newString( ContentNodeHelper.getContentRoot().toString() ) )
+                      .build() )
+        .build();
 
     public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
@@ -32,12 +39,13 @@ class ContentQueryNodeQueryTranslator
             .addValue( ValueFactory.newString( ContentConstants.CONTENT_NODE_COLLECTION.getName() ) )
             .build();
 
-        builder.query( buildNodeQueryExpr( contentQuery ) )
+        builder.query( contentQuery.getQueryExpr() != null ? contentQuery.getQueryExpr() : QueryExpr.from( null ) )
             .from( contentQuery.getFrom() )
             .size( contentQuery.getSize() )
             .addAggregationQueries( contentQuery.getAggregationQueries() )
             .addQueryFilters( contentQuery.getQueryFilters() )
             .addQueryFilter( contentCollectionFilter )
+            .addQueryFilter( CONTENT_ROOT_FILTER )
             .highlight( contentQuery.getHighlight() );
 
         processContentTypesNames( contentQuery, builder );
@@ -77,25 +85,5 @@ class ContentQueryNodeQueryTranslator
 
             builder.addQueryFilter( contentTypeFilterBuilder.build() );
         }
-    }
-
-    private static QueryExpr buildNodeQueryExpr( final ContentQuery contentQuery )
-    {
-        final QueryExpr queryExpr = contentQuery.getQueryExpr();
-        final String contentRoot = ContentNodeHelper.getContentRoot().toString();
-        final ConstraintExpr contentPathRootExpr = LogicalExpr.and( CompareExpr.eq( PATH_HIERARCHY, ValueExpr.string( contentRoot ) ),
-                                                                    CompareExpr.neq( FieldExpr.from( NodeIndexPath.PATH ),
-                                                                                     ValueExpr.string( contentRoot ) ) );
-
-        if ( queryExpr != null )
-        {
-            final ConstraintExpr newExpr =
-                queryExpr.getConstraint() != null ? LogicalExpr.and( queryExpr.getConstraint(), contentPathRootExpr ) : contentPathRootExpr;
-
-            return QueryExpr.from( newExpr, queryExpr.getOrderList() );
-
-        }
-
-        return QueryExpr.from( contentPathRootExpr );
     }
 }
