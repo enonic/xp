@@ -19,17 +19,6 @@ class ContentQueryNodeQueryTranslator
 {
     private static final String PATH_HIERARCHY = NodeIndexPath.PATH.getPath() + "._path";
 
-    private static final BooleanFilter CONTENT_ROOT_FILTER = BooleanFilter.create()
-        .must( ValueFilter.create()
-                   .fieldName( PATH_HIERARCHY )
-                   .addValue( ValueFactory.newString( ContentNodeHelper.getContentRoot().toString() ) )
-                   .build() )
-        .mustNot( ValueFilter.create()
-                      .fieldName( NodeIndexPath.PATH.getPath() )
-                      .addValue( ValueFactory.newString( ContentNodeHelper.getContentRoot().toString() ) )
-                      .build() )
-        .build();
-
     public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
         final NodeQuery.Builder builder = NodeQuery.create();
@@ -45,13 +34,22 @@ class ContentQueryNodeQueryTranslator
             .addAggregationQueries( contentQuery.getAggregationQueries() )
             .addQueryFilters( contentQuery.getQueryFilters() )
             .addQueryFilter( contentCollectionFilter )
-            .addQueryFilter( CONTENT_ROOT_FILTER )
+            .addQueryFilter( contentRootFilter() )
             .highlight( contentQuery.getHighlight() );
 
         processContentTypesNames( contentQuery, builder );
         processReferenceIds( contentQuery, builder );
 
         return builder;
+    }
+
+    private static BooleanFilter contentRootFilter()
+    {
+        final String contentRoot = ContentNodeHelper.getContentRoot().toString();
+        return BooleanFilter.create()
+            .must( ValueFilter.create().fieldName( PATH_HIERARCHY ).addValue( ValueFactory.newString( contentRoot ) ).build() )
+            .mustNot( ValueFilter.create().fieldName( NodeIndexPath.PATH.getPath() ).addValue( ValueFactory.newString( contentRoot ) ).build() )
+            .build();
     }
 
     private static void processContentTypesNames( final ContentQuery contentQuery, final NodeQuery.Builder builder )

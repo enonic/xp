@@ -5,7 +5,11 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.archive.ArchiveConstants;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -25,7 +29,7 @@ class ContentQueryNodeQueryTranslatorTest
 
         assertEquals( "displayname = 'a'", nodeQuery.getQuery().getConstraint().toString() );
         assertEquals( "_path ASC", nodeQuery.getQuery().getOrderList().get( 0 ).toString() );
-        assertContentRootFilter( nodeQuery );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
     @Test
@@ -34,10 +38,23 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build();
 
         assertNull( nodeQuery.getQuery().getConstraint() );
-        assertContentRootFilter( nodeQuery );
+        assertContentRootFilter( nodeQuery, "/content" );
     }
 
-    private static void assertContentRootFilter( final NodeQuery nodeQuery )
+    @Test
+    void contentRootFilterFollowsContextOfEachQuery()
+    {
+        final NodeQuery archived = ContextBuilder.from( ContextAccessor.current() )
+            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, ArchiveConstants.ARCHIVE_ROOT_PATH )
+            .build()
+            .callWith( () -> ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build() );
+        final NodeQuery content = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build() ).build();
+
+        assertContentRootFilter( archived, "/archive" );
+        assertContentRootFilter( content, "/content" );
+    }
+
+    private static void assertContentRootFilter( final NodeQuery nodeQuery, final String root )
     {
         final BooleanFilter filter = nodeQuery.getQueryFilters()
             .stream()
@@ -47,9 +64,9 @@ class ContentQueryNodeQueryTranslatorTest
             .orElseThrow();
         final ValueFilter hierarchy = (ValueFilter) filter.getMust().iterator().next();
         assertEquals( "_path._path", hierarchy.getFieldName() );
-        assertEquals( List.of( "/content" ), hierarchy.getValues().stream().map( Value::asString ).collect( Collectors.toList() ) );
-        final ValueFilter root = (ValueFilter) filter.getMustNot().iterator().next();
-        assertEquals( "_path", root.getFieldName() );
-        assertEquals( List.of( "/content" ), root.getValues().stream().map( Value::asString ).collect( Collectors.toList() ) );
+        assertEquals( List.of( root ), hierarchy.getValues().stream().map( Value::asString ).collect( Collectors.toList() ) );
+        final ValueFilter contentRoot = (ValueFilter) filter.getMustNot().iterator().next();
+        assertEquals( "_path", contentRoot.getFieldName() );
+        assertEquals( List.of( root ), contentRoot.getValues().stream().map( Value::asString ).collect( Collectors.toList() ) );
     }
 }
