@@ -1,5 +1,6 @@
 package com.enonic.xp.web.impl.trace;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +122,30 @@ class TraceWebFilterTest
     }
 
     @Test
+    void doHandleDoesNotReadByteSourceWithUnknownSize()
+        throws Exception
+    {
+        final ByteSource body = new ByteSource()
+        {
+            @Override
+            public InputStream openStream()
+            {
+                throw new AssertionError( "Tracing must not open the response stream" );
+            }
+        };
+        final WebResponse chainResponse = WebResponse.create().body( body ).build();
+        when( this.chain.handle( this.request, this.response ) ).thenReturn( chainResponse );
+
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final WebResponse result = Tracer.traceEx( trace, () -> this.filter.doHandle( this.request, this.response, this.chain ) );
+
+        assertSame( chainResponse, result );
+        assertSame( body, result.getBody() );
+        assertEquals( 200L, trace.get( "status" ) );
+        assertFalse( trace.containsKey( "size" ) );
+    }
+
+    @Test
     void responseSize()
     {
         assertEquals( 100L, TraceWebFilter.responseSize( WebResponse.create().header( HttpHeaders.CONTENT_LENGTH, "100" ).build() ) );
@@ -140,8 +165,7 @@ class TraceWebFilterTest
         when( unknownSizeResource.getSize() ).thenReturn( -1L );
         assertNull( TraceWebFilter.bodySize( unknownSizeResource, MediaType.PLAIN_TEXT_UTF_8 ) );
 
-        final ByteSource byteSource = mock( ByteSource.class );
-        when( byteSource.size() ).thenReturn( 20L );
+        final ByteSource byteSource = ByteSource.wrap( new byte[20] );
         assertEquals( 20L, TraceWebFilter.bodySize( byteSource, MediaType.PLAIN_TEXT_UTF_8 ) );
 
         assertEquals( 10L, TraceWebFilter.bodySize( new byte[10], MediaType.PLAIN_TEXT_UTF_8 ) );

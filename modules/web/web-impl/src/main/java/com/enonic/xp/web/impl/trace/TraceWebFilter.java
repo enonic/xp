@@ -91,7 +91,7 @@ public final class TraceWebFilter
         {
             case null -> 0L;
             case Resource resource -> knownSize( resource.getSize() );
-            case ByteSource byteSource -> byteSource.size();
+            case ByteSource byteSource -> byteSource.sizeIfKnown().orNull();
             case byte[] bytes -> (long) bytes.length;
             // serialized as JSON only when the response is written
             case Map<?, ?> _, List<?> _ -> null;
