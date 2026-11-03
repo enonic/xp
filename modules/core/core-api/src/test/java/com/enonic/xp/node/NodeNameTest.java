@@ -82,6 +82,32 @@ class NodeNameTest
     }
 
     @Test
+    void enclosingMarkNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "a⃝" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain 'U+20DD'" );
+    }
+
+    @Test
+    void combiningSpacingMarkAllowed()
+    {
+        assertThat( NodeName.from( "का" ) ).hasToString( "का" );
+    }
+
+    @Test
+    void threeConsecutiveNonSpacingMarksAllowed()
+    {
+        assertThat( NodeName.from( "q̀́̂" ) ).hasToString( "q̀́̂" );
+    }
+
+    @Test
+    void fourConsecutiveNonSpacingMarksNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "q̀́̂̃" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain more than 3 consecutive non-spacing marks" );
+    }
+
+    @Test
     void composedFormAllowed()
     {
         assertThat( NodeName.from( "bl\u00E5b\u00E6r" ) ).hasToString( "bl\u00E5b\u00E6r" );

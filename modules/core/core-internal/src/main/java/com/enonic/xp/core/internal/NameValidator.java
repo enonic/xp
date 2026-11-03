@@ -30,11 +30,13 @@ public final class NameValidator
      */
     public static final String HTML_SPECIAL_CHARACTERS = "<>&\"'";
 
+    private static final int MAX_CONSECUTIVE_NON_SPACING_MARKS = 3;
+
     public static final NameValidator NAME = builder( NameValidator.class ).invalidChars( NAME_ILLEGAL_CHARACTERS )
         .invalidStartChars( " " )
         .invalidEndChars( " " )
         .validCharTypes( Character.LOWERCASE_LETTER, Character.MODIFIER_LETTER, Character.UPPERCASE_LETTER, Character.TITLECASE_LETTER,
-                         Character.OTHER_LETTER, Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK, Character.ENCLOSING_MARK,
+                         Character.OTHER_LETTER, Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK,
                          Character.DECIMAL_DIGIT_NUMBER, Character.START_PUNCTUATION, Character.END_PUNCTUATION,
                          Character.INITIAL_QUOTE_PUNCTUATION, Character.FINAL_QUOTE_PUNCTUATION, Character.DASH_PUNCTUATION,
                          Character.CONNECTOR_PUNCTUATION, Character.OTHER_PUNCTUATION, Character.CURRENCY_SYMBOL, Character.MODIFIER_SYMBOL,
@@ -120,6 +122,12 @@ public final class NameValidator
             throw new IllegalArgumentException( typeOverride + " must be in Unicode NFC form" );
         }
 
+        if ( exceedsConsecutiveNonSpacingMarks( name ) )
+        {
+            throw new IllegalArgumentException(
+                typeOverride + " must not contain more than " + MAX_CONSECUTIVE_NON_SPACING_MARKS + " consecutive non-spacing marks" );
+        }
+
         name.codePoints().filter( this::isInvalidChar ).findFirst().ifPresent( cp -> {
             throw new IllegalArgumentException( typeOverride + " must not contain '" + toUCode( cp ) + "'" );
         } );
@@ -156,9 +164,23 @@ public final class NameValidator
     {
         return name.codePoints().anyMatch( cp -> switch ( Character.getType( cp ) )
         {
-            case Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK, Character.ENCLOSING_MARK -> true;
+            case Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK -> true;
             default -> false;
         } );
+    }
+
+    private static boolean exceedsConsecutiveNonSpacingMarks( final String name )
+    {
+        int run = 0;
+        for ( final int cp : name.codePoints().toArray() )
+        {
+            run = Character.getType( cp ) == Character.NON_SPACING_MARK ? run + 1 : 0;
+            if ( run > MAX_CONSECUTIVE_NON_SPACING_MARKS )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isInvalidChar( final int cp )
