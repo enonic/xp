@@ -115,7 +115,7 @@ public final class NameValidator
             throw new IllegalArgumentException( typeOverride + " must not be longer than " + maxLength + " characters" );
         }
 
-        if ( !Normalizer.isNormalized( name, Normalizer.Form.NFC ) )
+        if ( containsMark( name ) && !Normalizer.isNormalized( name, Normalizer.Form.NFC ) )
         {
             throw new IllegalArgumentException( typeOverride + " must be in Unicode NFC form" );
         }
@@ -150,6 +150,15 @@ public final class NameValidator
             return String.valueOf( (char) cp );
         }
         return String.format( "U+%04X", cp );
+    }
+
+    private static boolean containsMark( final String name )
+    {
+        return name.codePoints().anyMatch( cp -> switch ( Character.getType( cp ) )
+        {
+            case Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK, Character.ENCLOSING_MARK -> true;
+            default -> false;
+        } );
     }
 
     private boolean isInvalidChar( final int cp )

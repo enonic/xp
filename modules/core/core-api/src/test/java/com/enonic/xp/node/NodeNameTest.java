@@ -88,6 +88,15 @@ class NodeNameTest
     }
 
     @Test
+    void lettersWithCanonicalDecompositionAllowed()
+    {
+        for ( final String name : List.of( "Å", "Ω", "豈", "가" ) )
+        {
+            assertThat( NodeName.from( name ) ).hasToString( name );
+        }
+    }
+
+    @Test
     void devanagariAllowed()
     {
         for ( final String name : List.of( "\u0939\u092E\u0947\u0902-\u0906\u092A\u0915\u0940-\u0938\u0939\u092E\u0924\u093F-\u091A\u093E\u0939\u093F\u090F", "\u0915\u0941\u0915\u0940\u091C\u093C", "\u091F\u094D\u0930\u0948\u0915\u093F\u0902\u0917", "\u092A\u0930\u094D\u092F\u093E\u0935\u0930\u0923", "\u0939\u093F\u0928\u094D\u0926\u0940", "\u0928\u092E\u0938\u094D\u0924\u0947" ) )
