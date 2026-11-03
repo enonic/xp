@@ -46,11 +46,22 @@ public class VersionEntryProcessor
         {
             return;
         }
-        final DumpSerializer.NodeVersionLine versionLine = this.serializer.toNodeVersionLine( line );
-        final NodeId nodeId = NodeId.from( versionLine.nodeId() );
-        final List<Branch> branches = versionLine.branches() == null
-            ? List.of()
-            : versionLine.branches().stream().map( Branch::from ).toList();
+        final DumpSerializer.NodeVersionLine versionLine;
+        final NodeId nodeId;
+        final List<Branch> branches;
+        try
+        {
+            versionLine = this.serializer.toNodeVersionLine( line );
+            nodeId = NodeId.from( versionLine.nodeId() );
+            branches = versionLine.branches() == null ? List.of() : versionLine.branches().stream().map( Branch::from ).toList();
+        }
+        catch ( IllegalArgumentException e )
+        {
+            final String message = String.format( "Cannot load version entry %s: %s", line, e.getMessage() );
+            resultBuilder.error( EntryLoadError.error( message ) );
+            LOG.error( message, e );
+            return;
+        }
         processVersion( resultBuilder, nodeId, versionLine.version(), branches );
     }
 

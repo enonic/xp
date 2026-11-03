@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
@@ -76,7 +78,22 @@ class NodeNameTest
     void combiningMarkNotAllowed()
     {
         assertThatThrownBy( () -> NodeName.from( "a\u030A" ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessage( "NodeName must not contain 'U+030A'" );
+            .hasMessage( "NodeName must be in Unicode NFC form" );
+    }
+
+    @Test
+    void composedFormAllowed()
+    {
+        assertThat( NodeName.from( "bl\u00E5b\u00E6r" ) ).hasToString( "bl\u00E5b\u00E6r" );
+    }
+
+    @Test
+    void devanagariAllowed()
+    {
+        for ( final String name : List.of( "\u0939\u092E\u0947\u0902-\u0906\u092A\u0915\u0940-\u0938\u0939\u092E\u0924\u093F-\u091A\u093E\u0939\u093F\u090F", "\u0915\u0941\u0915\u0940\u091C\u093C", "\u091F\u094D\u0930\u0948\u0915\u093F\u0902\u0917", "\u092A\u0930\u094D\u092F\u093E\u0935\u0930\u0923", "\u0939\u093F\u0928\u094D\u0926\u0940", "\u0928\u092E\u0938\u094D\u0924\u0947" ) )
+        {
+            assertThat( NodeName.from( name ) ).hasToString( name );
+        }
     }
 
     @Test

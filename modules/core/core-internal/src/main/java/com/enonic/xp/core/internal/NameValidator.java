@@ -1,5 +1,6 @@
 package com.enonic.xp.core.internal;
 
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -33,7 +34,8 @@ public final class NameValidator
         .invalidStartChars( " " )
         .invalidEndChars( " " )
         .validCharTypes( Character.LOWERCASE_LETTER, Character.MODIFIER_LETTER, Character.UPPERCASE_LETTER, Character.TITLECASE_LETTER,
-                         Character.OTHER_LETTER, Character.DECIMAL_DIGIT_NUMBER, Character.START_PUNCTUATION, Character.END_PUNCTUATION,
+                         Character.OTHER_LETTER, Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK, Character.ENCLOSING_MARK,
+                         Character.DECIMAL_DIGIT_NUMBER, Character.START_PUNCTUATION, Character.END_PUNCTUATION,
                          Character.INITIAL_QUOTE_PUNCTUATION, Character.FINAL_QUOTE_PUNCTUATION, Character.DASH_PUNCTUATION,
                          Character.CONNECTOR_PUNCTUATION, Character.OTHER_PUNCTUATION, Character.CURRENCY_SYMBOL, Character.MODIFIER_SYMBOL,
                          Character.MATH_SYMBOL, Character.OTHER_SYMBOL )
@@ -111,6 +113,11 @@ public final class NameValidator
         if ( maxLength > 0 && name.length() > maxLength )
         {
             throw new IllegalArgumentException( typeOverride + " must not be longer than " + maxLength + " characters" );
+        }
+
+        if ( !Normalizer.isNormalized( name, Normalizer.Form.NFC ) )
+        {
+            throw new IllegalArgumentException( typeOverride + " must be in Unicode NFC form" );
         }
 
         name.codePoints().filter( this::isInvalidChar ).findFirst().ifPresent( cp -> {
