@@ -30,7 +30,11 @@ public final class NameValidator
      */
     public static final String HTML_SPECIAL_CHARACTERS = "<>&\"'";
 
-    private static final int MAX_CONSECUTIVE_NON_SPACING_MARKS = 3;
+    /**
+     * Maximum number of non-spacing marks (Mn) attached to a single base character.
+     * Spacing marks (Mc) in the same mark sequence do not reset the count.
+     */
+    private static final int MAX_NON_SPACING_MARKS_PER_BASE = 4;
 
     public static final NameValidator NAME = builder( NameValidator.class ).invalidChars( NAME_ILLEGAL_CHARACTERS )
         .invalidStartChars( " " )
@@ -80,61 +84,57 @@ public final class NameValidator
         this.reservedNames = Set.of( "_", ".", ".." );
     }
 
-    public String validate( final String name, String typeOverride )
+    public String validate( final String name, final String subject )
     {
-        requireNonNull( name, () -> typeOverride + " must not be null" );
+        requireNonNull( name, () -> subject + " must not be null" );
 
         if ( name.isEmpty() )
         {
-            throw new IllegalArgumentException( typeOverride + " must not be empty" );
+            throw new IllegalArgumentException( subject + " must not be empty" );
         }
 
         if ( reservedNames.contains( name ) )
         {
-            throw new IllegalArgumentException( typeOverride + " must not be " + name );
+            throw new IllegalArgumentException( subject + " must not be " + name );
         }
 
         if ( invalidStartChars != null )
         {
-            final char firstChar = name.charAt( 0 );
-            if ( Arrays.binarySearch( invalidStartChars, firstChar ) >= 0 )
+            final int firstCp = name.codePointAt( 0 );
+            if ( Arrays.binarySearch( invalidStartChars, firstCp ) >= 0 )
             {
-                throw new IllegalArgumentException( typeOverride + " must not start with '" + toUCode( firstChar ) + "'" );
+                throw new IllegalArgumentException( subject + " must not start with '" + toUCode( firstCp ) + "'" );
             }
         }
 
         if ( invalidEndChars != null )
         {
-            final char lastChar = name.charAt( name.length() - 1 );
-            if ( Arrays.binarySearch( invalidEndChars, lastChar ) >= 0 )
+            final int lastCp = name.codePointBefore( name.length() );
+            if ( Arrays.binarySearch( invalidEndChars, lastCp ) >= 0 )
             {
-                throw new IllegalArgumentException( typeOverride + " must not end with '" + toUCode( lastChar ) + "'" );
+                throw new IllegalArgumentException( subject + " must not end with '" + toUCode( lastCp ) + "'" );
             }
         }
 
         if ( maxLength > 0 && name.length() > maxLength )
         {
-            throw new IllegalArgumentException( typeOverride + " must not be longer than " + maxLength + " characters" );
+            throw new IllegalArgumentException( subject + " must not be longer than " + maxLength + " characters" );
         }
 
-        if ( containsMark( name ) && !Normalizer.isNormalized( name, Normalizer.Form.NFC ) )
+        if ( !Normalizer.isNormalized( name, Normalizer.Form.NFC ) )
         {
-            throw new IllegalArgumentException( typeOverride + " must be in Unicode NFC form" );
-        }
-
-        if ( exceedsConsecutiveNonSpacingMarks( name ) )
-        {
-            throw new IllegalArgumentException(
-                typeOverride + " must not contain more than " + MAX_CONSECUTIVE_NON_SPACING_MARKS + " consecutive non-spacing marks" );
+            throw new IllegalArgumentException( subject + " must be in Unicode NFC form" );
         }
 
         name.codePoints().filter( this::isInvalidChar ).findFirst().ifPresent( cp -> {
-            throw new IllegalArgumentException( typeOverride + " must not contain '" + toUCode( cp ) + "'" );
+            throw new IllegalArgumentException( subject + " must not contain '" + toUCode( cp ) + "'" );
         } );
+
+        validateMarks( name, subject );
 
         if ( regex != null && !regex.matcher( name ).matches() )
         {
-            throw new IllegalArgumentException( typeOverride + " is invalid: " + name );
+            throw new IllegalArgumentException( subject + " is invalid: " + name );
         }
 
         return name;
@@ -160,27 +160,63 @@ public final class NameValidator
         return String.format( "U+%04X", cp );
     }
 
-    private static boolean containsMark( final String name )
+    /**
+     * Validates combining marks (Mn, Mc). Expects an NFC string.
+     * <p>
+     * A mark is attached if the nearest preceding non-mark code point is a letter (L*) or a decimal digit (Nd).
+     * A mark sequence inherits the attachment of its first mark. Each check reports its own error:
+     * <ul>
+     *     <li>invisible mark: a mark that is Default_Ignorable_Code_Point, regardless of position;</li>
+     *     <li>unattached mark: a mark at the start of the string or after a non-base character;</li>
+     *     <li>too many non-spacing marks: more than {@value #MAX_NON_SPACING_MARKS_PER_BASE} Mn after one base.</li>
+     * </ul>
+     */
+    private static void validateMarks( final String name, final String subject )
     {
-        return name.codePoints().anyMatch( cp -> switch ( Character.getType( cp ) )
+        boolean attached = false;
+        int nonSpacingMarks = 0;
+        for ( int i = 0; i < name.length(); )
         {
-            case Character.NON_SPACING_MARK, Character.COMBINING_SPACING_MARK -> true;
-            default -> false;
-        } );
+            final int cp = name.codePointAt( i );
+            final int type = Character.getType( cp );
+            if ( isMark( type ) )
+            {
+                if ( isInvisibleMark( cp ) )
+                {
+                    throw new IllegalArgumentException( subject + " must not contain invisible mark '" + toUCode( cp ) + "'" );
+                }
+                if ( !attached )
+                {
+                    throw new IllegalArgumentException( subject + " must not contain unattached mark '" + toUCode( cp ) + "'" );
+                }
+                if ( type == Character.NON_SPACING_MARK && ++nonSpacingMarks > MAX_NON_SPACING_MARKS_PER_BASE )
+                {
+                    throw new IllegalArgumentException(
+                        subject + " must not contain more than " + MAX_NON_SPACING_MARKS_PER_BASE + " non-spacing marks per character" );
+                }
+            }
+            else
+            {
+                attached = Character.isLetter( cp ) || type == Character.DECIMAL_DIGIT_NUMBER;
+                nonSpacingMarks = 0;
+            }
+            i += Character.charCount( cp );
+        }
     }
 
-    private static boolean exceedsConsecutiveNonSpacingMarks( final String name )
+    private static boolean isMark( final int type )
     {
-        int run = 0;
-        for ( final int cp : name.codePoints().toArray() )
-        {
-            run = Character.getType( cp ) == Character.NON_SPACING_MARK ? run + 1 : 0;
-            if ( run > MAX_CONSECUTIVE_NON_SPACING_MARKS )
-            {
-                return true;
-            }
-        }
-        return false;
+        return type == Character.NON_SPACING_MARK || type == Character.COMBINING_SPACING_MARK;
+    }
+
+    /**
+     * Marks (Mn) that are also Default_Ignorable_Code_Point:
+     * combining grapheme joiner, Khmer inherent vowels, Mongolian free variation selectors, variation selectors.
+     */
+    private static boolean isInvisibleMark( final int cp )
+    {
+        return cp == 0x034F || ( cp >= 0x17B4 && cp <= 0x17B5 ) || ( cp >= 0x180B && cp <= 0x180D ) || cp == 0x180F ||
+            ( cp >= 0xFE00 && cp <= 0xFE0F ) || ( cp >= 0xE0100 && cp <= 0xE01EF );
     }
 
     private boolean isInvalidChar( final int cp )
@@ -200,12 +236,7 @@ public final class NameValidator
             return true;
         }
 
-        if ( validCharTypes != null && Arrays.binarySearch( validCharTypes, Character.getType( cp ) ) < 0 )
-        {
-            return true;
-        }
-
-        return false;
+        return validCharTypes != null && Arrays.binarySearch( validCharTypes, Character.getType( cp ) ) < 0;
     }
 
     public NameValidator cachedExtend( final Class<?> type )
@@ -266,7 +297,7 @@ public final class NameValidator
 
         public Builder invalidChars( final String invalidChars )
         {
-            this.invalidChars = invalidChars.chars().sorted().distinct().toArray();
+            this.invalidChars = invalidChars.codePoints().sorted().distinct().toArray();
             return this;
         }
 
@@ -278,13 +309,13 @@ public final class NameValidator
 
         public Builder invalidStartChars( final String invalidStartChars )
         {
-            this.invalidStartChars = invalidStartChars.chars().sorted().distinct().toArray();
+            this.invalidStartChars = invalidStartChars.codePoints().sorted().distinct().toArray();
             return this;
         }
 
         public Builder invalidEndChars( final String invalidEndChars )
         {
-            this.invalidEndChars = invalidEndChars.chars().sorted().distinct().toArray();
+            this.invalidEndChars = invalidEndChars.codePoints().sorted().distinct().toArray();
             return this;
         }
 

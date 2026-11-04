@@ -95,16 +95,60 @@ class NodeNameTest
     }
 
     @Test
-    void threeConsecutiveNonSpacingMarksAllowed()
+    void fourNonSpacingMarksPerBaseAllowed()
     {
-        assertThat( NodeName.from( "q̀́̂" ) ).hasToString( "q̀́̂" );
+        assertThat( NodeName.from( "q̀́̂̃" ) ).hasToString( "q̀́̂̃" );
+        assertThat( NodeName.from( "q̀́̂̃q̀́̂̃" ) ).hasToString(
+            "q̀́̂̃q̀́̂̃" );
     }
 
     @Test
-    void fourConsecutiveNonSpacingMarksNotAllowed()
+    void fiveNonSpacingMarksPerBaseNotAllowed()
     {
-        assertThatThrownBy( () -> NodeName.from( "q̀́̂̃" ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessage( "NodeName must not contain more than 3 consecutive non-spacing marks" );
+        assertThatThrownBy( () -> NodeName.from( "q̀́̂̃̄" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain more than 4 non-spacing marks per character" );
+    }
+
+    @Test
+    void spacingMarkDoesNotResetNonSpacingMarkCount()
+    {
+        assertThatThrownBy( () -> NodeName.from( "q̀́̂̃ा̀" ) ).isInstanceOf(
+            IllegalArgumentException.class ).hasMessage( "NodeName must not contain more than 4 non-spacing marks per character" );
+    }
+
+    @Test
+    void invalidCharReportedBeforeMarkAfterIt()
+    {
+        assertThatThrownBy( () -> NodeName.from( "a‍́" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain 'U+200D'" );
+    }
+
+    @Test
+    void unattachedMarkNotAllowed()
+    {
+        for ( final String name : List.of( "̀q", "q ̀", "q-̀", "q.̀", "€̀", "😀̀" ) )
+        {
+            assertThatThrownBy( () -> NodeName.from( name ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "NodeName must not contain unattached mark 'U+0300'" );
+        }
+    }
+
+    @Test
+    void markAttachedToLetterDigitOrMarkAllowed()
+    {
+        for ( final String name : List.of( "1̀", "ـَ", "कां", "ที่" ) )
+        {
+            assertThat( NodeName.from( name ) ).hasToString( name );
+        }
+    }
+
+    @Test
+    void invisibleMarkNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "q͏q" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain invisible mark 'U+034F'" );
+        assertThatThrownBy( () -> NodeName.from( "❤️" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain invisible mark 'U+FE0F'" );
     }
 
     @Test
@@ -114,11 +158,12 @@ class NodeNameTest
     }
 
     @Test
-    void lettersWithCanonicalDecompositionAllowed()
+    void lettersWithCanonicalDecompositionNotAllowed()
     {
-        for ( final String name : List.of( "Å", "Ω", "豈", "가" ) )
+        for ( final String name : List.of( "\u212B", "\u2126", "\uF900", "\u1100\u1161" ) )
         {
-            assertThat( NodeName.from( name ) ).hasToString( name );
+            assertThatThrownBy( () -> NodeName.from( name ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "NodeName must be in Unicode NFC form" );
         }
     }
 
