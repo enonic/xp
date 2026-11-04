@@ -74,6 +74,21 @@ class SchemaResourcePathsTest
         assertFalse( SchemaResourcePaths.isAppRootResourcePath( path ), path );
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"enonic.yaml", "/enonic.yml", "application.yaml", "application.yml", "enonic.svg", "/enonic.png",
+        "application.svg"})
+    void app_descriptor_or_icon_paths( final String path )
+    {
+        assertTrue( SchemaResourcePaths.isAppDescriptorOrIconPath( path ), path );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"application.png", "enonic.jpg", "cms/cms.yaml", "cms/enonic.yaml", "assets/enonic.svg", "lib/util.js"})
+    void non_app_descriptor_or_icon_paths( final String path )
+    {
+        assertFalse( SchemaResourcePaths.isAppDescriptorOrIconPath( path ), path );
+    }
+
     @Test
     void app_icon_name_by_mime_type()
     {

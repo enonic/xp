@@ -34,6 +34,16 @@ class BundleApplicationUrlResolverTest
     }
 
     @Test
+    void revision_is_the_last_modified_time_of_the_bundle()
+    {
+        final Bundle bundle = deploy( "bundle", newBundle( "foo.bar.bundle", true ) );
+        this.resolver = new BundleApplicationUrlResolver( bundle );
+
+        assertTrue( this.resolver.isStable() );
+        assertEquals( bundle.getLastModified(), this.resolver.revision() );
+    }
+
+    @Test
     void testFindUrl()
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", true );
