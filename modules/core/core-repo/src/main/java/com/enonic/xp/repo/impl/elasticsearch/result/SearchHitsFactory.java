@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.result;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -10,7 +11,8 @@ import com.enonic.xp.repo.impl.search.result.SearchHit;
 
 public class SearchHitsFactory
 {
-    public static List<SearchHit> create( final org.elasticsearch.search.SearchHits searchHits, ReturnFields returnFields )
+    public static List<SearchHit> create( final org.elasticsearch.search.SearchHits searchHits, ReturnFields returnFields,
+                                          final Set<Integer> hiddenSortPositions )
     {
         final List<SearchHit> builder = new ArrayList<>();
 
@@ -22,7 +24,7 @@ public class SearchHitsFactory
                 .indexName( hit.index() )
                 .indexType( hit.type() )
                 .returnValues( createReturnValues( hit, returnFields ) )
-                .sortValues( SortValuesPropertyFactory.create( hit.sortValues() ) )
+                .sortValues( SortValuesPropertyFactory.create( hit.sortValues(), hiddenSortPositions ) )
                 .highlightedFields( HighlightedPropertiesFactory.create( hit.highlightFields() ) )
                 .explanation( SearchExplanationFactory.create( hit ) );
 
