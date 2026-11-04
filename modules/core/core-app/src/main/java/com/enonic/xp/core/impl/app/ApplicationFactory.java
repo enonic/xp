@@ -61,12 +61,15 @@ public final class ApplicationFactory
     }
 
     /**
-     * Resolver for an application whose bundle is not active: only the persisted descriptor and schema are served,
-     * bundle resources (controllers, assets, ...) are not available until the application is started.
+     * Resolver for an application whose bundle is not active: the persisted descriptor and schema of a global application, the
+     * descriptor and icon of a local one straight from its bundle, which is all a local application has. Bundle resources
+     * (controllers, assets, ...) are not available until the application is started.
      */
     ApplicationUrlResolver createInactiveUrlResolver( final Bundle bundle )
     {
-        return isPersisted( bundle ) ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService ) : null;
+        return isPersisted( bundle )
+            ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService )
+            : new FilteredApplicationUrlResolver( createBundleUrlResolver( bundle ), () -> SchemaResourcePaths::isAppDescriptorOrIconPath );
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
