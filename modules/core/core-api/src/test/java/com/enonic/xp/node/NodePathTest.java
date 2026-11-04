@@ -73,6 +73,16 @@ class NodePathTest
     }
 
     @Test
+    void devanagariPath()
+    {
+        final NodePath path = new NodePath( "/content/project/ट्रैकिंग/पर्यावरण" );
+
+        assertThat( path ).hasToString( "/content/project/ट्रैकिंग/पर्यावरण" );
+        assertThat( path.getName() ).isEqualTo( NodeName.from( "पर्यावरण" ) );
+        assertThat( path.getParentPath() ).hasToString( "/content/project/ट्रैकिंग" );
+    }
+
+    @Test
     void getParentPaths()
     {
         NodePath nodePath = new NodePath( "/one/two/three" );
