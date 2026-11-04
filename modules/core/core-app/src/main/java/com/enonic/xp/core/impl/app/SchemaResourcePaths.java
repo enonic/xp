@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.util.BinaryReference;
 
 /**
@@ -48,11 +49,13 @@ public final class SchemaResourcePaths
 
     public static final String APP_ICON_PNG_NAME = "enonic." + PNG_EXTENSION;
 
-    /**
-     * Names of the nodes below the application node that make up the persisted schema. They are replaced as a whole.
-     */
-
     private static final List<String> APP_ICON_NAMES = List.of( APP_ICON_NAME, APP_ICON_PNG_NAME );
+
+    /**
+     * Paths the application icon is looked for at, in order: {@code enonic.svg}, {@code enonic.png} (persisted icons only) and the
+     * legacy {@code application.svg}.
+     */
+    public static final List<String> APP_ICON_PATHS = List.of( APP_ICON_NAME, APP_ICON_PNG_NAME, "application." + SVG_EXTENSION );
 
     // folder of a schema below the cms root: content-types, parts, ...
     public static final String KIND_GROUP = "kind";
@@ -216,6 +219,16 @@ public final class SchemaResourcePaths
     public static boolean isAppRootResourcePath( final String path )
     {
         return APP_ROOT_RESOURCE_PATTERN.matcher( normalize( path ) ).matches();
+    }
+
+    /**
+     * {@code true} for the paths the application descriptor ({@link ApplicationBundleUtils#DESCRIPTOR_PATHS}) and icon
+     * ({@link #APP_ICON_PATHS}) are looked for at: what the descriptor of an application is built from.
+     */
+    public static boolean isAppDescriptorOrIconPath( final String path )
+    {
+        final String normalized = normalize( path );
+        return ApplicationBundleUtils.DESCRIPTOR_PATHS.contains( normalized ) || APP_ICON_PATHS.contains( normalized );
     }
 
     /**
