@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
@@ -76,7 +78,102 @@ class NodeNameTest
     void combiningMarkNotAllowed()
     {
         assertThatThrownBy( () -> NodeName.from( "a\u030A" ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessage( "NodeName must not contain 'U+030A'" );
+            .hasMessage( "NodeName must be in Unicode NFC form" );
+    }
+
+    @Test
+    void enclosingMarkNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "a⃝" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain 'U+20DD'" );
+    }
+
+    @Test
+    void combiningSpacingMarkAllowed()
+    {
+        assertThat( NodeName.from( "का" ) ).hasToString( "का" );
+    }
+
+    @Test
+    void fourNonSpacingMarksPerBaseAllowed()
+    {
+        assertThat( NodeName.from( "q̀́̂̃" ) ).hasToString( "q̀́̂̃" );
+        assertThat( NodeName.from( "q̀́̂̃q̀́̂̃" ) ).hasToString(
+            "q̀́̂̃q̀́̂̃" );
+    }
+
+    @Test
+    void fiveNonSpacingMarksPerBaseNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "q̀́̂̃̄" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain more than 4 non-spacing marks per character" );
+    }
+
+    @Test
+    void spacingMarkDoesNotResetNonSpacingMarkCount()
+    {
+        assertThatThrownBy( () -> NodeName.from( "q̀́̂̃ा̀" ) ).isInstanceOf(
+            IllegalArgumentException.class ).hasMessage( "NodeName must not contain more than 4 non-spacing marks per character" );
+    }
+
+    @Test
+    void invalidCharReportedBeforeMarkAfterIt()
+    {
+        assertThatThrownBy( () -> NodeName.from( "a‍́" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain 'U+200D'" );
+    }
+
+    @Test
+    void unattachedMarkNotAllowed()
+    {
+        for ( final String name : List.of( "̀q", "q ̀", "q-̀", "q.̀", "€̀", "😀̀" ) )
+        {
+            assertThatThrownBy( () -> NodeName.from( name ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "NodeName must not contain unattached mark 'U+0300'" );
+        }
+    }
+
+    @Test
+    void markAttachedToLetterDigitOrMarkAllowed()
+    {
+        for ( final String name : List.of( "1̀", "ـَ", "कां", "ที่" ) )
+        {
+            assertThat( NodeName.from( name ) ).hasToString( name );
+        }
+    }
+
+    @Test
+    void invisibleMarkNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "q͏q" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain invisible mark 'U+034F'" );
+        assertThatThrownBy( () -> NodeName.from( "❤️" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain invisible mark 'U+FE0F'" );
+    }
+
+    @Test
+    void composedFormAllowed()
+    {
+        assertThat( NodeName.from( "bl\u00E5b\u00E6r" ) ).hasToString( "bl\u00E5b\u00E6r" );
+    }
+
+    @Test
+    void lettersWithCanonicalDecompositionNotAllowed()
+    {
+        for ( final String name : List.of( "\u212B", "\u2126", "\uF900", "\u1100\u1161" ) )
+        {
+            assertThatThrownBy( () -> NodeName.from( name ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "NodeName must be in Unicode NFC form" );
+        }
+    }
+
+    @Test
+    void devanagariAllowed()
+    {
+        for ( final String name : List.of( "\u0939\u092E\u0947\u0902-\u0906\u092A\u0915\u0940-\u0938\u0939\u092E\u0924\u093F-\u091A\u093E\u0939\u093F\u090F", "\u0915\u0941\u0915\u0940\u091C\u093C", "\u091F\u094D\u0930\u0948\u0915\u093F\u0902\u0917", "\u092A\u0930\u094D\u092F\u093E\u0935\u0930\u0923", "\u0939\u093F\u0928\u094D\u0926\u0940", "\u0928\u092E\u0938\u094D\u0924\u0947" ) )
+        {
+            assertThat( NodeName.from( name ) ).hasToString( name );
+        }
     }
 
     @Test
