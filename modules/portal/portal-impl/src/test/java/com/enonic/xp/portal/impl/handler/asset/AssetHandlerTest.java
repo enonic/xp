@@ -175,6 +175,7 @@ public class AssetHandlerTest
 
     @Test
     public void testPathOutsideAssetsNotFound()
+        throws Exception
     {
         addResource( "demo:/site/site.xml" );
         addResource( "demo:/assets-other/main.css" );

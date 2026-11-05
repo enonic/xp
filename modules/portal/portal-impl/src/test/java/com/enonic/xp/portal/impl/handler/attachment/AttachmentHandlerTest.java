@@ -299,10 +299,10 @@ class AttachmentHandlerTest
     void byteServingSuffixLongerThanFile()
         throws Exception
     {
-        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=-100" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( "bytes 0-6/7", res.getHeaders().get( "Content-Range" ) );
         assertArrayEquals( mediaBytes.read(), ( (ByteSource) res.getBody() ).read() );
@@ -312,10 +312,10 @@ class AttachmentHandlerTest
     void byteServingSuffixZero()
         throws Exception
     {
-        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=-0" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, res.getStatus() );
         assertEquals( "bytes */7", res.getHeaders().get( "Content-Range" ) );
         assertNull( res.getBody() );
@@ -325,10 +325,10 @@ class AttachmentHandlerTest
     void byteServingTooManyRangesServesWholeBody()
         throws Exception
     {
-        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=" + "0-,".repeat( 10 ) + "0-" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertNull( res.getHeaders().get( "Content-Range" ) );
         assertSame( this.mediaBytes, res.getBody() );
@@ -338,10 +338,10 @@ class AttachmentHandlerTest
     void byteServingUnknownUnitServesWholeBody()
         throws Exception
     {
-        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "items=0-1" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertNull( res.getHeaders().get( "Content-Range" ) );
         assertArrayEquals( mediaBytes.read(), ( (ByteSource) res.getBody() ).read() );
@@ -351,10 +351,10 @@ class AttachmentHandlerTest
     void byteServingOverlappingRangesServeWholeBody()
         throws Exception
     {
-        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=0-,0-" );
 
-        final PortalResponse res = this.handler.handle( this.request );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
         assertArrayEquals( mediaBytes.read(), ( (ByteSource) res.getBody() ).read() );
