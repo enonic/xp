@@ -3,9 +3,6 @@ package com.enonic.xp.core.impl.content.schema;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
@@ -16,8 +13,6 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 final class ContentTypeRegistry
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ContentTypeRegistry.class );
-
     private final BuiltinContentTypes builtInTypes;
 
     private final ContentTypeLoader contentTypeLoader;
@@ -33,7 +28,7 @@ final class ContentTypeRegistry
 
     public ContentType get( final ContentTypeName name )
     {
-        return SchemaHelper.isSystem( name.getApplicationKey() ) ? this.builtInTypes.getContentType( name ) : loadOrNull( name );
+        return SchemaHelper.isSystem( name.getApplicationKey() ) ? this.builtInTypes.getContentType( name ) : contentTypeLoader.get( name );
     }
 
     public ContentTypes getByApplication( final ApplicationKey key )
@@ -60,19 +55,7 @@ final class ContentTypeRegistry
 
     private Stream<ContentType> loadByApplication( final ApplicationKey key )
     {
-        return contentTypeLoader.findNames( key ).stream().map( this::loadOrNull ).filter( Objects::nonNull );
-    }
-
-    private ContentType loadOrNull( final ContentTypeName name )
-    {
-        try
-        {
-            return contentTypeLoader.get( name );
-        }
-        catch ( final Exception e )
-        {
-            LOG.error( "Error loading content type: '{}'", name, e );
-            return null;
-        }
+        // the loader yields null for a content type that failed to parse, having logged it
+        return contentTypeLoader.findNames( key ).stream().map( contentTypeLoader::get ).filter( Objects::nonNull );
     }
 }

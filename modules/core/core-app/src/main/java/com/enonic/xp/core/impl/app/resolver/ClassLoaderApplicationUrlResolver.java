@@ -87,4 +87,18 @@ public final class ClassLoaderApplicationUrlResolver
     {
         return path.startsWith( "/" ) ? path.substring( 1 ) : path;
     }
+
+    @Override
+    public boolean isStable()
+    {
+        // files on disk change without any signal: nothing derived from them is cached
+        return false;
+    }
+
+    @Override
+    public Object revision()
+    {
+        // the files have no revision to offer, see isStable
+        return null;
+    }
 }

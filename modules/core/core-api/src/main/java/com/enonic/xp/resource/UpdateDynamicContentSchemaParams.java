@@ -5,6 +5,10 @@ import com.enonic.xp.schema.BaseSchemaName;
 import static java.util.Objects.requireNonNull;
 
 
+/**
+ * @deprecated the parameters of the deprecated {@link DynamicSchemaService#updateContentSchema}; use {@link CreateOrUpdateContentSchemaParams}
+ */
+@Deprecated
 public final class UpdateDynamicContentSchemaParams
 {
     private final BaseSchemaName name;

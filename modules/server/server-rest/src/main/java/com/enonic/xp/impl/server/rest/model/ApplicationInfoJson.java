@@ -31,10 +31,12 @@ public class ApplicationInfoJson
 
     private final boolean system;
 
+    private final boolean schema;
+
     private ApplicationInfoJson( final String key, final String version, final String title, final String maxSystemVersion,
                                  final String minSystemVersion, final String url, final String vendorName, final String vendorUrl,
-                                 final Instant modifiedTime, final String state, final boolean local,
-                                 final boolean system )
+                                 final Instant modifiedTime, final String state, final boolean local, final boolean system,
+                                 final boolean schema )
     {
         this.key = key;
         this.version = version;
@@ -48,6 +50,7 @@ public class ApplicationInfoJson
         this.state = state;
         this.local = local;
         this.system = system;
+        this.schema = schema;
     }
 
     public static ApplicationInfoJson create( final Application application, final ApplicationDescriptor descriptor, final boolean local )
@@ -58,7 +61,7 @@ public class ApplicationInfoJson
                                         descriptor != null ? descriptor.getVendorName() : null,
                                         descriptor != null ? descriptor.getVendorUrl() : null, application.getModifiedTime(),
                                         application.isStarted() ? "started" : "stopped", local,
-                                        application.isSystem() );
+                                        application.isSystem(), application.isSchema() );
     }
 
     public String getKey()
@@ -119,5 +122,10 @@ public class ApplicationInfoJson
     public boolean getSystem()
     {
         return system;
+    }
+
+    public boolean getSchema()
+    {
+        return schema;
     }
 }
