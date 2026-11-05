@@ -145,3 +145,15 @@ exports.rejectSystemApplication = function () {
         });
     });
 };
+
+exports.rejectLocalApplication = function () {
+    assert.assertThrows(function () {
+        appLib.createOrUpdate({
+            key: 'com.enonic.app.local',
+            editor: function (descriptor) {
+                descriptor.title = 'Hijacked';
+                return descriptor;
+            }
+        });
+    });
+};

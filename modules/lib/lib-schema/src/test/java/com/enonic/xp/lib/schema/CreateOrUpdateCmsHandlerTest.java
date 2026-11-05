@@ -52,4 +52,13 @@ class CreateOrUpdateCmsHandlerTest
 
         runFunction( "/test/CreateOrUpdateCmsHandlerTest.js", "createSystemCms" );
     }
+
+    @Test
+    void testLocalApplication()
+    {
+        when( dynamicSchemaService.createOrUpdateCms( isA( CreateOrUpdateCmsParams.class ) ) ).thenThrow(
+            new IllegalArgumentException( "Cannot modify local application: com.enonic.app.local" ) );
+
+        runFunction( "/test/CreateOrUpdateCmsHandlerTest.js", "createLocalCms" );
+    }
 }

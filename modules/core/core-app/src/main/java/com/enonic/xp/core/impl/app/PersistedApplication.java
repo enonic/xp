@@ -108,4 +108,10 @@ final class PersistedApplication
     {
         return this.schema;
     }
+
+    @Override
+    public boolean isLocal()
+    {
+        return false;
+    }
 }
