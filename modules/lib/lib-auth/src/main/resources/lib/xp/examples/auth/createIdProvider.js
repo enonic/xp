@@ -1,5 +1,7 @@
 var authLib = require('/lib/xp/auth');
 
+// BEGIN
+// Creates an id provider.
 var createIdProviderResult = authLib.createIdProvider({
     key: 'myIdProvider',
     displayName: 'My id provider',
@@ -17,3 +19,4 @@ var createIdProviderResult = authLib.createIdProvider({
         }
     ]
 });
+// END

@@ -706,69 +706,6 @@ export type PatchedNode<Data = Record<string, unknown>> = NodePropertiesOnPatch 
 export type Node<Data = Record<string, unknown>> = NodePropertiesOnRead & Data;
 
 export interface RepoConnection {
-    create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData>;
-
-    update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData>;
-
-    patch(params: PatchNodeParams): PatchNodeResult;
-
-    get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
-
-    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData> | Node<NodeData>[] | null;
-
-    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null;
-
-    delete(...keys: (string | string[])[]): string[];
-
-    push(params: PushNodeParams): PushNodesResult;
-
-    diff(params: DiffBranchesParams): DiffBranchesResult;
-
-    getBinary(params: GetBinaryParams): ByteSource;
-
-    move<NodeData = Record<string, unknown>>(params: MoveNodeParams): Node<NodeData>;
-
-    sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData>;
-
-    query<
-        AggregationInput extends Aggregations = never
-    >(params: QueryNodeParams<AggregationInput>): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>>;
-
-    exists(key: string): boolean;
-
-    getVersions(params: GetVersionsParams): GetNodeVersionsResult;
-
-    getActiveVersion(params: GetActiveVersionParams): NodeVersion | null;
-
-    /**
-     * @deprecated Use {@link RepoConnection.query} with `parent` instead.
-     */
-    findChildren(params: FindChildrenParams): FindNodesByParentResult;
-
-    refresh(mode?: RefreshMode): void;
-
-    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult;
-
-    commit(params: CommitParams): NodeCommit;
-
-    getCommit(params: GetCommitParams): NodeCommit | null;
-
-    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams<NodeData>): Node<NodeData>;
-}
-
-/**
- * Creates a new repo connection.
- *
- * @constructor
- * @hideconstructor
- * @alias RepoConnection
- */
-class RepoConnectionImpl
-    implements RepoConnection {
-
-    constructor(private nodeHandler: NodeHandler) {
-    }
-
     /**
      * This function creates a node.
      *
@@ -790,6 +727,277 @@ class RepoConnectionImpl
      *
      * @returns {object} Node created as JSON.
      */
+    create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData>;
+
+    /**
+     * This function updates a node.
+     *
+     * @example-ref examples/node/update.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or id to the node.
+     * @param {function} params.editor Editor callback function.
+     *
+     * @returns {object} Updated node as JSON.
+     */
+    update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData>;
+
+    /**
+     * This function patches a node.
+     *
+     * @example-ref examples/node/patch-1.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or id to the node.
+     * @param {function} params.editor Editor callback function.
+     * @param {string[]} [params.branches] Branches to patch in. If empty or omitted the patch is applied only to the current context branch.
+     *
+     * @returns {object} Patch result, with one entry per branch where the node was patched.
+     */
+    patch(params: PatchNodeParams): PatchNodeResult;
+
+    /**
+     * This function fetches nodes.
+     *
+     * @example-ref examples/node/get-1.js
+     * @example-ref examples/node/get-2.js
+     * @example-ref examples/node/get-3.js
+     *
+     * @param {...(string|object|Array.<(string|object)>)} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
+     *
+     * @returns {object} The node or node array (as JSON) fetched from the repository.
+     */
+    get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
+
+    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData> | Node<NodeData>[] | null;
+
+    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null;
+
+    /**
+     * This function deletes a node or nodes.
+     *
+     * @example-ref examples/node/delete.js
+     *
+     * @param {...(string|string[])} keys Keys to delete. Each argument could be an id, a path or an array of the two
+     *
+     * @returns {string[]} An array of keys that were actually deleted
+     */
+    delete(...keys: (string | string[])[]): string[];
+
+    /**
+     * This function push a node to a given branch.
+     *
+     * @example-ref examples/node/push-1.js
+     * @example-ref examples/node/push-2.js
+     * @example-ref examples/node/push-3.js
+     *
+     * @param {object} params JSON with the parameters
+     * @param {string} [params.key] Id or path to the nodes. Either `key` or `keys` must be specified.
+     * @param {string[]} [params.keys] Array of ids or paths to the nodes. Either `key` or `keys` must be specified.
+     * @param {string} params.target Branch to push nodes to
+     * @param {boolean} [params.includeChildren=false] Also push children of given nodes
+     * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed
+     * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway)
+     *
+     * @returns {object} PushNodesResult
+     */
+    push(params: PushNodeParams): PushNodesResult;
+
+    /**
+     * This function resolves the differences for node between current and given branch
+     *
+     * @example-ref examples/node/diff-1.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or id to resolve diff for
+     * @param {string} params.target Branch to diff against.
+     * @param {boolean} [params.includeChildren=false] also resolve dependencies for children
+     *
+     * @returns {object} DiffNodesResult
+     */
+    diff(params: DiffBranchesParams): DiffBranchesResult;
+
+    /**
+     * This function returns a binary stream.
+     *
+     * @example-ref examples/node/getBinary.js
+     * @param {string} params.key Path or id to the node.
+     * @param {string} params.binaryReference to the binary.
+     *
+     * @returns {*} Stream of the binary.
+     */
+    getBinary(params: GetBinaryParams): ByteSource;
+
+    /**
+     * Rename a node or move it to a new path.
+     *
+     * @example-ref examples/node/move-1.js
+     * @example-ref examples/node/move-2.js
+     * @example-ref examples/node/move-3.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.source Path or id of the node to be moved or renamed.
+     * @param {string} params.target New path or name for the node. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the node.
+     *
+     * @returns {object} The moved or renamed node as JSON.
+     */
+    move<NodeData = Record<string, unknown>>(params: MoveNodeParams): Node<NodeData>;
+
+    /**
+     * Sort node's children
+
+     * @example-ref examples/node/sort.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key node's path or id
+     * @param {string} params.childOrder children order
+     * @returns {object} result with updated nodes
+     */
+    sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData>;
+
+    /**
+     * This command queries nodes.
+     *
+     * @example-ref examples/node/query.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {number} [params.start=0] Start index (used for paging).
+     * @param {number} [params.count=10] Number of contents to fetch.
+     * @param {string} [params.parent] Path or id of a node to whose direct children the query is restricted. Where `sort` is not
+     * specified, the children are returned in the child order of the parent. A parent that does not exist matches nothing.
+     * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
+     * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify
+     * `sort` where the order of a recursive result is significant.
+     * @param {string[]} [params.returns] Index fields each hit is to carry, supplied as `fields` on the hit. An empty list is an
+     * error; omit `returns` where no fields are required. The supported fields are `_name`, `_path`, `_nodeType`, `_versionKey` and
+     * `_ts`, which are returned in the form a node exposes them. Other fields are not supported.
+     * @param {string|object} [params.query] Query expression.
+     * @param {object} [params.filters] Query filters
+     * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
+     * @param {string} [params.aggregations] Aggregations expression.
+     * @param {string} [params.highlight] Highlighting parameters.
+     * @param {boolean} [params.explain=false] Return score calculation explanation.
+     * @returns {object} Result of query.
+     */
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>>;
+
+    /**
+     * Check if node exists.
+     *
+     * @example-ref examples/node/exists.js
+     *
+     * @param {string} [key] node path or id.
+     *
+     * @returns {boolean} True if exists, false otherwise.
+     */
+    exists(key: string): boolean;
+
+    /**
+     * This function returns node versions.
+     *
+     * @example-ref examples/node/getVersions.js
+     * @param {object} params JSON parameters.
+     * @param {string} params.key Path or ID of the node.
+     * @param {string} [params.cursor] Cursor for pagination.
+     * @param {number} [params.count=10] Number of node versions to fetch.
+     *
+     * @returns {object} Node versions query result.
+     */
+    getVersions(params: GetVersionsParams): GetNodeVersionsResult;
+
+    /**
+     * This function returns the active version of a node.
+     *
+     * @example-ref examples/node/getActiveVersion.js
+     * @param {object} params JSON parameters.
+     * @param {string} params.key Path or ID of the node.
+     *
+     * @returns {object} Active node version, or null if not found.
+     */
+    getActiveVersion(params: GetActiveVersionParams): NodeVersion | null;
+
+    /**
+     * Get children for given node.
+     *
+     * @example-ref examples/node/findChildren.js
+     *
+     * @deprecated Use {@link RepoConnection.query} with `parent` instead. It accepts the same path or id, applies the same child order
+     * of the parent where `sort` is omitted, covers `recursive`, and additionally supports every other constraint and return shape of a
+     * query. A count is expressed as a query with `count: 0`, reading `total`.
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.parentKey path or id of parent to get children of
+     * @param {number} [params.start=0] Start index (used for paging).
+     * @param {number} [params.count=10] Number of contents to fetch.
+     * @param {string} [params.childOrder] How to order the children (defaults to value stored on parent)
+     * @param {boolean} [params.countOnly=false] Optimize for count children only ( no children returned )
+     * @param {boolean} [params.recursive=false] Do recursive fetching of all children of children
+     * @returns {object} Result of getChildren.
+     */
+    findChildren(params: FindChildrenParams): FindNodesByParentResult;
+
+    /**
+     * Refresh the index for the current repoConnection
+     *
+     * @example-ref examples/node/refresh.js
+     *
+     * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH), or the storage-index (STORAGE)
+     */
+    refresh(mode?: RefreshMode): void;
+
+    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult;
+
+    /**
+     * This function commits the active version of nodes.
+     *
+     * @example-ref examples/node/commit.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string|string[]} params.keys Node keys to commit. The value can be an id, a path or an array of the two. Prefer the usage of ID rather than paths.
+     * @param {string} [params.message] Commit message.
+     *
+     * @returns {object} Commit object.
+     */
+    commit(params: CommitParams): NodeCommit;
+
+    /**
+     * This function fetches commit by id.
+     *
+     * @example-ref examples/node/getCommit.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.id existing commit id.
+     *
+     * @returns {object} Commit object, or null if no commit with that id was found.
+     */
+    getCommit(params: GetCommitParams): NodeCommit | null;
+
+    /**
+     * This function duplicates a node.
+     *
+     * @example-ref examples/node/duplicate.js
+     *
+     * @param {object} params JSON parameters.
+     * @param {string} params.nodeId Id to the node.
+     * @param {string} [params.name] New node name.
+     * @param {boolean} [params.includeChildren=true] Indicates that children nodes must be duplicated, too.
+     * @param {string} [params.parent] Destination parent path. By default, a duplicated node will be added as a sibling of the source node.
+     * @param {string} [params.refresh] Refresh the index for the current repoConnection.
+     * @param {function} [params.dataProcessor] Node data processor.
+     *
+     * @returns {object} Duplicated node.
+     */
+    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams<NodeData>): Node<NodeData>;
+}
+
+class RepoConnectionImpl
+    implements RepoConnection {
+
+    constructor(private nodeHandler: NodeHandler) {
+    }
+
     create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData> {
         return __.toNativeObject(this.nodeHandler.create(__.toScriptValue(params)));
     }
@@ -810,18 +1018,6 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), key));
     }
 
-    /**
-     * This function patches a node.
-     *
-     * @example-ref examples/node/patch-1.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.key Path or id to the node.
-     * @param {function} params.editor Editor callback function.
-     * @param {string[]} [params.branches] Branches to patch in. If empty or omitted the patch is applied only to the current context branch.
-     *
-     * @returns {object} Patch result, with one entry per branch where the node was patched.
-     */
     patch(params: PatchNodeParams): PatchNodeResult {
         const key = checkRequired(params, 'key');
         const editor = checkRequired(params, 'editor');
@@ -839,17 +1035,6 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.patch(handlerParams));
     }
 
-    /**
-     * This function updates a node.
-     *
-     * @example-ref examples/node/update.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.key Path or id to the node.
-     * @param {function} params.editor Editor callback function.
-     *
-     * @returns {object} Updated node as JSON.
-     */
     update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData> {
         const key = checkRequired(params, 'key');
 
@@ -859,53 +1044,16 @@ class RepoConnectionImpl
     get<NodeData = Record<string, unknown>>(keys: string | GetNodeParams): Node<NodeData> | null;
     get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
-    /**
-     * This function fetches nodes.
-     *
-     * @example-ref examples/node/get-1.js
-     * @example-ref examples/node/get-2.js
-     * @example-ref examples/node/get-3.js
-     *
-     * @param {...(string|object|Array.<(string|object)>)} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
-     *
-     * @returns {object} The node or node array (as JSON) fetched from the repository.
-     */
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null {
         const handlerParams = __.newBean<GetNodeHandlerParams>('com.enonic.xp.lib.node.GetNodeHandlerParams');
         prepareGetParams(keys, handlerParams);
         return __.toNativeObject(this.nodeHandler.get(handlerParams));
     }
 
-    /**
-     * This function deletes a node or nodes.
-     *
-     * @example-ref examples/node/delete.js
-     *
-     * @param {...(string|string[])} keys Keys to delete. Each argument could be an id, a path or an array of the two
-     *
-     * @returns {string[]} An array of keys that were actually deleted
-     */
     delete(...keys: (string | string[])[]): string[] {
         return __.toNativeObject(this.nodeHandler.delete(argsToStringArray(keys)));
     }
 
-    /**
-     * This function push a node to a given branch.
-     *
-     * @example-ref examples/node/push-1.js
-     * @example-ref examples/node/push-2.js
-     * @example-ref examples/node/push-3.js
-     *
-     * @param {object} params JSON with the parameters
-     * @param {string} [params.key] Id or path to the nodes. Either `key` or `keys` must be specified.
-     * @param {string[]} [params.keys] Array of ids or paths to the nodes. Either `key` or `keys` must be specified.
-     * @param {string} params.target Branch to push nodes to
-     * @param {boolean} [params.includeChildren=false] Also push children of given nodes
-     * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed
-     * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway)
-     *
-     * @returns {object} PushNodesResult
-     */
     push(params: PushNodeParams): PushNodesResult {
         const target = checkRequired(params, 'target');
 
@@ -933,18 +1081,6 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.push(handlerParams));
     }
 
-    /**
-     * This function resolves the differences for node between current and given branch
-     *
-     * @example-ref examples/node/diff-1.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.key Path or id to resolve diff for
-     * @param {string} params.target Branch to diff against.
-     * @param {boolean} [params.includeChildren=false] also resolve dependencies for children
-     *
-     * @returns {object} DiffNodesResult
-     */
     diff(params: DiffBranchesParams): DiffBranchesResult {
         const {
             key,
@@ -962,33 +1098,11 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.diff(handlerParams));
     }
 
-    /**
-     * This function returns a binary stream.
-     *
-     * @example-ref examples/node/getBinary.js
-     * @param {string} params.key Path or id to the node.
-     * @param {string} params.binaryReference to the binary.
-     *
-     * @returns {*} Stream of the binary.
-     */
     getBinary(params: GetBinaryParams): ByteSource {
         const key = checkRequired(params, 'key');
         return this.nodeHandler.getBinary(key, params.binaryReference);
     }
 
-    /**
-     * Rename a node or move it to a new path.
-     *
-     * @example-ref examples/node/move-1.js
-     * @example-ref examples/node/move-2.js
-     * @example-ref examples/node/move-3.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.source Path or id of the node to be moved or renamed.
-     * @param {string} params.target New path or name for the node. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the node.
-     *
-     * @returns {object} The moved or renamed node as JSON.
-     */
     move<NodeData = Record<string, unknown>>(params: MoveNodeParams): Node<NodeData> {
         const source = checkRequired(params, 'source');
         const target = checkRequired(params, 'target');
@@ -996,16 +1110,6 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.move<NodeData>(source, target));
     }
 
-    /**
-     * Sort node's children
-
-     * @example-ref examples/node/sort.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.key node's path or id
-     * @param {string} params.childOrder children order
-     * @returns {object} result with updated nodes
-     */
     sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData> {
         const key = checkRequired(params, 'key');
         const childOrder = checkRequired(params, 'childOrder');
@@ -1013,30 +1117,6 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.sort(key, childOrder));
     }
 
-    /**
-     * This command queries nodes.
-     *
-     * @example-ref examples/node/query.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {number} [params.start=0] Start index (used for paging).
-     * @param {number} [params.count=10] Number of contents to fetch.
-     * @param {string} [params.parent] Path or id of a node to whose direct children the query is restricted. Where `sort` is not
-     * specified, the children are returned in the child order of the parent. A parent that does not exist matches nothing.
-     * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
-     * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify
-     * `sort` where the order of a recursive result is significant.
-     * @param {string[]} [params.returns] Index fields each hit is to carry, supplied as `fields` on the hit. An empty list is an
-     * error; omit `returns` where no fields are required. The supported fields are `_name`, `_path`, `_nodeType`, `_versionKey` and
-     * `_ts`, which are returned in the form a node exposes them. Other fields are not supported.
-     * @param {string|object} [params.query] Query expression.
-     * @param {object} [params.filters] Query filters
-     * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
-     * @param {string} [params.aggregations] Aggregations expression.
-     * @param {string} [params.highlight] Highlighting parameters.
-     * @param {boolean} [params.explain=false] Return score calculation explanation.
-     * @returns {object} Result of query.
-     */
     query<
         AggregationInput extends Aggregations = never
     >(params: QueryNodeParams<AggregationInput>): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>> {
@@ -1073,30 +1153,10 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.query<AggregationInput>(handlerParams));
     }
 
-    /**
-     * Check if node exists.
-     *
-     * @example-ref examples/node/exists.js
-     *
-     * @param {string} [key] node path or id.
-     *
-     * @returns {boolean} True if exists, false otherwise.
-     */
     exists(key: string): boolean {
         return __.toNativeObject(this.nodeHandler.exist(key));
     }
 
-    /**
-     * This function returns node versions.
-     *
-     * @example-ref examples/node/getVersions.js
-     * @param {object} params JSON parameters.
-     * @param {string} params.key Path or ID of the node.
-     * @param {string} [params.cursor] Cursor for pagination.
-     * @param {number} [params.count=10] Number of node versions to fetch.
-     *
-     * @returns {object} Node versions query result.
-     */
     getVersions(params: GetVersionsParams): GetNodeVersionsResult {
         const key = checkRequired(params, 'key');
 
@@ -1115,39 +1175,12 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.getVersions(handlerParams));
     }
 
-    /**
-     * This function returns the active version of a node.
-     *
-     * @example-ref examples/node/getActiveVersion.js
-     * @param {object} params JSON parameters.
-     * @param {string} params.key Path or ID of the node.
-     *
-     * @returns {object} Active node version, or null if not found.
-     */
     getActiveVersion(params: GetActiveVersionParams): NodeVersion | null {
         const key = checkRequired(params, 'key');
 
         return __.toNativeObject(this.nodeHandler.getActiveVersion(key));
     }
 
-    /**
-     * Get children for given node.
-     *
-     * @example-ref examples/node/findChildren.js
-     *
-     * @deprecated Use {@link RepoConnection.query} with `parent` instead. It accepts the same path or id, applies the same child order
-     * of the parent where `sort` is omitted, covers `recursive`, and additionally supports every other constraint and return shape of a
-     * query. A count is expressed as a query with `count: 0`, reading `total`.
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.parentKey path or id of parent to get children of
-     * @param {number} [params.start=0] Start index (used for paging).
-     * @param {number} [params.count=10] Number of contents to fetch.
-     * @param {string} [params.childOrder] How to order the children (defaults to value stored on parent)
-     * @param {boolean} [params.countOnly=false] Optimize for count children only ( no children returned )
-     * @param {boolean} [params.recursive=false] Do recursive fetching of all children of children
-     * @returns {object} Result of getChildren.
-     */
     findChildren(params: FindChildrenParams): FindNodesByParentResult {
         const parentKey = checkRequired(params, 'parentKey');
 
@@ -1172,13 +1205,6 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.findChildren(handlerParams));
     }
 
-    /**
-     * Refresh the index for the current repoConnection
-     *
-     * @example-ref examples/node/refresh.js
-     *
-     * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH), or the storage-index (STORAGE)
-     */
     refresh(mode: RefreshMode = 'ALL'): void {
         this.nodeHandler.refresh(mode);
     }
@@ -1209,53 +1235,17 @@ class RepoConnectionImpl
             __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), branches, scope));
     }
 
-    /**
-     * This function commits the active version of nodes.
-     *
-     * @example-ref examples/node/commit.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string|string[]} params.keys Node keys to commit. The value can be an id, a path or an array of the two. Prefer the usage of ID rather than paths.
-     * @param {string} [params.message] Commit message.
-     *
-     * @returns {object} Commit object.
-     */
     commit(params: CommitParams): NodeCommit {
         const keys: string[] = Array.isArray(params.keys) ? params.keys : [params.keys];
 
         return __.toNativeObject(this.nodeHandler.commit(argsToStringArray(keys), __.nullOrValue(params.message)));
     }
 
-    /**
-     * This function fetches commit by id.
-     *
-     * @example-ref examples/node/getCommit.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.id existing commit id.
-     *
-     * @returns {object} Commit object, or null if no commit with that id was found.
-     */
     getCommit(params: GetCommitParams): NodeCommit | null {
         const id = checkRequired(params, 'id');
         return __.toNativeObject(this.nodeHandler.getCommit(id));
     }
 
-    /**
-     * This function duplicates a node.
-     *
-     * @example-ref examples/node/duplicate.js
-     *
-     * @param {object} params JSON parameters.
-     * @param {string} params.nodeId Id to the node.
-     * @param {string} [params.name] New node name.
-     * @param {boolean} [params.includeChildren=true] Indicates that children nodes must be duplicated, too.
-     * @param {string} [params.parent] Destination parent path. By default, a duplicated node will be added as a sibling of the source node.
-     * @param {string} [params.refresh] Refresh the index for the current repoConnection.
-     * @param {function} [params.dataProcessor] Node data processor.
-     *
-     * @returns {object} Duplicated node.
-     */
     duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams<NodeData>): Node<NodeData> {
         const nodeId = checkRequired(params, 'nodeId');
 
@@ -1288,24 +1278,6 @@ class RepoConnectionImpl
 }
 
 export interface MultiRepoConnection {
-    query<
-        AggregationInput extends Aggregations = never
-    >(params: QueryNodeParams<AggregationInput>): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>>;
-}
-
-/**
- * Creates a new multirepo-connection.
- *
- * @constructor
- * @hideconstructor
- * @alias MultiRepoConnection
- */
-class MultiRepoConnectionImpl
-    implements MultiRepoConnection {
-
-    constructor(private multiRepoConnection: MultiRepoNodeHandler) {
-    }
-
     /**
      * This command queries nodes in a multi-repo connection.
      *
@@ -1331,6 +1303,17 @@ class MultiRepoConnectionImpl
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>>;
+}
+
+class MultiRepoConnectionImpl
+    implements MultiRepoConnection {
+
+    constructor(private multiRepoConnection: MultiRepoNodeHandler) {
+    }
+
     query<
         AggregationInput extends Aggregations = never
     >(params: QueryNodeParams<AggregationInput>): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>> {
