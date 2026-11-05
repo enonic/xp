@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -527,6 +528,54 @@ class ResourceServiceImplTest
         // the same version again is a hit
         assertEquals( value2, processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
         verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+    }
+
+    // a computation finishing after a newer one filled the cache replaces the newer value, but under the stamp it was computed
+    // under: the next read rejects it and recomputes, nothing older than the current version is ever served
+    @Test
+    void nodeResolver_lateComputationCannotFillTheCacheWithAStaleValue()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( new ResourceSource( bundle, nodeResolver( nodeService ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+
+        final AtomicInteger computed = new AtomicInteger();
+        final AtomicReference<String> stored = new AtomicReference<>( "v1" );
+        final ResourceProcessor<String, String> late = new ResourceProcessor.Builder<String, String>().key( "my-part" )
+            .segment( "segment1" )
+            .keyTranslator( name -> ResourceKey.from( "myapp:/cms/parts/my-part.yaml" ) )
+            .processor( res -> {
+                final String value = stored.get();
+                // the schema is written while this computation is under way, and a reader of the new version fills the cache
+                stubPartNode( nodeService, Instant.parse( "2021-12-03T10:15:30.00Z" ), NodeVersionId.from( "v2" ) );
+                stored.set( "v2" );
+                assertEquals( "v2", processResourceNamed( "segment1", "my-part", stored, computed ) );
+                return value;
+            } )
+            .build();
+
+        // the late computation returns what it read, under the old version
+        assertEquals( "v1", this.resourceService.processResource( late ) );
+        assertEquals( 1, computed.get() );
+
+        // what it left in the cache is stamped with the old version: the next read computes the current value again, once
+        assertEquals( "v2", processResourceNamed( "segment1", "my-part", stored, computed ) );
+        assertEquals( 2, computed.get() );
+        assertEquals( "v2", processResourceNamed( "segment1", "my-part", new AtomicReference<>( "v3" ), computed ) );
+        assertEquals( 2, computed.get() );
+    }
+
+    private String processResourceNamed( final String segment, final String key, final AtomicReference<String> stored,
+                                         final AtomicInteger computed )
+    {
+        return this.resourceService.processResource( new ResourceProcessor.Builder<String, String>().key( key )
+                                                         .segment( segment )
+                                                         .keyTranslator( name -> ResourceKey.from( "myapp:/cms/parts/" + name + ".yaml" ) )
+                                                         .processor( res -> {
+                                                             computed.incrementAndGet();
+                                                             return stored.get();
+                                                         } )
+                                                         .build() );
     }
 
     @Test

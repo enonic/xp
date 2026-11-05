@@ -87,7 +87,7 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorWithoutDescriptorFile()
     {
-        final ApplicationDescriptor appDescriptor = build( ENONIC_APP_DESCRIPTOR_PATH_YAML, resources() );
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resources() );
 
         assertEquals( APP_KEY, appDescriptor.getKey() );
         assertEquals( "", appDescriptor.getDescription() );
@@ -97,7 +97,7 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorWithoutDescriptorFileKeepsTheIcon()
     {
-        final ApplicationDescriptor appDescriptor = build( ENONIC_APP_DESCRIPTOR_PATH_YAML, resources( ENONIC_APP_ICON_FILENAME ) );
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resources( ENONIC_APP_ICON_FILENAME ) );
 
         assertEquals( APP_KEY, appDescriptor.getKey() );
         assertEquals( "image/svg+xml", appDescriptor.getIcon().getMimeType() );

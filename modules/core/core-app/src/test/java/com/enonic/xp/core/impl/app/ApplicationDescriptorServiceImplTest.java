@@ -439,6 +439,67 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
+    void createOrUpdate_edits_the_persisted_descriptor_whatever_the_resource_source_of_the_caller()
+    {
+        final AtomicReference<String> persisted = stubUpsert();
+        persisted.set( "kind: \"Application\"\n" );
+        stubDescriptorNodeFrom( persisted, null );
+        stubApplicationNode();
+        // a global application: the bundle ships a descriptor of its own, the persisted one is what every reader sees
+        installed.install( mockAppBundle( MYAPP.getName() ) );
+
+        asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.title = "Renamed" ) ) );
+
+        // a caller reading the bundle alone still edits the persisted descriptor, and gets the persisted one back
+        final Context bundleSource = ContextBuilder.create()
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.SCHEMA_ADMIN ).user( User.anonymous() ).build() )
+            .attribute( "resourceSource", "bundle" )
+            .build();
+        final ApplicationDescriptor result = bundleSource.callWith( () -> appDescriptorService.createOrUpdate( params( edit -> {
+            assertEquals( "Renamed", edit.title );
+            edit.description = "Updated";
+        } ) ) );
+
+        assertEquals( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"Renamed\"\ndescription: \"Updated\"\n", persisted.get() );
+        assertEquals( "Renamed", result.getTitle() );
+        assertEquals( "Updated", result.getDescription() );
+
+        // the bundle descriptor is what that caller reads, and it is served from the bundle still
+        assertEquals( "My app description", bundleSource.callWith( () -> appDescriptorService.get( MYAPP ) ).getDescription() );
+        assertEquals( "Updated", appDescriptorService.get( MYAPP ).getDescription() );
+    }
+
+    @Test
+    void get_caches_the_descriptor_of_an_application_without_descriptor_file()
+    {
+        final Hashtable<String, String> headers = new Hashtable<>();
+        headers.put( "X-Bundle-Type", "system" );
+        final Bundle bundle = mockLocalBundle( ApplicationKey.from( "com.enonic.nodescriptor" ) );
+        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
+        installed.install( bundle );
+
+        final ApplicationDescriptor descriptor = appDescriptorService.get( ApplicationKey.from( "com.enonic.nodescriptor" ) );
+        assertNotNull( descriptor );
+
+        // the descriptor paths and the icon are not looked for again while the bundle holds
+        Mockito.clearInvocations( bundle );
+        assertSame( descriptor, appDescriptorService.get( ApplicationKey.from( "com.enonic.nodescriptor" ) ) );
+        verify( bundle, never() ).getResource( anyString() );
+    }
+
+    @Test
+    void get_selects_the_descriptor_path_under_the_stamp_of_the_bundle()
+    {
+        final ApplicationKey key = ApplicationKey.from( "com.enonic.localapp" );
+        installed.install( mockLocalBundle( key, "application.yml" ) );
+        assertEquals( "My app description", appDescriptorService.get( key ).getDescription() );
+
+        // the bundle replaced by one shipping a descriptor of higher precedence next to the old one: the new one is read
+        installed.install( mockLocalBundle( key, "application.yml", "enonic.yaml" ) );
+        assertEquals( "My app description YAML", appDescriptorService.get( key ).getDescription() );
+    }
+
+    @Test
     void createOrUpdate_keeps_the_icon_left_as_is()
     {
         final AtomicReference<String> persisted = stubUpsert();

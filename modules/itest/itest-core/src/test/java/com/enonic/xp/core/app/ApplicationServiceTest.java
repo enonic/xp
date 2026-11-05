@@ -540,6 +540,49 @@ class ApplicationServiceTest
         } );
     }
 
+    // every edit starts from the descriptor as last written, whichever node of the cluster wrote it: the cached base of an
+    // instance is checked against the version of the application node, no event needed
+    @Test
+    void sequentialEditsThroughDifferentInstancesStartFromTheLatestDescriptor()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of(
+                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n" ) ) );
+
+            final ApplicationDescriptorServiceImpl otherNodeDescriptors =
+                new ApplicationDescriptorServiceImpl( new ResourceServiceImpl( applicationFactoryService ), applicationFactoryService,
+                                                      new ApplicationRepoServiceImpl( nodeService ), mock( DynamicSchemaAuditLogSupport.class ),
+                                                      mock( EventPublisher.class ) );
+            // both instances hold the shipped descriptor in their cache
+            assertEquals( "Shipped", applicationDescriptorService.get( appKey ).getTitle() );
+            assertEquals( "Shipped", otherNodeDescriptors.get( appKey ).getTitle() );
+
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Renamed" ).build() );
+
+            final ApplicationDescriptor second = otherNodeDescriptors.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> {
+                    assertEquals( "Renamed", edit.title );
+                    edit.description = "Described";
+                } ).build() );
+            assertEquals( "Renamed", second.getTitle() );
+            assertEquals( "Described", second.getDescription() );
+
+            final ApplicationDescriptor third = applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> {
+                    assertEquals( "Renamed", edit.title );
+                    assertEquals( "Described", edit.description );
+                    edit.vendorName = "Enonic";
+                } ).build() );
+            assertEquals( "Renamed", third.getTitle() );
+            assertEquals( "Described", third.getDescription() );
+            assertEquals( "Enonic", third.getVendorName() );
+            assertEquals( "Enonic", otherNodeDescriptors.get( appKey ).getVendorName() );
+        } );
+    }
+
     // the content of the resource as the service caches it, null when the resource does not exist
     private static String processed( final ResourceService resourceService, final ApplicationKey appKey, final String path )
     {
