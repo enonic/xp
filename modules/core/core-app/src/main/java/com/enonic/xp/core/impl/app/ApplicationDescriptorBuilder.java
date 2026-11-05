@@ -20,13 +20,24 @@ final class ApplicationDescriptorBuilder
     {
     }
 
+    /**
+     * The descriptor of an application serving no descriptor resource: its key and icon alone.
+     */
+    static ApplicationDescriptor build( final ApplicationKey applicationKey, final ResourceService resourceService )
+    {
+        return withIcon( ApplicationDescriptor.create().key( applicationKey ), applicationKey, resourceService );
+    }
+
     static ApplicationDescriptor build( final ApplicationKey applicationKey, final Resource descriptorResource,
                                         final ResourceService resourceService )
     {
-        final ApplicationDescriptor.Builder builder = descriptorResource.exists()
-            ? YmlApplicationDescriptorParser.parse( readDescriptor( descriptorResource ), applicationKey )
-            : ApplicationDescriptor.create().key( applicationKey );
+        return withIcon( YmlApplicationDescriptorParser.parse( readDescriptor( descriptorResource ), applicationKey ), applicationKey,
+                         resourceService );
+    }
 
+    private static ApplicationDescriptor withIcon( final ApplicationDescriptor.Builder builder, final ApplicationKey applicationKey,
+                                                   final ResourceService resourceService )
+    {
         final Resource iconResource = SchemaResourcePaths.APP_ICON_PATHS.stream()
             .map( path -> resourceService.getResource( ResourceKey.from( applicationKey, "/" + path ) ) )
             .filter( Resource::exists )
