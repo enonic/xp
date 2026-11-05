@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -21,9 +22,9 @@ import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.icon.IconUpdate;
+import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 
 /**
@@ -71,38 +72,33 @@ public class ApplicationDescriptorServiceImpl
         {
             return null;
         }
-        final ApplicationDescriptor descriptor = this.resourceService.processResource( processor( key ) );
-        return descriptor != null ? descriptor : buildWithoutDescriptorResource( key );
+        final LoadedDescriptor loaded = this.resourceService.processResources( processor( key ) );
+        if ( loaded.fromResource() || this.applicationFactoryService.findResourceSource( key, null ).resolver() != null )
+        {
+            return loaded.descriptor();
+        }
+        return null;
     }
 
-    private ResourceProcessor<ApplicationKey, ApplicationDescriptor> processor( final ApplicationKey key )
+    // the descriptor paths are fixed, in order of preference: which of them the application serves is decided under the stamp
+    private MultiResourceProcessor<ApplicationKey, LoadedDescriptor> processor( final ApplicationKey key )
     {
-        return new ResourceProcessor.Builder<ApplicationKey, ApplicationDescriptor>().key( key )
+        return new MultiResourceProcessor.Builder<ApplicationKey, LoadedDescriptor>().key( key )
             .segment( SEGMENT )
-            .keyTranslator( this::descriptorKey )
-            .processor( resource -> ApplicationDescriptorBuilder.build( key, resource, this.resourceService ) )
+            .keysTranslator( k -> ApplicationBundleUtils.DESCRIPTOR_PATHS.stream()
+                .map( path -> ResourceKey.from( k, "/" + path ) )
+                .toList() )
+            .processor( resources -> load( key, resources ) )
             .build();
     }
 
-    // the first of the descriptor paths the application serves, the persisted one when nothing is served
-    private ResourceKey descriptorKey( final ApplicationKey key )
+    private LoadedDescriptor load( final ApplicationKey key, final List<Resource> candidates )
     {
-        return ApplicationBundleUtils.DESCRIPTOR_PATHS.stream()
-            .map( path -> ResourceKey.from( key, "/" + path ) )
-            .filter( resourceKey -> this.resourceService.getResource( resourceKey ).exists() )
+        return candidates.stream()
+            .filter( Resource::exists )
             .findFirst()
-            .orElseGet( () -> ResourceKey.from( key, "/" + SchemaResourcePaths.APP_DESCRIPTOR_NAME ) );
-    }
-
-    // an application serving no descriptor resource still has a descriptor, holding its key and icon; an unknown one has none
-    private ApplicationDescriptor buildWithoutDescriptorResource( final ApplicationKey key )
-    {
-        if ( this.applicationFactoryService.findResourceSource( key, null ).resolver() == null )
-        {
-            return null;
-        }
-        final Resource missing = this.resourceService.getResource( descriptorKey( key ) );
-        return ApplicationDescriptorBuilder.build( key, missing, this.resourceService );
+            .map( descriptor -> new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, descriptor, this.resourceService ), true ) )
+            .orElseGet( () -> new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, this.resourceService ), false ) );
     }
 
     @Override
@@ -122,7 +118,9 @@ public class ApplicationDescriptorServiceImpl
             this.repoService.createApplicationNode( key );
         }
 
-        final ApplicationDescriptor current = get( key );
+        // the descriptor is edited and read back from the persisted source the write goes to, whatever resource source the
+        // context of the caller selects
+        final ApplicationDescriptor current = ApplicationHelper.callWithContext( () -> get( key ) );
         final ApplicationDescriptor source = current != null ? current : ApplicationDescriptor.create().key( key ).build();
 
         final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( source );
@@ -134,7 +132,8 @@ public class ApplicationDescriptorServiceImpl
         this.repoService.upsertApplicationDescriptor( key, yaml, iconUpdate );
 
         // the write moved the version of the application node: the descriptor is read back the way every reader sees it from now on
-        final ApplicationDescriptor result = Objects.requireNonNull( get( key ), "application descriptor not found after write" );
+        final ApplicationDescriptor result = Objects.requireNonNull( ApplicationHelper.callWithContext( () -> get( key ) ),
+                                                                     "application descriptor not found after write" );
 
         final String iconMimeType = iconUpdate instanceof IconUpdate.Replace replace ? replace.mimeType() : null;
         final long iconSize = iconMimeType != null ? edit.icon.getSize() : 0;
@@ -182,5 +181,13 @@ public class ApplicationDescriptorServiceImpl
             throw new IllegalArgumentException( String.format( "icon size %d exceeds the limit of %d bytes", size, MAX_ICON_SIZE ) );
         }
         return IconUpdate.replace( ByteSource.wrap( editedIcon.toByteArray() ), mimeType );
+    }
+
+    /**
+     * The descriptor as cached, and whether it was read from a descriptor resource: an application serving none still has a
+     * descriptor, holding its key and icon, an unknown application has none.
+     */
+    private record LoadedDescriptor(ApplicationDescriptor descriptor, boolean fromResource)
+    {
     }
 }
