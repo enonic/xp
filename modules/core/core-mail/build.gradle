@@ -1,8 +1,14 @@
+configurations.configureEach {
+    exclude group: 'com.sun.activation'
+}
+
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
 
     implementation libs.jakarta.mail
+    implementation libs.jakarta.activation
+    testRuntimeOnly libs.angus.activation
 
     testImplementation ( libs.mockjavamail ) {
         exclude group: 'jakarta.mail'

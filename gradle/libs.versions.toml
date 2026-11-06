@@ -39,6 +39,7 @@ jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.6.3.F
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.6.6" }
 
 jakarta-activation = { module = "jakarta.activation:jakarta.activation-api", version = "2.1.4" }
+angus-activation = { module = "org.eclipse.angus:angus-activation", version = "2.0.2" }
 jakarta-mail = { module = "com.sun.mail:jakarta.mail", version = "2.0.2" }
 jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "3.0.0" }
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.1.1" }
