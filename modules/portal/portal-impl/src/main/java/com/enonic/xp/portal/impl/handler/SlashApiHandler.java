@@ -125,10 +125,6 @@ public class SlashApiHandler
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
-        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
-        {
-            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
-        }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
@@ -282,7 +278,12 @@ public class SlashApiHandler
         PortalRequestAccessor.set( portalRequest );
         try
         {
-            return supplier.get();
+            final WebResponse response = supplier.get();
+            if ( portalRequest.getMethod() == HttpMethod.OPTIONS && response.getStatus() == HttpStatus.METHOD_NOT_ALLOWED )
+            {
+                return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+            }
+            return response;
         }
         finally
         {
