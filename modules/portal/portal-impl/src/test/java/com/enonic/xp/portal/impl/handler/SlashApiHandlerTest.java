@@ -165,26 +165,57 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHttpOptions()
-        throws Exception
+    void testHttpOptionsReachesTheController()
     {
-        final WebRequest webRequest1 = new WebRequest();
-        webRequest1.setMethod( HttpMethod.OPTIONS );
-        webRequest1.setRawPath( "/path/_/com.enonic.app.myapp:api-key" );
+        request.setMethod( HttpMethod.OPTIONS );
+        mountedOnWeb();
 
-        WebResponse res = this.handler.handle( webRequest1 );
-        assertNotNull( res );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
+
+        final WebResponse res = this.handler.handle( request );
+
+        assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
+        assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
+        verify( controllerScript ).execute( request );
+    }
+
+    @Test
+    void testHttpOptionsDefaultsWhenTheControllerDoesNotHandleIt()
+    {
+        request.setMethod( HttpMethod.OPTIONS );
+        mountedOnWeb();
+
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build() );
+
+        final WebResponse res = this.handler.handle( request );
+
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+    }
 
-        final WebRequest webRequest2 = new WebRequest();
-        webRequest2.setMethod( HttpMethod.OPTIONS );
-        webRequest2.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+    @Test
+    void testHttpOptionsOfUnknownApiIsNotFound()
+    {
+        request.setMethod( HttpMethod.OPTIONS );
+        request.setRawPath( "/api/app:unknown" );
 
-        res = this.handler.handle( webRequest2 );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    private void mountedOnWeb()
+    {
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
     }
 
     @Test
