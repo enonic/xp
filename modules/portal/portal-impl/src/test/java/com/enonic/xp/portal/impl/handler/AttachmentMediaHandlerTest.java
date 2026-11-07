@@ -43,9 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AttachmentMediaHandlerTest
@@ -305,4 +308,157 @@ class AttachmentMediaHandlerTest
             .build();
     }
 
+    private static final String ETAG = "\"ec25d6e4126c7064f82aaab8b34693fc\"";
+
+    private WebRequest attachmentRequest( final String rawPath )
+    {
+        setupMedia();
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( rawPath );
+        return request;
+    }
+
+    private WebRequest attachmentRequest()
+    {
+        return attachmentRequest( "/api/media:attachment/myproject/123456/logo.png" );
+    }
+
+    @Test
+    void etagFromAttachmentHash()
+    {
+        final PortalResponse res = (PortalResponse) this.handler.handle( attachmentRequest() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertEquals( "bytes", res.getHeaders().get( "Accept-Ranges" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchMatches()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "If-None-Match", ETAG );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertNull( res.getBody() );
+        verify( this.contentService, never() ).getBinary( any(), any() );
+    }
+
+    @Test
+    void ifNoneMatchHead()
+    {
+        final WebRequest request = attachmentRequest();
+        request.setMethod( HttpMethod.HEAD );
+        request.getHeaders().put( "If-None-Match", ETAG );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertNull( res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchWeakTag()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "If-None-Match", "W/" + ETAG );
+
+        assertEquals( HttpStatus.NOT_MODIFIED, this.handler.handle( request ).getStatus() );
+    }
+
+    @Test
+    void ifNoneMatchList()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "If-None-Match", "\"other\", " + ETAG );
+
+        assertEquals( HttpStatus.NOT_MODIFIED, this.handler.handle( request ).getStatus() );
+    }
+
+    @Test
+    void ifNoneMatchStar()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertEquals( HttpStatus.NOT_MODIFIED, this.handler.handle( request ).getStatus() );
+    }
+
+    @Test
+    void ifNoneMatchMismatch()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "If-None-Match", "\"other\"" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchKeepsCacheControl()
+    {
+        final WebRequest request = attachmentRequest( "/api/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        request.getHeaders().put( "If-None-Match", ETAG );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
+    }
+
+    @Test
+    void ifRangeMatches()
+        throws Exception
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "Range", "bytes=2-4" );
+        request.getHeaders().put( "If-Range", ETAG );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( "bytes 2-4/7", res.getHeaders().get( "Content-Range" ) );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertEquals( 3, ( (ByteSource) res.getBody() ).read().length );
+    }
+
+    @Test
+    void ifRangeMismatchIgnoresRange()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "Range", "bytes=2-4" );
+        request.getHeaders().put( "If-Range", "\"other\"" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "Content-Range" ) );
+        assertEquals( "bytes", res.getHeaders().get( "Accept-Ranges" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifRangeWeakTagIgnoresRange()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "Range", "bytes=2-4" );
+        request.getHeaders().put( "If-Range", "W/" + ETAG );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifRangeDateIgnoresRange()
+    {
+        final WebRequest request = attachmentRequest();
+        request.getHeaders().put( "Range", "bytes=2-4" );
+        request.getHeaders().put( "If-Range", "Wed, 21 Oct 2015 07:28:00 GMT" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
 }

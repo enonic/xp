@@ -44,9 +44,13 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ImageMediaHandlerTest
@@ -338,5 +342,51 @@ class ImageMediaHandlerTest
             .data( data )
             .attachments( Attachments.from( attachments ) )
             .build();
+    }
+
+    private WebRequest imageRequest()
+        throws Exception
+    {
+        setupContent();
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/api/media:image/myproject/123456/scale-100-100/image-name.jpg" );
+        return request;
+    }
+
+    @Test
+    void etag()
+        throws Exception
+    {
+        final WebResponse res = this.handler.handle( imageRequest() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertTrue( res.getHeaders().get( "ETag" ).matches( "\"[0-9a-f]{32}\"" ) );
+    }
+
+    @Test
+    void ifNoneMatchSkipsTransform()
+        throws Exception
+    {
+        final String etag = this.handler.handle( imageRequest() ).getHeaders().get( "ETag" );
+
+        final WebRequest request = imageRequest();
+        request.getHeaders().put( "If-None-Match", etag );
+        final WebResponse res = this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( etag, res.getHeaders().get( "ETag" ) );
+        assertNull( res.getBody() );
+        verify( this.imageService, times( 1 ) ).readImage( any() );
+    }
+
+    @Test
+    void ifNoneMatchMismatchTransforms()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getHeaders().put( "If-None-Match", "\"other\"" );
+        final WebResponse res = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNotNull( res.getBody() );
+        verify( this.imageService, times( 1 ) ).readImage( any() );
     }
 }
