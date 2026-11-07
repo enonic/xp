@@ -53,6 +53,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ImageHandlerTest
@@ -526,5 +528,38 @@ class ImageHandlerTest
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( portalRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Not a valid request", ex.getMessage() );
+    }
+
+    @Test
+    void etag()
+        throws Exception
+    {
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertThat( res.getHeaders().get( "ETag" ) ).matches( "\"[0-9a-f]{32}\"" );
+    }
+
+    @Test
+    void ifNoneMatchSkipsTransform()
+        throws Exception
+    {
+        final String etag = this.handler.handle( this.request ).getHeaders().get( "ETag" );
+
+        this.request.getHeaders().put( "If-None-Match", etag );
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( etag, res.getHeaders().get( "ETag" ) );
+        assertNull( res.getBody() );
+        verify( this.contentService, never() ).getBinary( eq( ContentId.from( "123456" ) ), isA( BinaryReference.class ) );
+    }
+
+    @Test
+    void ifNoneMatchMismatchTransforms()
+        throws Exception
+    {
+        this.request.getHeaders().put( "If-None-Match", "\"other\"" );
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNotNull( res.getBody() );
     }
 }

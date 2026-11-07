@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
@@ -15,11 +16,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.ImageScaling;
+import com.enonic.xp.portal.impl.handler.attachment.EntityTag;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
@@ -66,26 +69,20 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         final T content = cast( getContent( this.id ) );
         final Attachment attachment = resolveAttachment( content, this.name );
         final BinaryReference binaryReference = attachment.getBinaryReference();
-        final ByteSource binary = getBinary( this.id, binaryReference );
 
         final boolean isSvgz = "svgz".equals( attachment.getExtension() );
 
         final MediaType attachmentMimeType = ImageScaling.mimeType( attachment );
+        final boolean scalable = ImageScaling.isScalable( attachmentMimeType );
 
-        final MediaType contentType;
-        final ByteSource body;
-        if ( !ImageScaling.isScalable( attachmentMimeType ) )
-        {
-            contentType = attachmentMimeType;
-            body = binary;
-        }
-        else
-        {
-            contentType = shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
-            body = transform( content, binaryReference, binary, contentType );
-        }
+        final MediaType contentType =
+            scalable && shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
+
+        final Optional<EntityTag> entityTag = Optional.ofNullable( resolveHash( content, attachment, binaryReference ) ).map( EntityTag::new );
 
         final PortalResponse.Builder portalResponse = PortalResponse.create();
+
+        entityTag.ifPresent( tag -> portalResponse.header( HttpHeaders.ETAG, tag.toHeaderValue() ) );
 
         if ( contentType.is( SVG_MEDIA_TYPE ) )
         {
@@ -111,13 +108,12 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
             if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() )
             {
-                final String hash = resolveHash( content, attachment, binaryReference );
                 // fallback to private cache control header if hash is not known
-                if ( hash == null && !nullToEmpty( privateCacheControlHeaderConfig ).isBlank() )
+                if ( entityTag.isEmpty() && !nullToEmpty( privateCacheControlHeaderConfig ).isBlank() )
                 {
                     portalResponse.header( HttpHeaders.CACHE_CONTROL, privateCacheControlHeaderConfig );
                 }
-                if ( this.fingerprint.equals( hash ) )
+                if ( entityTag.map( EntityTag::value ).filter( this.fingerprint::equals ).isPresent() )
                 {
                     portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
                 }
@@ -131,9 +127,23 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         addTrace( content );
 
-        writeResponseContent( portalResponse, contentType, body );
+        if ( isNotModified( entityTag ) )
+        {
+            return portalResponse.status( HttpStatus.NOT_MODIFIED ).build();
+        }
+
+        final ByteSource binary = getBinary( this.id, binaryReference );
+        final ByteSource body = scalable ? transform( content, binaryReference, binary, contentType ) : binary;
+
+        writeResponseContent( portalResponse, contentType, body, entityTag );
 
         return portalResponse.build();
+    }
+
+    private boolean isNotModified( final Optional<EntityTag> entityTag )
+    {
+        final String ifNoneMatchHeader = this.request.getHeaders().get( HttpHeaders.IF_NONE_MATCH );
+        return ifNoneMatchHeader != null && entityTag.filter( tag -> tag.matchesIfNoneMatch( ifNoneMatchHeader ) ).isPresent();
     }
 
     protected ByteSource transform( final T content, final BinaryReference binaryReference, final ByteSource binary,
@@ -162,10 +172,11 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         return false;
     }
 
-    protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body )
+    protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body,
+                                         final Optional<EntityTag> entityTag )
         throws IOException
     {
-        new RangeRequestHelper().handleRangeRequest( request, portalResponse, body, contentType );
+        new RangeRequestHelper().handleRangeRequest( request, portalResponse, body, contentType, entityTag );
     }
 
     protected abstract T cast( Content content );

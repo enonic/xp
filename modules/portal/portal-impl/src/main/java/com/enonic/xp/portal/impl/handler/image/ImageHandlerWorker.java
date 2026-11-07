@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.image;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -21,6 +22,7 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
+import com.enonic.xp.portal.impl.handler.attachment.EntityTag;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
@@ -78,7 +80,8 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body )
+    protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body,
+                                         final Optional<EntityTag> entityTag )
     {
         portalResponse.contentType( contentType );
         portalResponse.body( body );

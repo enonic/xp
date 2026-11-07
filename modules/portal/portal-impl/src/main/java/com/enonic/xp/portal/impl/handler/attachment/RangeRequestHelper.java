@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,9 +34,23 @@ public final class RangeRequestHelper
                                     final MediaType contentType )
         throws IOException
     {
+        handleRangeRequest( request, response, body, contentType, Optional.empty() );
+    }
+
+    public void handleRangeRequest( final WebRequest request, final WebResponse.Builder response, final ByteSource body,
+                                    final MediaType contentType, final Optional<EntityTag> entityTag )
+        throws IOException
+    {
         response.contentType( contentType );
         response.header( HttpHeaders.ACCEPT_RANGES, "bytes" );
         if ( !request.getHeaders().containsKey( HttpHeaders.RANGE ) )
+        {
+            response.body( body );
+            return;
+        }
+
+        final String ifRangeHeader = request.getHeaders().get( HttpHeaders.IF_RANGE );
+        if ( ifRangeHeader != null && entityTag.filter( tag -> tag.matchesIfRange( ifRangeHeader ) ).isEmpty() )
         {
             response.body( body );
             return;

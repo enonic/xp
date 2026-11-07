@@ -49,6 +49,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AttachmentHandlerTest
@@ -500,4 +502,202 @@ class AttachmentHandlerTest
         assertEquals( "Not a valid request", ex.getMessage() );
     }
 
+    private static final String SHA512 = "0123456789abcdef".repeat( 8 );
+
+    private static final String ETAG = "\"0123456789abcdef0123456789abcdef\"";
+
+    private void setupMediaWithHash()
+    {
+        final Attachment attachment =
+            Attachment.create().name( "logo.png" ).mimeType( "image/png" ).label( "small" ).sha512( SHA512 ).build();
+        final Media content = createMedia( "123456", "path/to/content", attachment );
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+    }
+
+    @Test
+    void etagFromAttachmentHash()
+        throws Exception
+    {
+        setupMediaWithHash();
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertEquals( "bytes", res.getHeaders().get( "Accept-Ranges" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void noEtagWithoutAttachmentHash()
+        throws Exception
+    {
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "ETag" ) );
+    }
+
+    @Test
+    void ifNoneMatchMatches()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "If-None-Match", ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertNull( res.getBody() );
+        verify( this.contentService, never() ).getBinary( any(), any() );
+    }
+
+    @Test
+    void ifNoneMatchHead()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.setMethod( HttpMethod.HEAD );
+        this.request.getHeaders().put( "If-None-Match", ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertNull( res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchWeakTag()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "If-None-Match", "W/" + ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+    }
+
+    @Test
+    void ifNoneMatchList()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "If-None-Match", "\"other\", " + ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+    }
+
+    @Test
+    void ifNoneMatchStar()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "If-None-Match", "*" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+    }
+
+    @Test
+    void ifNoneMatchMismatch()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "If-None-Match", "\"other\"" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchWithoutAttachmentHash()
+        throws Exception
+    {
+        this.request.getHeaders().put( "If-None-Match", "*" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchKeepsCacheControl()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.setRawPath( "/_/attachment/inline/123456:0123456789abcdef0123456789abcdef/logo.png" );
+        this.request.getHeaders().put( "If-None-Match", ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+    }
+
+    @Test
+    void ifRangeMatches()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "Range", "bytes=2-4" );
+        this.request.getHeaders().put( "If-Range", ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( "bytes 2-4/7", res.getHeaders().get( "Content-Range" ) );
+        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertEquals( 3, ( (ByteSource) res.getBody() ).read().length );
+    }
+
+    @Test
+    void ifRangeMismatch()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "Range", "bytes=2-4" );
+        this.request.getHeaders().put( "If-Range", "\"other\"" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "Content-Range" ) );
+        assertEquals( "bytes", res.getHeaders().get( "Accept-Ranges" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifRangeWeakTagIgnoresRange()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "Range", "bytes=2-4" );
+        this.request.getHeaders().put( "If-Range", "W/" + ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifRangeDateIgnoresRange()
+        throws Exception
+    {
+        setupMediaWithHash();
+        this.request.getHeaders().put( "Range", "bytes=2-4" );
+        this.request.getHeaders().put( "If-Range", "Wed, 21 Oct 2015 07:28:00 GMT" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifRangeWithoutAttachmentHashIgnoresRange()
+        throws Exception
+    {
+        this.request.getHeaders().put( "Range", "bytes=2-4" );
+        this.request.getHeaders().put( "If-Range", ETAG );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
 }
