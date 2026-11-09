@@ -50,6 +50,8 @@ public final class ImageHandlerWorker
 
     public ScaleParams scaleParams;
 
+    private ReadImageParams readImageParams;
+
     public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService )
     {
         super( request, contentService );
@@ -104,9 +106,7 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
-                                    final MediaType contentType )
-        throws IOException
+    protected void prepareTransform( final Media content, final BinaryReference binaryReference, final MediaType contentType )
     {
         final PropertySet mediaData = content.getData().getSet( ContentPropertyNames.MEDIA );
         final ImageOrientation imageOrientation = requireNonNullElse(
@@ -125,7 +125,7 @@ public final class ImageHandlerWorker
             final Attachment attachment =
                 requireNonNull( content.getAttachments().byLabel( "source" ), "Media content must have an attachment" );
 
-            final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            this.readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )
                 .binaryReference( binaryReference )
                 .cropping( MediaUtils.readCropping( mediaData ) )
@@ -138,8 +138,21 @@ public final class ImageHandlerWorker
                 .quality( imageQuality )
                 .mimeType( contentType.toString() )
                 .build();
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.badRequest( "Invalid parameters", e );
+        }
+    }
 
-            return this.imageService.readImage( readImageParams );
+    @Override
+    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
+                                    final MediaType contentType )
+        throws IOException
+    {
+        try
+        {
+            return this.imageService.readImage( this.readImageParams );
         }
         catch ( IllegalArgumentException e )
         {

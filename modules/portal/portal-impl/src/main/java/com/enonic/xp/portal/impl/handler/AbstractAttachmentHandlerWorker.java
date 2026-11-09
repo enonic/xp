@@ -127,9 +127,14 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         addTrace( content );
 
+        if ( scalable )
+        {
+            prepareTransform( content, binaryReference, contentType );
+        }
+
         if ( isNotModified( entityTag ) )
         {
-            return portalResponse.status( HttpStatus.NOT_MODIFIED ).build();
+            return portalResponse.contentType( contentType ).status( HttpStatus.NOT_MODIFIED ).build();
         }
 
         final ByteSource binary = getBinary( this.id, binaryReference );
@@ -144,6 +149,10 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
     {
         final String ifNoneMatchHeader = this.request.getHeaders().get( HttpHeaders.IF_NONE_MATCH );
         return ifNoneMatchHeader != null && entityTag.filter( tag -> tag.matchesIfNoneMatch( ifNoneMatchHeader ) ).isPresent();
+    }
+
+    protected void prepareTransform( final T content, final BinaryReference binaryReference, final MediaType contentType )
+    {
     }
 
     protected ByteSource transform( final T content, final BinaryReference binaryReference, final ByteSource binary,

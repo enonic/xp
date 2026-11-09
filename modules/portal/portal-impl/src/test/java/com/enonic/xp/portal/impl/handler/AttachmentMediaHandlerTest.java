@@ -53,6 +53,8 @@ import static org.mockito.Mockito.when;
 
 class AttachmentMediaHandlerTest
 {
+    private static final String ETAG = "\"ec25d6e4126c7064f82aaab8b34693fc\"";
+
     private AttachmentMediaHandler handler;
 
     private PortalRequest request;
@@ -308,8 +310,6 @@ class AttachmentMediaHandlerTest
             .build();
     }
 
-    private static final String ETAG = "\"ec25d6e4126c7064f82aaab8b34693fc\"";
-
     private WebRequest attachmentRequest( final String rawPath )
     {
         setupMedia();
@@ -342,6 +342,7 @@ class AttachmentMediaHandlerTest
 
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
         assertNull( res.getBody() );
         verify( this.contentService, never() ).getBinary( any(), any() );

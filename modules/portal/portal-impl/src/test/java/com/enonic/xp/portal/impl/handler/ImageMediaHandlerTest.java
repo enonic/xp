@@ -39,6 +39,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -367,12 +368,15 @@ class ImageMediaHandlerTest
     void ifNoneMatchSkipsTransform()
         throws Exception
     {
-        final String etag = this.handler.handle( imageRequest() ).getHeaders().get( "ETag" );
+        final WebResponse first = this.handler.handle( imageRequest() );
+        final String etag = first.getHeaders().get( "ETag" );
 
         final WebRequest request = imageRequest();
         request.getHeaders().put( "If-None-Match", etag );
         final WebResponse res = this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( MediaType.PNG, first.getContentType() );
+        assertEquals( first.getContentType(), res.getContentType() );
         assertEquals( etag, res.getHeaders().get( "ETag" ) );
         assertNull( res.getBody() );
         verify( this.imageService, times( 1 ) ).readImage( any() );
@@ -388,5 +392,44 @@ class ImageMediaHandlerTest
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertNotNull( res.getBody() );
         verify( this.imageService, times( 1 ) ).readImage( any() );
+    }
+
+    @Test
+    void ifNoneMatchDoesNotBypassQualityValidation()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getParams().put( "quality", "high" );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.BAD_REQUEST );
+    }
+
+    @Test
+    void ifNoneMatchDoesNotBypassQualityBoundsValidation()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getParams().put( "quality", "101" );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.BAD_REQUEST );
+    }
+
+    @Test
+    void ifNoneMatchDoesNotBypassBackgroundValidation()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getParams().put( "background", "0xzz" );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.BAD_REQUEST );
     }
 }
