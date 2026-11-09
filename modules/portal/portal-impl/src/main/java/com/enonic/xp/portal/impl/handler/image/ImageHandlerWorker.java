@@ -50,8 +50,6 @@ public final class ImageHandlerWorker
 
     public ScaleParams scaleParams;
 
-    private ReadImageParams readImageParams;
-
     public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService )
     {
         super( request, contentService );
@@ -106,7 +104,7 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected void prepareTransform( final Media content, final BinaryReference binaryReference, final MediaType contentType )
+    protected BinaryTransform prepareTransform( final Media content, final BinaryReference binaryReference, final MediaType contentType )
     {
         final PropertySet mediaData = content.getData().getSet( ContentPropertyNames.MEDIA );
         final ImageOrientation imageOrientation = requireNonNullElse(
@@ -125,7 +123,7 @@ public final class ImageHandlerWorker
             final Attachment attachment =
                 requireNonNull( content.getAttachments().byLabel( "source" ), "Media content must have an attachment" );
 
-            this.readImageParams = ReadImageParams.newImageParams()
+            final ReadImageParams readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )
                 .binaryReference( binaryReference )
                 .cropping( MediaUtils.readCropping( mediaData ) )
@@ -138,6 +136,8 @@ public final class ImageHandlerWorker
                 .quality( imageQuality )
                 .mimeType( contentType.toString() )
                 .build();
+
+            return binary -> readImage( readImageParams );
         }
         catch ( IllegalArgumentException e )
         {
@@ -145,14 +145,12 @@ public final class ImageHandlerWorker
         }
     }
 
-    @Override
-    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
-                                    final MediaType contentType )
+    private ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
         try
         {
-            return this.imageService.readImage( this.readImageParams );
+            return this.imageService.readImage( readImageParams );
         }
         catch ( IllegalArgumentException e )
         {

@@ -31,13 +31,6 @@ public final class RangeRequestHelper
     private static final String BYTES_UNIT = "bytes=";
 
     public void handleRangeRequest( final WebRequest request, final WebResponse.Builder response, final ByteSource body,
-                                    final MediaType contentType )
-        throws IOException
-    {
-        handleRangeRequest( request, response, body, contentType, Optional.empty() );
-    }
-
-    public void handleRangeRequest( final WebRequest request, final WebResponse.Builder response, final ByteSource body,
                                     final MediaType contentType, final Optional<EntityTag> entityTag )
         throws IOException
     {

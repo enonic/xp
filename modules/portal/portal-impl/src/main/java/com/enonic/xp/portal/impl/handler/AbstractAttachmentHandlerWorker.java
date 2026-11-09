@@ -127,18 +127,15 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         addTrace( content );
 
-        if ( scalable )
-        {
-            prepareTransform( content, binaryReference, contentType );
-        }
+        final BinaryTransform transform =
+            scalable ? prepareTransform( content, binaryReference, contentType ) : BinaryTransform.IDENTITY;
 
         if ( isNotModified( entityTag ) )
         {
             return portalResponse.contentType( contentType ).status( HttpStatus.NOT_MODIFIED ).build();
         }
 
-        final ByteSource binary = getBinary( this.id, binaryReference );
-        final ByteSource body = scalable ? transform( content, binaryReference, binary, contentType ) : binary;
+        final ByteSource body = transform.apply( getBinary( this.id, binaryReference ) );
 
         writeResponseContent( portalResponse, contentType, body, entityTag );
 
@@ -151,15 +148,9 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         return ifNoneMatchHeader != null && entityTag.filter( tag -> tag.matchesIfNoneMatch( ifNoneMatchHeader ) ).isPresent();
     }
 
-    protected void prepareTransform( final T content, final BinaryReference binaryReference, final MediaType contentType )
+    protected BinaryTransform prepareTransform( final T content, final BinaryReference binaryReference, final MediaType contentType )
     {
-    }
-
-    protected ByteSource transform( final T content, final BinaryReference binaryReference, final ByteSource binary,
-                                    final MediaType contentType )
-        throws IOException
-    {
-        return binary;
+        return BinaryTransform.IDENTITY;
     }
 
     protected abstract String resolveHash( T content, Attachment attachment, BinaryReference binaryReference );
@@ -220,5 +211,14 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         }
 
         return binary;
+    }
+
+    @FunctionalInterface
+    protected interface BinaryTransform
+    {
+        BinaryTransform IDENTITY = binary -> binary;
+
+        ByteSource apply( ByteSource binary )
+            throws IOException;
     }
 }
