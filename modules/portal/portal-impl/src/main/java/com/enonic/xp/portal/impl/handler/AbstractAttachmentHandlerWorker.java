@@ -109,25 +109,21 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         final BinaryTransform transform =
             scalable ? prepareTransform( content, binaryReference, contentType ) : BinaryTransform.IDENTITY;
 
+        final boolean isSvg = contentType.is( SVG_MEDIA_TYPE );
+        final String contentSecurityPolicyHeader = nullToEmpty( isSvg ? contentSecurityPolicySvg : contentSecurityPolicy );
+        if ( !contentSecurityPolicyHeader.isBlank() )
+        {
+            portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicyHeader );
+        }
+
         if ( isNotModified( entityTag ) )
         {
             return portalResponse.status( HttpStatus.NOT_MODIFIED ).build();
         }
 
-        if ( contentType.is( SVG_MEDIA_TYPE ) )
+        if ( isSvg && isSvgz )
         {
-            if ( isSvgz )
-            {
-                portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
-            }
-            if ( !nullToEmpty( contentSecurityPolicySvg ).isBlank() )
-            {
-                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicySvg );
-            }
-        }
-        else if ( !nullToEmpty( contentSecurityPolicy ).isBlank() )
-        {
-            portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicy );
+            portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
         }
 
         if ( download )

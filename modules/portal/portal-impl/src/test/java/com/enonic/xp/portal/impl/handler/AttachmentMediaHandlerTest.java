@@ -56,6 +56,8 @@ class AttachmentMediaHandlerTest
 {
     private static final String ETAG = "\"ec25d6e4126c7064f82aaab8b34693fc\"";
 
+    private static final String CSP = "default-src 'none'; base-uri 'none'; form-action 'none'";
+
     private AttachmentMediaHandler handler;
 
     private PortalRequest request;
@@ -343,7 +345,7 @@ class AttachmentMediaHandlerTest
 
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( Map.of( "ETag", ETAG ), res.getHeaders() );
+        assertEquals( Map.of( "ETag", ETAG, "Content-Security-Policy", CSP ), res.getHeaders() );
         assertNull( res.getBody() );
         verify( this.contentService, never() ).getBinary( any(), any() );
     }
@@ -357,12 +359,12 @@ class AttachmentMediaHandlerTest
         final PortalResponse ok = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.OK, ok.getStatus() );
         assertNotNull( ok.getHeaders().get( "Content-Disposition" ) );
-        assertNotNull( ok.getHeaders().get( "Content-Security-Policy" ) );
+        assertEquals( CSP, ok.getHeaders().get( "Content-Security-Policy" ) );
 
         request.getHeaders().put( "If-None-Match", ETAG );
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( Map.of( "ETag", ETAG ), res.getHeaders() );
+        assertEquals( Map.of( "ETag", ETAG, "Content-Security-Policy", CSP ), res.getHeaders() );
     }
 
     @Test
@@ -424,7 +426,8 @@ class AttachmentMediaHandlerTest
 
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( Map.of( "ETag", ETAG, "Cache-Control", "public, max-age=31536000, immutable" ), res.getHeaders() );
+        assertEquals( Map.of( "ETag", ETAG, "Cache-Control", "public, max-age=31536000, immutable", "Content-Security-Policy", CSP ),
+                      res.getHeaders() );
     }
 
     @Test

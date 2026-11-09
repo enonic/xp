@@ -376,7 +376,8 @@ class ImageMediaHandlerTest
         request.getHeaders().put( "If-None-Match", etag );
         final WebResponse res = this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( Map.of( "ETag", etag ), res.getHeaders() );
+        assertEquals( Map.of( "ETag", etag, "Content-Security-Policy", first.getHeaders().get( "Content-Security-Policy" ) ),
+                      res.getHeaders() );
         assertNull( res.getBody() );
         verify( this.imageService, times( 1 ) ).readImage( any() );
     }
@@ -450,6 +451,7 @@ class ImageMediaHandlerTest
         request.getHeaders().put( "If-None-Match", etag );
         final WebResponse res = this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( Map.of( "ETag", etag ), res.getHeaders() );
+        assertEquals( Map.of( "ETag", etag, "Content-Security-Policy", ok.getHeaders().get( "Content-Security-Policy" ) ),
+                      res.getHeaders() );
     }
 }
