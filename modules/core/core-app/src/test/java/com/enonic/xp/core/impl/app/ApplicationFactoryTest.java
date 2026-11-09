@@ -362,6 +362,29 @@ class ApplicationFactoryTest
         assertNull( resolver.findResource( "/enonic.yaml" ) );
     }
 
+    @Test
+    void system_app_serves_everything_from_its_bundle()
+    {
+        // the system application is provisioned by the launcher at a plain location, never installed through the application
+        // service: nothing is persisted for it, its style descriptor and phrases are read from the bundle like the rest
+        final Bundle bundle = deploy( "file:/system/app-system.jar", newBundle( "com.enonic.xp.app.system", false )
+            .setHeader( ApplicationManifestConstants.X_BUNDLE_TYPE, "system" )
+            .addResource( STYLE_PATH, stream( "kind: \"Style\"" ) )
+            .addResource( LIB_PATH, stream( "library" ) ) );
+
+        RunModeSupport.set( RunMode.PROD );
+
+        final ApplicationFactory factory = new ApplicationFactory( nodeService );
+
+        final ApplicationUrlResolver resolver = factory.createUrlResolver( bundle, null );
+        assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
+        assertNotNull( resolver.findResource( "/" + STYLE_PATH ) );
+        assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
+        assertTrue( resolver.findFiles().contains( STYLE_PATH ) );
+    }
+
+    private static final String STYLE_PATH = "cms/style/style.yaml";
+
     private static final String CONTENT_TYPE_PATH = "cms/content-types/mytype/mytype.yaml";
 
     private static final String LIB_PATH = "lib/util.js";
