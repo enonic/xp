@@ -84,22 +84,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         entityTag.ifPresent( tag -> portalResponse.header( HttpHeaders.ETAG, tag.toHeaderValue() ) );
 
-        if ( contentType.is( SVG_MEDIA_TYPE ) )
-        {
-            if ( isSvgz )
-            {
-                portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
-            }
-            if ( !nullToEmpty( contentSecurityPolicySvg ).isBlank() )
-            {
-                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicySvg );
-            }
-        }
-        else if ( !nullToEmpty( contentSecurityPolicy ).isBlank() )
-        {
-            portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicy );
-        }
-
         if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
             final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
@@ -120,11 +104,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
             }
         }
 
-        if ( download )
-        {
-            portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( attachment.getName() ) );
-        }
-
         addTrace( content );
 
         final BinaryTransform transform =
@@ -132,7 +111,28 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         if ( isNotModified( entityTag ) )
         {
-            return portalResponse.contentType( contentType ).status( HttpStatus.NOT_MODIFIED ).build();
+            return portalResponse.status( HttpStatus.NOT_MODIFIED ).build();
+        }
+
+        if ( contentType.is( SVG_MEDIA_TYPE ) )
+        {
+            if ( isSvgz )
+            {
+                portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
+            }
+            if ( !nullToEmpty( contentSecurityPolicySvg ).isBlank() )
+            {
+                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicySvg );
+            }
+        }
+        else if ( !nullToEmpty( contentSecurityPolicy ).isBlank() )
+        {
+            portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicy );
+        }
+
+        if ( download )
+        {
+            portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( attachment.getName() ) );
         }
 
         final ByteSource body = transform.apply( getBinary( this.id, binaryReference ) );

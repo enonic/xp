@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -342,10 +343,26 @@ class AttachmentMediaHandlerTest
 
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
-        assertEquals( ETAG, res.getHeaders().get( "ETag" ) );
+        assertEquals( Map.of( "ETag", ETAG ), res.getHeaders() );
         assertNull( res.getBody() );
         verify( this.contentService, never() ).getBinary( any(), any() );
+    }
+
+    @Test
+    void ifNoneMatchOmitsRepresentationHeaders()
+    {
+        final WebRequest request = attachmentRequest( "/api/media:attachment/myproject/123456/logo.png" );
+        request.getParams().put( "download", "" );
+
+        final PortalResponse ok = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.OK, ok.getStatus() );
+        assertNotNull( ok.getHeaders().get( "Content-Disposition" ) );
+        assertNotNull( ok.getHeaders().get( "Content-Security-Policy" ) );
+
+        request.getHeaders().put( "If-None-Match", ETAG );
+        final PortalResponse res = (PortalResponse) this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( Map.of( "ETag", ETAG ), res.getHeaders() );
     }
 
     @Test
@@ -407,7 +424,7 @@ class AttachmentMediaHandlerTest
 
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
+        assertEquals( Map.of( "ETag", ETAG, "Cache-Control", "public, max-age=31536000, immutable" ), res.getHeaders() );
     }
 
     @Test

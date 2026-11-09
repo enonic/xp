@@ -13,6 +13,7 @@ import com.google.common.io.CharSource;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.csp.ContentSecurityPolicy;
@@ -40,7 +41,10 @@ public final class ResponseSerializer
         }
 
         response.setStatus( this.webResponse.getStatus().value() );
-        response.setContentType( this.webResponse.getContentType().toString() );
+        if ( this.webResponse.getStatus() != HttpStatus.NOT_MODIFIED )
+        {
+            response.setContentType( this.webResponse.getContentType().toString() );
+        }
 
         this.webResponse.getHeaders().forEach( response::setHeader );
         serializeContentSecurityPolicy( response );

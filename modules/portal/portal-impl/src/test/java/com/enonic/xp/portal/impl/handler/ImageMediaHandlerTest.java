@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -375,9 +376,7 @@ class ImageMediaHandlerTest
         request.getHeaders().put( "If-None-Match", etag );
         final WebResponse res = this.handler.handle( request );
         assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
-        assertEquals( MediaType.PNG, first.getContentType() );
-        assertEquals( first.getContentType(), res.getContentType() );
-        assertEquals( etag, res.getHeaders().get( "ETag" ) );
+        assertEquals( Map.of( "ETag", etag ), res.getHeaders() );
         assertNull( res.getBody() );
         verify( this.imageService, times( 1 ) ).readImage( any() );
     }
@@ -431,5 +430,26 @@ class ImageMediaHandlerTest
         assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
             .extracting( e -> ( (WebException) e ).getStatus() )
             .isEqualTo( HttpStatus.BAD_REQUEST );
+    }
+
+    @Test
+    void ifNoneMatchOmitsRepresentationHeaders()
+        throws Exception
+    {
+        setupContentSvgz();
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/api/media:image/myproject/123456/full/image-name.svgz" );
+
+        final WebResponse ok = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, ok.getStatus() );
+        assertEquals( "gzip", ok.getHeaders().get( "Content-Encoding" ) );
+        assertNotNull( ok.getHeaders().get( "Content-Security-Policy" ) );
+        final String etag = ok.getHeaders().get( "ETag" );
+
+        request.getHeaders().put( "If-None-Match", etag );
+        final WebResponse res = this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( Map.of( "ETag", etag ), res.getHeaders() );
     }
 }

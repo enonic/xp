@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -333,5 +334,24 @@ class ResponseSerializerTest
         final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
         new ResponseSerializer( req, resp ).serialize( httpResponse );
         return httpResponse;
+    }
+
+    @Test
+    void serializeNotModifiedWithoutContentType()
+        throws Exception
+    {
+        final WebRequest req = new WebRequest();
+        req.setMethod( HttpMethod.GET );
+
+        final WebResponse resp = WebResponse.create().status( HttpStatus.NOT_MODIFIED ).header( "ETag", "\"abc\"" ).build();
+
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+
+        new ResponseSerializer( req, resp ).serialize( httpResponse );
+
+        verify( httpResponse ).setStatus( 304 );
+        verify( httpResponse ).setHeader( "etag", "\"abc\"" );
+        verify( httpResponse, never() ).setContentType( any() );
+        verify( httpResponse, never() ).getOutputStream();
     }
 }
