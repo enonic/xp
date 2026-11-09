@@ -76,7 +76,7 @@ caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "c
 guava-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.23.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.24.1" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20261011.1" }
 
