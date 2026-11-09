@@ -5,10 +5,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
@@ -37,6 +40,8 @@ import com.enonic.xp.resource.ResourceService;
 public class ApplicationDescriptorServiceImpl
     implements ApplicationDescriptorService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationDescriptorServiceImpl.class );
+
     static final int MAX_ICON_SIZE = 100 * 1024;
 
     private static final String SEGMENT = ApplicationDescriptor.class.getName();
@@ -94,11 +99,18 @@ public class ApplicationDescriptorServiceImpl
 
     private LoadedDescriptor load( final ApplicationKey key, final List<Resource> candidates )
     {
-        return candidates.stream()
-            .filter( Resource::exists )
-            .findFirst()
-            .map( descriptor -> new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, descriptor, this.resourceService ), true ) )
-            .orElseGet( () -> new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, this.resourceService ), false ) );
+        final Resource descriptor = candidates.stream().filter( Resource::exists ).findFirst().orElse( null );
+        try
+        {
+            return descriptor != null
+                ? new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, descriptor, this.resourceService ), true )
+                : new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, this.resourceService ), false );
+        }
+        catch ( final Exception e )
+        {
+            LOG.warn( "Unable to load application descriptor for {}", key, e );
+            return LoadedDescriptor.FAILED;
+        }
     }
 
     @Override
@@ -185,9 +197,11 @@ public class ApplicationDescriptorServiceImpl
 
     /**
      * The descriptor as cached, and whether it was read from a descriptor resource: an application serving none still has a
-     * descriptor, holding its key and icon, an unknown application has none.
+     * descriptor, holding its key and icon, an unknown application has none. {@link #FAILED} is an application serving a descriptor
+     * that could not be built: it has none either, and nothing is looked up for it beyond the resources.
      */
-    private record LoadedDescriptor(ApplicationDescriptor descriptor, boolean fromResource)
+    private record LoadedDescriptor(@Nullable ApplicationDescriptor descriptor, boolean fromResource)
     {
+        static final LoadedDescriptor FAILED = new LoadedDescriptor( null, true );
     }
 }
