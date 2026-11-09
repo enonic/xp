@@ -282,6 +282,32 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
+    void get_returns_null_for_a_descriptor_that_cannot_be_built()
+        throws Exception
+    {
+        RunModeSupport.set( RunMode.DEV );
+        final ApplicationKey key = ApplicationKey.from( "com.enonic.brokenapp" );
+        final Path sources = Files.createDirectory( temporaryFolder.resolve( "brokenapp" ) );
+        Files.writeString( sources.resolve( "enonic.yaml" ), "kind: \"Application\"\ndescription: \"Draft\n" );
+
+        final Bundle bundle = mockLocalBundle( key );
+        final Hashtable<String, String> headers = new Hashtable<>();
+        headers.put( ApplicationManifestConstants.X_SOURCE_PATHS, sources.toString() );
+        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
+        installed.install( bundle );
+
+        // a half-written descriptor is logged, not thrown: the application has no descriptor until it is fixed
+        assertNull( appDescriptorService.get( key ) );
+
+        Files.writeString( sources.resolve( "enonic.yaml" ), "kind: \"Application\"\ndescription: \"Fixed\"\n" );
+        assertEquals( "Fixed", appDescriptorService.get( key ).getDescription() );
+
+        // a descriptor naming another application is rejected the same way
+        Files.writeString( sources.resolve( "enonic.yaml" ), "kind: \"Application\"\nname: \"com.enonic.otherapp\"\n" );
+        assertNull( appDescriptorService.get( key ) );
+    }
+
+    @Test
     void get_reads_the_descriptor_of_a_stopped_local_application_from_its_bundle()
     {
         final ApplicationKey key = ApplicationKey.from( "com.enonic.localapp" );
