@@ -308,6 +308,27 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
+    void get_retries_a_descriptor_whose_read_failed_without_a_change_of_version()
+    {
+        final AtomicReference<String> persisted = new AtomicReference<>( "kind: \"Application\"\ndescription: \"Persisted\"\n" );
+        stubDescriptorNodeFrom( persisted, "image/svg+xml" );
+        // the binary of the icon is out of reach once, the node and its version are untouched
+        when( nodeService.getBinary( any( NodeId.class ), eq( BinaryReference.from( "enonic.svg" ) ) ) )
+            .thenThrow( new RuntimeException( "blob store unavailable" ) )
+            .thenReturn( ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
+
+        // the failure is logged and the application has no descriptor for now
+        assertNull( appDescriptorService.get( MYAPP ) );
+
+        // nothing was cached for the failure: the next read succeeds under the same version
+        final ApplicationDescriptor descriptor = appDescriptorService.get( MYAPP );
+        assertNotNull( descriptor );
+        assertEquals( "Persisted", descriptor.getDescription() );
+        assertEquals( "image/svg+xml", descriptor.getIcon().getMimeType() );
+        assertSame( descriptor, appDescriptorService.get( MYAPP ) );
+    }
+
+    @Test
     void get_reads_the_descriptor_of_a_stopped_local_application_from_its_bundle()
     {
         final ApplicationKey key = ApplicationKey.from( "com.enonic.localapp" );

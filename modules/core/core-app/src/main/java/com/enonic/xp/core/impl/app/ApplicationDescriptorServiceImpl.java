@@ -78,6 +78,10 @@ public class ApplicationDescriptorServiceImpl
             return null;
         }
         final LoadedDescriptor loaded = this.resourceService.processResources( processor( key ) );
+        if ( loaded == null )
+        {
+            return null;
+        }
         if ( loaded.fromResource() || this.applicationFactoryService.findResourceSource( key, null ).resolver() != null )
         {
             return loaded.descriptor();
@@ -97,7 +101,10 @@ public class ApplicationDescriptorServiceImpl
             .build();
     }
 
-    private LoadedDescriptor load( final ApplicationKey key, final List<Resource> candidates )
+    // a descriptor that cannot be built (a malformed yaml, an unreadable icon) is logged and the application has none, as before.
+    // The failure is not cached: a read failing for a while (the binary of the icon out of reach) is retried on the next call,
+    // and nothing tells a failure of that kind from a malformed descriptor, which is logged on every read until it is fixed
+    private @Nullable LoadedDescriptor load( final ApplicationKey key, final List<Resource> candidates )
     {
         final Resource descriptor = candidates.stream().filter( Resource::exists ).findFirst().orElse( null );
         try
@@ -109,7 +116,7 @@ public class ApplicationDescriptorServiceImpl
         catch ( final Exception e )
         {
             LOG.warn( "Unable to load application descriptor for {}", key, e );
-            return LoadedDescriptor.FAILED;
+            return null;
         }
     }
 
@@ -197,11 +204,9 @@ public class ApplicationDescriptorServiceImpl
 
     /**
      * The descriptor as cached, and whether it was read from a descriptor resource: an application serving none still has a
-     * descriptor, holding its key and icon, an unknown application has none. {@link #FAILED} is an application serving a descriptor
-     * that could not be built: it has none either, and nothing is looked up for it beyond the resources.
+     * descriptor, holding its key and icon, an unknown application has none.
      */
-    private record LoadedDescriptor(@Nullable ApplicationDescriptor descriptor, boolean fromResource)
+    private record LoadedDescriptor(ApplicationDescriptor descriptor, boolean fromResource)
     {
-        static final LoadedDescriptor FAILED = new LoadedDescriptor( null, true );
     }
 }
