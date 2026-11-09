@@ -19,6 +19,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -65,10 +66,13 @@ public class AdminExtensionApiHandler
             throw WebException.notFound( String.format( "Extension [%s] not found", descriptorKey ) );
         }
 
-        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
-        if ( !descriptor.isAccessAllowed( principals ) )
+        if ( webRequest.getMethod() != HttpMethod.OPTIONS )
         {
-            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
+            final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+            if ( !descriptor.isAccessAllowed( principals ) )
+            {
+                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
+            }
         }
 
         verifyMounts( descriptor, webRequest );

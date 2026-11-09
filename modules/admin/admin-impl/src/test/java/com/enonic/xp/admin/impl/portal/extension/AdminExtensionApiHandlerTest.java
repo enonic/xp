@@ -118,6 +118,38 @@ class AdminExtensionApiHandlerTest
     }
 
     @Test
+    void testOptionsOfProtectedExtensionReachesTheController()
+    {
+        // a CORS preflight is sent without credentials and must not be rejected by the access check
+        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final AdminExtensionDescriptor widgetDescriptor = mock( AdminExtensionDescriptor.class );
+        when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( false );
+        when( widgetDescriptor.getKey() ).thenReturn( descriptorKey );
+        when( widgetDescriptor.hasInterface( AdminExtensionDescriptor.GENERIC_INTERFACE ) ).thenReturn( true );
+
+        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).build() );
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.OPTIONS );
+        webRequest.setRawPath( "/path/_/admin:extension/app:widgetName" );
+
+        final WebResponse response = this.handler.handle( webRequest );
+        assertEquals( HttpStatus.NO_CONTENT, response.getStatus() );
+        verify( controllerScript ).execute( any( PortalRequest.class ) );
+
+        // the actual request is still authorized
+        webRequest.setMethod( HttpMethod.POST );
+        final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+    }
+
+    @Test
     void testHandle()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );

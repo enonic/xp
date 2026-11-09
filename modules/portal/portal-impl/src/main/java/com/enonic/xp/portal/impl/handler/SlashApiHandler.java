@@ -137,7 +137,10 @@ public class SlashApiHandler
         }
 
         final MountContext mountContext = resolveMountContext( portalRequest );
-        verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
+        if ( !HandlerHelper.isPreflight( portalRequest ) )
+        {
+            verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
+        }
         verifyRequestMounted( apiDescriptor, portalRequest, mountContext );
 
         final Supplier<WebResponse> handler = dynamicApiHandler != null
@@ -279,7 +282,7 @@ public class SlashApiHandler
         try
         {
             final WebResponse response = supplier.get();
-            if ( portalRequest.getMethod() == HttpMethod.OPTIONS && response.getStatus() == HttpStatus.METHOD_NOT_ALLOWED )
+            if ( HandlerHelper.isPreflight( portalRequest ) && response.getStatus() == HttpStatus.METHOD_NOT_ALLOWED )
             {
                 return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
             }

@@ -63,6 +63,11 @@ public final class HandlerHelper
         return values.isEmpty() ? null : values.iterator().next();
     }
 
+    public static boolean isPreflight( final WebRequest webRequest )
+    {
+        return webRequest.getMethod() == HttpMethod.OPTIONS;
+    }
+
     public static PortalResponse handleDefaultOptions( final EnumSet<HttpMethod> methodsAllowed )
     {
         return PortalResponse.create()

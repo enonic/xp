@@ -64,11 +64,6 @@ public class ServiceHandler
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
 
-        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
-        {
-            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
-        }
-
         final DescriptorKey descriptorKey = parseDescriptorKey( matcher.group( 1 ), matcher.group( 2 ) );
         final ApplicationKey applicationKey = descriptorKey.getApplicationKey();
         final String name = descriptorKey.getName();
@@ -87,6 +82,11 @@ public class ServiceHandler
             boundRef[0] = bound;
             return bound.execute( portalRequest );
         } );
+
+        if ( HandlerHelper.isPreflight( portalRequest ) && portalResponse.getStatus() == HttpStatus.METHOD_NOT_ALLOWED )
+        {
+            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+        }
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = portalRequest.getWebSocketContext();
@@ -126,11 +126,14 @@ public class ServiceHandler
             throw WebException.notFound( String.format( "Service [%s] not found", descriptorKey ) );
         }
 
-        //Checks if the access to ServiceDescriptor is allowed
-        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
-        if ( !serviceDescriptor.isAccessAllowed( principals ) )
+        //Checks if the access to ServiceDescriptor is allowed (CORS preflights are sent without credentials and are let through)
+        if ( !HandlerHelper.isPreflight( portalRequest ) )
         {
-            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
+            final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+            if ( !serviceDescriptor.isAccessAllowed( principals ) )
+            {
+                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
+            }
         }
 
         if ( PortalRequestHelper.isSiteBase( portalRequest ) )
