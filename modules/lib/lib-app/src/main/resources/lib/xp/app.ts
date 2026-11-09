@@ -2,7 +2,7 @@
  * Application related functions.
  *
  * @example
- * var schema = require('/lib/xp/app');
+ * var app = require('/lib/xp/app');
  *
  * @module app
  */
@@ -36,7 +36,7 @@ export interface Application {
     modifiedTime: string | null;
     started: boolean;
     system: boolean;
-    schema: boolean;
+    codeless: boolean;
 }
 
 export interface GetApplicationParams {
@@ -104,6 +104,7 @@ export interface ApplicationDescriptor {
     vendorName: string | null;
     vendorUrl: string | null;
     url: string | null;
+    version: string | null;
     config: Record<string, ConfigValue>;
     icon?: Icon;
 }
@@ -165,6 +166,7 @@ interface CreateOrUpdateApplicationDescriptorHandler {
  *
  * Pass an `editor` function that receives the current descriptor, as {@link getDescriptor} returns it, mutates the fields
  * it wants to change and returns it. Fields left untouched keep their value, fields set to `null` are cleared.
+ * The `version` is the version the descriptor declares; an application without a bundle reports it as its version.
  * The icon is kept when left as received, removed when set to `null`, and replaced when set to `{data, mimeType}`
  * (`image/svg+xml` or `image/png`, at most 100 KB).
  *

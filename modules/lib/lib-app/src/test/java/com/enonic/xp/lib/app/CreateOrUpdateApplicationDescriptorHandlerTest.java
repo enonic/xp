@@ -72,6 +72,7 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
         assertEquals( "Vendor", edit.vendorName );
         assertEquals( "https://vendor", edit.vendorUrl );
         assertEquals( "https://app", edit.url );
+        assertEquals( "1.0.0", edit.version );
         assertEquals( sourceDescriptor().getSchemaConfig(), edit.schemaConfig );
         assertSame( SOURCE_ICON, edit.icon );
     }
@@ -87,9 +88,20 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
         assertNull( edit.title );
         assertNull( edit.titleI18nKey );
         assertNull( edit.vendorUrl );
+        assertNull( edit.version );
         assertEquals( "Old description", edit.description );
         assertTrue( edit.schemaConfig.properties().isEmpty() );
         assertSame( SOURCE_ICON, edit.icon );
+    }
+
+    @Test
+    void setsVersion()
+    {
+        final AtomicReference<EditableApplicationDescriptor> edited = stubService( sourceDescriptor() );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "setVersion" );
+
+        assertEquals( "2.0.0", edited.get().version );
     }
 
     @Test
@@ -191,6 +203,7 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
             .vendorName( "Vendor" )
             .vendorUrl( "https://vendor" )
             .url( "https://app" )
+            .version( "1.0.0" )
             .schemaConfig( GenericValue.newObject().put( "property_1", "value_1" ).build() )
             .icon( SOURCE_ICON )
             .build();
@@ -217,6 +230,7 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
                 .vendorName( edit.vendorName )
                 .vendorUrl( edit.vendorUrl )
                 .url( edit.url )
+                .version( edit.version )
                 .schemaConfig( edit.schemaConfig );
             if ( edit.icon != null )
             {

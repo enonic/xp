@@ -30,6 +30,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
+import com.enonic.xp.util.Version;
 
 @Component
 public final class ApplicationServiceImpl
@@ -123,7 +124,21 @@ public final class ApplicationServiceImpl
     private PersistedApplication persistedApplication( final Node applicationNode )
     {
         final ApplicationKey key = ApplicationKey.from( applicationNode.name().toString() );
-        return new PersistedApplication( applicationNode, this.repoService.hasCmsDescriptor( key ) );
+        return new PersistedApplication( applicationNode, persistedVersion( applicationNode, key ), this.repoService.hasCmsDescriptor( key ) );
+    }
+
+    private static Version persistedVersion( final Node applicationNode, final ApplicationKey key )
+    {
+        try
+        {
+            final String descriptor = applicationNode.data().getString( SchemaNodePropertyNames.DESCRIPTOR );
+            return Version.parseVersion( YmlApplicationDescriptorParser.parse( descriptor, key ).build().getVersion() );
+        }
+        catch ( final Exception e )
+        {
+            LOG.debug( "Unable to read the version of application [{}] from its persisted descriptor", key, e );
+            return Version.emptyVersion;
+        }
     }
 
     private Application doGet( final ApplicationKey key )
@@ -404,7 +419,7 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    // a schema application is always started, whatever state was stored for it, and an application without a bundle has
+    // a codeless application is always started, whatever state was stored for it, and an application without a bundle has
     // nothing to start or stop
     private void requireStartableApplication( final ApplicationKey key, final String action )
     {
@@ -413,9 +428,9 @@ public final class ApplicationServiceImpl
         {
             return;
         }
-        if ( app.isSchema() )
+        if ( app.isCodeless() )
         {
-            throw new IllegalArgumentException( "Cannot " + action + " schema application: " + key );
+            throw new IllegalArgumentException( "Cannot " + action + " codeless application: " + key );
         }
         if ( app instanceof PersistedApplication )
         {
@@ -443,7 +458,7 @@ public final class ApplicationServiceImpl
         doInstallStoredApplication( applicationKey );
         final Application application = registry.get( applicationKey );
         final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) ||
-            application != null && application.isSchema();
+            application != null && application.isCodeless();
         if ( started )
         {
             tryStartApplication( applicationKey );

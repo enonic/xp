@@ -37,6 +37,7 @@ class YmlApplicationDescriptorSerializerTest
             .vendorName( "Enonic" )
             .vendorUrl( "https://enonic.com" )
             .url( "https://github.com/enonic/myapp" )
+            .version( "1.2.3-SNAPSHOT" )
             .schemaConfig( GenericValue.newObject()
                                .put( "property_1", "value_1" )
                                .put( "number", 42 )
@@ -56,6 +57,8 @@ class YmlApplicationDescriptorSerializerTest
         assertEquals( "Enonic", parsed.getVendorName() );
         assertEquals( "https://enonic.com", parsed.getVendorUrl() );
         assertEquals( "https://github.com/enonic/myapp", parsed.getUrl() );
+        assertEquals( "1.2.3-SNAPSHOT", parsed.getVersion() );
+        assertTrue( yaml.startsWith( "kind: \"Application\"\nname: \"myapp\"\nversion: \"1.2.3-SNAPSHOT\"\n" ), yaml );
         assertEquals( descriptor.getSchemaConfig(), parsed.getSchemaConfig() );
         assertNull( parsed.getIcon() );
         assertFalse( yaml.contains( "icon" ), yaml );
@@ -84,10 +87,11 @@ class YmlApplicationDescriptorSerializerTest
     void empty_fields_are_omitted()
     {
         final String yaml = YmlApplicationDescriptorSerializer.serialize(
-            ApplicationDescriptor.create().key( MYAPP ).description( "" ).vendorName( "" ).build() );
+            ApplicationDescriptor.create().key( MYAPP ).description( "" ).vendorName( "" ).version( "" ).build() );
 
         assertFalse( yaml.contains( "description" ), yaml );
         assertFalse( yaml.contains( "vendorName" ), yaml );
+        assertFalse( yaml.contains( "version" ), yaml );
         assertFalse( yaml.contains( "config" ), yaml );
     }
 }

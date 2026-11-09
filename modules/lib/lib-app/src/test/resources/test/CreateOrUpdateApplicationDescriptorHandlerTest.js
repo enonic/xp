@@ -40,10 +40,24 @@ exports.clearWithNull = function () {
             descriptor.title = null;
             descriptor.titleI18nKey = null;
             descriptor.vendorUrl = null;
+            descriptor.version = null;
             descriptor.config = null;
             return descriptor;
         }
     });
+};
+
+exports.setVersion = function () {
+    var result = appLib.createOrUpdate({
+        key: 'my_app',
+        editor: function (descriptor) {
+            assert.assertEquals('1.0.0', descriptor.version);
+            descriptor.version = '2.0.0';
+            return descriptor;
+        }
+    });
+
+    assert.assertEquals('2.0.0', result.version);
 };
 
 exports.setConfig = function () {

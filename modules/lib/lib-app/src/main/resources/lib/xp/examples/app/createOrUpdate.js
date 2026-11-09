@@ -11,6 +11,7 @@ var result = appLib.createOrUpdate({
         descriptor.title = 'My App';
         descriptor.description = 'Created from a script';
         descriptor.vendorName = 'Enonic';
+        descriptor.version = '1.0.0';
         descriptor.config = {feature: true, limit: 42};
         descriptor.icon = {
             data: testInstance.createByteSource('<svg/>'),
@@ -28,6 +29,7 @@ assert.assertJsonEquals({
     description: 'Created from a script',
     title: 'My App',
     vendorName: 'Enonic',
+    version: '1.0.0',
     config: {
         feature: true,
         limit: 42

@@ -141,7 +141,7 @@ public class MockApplication
     }
 
     @Override
-    public boolean isSchema()
+    public boolean isCodeless()
     {
         return false;
     }

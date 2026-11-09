@@ -13,7 +13,7 @@ import com.enonic.xp.util.Version;
 /**
  * An application that exists as nodes only, created through {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}:
  * it ships a persisted descriptor, and a schema once its cms descriptor is persisted, but no bundle, hence no code, class loader or
- * configuration. It is a schema application as soon as it owns a schema. There is nothing to start or stop, it is always started.
+ * configuration. It is a codeless application as soon as it owns a schema. There is nothing to start or stop, it is always started.
  */
 final class PersistedApplication
     implements Application
@@ -24,17 +24,21 @@ final class PersistedApplication
 
     private final Instant modifiedTime;
 
-    private final boolean schema;
+    private final Version version;
+
+    private final boolean codeless;
 
     /**
-     * @param schema whether the cms descriptor ({@code cms/cms.yaml}) is persisted for the application
+     * @param version  the version declared by the persisted descriptor, {@link Version#emptyVersion} when it declares none
+     * @param codeless whether the cms descriptor ({@code cms/cms.yaml}) is persisted for the application
      */
-    PersistedApplication( final Node applicationNode, final boolean schema )
+    PersistedApplication( final Node applicationNode, final Version version, final boolean codeless )
     {
         this.key = ApplicationKey.from( applicationNode.name().toString() );
         final Instant modified = applicationNode.data().getInstant( ApplicationPropertyNames.MODIFIED_TIME );
         this.modifiedTime = modified != null ? modified : applicationNode.getTimestamp();
-        this.schema = schema;
+        this.version = version;
+        this.codeless = codeless;
     }
 
     @Override
@@ -46,7 +50,7 @@ final class PersistedApplication
     @Override
     public Version getVersion()
     {
-        return Version.emptyVersion;
+        return this.version;
     }
 
     @Override
@@ -104,8 +108,8 @@ final class PersistedApplication
     }
 
     @Override
-    public boolean isSchema()
+    public boolean isCodeless()
     {
-        return this.schema;
+        return this.codeless;
     }
 }

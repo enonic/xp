@@ -186,16 +186,18 @@ class ApplicationDescriptorServiceImplTest
             assertNull( edit.title );
             edit.title = "My App";
             edit.vendorName = "Enonic";
+            edit.version = "2.0.0";
             edit.schemaConfig = GenericValue.newObject().put( "flag", true ).build();
         } ) ) );
 
         verify( repoService ).createApplicationNode( MYAPP );
         verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( IconUpdate.KEEP ) );
-        assertEquals( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"My App\"\nvendorName: \"Enonic\"\nconfig:\n  flag: true\n",
+        assertEquals( "kind: \"Application\"\nname: \"myapp\"\nversion: \"2.0.0\"\ntitle: \"My App\"\nvendorName: \"Enonic\"\nconfig:\n  flag: true\n",
                       persisted.get() );
 
         assertEquals( "My App", result.getTitle() );
         assertEquals( "Enonic", result.getVendorName() );
+        assertEquals( "2.0.0", result.getVersion() );
         assertTrue( result.getSchemaConfig().property( "flag" ).asBoolean() );
         assertSame( result, appDescriptorService.get( MYAPP ) );
 
@@ -245,15 +247,17 @@ class ApplicationDescriptorServiceImplTest
     void createOrUpdate_keeps_untouched_fields_and_clears_nulls()
     {
         final AtomicReference<String> persisted = stubUpsert();
-        persisted.set( "kind: \"Application\"\ntitle: \"Old\"\ndescription: {text: \"Desc\", i18n: \"app.desc\"}\nvendorUrl: \"https://old\"\n" );
+        persisted.set( "kind: \"Application\"\nversion: \"1.0.0\"\ntitle: \"Old\"\ndescription: {text: \"Desc\", i18n: \"app.desc\"}\nvendorUrl: \"https://old\"\n" );
         stubDescriptorNodeFrom( persisted, null );
         stubApplicationNode();
 
         final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> {
             assertEquals( "Old", edit.title );
             assertEquals( "app.desc", edit.descriptionI18nKey );
+            assertEquals( "1.0.0", edit.version );
             edit.title = "New";
             edit.vendorUrl = null;
+            edit.version = null;
         } ) ) );
 
         verify( repoService, never() ).createApplicationNode( any() );
@@ -263,6 +267,7 @@ class ApplicationDescriptorServiceImplTest
         assertEquals( "Desc", result.getDescription() );
         assertEquals( "app.desc", result.getDescriptionI18nKey() );
         assertNull( result.getVendorUrl() );
+        assertNull( result.getVersion() );
 
         verify( auditLogSupport ).updateApplicationDescriptor( MYAPP, persisted.get(), null, 0, false );
         // the application stays listed, whoever caches its descriptor is told that it changed

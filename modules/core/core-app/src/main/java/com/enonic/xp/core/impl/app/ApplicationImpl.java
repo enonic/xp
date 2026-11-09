@@ -133,9 +133,9 @@ public final class ApplicationImpl
     }
 
     @Override
-    public boolean isSchema()
+    public boolean isCodeless()
     {
-        return ApplicationHelper.isSchemaApplication( this.bundle );
+        return ApplicationHelper.isCodelessApplication( this.bundle );
     }
 
     @Override

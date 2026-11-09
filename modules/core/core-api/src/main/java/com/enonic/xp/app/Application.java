@@ -31,5 +31,11 @@ public interface Application
 
     boolean isSystem();
 
-    boolean isSchema();
+    /**
+     * Whether the application is codeless: it owns its schema ({@code cms/cms.yaml}) without shipping any code, is always
+     * started and can neither be started nor stopped.
+     *
+     * @return {@code true} for a codeless application
+     */
+    boolean isCodeless();
 }

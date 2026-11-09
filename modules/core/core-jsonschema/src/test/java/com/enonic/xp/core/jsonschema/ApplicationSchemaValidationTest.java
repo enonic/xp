@@ -37,6 +37,12 @@ class ApplicationSchemaValidationTest
     }
 
     @Test
+    void versionIsValid()
+    {
+        assertThat( validateYaml( schema, "fixtures/application/valid-with-version.yml" ) ).isEmpty();
+    }
+
+    @Test
     void nameMustBeValidApplicationName()
     {
         assertThat( validateYaml( schema, "fixtures/application/invalid-name-with-dash.yml" ) ).isNotEmpty();

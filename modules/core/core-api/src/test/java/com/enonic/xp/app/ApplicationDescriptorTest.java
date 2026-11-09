@@ -9,6 +9,7 @@ import com.enonic.xp.icon.Icon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ApplicationDescriptorTest
@@ -29,6 +30,23 @@ class ApplicationDescriptorTest
         assertSame( key, desc.getKey() );
         assertEquals( "My Application", desc.getDescription() );
         assertSame( icon, desc.getIcon() );
+    }
+
+    @Test
+    void version()
+    {
+        final ApplicationKey key = ApplicationKey.from( "app" );
+
+        final ApplicationDescriptor withVersion = ApplicationDescriptor.create().key( key ).version( "1.2.3" ).build();
+        final ApplicationDescriptor sameVersion = ApplicationDescriptor.create().key( key ).version( "1.2.3" ).build();
+        final ApplicationDescriptor withoutVersion = ApplicationDescriptor.create().key( key ).build();
+
+        assertEquals( "1.2.3", withVersion.getVersion() );
+        assertNull( withoutVersion.getVersion() );
+        assertEquals( withVersion, sameVersion );
+        assertEquals( withVersion.hashCode(), sameVersion.hashCode() );
+        assertNotEquals( withVersion, withoutVersion );
+        assertNotEquals( withVersion.hashCode(), withoutVersion.hashCode() );
     }
 
     @Test

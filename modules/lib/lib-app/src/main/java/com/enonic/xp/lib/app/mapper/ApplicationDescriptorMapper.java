@@ -27,6 +27,7 @@ public class ApplicationDescriptorMapper
         gen.value( "vendorName", descriptor.getVendorName() );
         gen.value( "vendorUrl", descriptor.getVendorUrl() );
         gen.value( "url", descriptor.getUrl() );
+        gen.value( "version", descriptor.getVersion() );
         serializeConfig( gen, descriptor.getSchemaConfig() );
         serializeIcon( gen, descriptor.getIcon() );
     }

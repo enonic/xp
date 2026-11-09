@@ -174,7 +174,7 @@ class ApplicationServiceImplTest
         final Application persisted = result.get( 1 );
         assertInstanceOf( PersistedApplication.class, persisted );
         assertEquals( ApplicationKey.from( "app2" ), persisted.getKey() );
-        assertTrue( persisted.isSchema() );
+        assertTrue( persisted.isCodeless() );
         assertTrue( persisted.isStarted() );
         assertFalse( persisted.isSystem() );
         assertNull( persisted.getClassLoader() );
@@ -207,10 +207,40 @@ class ApplicationServiceImplTest
         assertEquals( applicationKey, result.getKey() );
         assertEquals( applicationKey, this.service.getInstalledApplication( applicationKey ).getKey() );
 
-        // a descriptor alone makes no schema application: the cms descriptor does
-        assertFalse( result.isSchema() );
+        // a descriptor alone makes no codeless application: the cms descriptor does
+        assertFalse( result.isCodeless() );
         when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
-        assertTrue( this.service.get( applicationKey ).isSchema() );
+        assertTrue( this.service.get( applicationKey ).isCodeless() );
+    }
+
+    @Test
+    void persisted_only_application_reports_the_version_of_its_descriptor()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn(
+            applicationNode( "app1", persistedNodeData( "kind: \"Application\"\nversion: \"2.1.0\"\n" ) ) );
+
+        assertEquals( Version.parseVersion( "2.1.0" ), this.service.get( applicationKey ).getVersion() );
+    }
+
+    @Test
+    void persisted_only_application_with_unparseable_version_reports_the_empty_version()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn(
+            applicationNode( "app1", persistedNodeData( "kind: \"Application\"\nversion: \"1.0.0-SNAPSHOT\"\n" ) ) );
+
+        assertEquals( Version.emptyVersion, this.service.get( applicationKey ).getVersion() );
+    }
+
+    @Test
+    void persisted_only_application_with_unparseable_descriptor_reports_the_empty_version()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn(
+            applicationNode( "app1", persistedNodeData( "kind: \"Application\"\nunknown: true\n" ) ) );
+
+        assertEquals( Version.emptyVersion, this.service.get( applicationKey ).getVersion() );
     }
 
     @Test
@@ -237,12 +267,12 @@ class ApplicationServiceImplTest
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
             .hasMessageContaining( "without bundle" );
 
-        // ...and a schema application, owning a schema, is always started
+        // ...and a codeless application, owning a schema, is always started
         when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
         assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
 
         verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
         verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
@@ -312,9 +342,14 @@ class ApplicationServiceImplTest
     // the node of an application created through the descriptor service: no bundle
     private static PropertyTree persistedNodeData()
     {
+        return persistedNodeData( "kind: \"Application\"\n" );
+    }
+
+    private static PropertyTree persistedNodeData( final String descriptor )
+    {
         final PropertyTree data = new PropertyTree();
         data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Instant.parse( "2026-10-12T10:00:00Z" ) );
-        data.setString( SchemaNodePropertyNames.DESCRIPTOR, "kind: \"Application\"\n" );
+        data.setString( SchemaNodePropertyNames.DESCRIPTOR, descriptor );
         return data;
     }
 
@@ -454,20 +489,20 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void stopApplication_schemaApp_throws()
+    void stopApplication_codelessApp_throws()
         throws Exception
     {
-        final Bundle bundle = deploy( "schemaApp",
-                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
+        final Bundle bundle = deploy( "codelessApp",
+                                      buildWithoutBnd( newBundle( "codelessApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
 
         applicationRegistry.registerApplication( bundle );
 
         bundle.start();
 
-        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "codelessApp" );
 
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
         verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
@@ -475,17 +510,17 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void startApplication_schemaApp_throws()
+    void startApplication_codelessApp_throws()
     {
-        final Bundle bundle = deploy( "schemaApp",
-                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
+        final Bundle bundle = deploy( "codelessApp",
+                                      buildWithoutBnd( newBundle( "codelessApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
 
         applicationRegistry.registerApplication( bundle );
 
-        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "codelessApp" );
 
         assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
@@ -508,12 +543,12 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void install_stored_schema_application_is_started()
+    void install_stored_codeless_application_is_started()
     {
-        final String bundleName = "schemaApp";
+        final String bundleName = "codelessApp";
         final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
 
-        // stored as stopped: a schema application is started regardless
+        // stored as stopped: a codeless application is started regardless
         final PropertyTree data = bundleNodeData();
         data.setBoolean( ApplicationPropertyNames.STARTED, false );
         final Node node = Node.create()
@@ -532,7 +567,7 @@ class ApplicationServiceImplTest
 
         final Application application = this.service.getInstalledApplication( applicationKey );
         assertNotNull( application );
-        assertTrue( application.isSchema() );
+        assertTrue( application.isCodeless() );
         assertTrue( application.isStarted() );
     }
 

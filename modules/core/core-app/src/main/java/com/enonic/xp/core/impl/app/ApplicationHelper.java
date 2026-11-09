@@ -43,11 +43,11 @@ public final class ApplicationHelper
     }
 
     /**
-     * A schema application owns its schema ({@code cms/cms.yaml}), is installed globally (its schema is persisted in nodes)
+     * A codeless application owns its schema ({@code cms/cms.yaml}), is installed globally (its schema is persisted in nodes)
      * and is not built with gradle: the XP gradle plugin builds the manifest with Bnd, which always stamps it with
-     * {@code Bnd-LastModified} and {@code Tool}, while the manifest of a schema application (built by Enonic CLI) has neither.
+     * {@code Bnd-LastModified} and {@code Tool}, while the manifest of a codeless application (built by Enonic CLI) has neither.
      */
-    static boolean isSchemaApplication( final Bundle bundle )
+    static boolean isCodelessApplication( final Bundle bundle )
     {
         return hasCmsDescriptor( bundle ) && !isLocalApplication( bundle ) && !isBuiltWithBnd( bundle );
     }

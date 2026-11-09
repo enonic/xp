@@ -46,6 +46,7 @@ class GetApplicationDescriptorHandlerTest
                 .titleI18nKey( "app.title.key" )
                 .vendorName(  "Vendor Name" )
                 .vendorUrl( "vendorUrl" )
+                .version( "1.2.3" )
                 .build();
         } );
 

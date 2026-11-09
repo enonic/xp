@@ -50,6 +50,9 @@ final class YmlApplicationDescriptorParser
         @JsonProperty("url")
         abstract ApplicationDescriptor.Builder url( String value );
 
+        @JsonProperty("version")
+        abstract ApplicationDescriptor.Builder version( String value );
+
         @JsonProperty("name")
         @JacksonInject(CURRENT_APPLICATION)
         @JsonDeserialize(using = ApplicationNameDeserializer.class)

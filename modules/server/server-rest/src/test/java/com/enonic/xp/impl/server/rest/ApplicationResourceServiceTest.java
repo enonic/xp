@@ -140,16 +140,16 @@ class ApplicationResourceServiceTest
     }
 
     @Test
-    void start_stop_schema_application_rejected()
+    void start_stop_codeless_application_rejected()
     {
-        final Application schemaApp = mock( Application.class );
-        when( schemaApp.isSchema() ).thenReturn( true );
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "com.enonic.schema" ) ) ).thenReturn( schemaApp );
+        final Application codelessApp = mock( Application.class );
+        when( codelessApp.isCodeless() ).thenReturn( true );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "com.enonic.schema" ) ) ).thenReturn( codelessApp );
 
         final ApplicationParams params = createApplicationParams( "com.enonic.app1", "com.enonic.schema" );
 
         final ApplicationActionResultJson.ActionResult rejected =
-            new ApplicationActionResultJson.ActionResult( "com.enonic.schema", false, ApplicationResourceService.SCHEMA_APPLICATION_MESSAGE );
+            new ApplicationActionResultJson.ActionResult( "com.enonic.schema", false, ApplicationResourceService.CODELESS_APPLICATION_MESSAGE );
 
         assertThat( service.start( params ).getResults() ).containsExactlyInAnyOrder(
             new ApplicationActionResultJson.ActionResult( "com.enonic.app1", true ), rejected );
@@ -164,10 +164,10 @@ class ApplicationResourceServiceTest
     void installed_application_schema_flag()
     {
         final Application application = createApplication();
-        when( application.isSchema() ).thenReturn( true );
+        when( application.isCodeless() ).thenReturn( true );
         when( applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
 
-        assertThat( service.getInstalledApplication( application.getKey() ).getSchema() ).isTrue();
+        assertThat( service.getInstalledApplication( application.getKey() ).getCodeless() ).isTrue();
     }
 
     @Test

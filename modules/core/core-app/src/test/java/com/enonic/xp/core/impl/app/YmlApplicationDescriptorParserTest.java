@@ -13,6 +13,7 @@ import com.enonic.xp.util.GenericValue;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class YmlApplicationDescriptorParserTest
 {
@@ -28,6 +29,7 @@ public class YmlApplicationDescriptorParserTest
         assertNotNull( descriptor );
         assertEquals( MYAPP, descriptor.getKey() );
         assertEquals( "Brief description of the application", descriptor.getDescription() );
+        assertEquals( "1.2.3", descriptor.getVersion() );
 
         final GenericValue schemaConfig = descriptor.getSchemaConfig();
         assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
@@ -40,6 +42,12 @@ public class YmlApplicationDescriptorParserTest
         final ApplicationDescriptor descriptor = parse( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"My app\"\n" );
         assertEquals( MYAPP, descriptor.getKey() );
         assertEquals( "My app", descriptor.getTitle() );
+    }
+
+    @Test
+    void version_is_optional()
+    {
+        assertNull( parse( "kind: \"Application\"\n" ).getVersion() );
     }
 
     @Test

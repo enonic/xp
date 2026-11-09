@@ -31,6 +31,8 @@ public final class ApplicationDescriptor
 
     private final String url;
 
+    private final String version;
+
     private ApplicationDescriptor( final Builder builder )
     {
         this.key = requireNonNull( builder.key, "key cannot be null" );
@@ -42,6 +44,7 @@ public final class ApplicationDescriptor
         this.vendorName = builder.vendorName;
         this.vendorUrl = builder.vendorUrl;
         this.url = builder.url;
+        this.version = builder.version;
         this.schemaConfig = builder.schemaConfig.build();
     }
 
@@ -90,6 +93,17 @@ public final class ApplicationDescriptor
         return url;
     }
 
+    /**
+     * The version declared by the {@code version} field of the application descriptor, or {@code null} when the descriptor
+     * declares none.
+     *
+     * @return the declared version, or {@code null}
+     */
+    public String getVersion()
+    {
+        return version;
+    }
+
     public GenericValue getSchemaConfig()
     {
         return schemaConfig;
@@ -112,13 +126,15 @@ public final class ApplicationDescriptor
         return key.equals( that.key ) && Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
             Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) && Objects.equals( title, that.title ) &&
             Objects.equals( titleI18nKey, that.titleI18nKey ) && Objects.equals( vendorName, that.vendorName ) &&
-            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && schemaConfig.equals( that.schemaConfig );
+            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && Objects.equals( version, that.version ) &&
+            schemaConfig.equals( that.schemaConfig );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( key, description, icon, title, titleI18nKey, vendorName, vendorUrl, url, schemaConfig );
+        return Objects.hash( key, description, descriptionI18nKey, icon, title, titleI18nKey, vendorName, vendorUrl, url, version,
+                             schemaConfig );
     }
 
     public static Builder create()
@@ -145,6 +161,8 @@ public final class ApplicationDescriptor
         private String vendorUrl;
 
         private String url;
+
+        private String version;
 
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
@@ -217,6 +235,18 @@ public final class ApplicationDescriptor
         public Builder url( final String url )
         {
             this.url = url;
+            return this;
+        }
+
+        /**
+         * Sets the version declared by the descriptor.
+         *
+         * @param version the declared version, or {@code null} for none
+         * @return this builder
+         */
+        public Builder version( final String version )
+        {
+            this.version = version;
             return this;
         }
 

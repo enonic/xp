@@ -572,10 +572,10 @@ class ApplicationServiceTest
         assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
 
         // without a bundle the application is still an application: listed, always started, nothing to start or stop; it is no
-        // schema application until it owns a schema, which takes the cms descriptor
+        // codeless application until it owns a schema, which takes the cms descriptor
         final Application nodeOnly = applicationService.get( appKey );
         assertNotNull( nodeOnly );
-        assertFalse( nodeOnly.isSchema() );
+        assertFalse( nodeOnly.isCodeless() );
         assertTrue( nodeOnly.isStarted() );
         assertNull( nodeOnly.getClassLoader() );
         assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );

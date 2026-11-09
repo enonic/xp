@@ -16,7 +16,7 @@
       "type": "string",
       "pattern": "^\\w+(?:\\.\\w+)*$",
       "maxLength": 63,
-      "description": "Application name, e.g. com.example.myapp. Required only for Schema Applications."
+      "description": "Application name, e.g. com.example.myapp. Required only for Codeless Applications."
     },
     "title": {
       "$ref": "#/$defs/localizedTextDef"
@@ -32,6 +32,10 @@
     },
     "url": {
       "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "description": "Application version, e.g. 1.0.0"
     },
     "config": {
       "$ref": "#/$defs/genericValueDef"

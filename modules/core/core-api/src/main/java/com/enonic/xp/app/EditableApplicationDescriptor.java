@@ -32,6 +32,8 @@ public final class EditableApplicationDescriptor
 
     public String url;
 
+    public String version;
+
     public GenericValue schemaConfig;
 
     public Icon icon;
@@ -46,6 +48,7 @@ public final class EditableApplicationDescriptor
         this.vendorName = source.getVendorName();
         this.vendorUrl = source.getVendorUrl();
         this.url = source.getUrl();
+        this.version = source.getVersion();
         this.schemaConfig = source.getSchemaConfig();
         this.icon = source.getIcon();
     }
@@ -61,7 +64,8 @@ public final class EditableApplicationDescriptor
             .description( new LocalizedText( description, descriptionI18nKey ) )
             .vendorName( vendorName )
             .vendorUrl( vendorUrl )
-            .url( url );
+            .url( url )
+            .version( version );
         if ( schemaConfig != null )
         {
             builder.schemaConfig( schemaConfig );

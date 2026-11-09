@@ -76,6 +76,7 @@ public final class CreateOrUpdateApplicationDescriptorHandler
         edit( map, "vendorName", val -> target.vendorName = val.orElse( null ) );
         edit( map, "vendorUrl", val -> target.vendorUrl = val.orElse( null ) );
         edit( map, "url", val -> target.url = val.orElse( null ) );
+        edit( map, "version", val -> target.version = val.orElse( null ) );
 
         if ( map.containsKey( "config" ) )
         {
