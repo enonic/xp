@@ -24,6 +24,7 @@ import com.enonic.xp.web.WebResponse;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -337,13 +338,19 @@ class ResponseSerializerTest
     }
 
     @Test
-    void serializeNotModifiedWithoutContentType()
+    void serializeNotModifiedWithoutContent()
         throws Exception
     {
         final WebRequest req = new WebRequest();
         req.setMethod( HttpMethod.GET );
 
-        final WebResponse resp = WebResponse.create().status( HttpStatus.NOT_MODIFIED ).header( "ETag", "\"abc\"" ).build();
+        final WebResponse resp = WebResponse.create()
+            .status( HttpStatus.NOT_MODIFIED )
+            .contentType( MediaType.PNG )
+            .header( "ETag", "\"abc\"" )
+            .cookie( new Cookie( "cookie-name", "cookie-value" ) )
+            .body( "String body" )
+            .build();
 
         final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
 
@@ -351,7 +358,9 @@ class ResponseSerializerTest
 
         verify( httpResponse ).setStatus( 304 );
         verify( httpResponse ).setHeader( "etag", "\"abc\"" );
+        verify( httpResponse ).addCookie( any() );
         verify( httpResponse, never() ).setContentType( any() );
+        verify( httpResponse, never() ).setContentLengthLong( anyLong() );
         verify( httpResponse, never() ).getOutputStream();
     }
 }

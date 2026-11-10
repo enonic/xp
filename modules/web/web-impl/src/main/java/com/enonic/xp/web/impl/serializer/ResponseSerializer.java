@@ -40,8 +40,10 @@ public final class ResponseSerializer
             return;
         }
 
+        final boolean hasContent = this.webResponse.getStatus() != HttpStatus.NOT_MODIFIED;
+
         response.setStatus( this.webResponse.getStatus().value() );
-        if ( this.webResponse.getStatus() != HttpStatus.NOT_MODIFIED )
+        if ( hasContent )
         {
             response.setContentType( this.webResponse.getContentType().toString() );
         }
@@ -49,7 +51,10 @@ public final class ResponseSerializer
         this.webResponse.getHeaders().forEach( response::setHeader );
         serializeContentSecurityPolicy( response );
         this.webResponse.getCookies().forEach( response::addCookie );
-        serializeBody( response, this.webResponse.getBody() );
+        if ( hasContent )
+        {
+            serializeBody( response, this.webResponse.getBody() );
+        }
     }
 
     /**
