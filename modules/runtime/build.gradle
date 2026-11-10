@@ -26,6 +26,9 @@ ext {
 }
 
 addBundle( libs.jakarta.activation, 4 )
+repackBundle( libs.angus.activation, 4 ) {
+    fragmentHost = "jakarta.activation-api"
+}
 addBundle( libs.jakarta.mail, 4 )
 addBundle( libs.jakarta.annotation, 4 )
 addBundle( libs.jakarta.validation, 4 )
