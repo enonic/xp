@@ -527,4 +527,15 @@ class ImageHandlerTest
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Not a valid request", ex.getMessage() );
     }
+
+    @Test
+    void noEtagInLegacyMode()
+        throws Exception
+    {
+        setupContent();
+
+        final WebResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "ETag" ) );
+    }
 }

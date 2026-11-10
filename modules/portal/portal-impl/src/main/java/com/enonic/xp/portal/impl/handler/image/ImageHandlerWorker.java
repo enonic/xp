@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.image;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -21,6 +22,7 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
+import com.enonic.xp.portal.impl.handler.attachment.EntityTag;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
@@ -78,7 +80,8 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body )
+    protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body,
+                                         final Optional<EntityTag> entityTag )
     {
         portalResponse.contentType( contentType );
         portalResponse.body( body );
@@ -101,9 +104,7 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
-                                    final MediaType contentType )
-        throws IOException
+    protected BinaryTransform prepareTransform( final Media content, final BinaryReference binaryReference, final MediaType contentType )
     {
         final PropertySet mediaData = content.getData().getSet( ContentPropertyNames.MEDIA );
         final ImageOrientation imageOrientation = requireNonNullElse(
@@ -136,6 +137,19 @@ public final class ImageHandlerWorker
                 .mimeType( contentType.toString() )
                 .build();
 
+            return binary -> readImage( readImageParams );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.badRequest( "Invalid parameters", e );
+        }
+    }
+
+    private ByteSource readImage( final ReadImageParams readImageParams )
+        throws IOException
+    {
+        try
+        {
             return this.imageService.readImage( readImageParams );
         }
         catch ( IllegalArgumentException e )

@@ -39,13 +39,25 @@ public final class ResponseSerializer
             return;
         }
 
+        final boolean hasContent = switch ( this.webResponse.getStatus() )
+        {
+            case NO_CONTENT, NOT_MODIFIED -> false;
+            default -> true;
+        };
+
         response.setStatus( this.webResponse.getStatus().value() );
-        response.setContentType( this.webResponse.getContentType().toString() );
+        if ( hasContent )
+        {
+            response.setContentType( this.webResponse.getContentType().toString() );
+        }
 
         this.webResponse.getHeaders().forEach( response::setHeader );
         serializeContentSecurityPolicy( response );
         this.webResponse.getCookies().forEach( response::addCookie );
-        serializeBody( response, this.webResponse.getBody() );
+        if ( hasContent )
+        {
+            serializeBody( response, this.webResponse.getBody() );
+        }
     }
 
     /**
