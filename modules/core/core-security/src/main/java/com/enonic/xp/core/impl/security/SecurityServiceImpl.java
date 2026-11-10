@@ -108,7 +108,8 @@ public final class SecurityServiceImpl
 
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
 
-    private static final Set<PrincipalKey> NON_MODIFIABLE_USERS = Set.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() );
+    private static final Set<NodePath> NON_MODIFIABLE_USER_PATHS =
+        Set.of( PrincipalKey.ofSuperUser().toPath(), PrincipalKey.ofAnonymous().toPath() );
 
     static final String ID_PROVIDER_LOCKS = "com.enonic.xp.security.lock.idprovider";
 
@@ -519,7 +520,7 @@ public final class SecurityServiceImpl
 
     private static void requireModifiable( final PrincipalKey key )
     {
-        if ( NON_MODIFIABLE_USERS.contains( key ) )
+        if ( NON_MODIFIABLE_USER_PATHS.contains( key.toPath() ) )
         {
             throw new IllegalArgumentException( String.format( "[%s] user cannot be modified", key ) );
         }

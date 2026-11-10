@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -729,6 +730,39 @@ class OAuthHandlerTest
             AuthenticationInfo.create().user( User.create().key( ALICE ).login( "alice" ).build() ).principals( RoleKeys.AUTHENTICATED ).build() );
         assertThat( handler.handle( refresh, IDP, "token", UNRESTRICTED ).getStatus() ).as( "the same refresh token, once the user may sign in" )
             .isEqualTo( HttpStatus.OK );
+    }
+
+    @Test
+    void a_refresh_token_once_redeemed_is_answered_with_its_successor_whatever_becomes_of_the_user()
+        throws Exception
+    {
+        final Grant grant = Grant.create()
+            .id( "grant-1" )
+            .subject( ALICE )
+            .clientId( "cli" )
+            .scope( Set.of() )
+            .audience( Set.of( "api" ) )
+            .restriction( RoleRestriction.none() )
+            .createdAt( now )
+            .rotatedAt( now )
+            .expiresAt( now.plusSeconds( 3600 ) )
+            .build();
+        when( grantService.lookup( any() ) ).thenReturn( Optional.of( grant ) );
+        final AuthenticationInfo alice =
+            AuthenticationInfo.create().user( User.create().key( ALICE ).login( "alice" ).build() ).principals( RoleKeys.AUTHENTICATED ).build();
+        final AtomicBoolean disabled = new AtomicBoolean();
+        when( securityService.authenticate( any() ) ).thenAnswer( i -> disabled.get() ? AuthenticationInfo.unAuthenticated() : alice );
+        when( grantService.redeem( any() ) ).thenAnswer( i -> {
+            disabled.set( true );
+            return Optional.of( new GrantWithRefreshToken( grant, "refresh-2" ) );
+        } );
+
+        final PortalResponse answered = handler.handle(
+            request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) ),
+            IDP, "token", UNRESTRICTED );
+
+        assertThat( answered.getStatus() ).isEqualTo( HttpStatus.OK );
+        assertThat( body( answered ).get( "refresh_token" ).asText() ).isEqualTo( "refresh-2" );
     }
 
     @Test

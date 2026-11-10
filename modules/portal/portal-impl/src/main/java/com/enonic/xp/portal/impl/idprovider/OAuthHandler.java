@@ -936,6 +936,10 @@ public class OAuthHandler
         final Optional<Grant> found = grantService.lookup( params );
         if ( found.isPresent() )
         {
+            if ( !maySignIn( found.get().getSubject() ) )
+            {
+                return userRefused();
+            }
             final PortalResponse refusedBefore = refusedAtRefresh( request, client.orElse( null ), found.get() );
             if ( refusedBefore != null )
             {
@@ -957,18 +961,13 @@ public class OAuthHandler
     }
 
     /**
-     * Why a refresh is refused for the grant as it is: its user may not sign in, which leaves the
-     * grant as it was, beyond the client's lists, which ends the grant, or asking for a resource
-     * the grant does not hold. Checked before the refresh token is redeemed, so a refusal leaves it
-     * as it was, and again on the grant as redeemed, since the grant may have been changed in
-     * between.
+     * Why a refresh is refused for the grant as it is: beyond the client's lists, which ends the
+     * grant, or asking for a resource the grant does not hold. Checked before the refresh token is
+     * redeemed, so a refusal leaves it as it was, and again on the grant as redeemed, since the
+     * grant may have been changed in between.
      */
     private @Nullable PortalResponse refusedAtRefresh( final PortalRequest request, final @Nullable Client client, final Grant grant )
     {
-        if ( !maySignIn( grant.getSubject() ) )
-        {
-            return userRefused();
-        }
         final PortalResponse beyond = client == null ? null : beyondClient( client, grant.getScope(), grant.getAudience() );
         if ( beyond != null )
         {

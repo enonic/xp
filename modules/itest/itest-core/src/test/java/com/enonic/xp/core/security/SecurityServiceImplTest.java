@@ -822,7 +822,10 @@ class SecurityServiceImplTest
     void testSystemUsersCannotBeModified()
     {
         runAsAdmin( () -> {
-            for ( PrincipalKey userKey : List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() ) )
+            final List<PrincipalKey> userKeys =
+                List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous(), PrincipalKey.from( "user:system:SU" ),
+                         PrincipalKey.from( "user:System:Anonymous" ) );
+            for ( PrincipalKey userKey : userKeys )
             {
                 final UpdateUserParams disable = UpdateUserParams.create().userKey( userKey ).disabled( true ).build();
                 assertThatThrownBy( () -> securityService.updateUser( disable ) ).isInstanceOf( IllegalArgumentException.class )
@@ -835,7 +838,10 @@ class SecurityServiceImplTest
                 assertThatThrownBy( () -> securityService.setPassword( userKey, "password" ) ).isInstanceOf(
                     IllegalArgumentException.class ).hasMessageContaining( "cannot be modified" );
                 assertThatThrownBy( () -> securityService.setPassword( userKey, null ) ).isInstanceOf( IllegalArgumentException.class );
+            }
 
+            for ( PrincipalKey userKey : List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() ) )
+            {
                 final User user = securityService.getUser( userKey ).orElseThrow();
                 assertNull( user.getAuthenticationHash() );
                 assertFalse( user.isDisabled() );
