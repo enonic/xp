@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InOrder;
 
 import com.google.common.io.Resources;
@@ -337,15 +339,16 @@ class ResponseSerializerTest
         return httpResponse;
     }
 
-    @Test
-    void serializeNotModifiedWithoutContent()
+    @ParameterizedTest
+    @EnumSource(value = HttpStatus.class, names = {"NO_CONTENT", "NOT_MODIFIED"})
+    void serializeStatusWithoutContent( final HttpStatus status )
         throws Exception
     {
         final WebRequest req = new WebRequest();
         req.setMethod( HttpMethod.GET );
 
         final WebResponse resp = WebResponse.create()
-            .status( HttpStatus.NOT_MODIFIED )
+            .status( status )
             .contentType( MediaType.PNG )
             .header( "ETag", "\"abc\"" )
             .cookie( new Cookie( "cookie-name", "cookie-value" ) )
@@ -356,7 +359,7 @@ class ResponseSerializerTest
 
         new ResponseSerializer( req, resp ).serialize( httpResponse );
 
-        verify( httpResponse ).setStatus( 304 );
+        verify( httpResponse ).setStatus( status.value() );
         verify( httpResponse ).setHeader( "etag", "\"abc\"" );
         verify( httpResponse ).addCookie( any() );
         verify( httpResponse, never() ).setContentType( any() );

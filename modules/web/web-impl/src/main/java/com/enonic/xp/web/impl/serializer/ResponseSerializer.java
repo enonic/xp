@@ -13,7 +13,6 @@ import com.google.common.io.CharSource;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.csp.ContentSecurityPolicy;
@@ -40,7 +39,11 @@ public final class ResponseSerializer
             return;
         }
 
-        final boolean hasContent = this.webResponse.getStatus() != HttpStatus.NOT_MODIFIED;
+        final boolean hasContent = switch ( this.webResponse.getStatus() )
+        {
+            case NO_CONTENT, NOT_MODIFIED -> false;
+            default -> true;
+        };
 
         response.setStatus( this.webResponse.getStatus().value() );
         if ( hasContent )
