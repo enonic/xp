@@ -16,6 +16,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
 
 public final class HandlerHelper
 {
@@ -66,6 +67,11 @@ public final class HandlerHelper
     public static boolean isPreflight( final WebRequest webRequest )
     {
         return webRequest.getMethod() == HttpMethod.OPTIONS;
+    }
+
+    public static WebResponse defaultOptionsIfNotHandled( final WebResponse response )
+    {
+        return response.getStatus() == HttpStatus.METHOD_NOT_ALLOWED ? handleDefaultOptions( HttpMethod.standard() ) : response;
     }
 
     public static PortalResponse handleDefaultOptions( final EnumSet<HttpMethod> methodsAllowed )

@@ -143,9 +143,19 @@ public class SlashApiHandler
         }
         verifyRequestMounted( apiDescriptor, portalRequest, mountContext );
 
-        final Supplier<WebResponse> handler = dynamicApiHandler != null
-            ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
-            : () -> executeController( portalRequest, descriptorKey );
+        final Supplier<WebResponse> handler;
+        if ( HandlerHelper.isPreflight( portalRequest ) )
+        {
+            handler = dynamicApiHandler != null
+                ? () -> HandlerHelper.defaultOptionsIfNotHandled( dynamicApiHandler.handlePreflight( portalRequest ) )
+                : () -> HandlerHelper.defaultOptionsIfNotHandled( getScript( descriptorKey ).executePreflight( portalRequest ) );
+        }
+        else
+        {
+            handler = dynamicApiHandler != null
+                ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
+                : () -> executeController( portalRequest, descriptorKey );
+        }
 
         return execute( portalRequest, descriptorKey, handler );
     }
@@ -281,12 +291,7 @@ public class SlashApiHandler
         PortalRequestAccessor.set( portalRequest );
         try
         {
-            final WebResponse response = supplier.get();
-            if ( HandlerHelper.isPreflight( portalRequest ) && response.getStatus() == HttpStatus.METHOD_NOT_ALLOWED )
-            {
-                return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
-            }
-            return response;
+            return supplier.get();
         }
         finally
         {

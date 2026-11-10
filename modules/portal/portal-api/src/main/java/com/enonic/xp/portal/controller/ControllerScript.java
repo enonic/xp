@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
@@ -14,6 +15,17 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
 public interface ControllerScript
 {
     PortalResponse execute( PortalRequest portalRequest );
+
+    /**
+     * Executes a CORS preflight ({@code OPTIONS}) request that has not been authorized.
+     * Only an explicit {@code OPTIONS}/{@code options} export is invoked. The request never falls through
+     * to the {@code all} export, which may assume that the caller has already passed the access check.
+     * Responds with {@link HttpStatus#METHOD_NOT_ALLOWED} when the controller has no such export.
+     */
+    default PortalResponse executePreflight( PortalRequest portalRequest )
+    {
+        return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
+    }
 
     default void onSocketEvent( WebSocketEvent event )
     {

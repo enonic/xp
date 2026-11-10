@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -118,7 +119,7 @@ class AdminExtensionApiHandlerTest
     }
 
     @Test
-    void testOptionsOfProtectedExtensionReachesTheController()
+    void testOptionsOfProtectedExtensionReachesTheOptionsExport()
     {
         // a CORS preflight is sent without credentials and must not be rejected by the access check
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
@@ -131,7 +132,7 @@ class AdminExtensionApiHandlerTest
         when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
-        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+        when( controllerScript.executePreflight( any( PortalRequest.class ) ) ).thenReturn(
             PortalResponse.create().status( HttpStatus.NO_CONTENT ).build() );
         when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
 
@@ -141,7 +142,8 @@ class AdminExtensionApiHandlerTest
 
         final WebResponse response = this.handler.handle( webRequest );
         assertEquals( HttpStatus.NO_CONTENT, response.getStatus() );
-        verify( controllerScript ).execute( any( PortalRequest.class ) );
+        verify( controllerScript ).executePreflight( any( PortalRequest.class ) );
+        verify( controllerScript, never() ).execute( any( PortalRequest.class ) );
 
         // the actual request is still authorized
         webRequest.setMethod( HttpMethod.POST );

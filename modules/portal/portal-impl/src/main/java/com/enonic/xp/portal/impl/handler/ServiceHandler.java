@@ -75,6 +75,11 @@ public class ServiceHandler
         final ControllerScript controllerScript =
             controllerScriptFactory.fromScript( ResourceKey.from( applicationKey, "services/" + name + "/" + name + ".js" ) );
 
+        if ( HandlerHelper.isPreflight( portalRequest ) )
+        {
+            return HandlerHelper.defaultOptionsIfNotHandled( controllerScript.executePreflight( portalRequest ) );
+        }
+
         // bound execution: a websocket opened by this request stays on the exact context that
         // executed it
         final ControllerScript[] boundRef = new ControllerScript[1];
@@ -82,11 +87,6 @@ public class ServiceHandler
             boundRef[0] = bound;
             return bound.execute( portalRequest );
         } );
-
-        if ( HandlerHelper.isPreflight( portalRequest ) && portalResponse.getStatus() == HttpStatus.METHOD_NOT_ALLOWED )
-        {
-            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
-        }
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = portalRequest.getWebSocketContext();
@@ -126,7 +126,7 @@ public class ServiceHandler
             throw WebException.notFound( String.format( "Service [%s] not found", descriptorKey ) );
         }
 
-        //Checks if the access to ServiceDescriptor is allowed (CORS preflights are sent without credentials and are let through)
+        //Checks if the access to ServiceDescriptor is allowed
         if ( !HandlerHelper.isPreflight( portalRequest ) )
         {
             final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();

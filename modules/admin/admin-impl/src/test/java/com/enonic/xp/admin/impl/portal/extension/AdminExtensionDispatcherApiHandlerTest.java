@@ -11,6 +11,7 @@ import com.enonic.xp.web.WebResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class AdminExtensionDispatcherApiHandlerTest
@@ -58,5 +59,32 @@ class AdminExtensionDispatcherApiHandlerTest
 
         when( extensionApiHandler.handle( webRequest4 ) ).thenReturn( response );
         assertEquals( response, handler.handle( webRequest4 ) );
+    }
+
+    @Test
+    void testPreflightIsDispatchedToExtensionOnly()
+    {
+        final GetListAllowedAdminExtensionsHandler listExtensionsHandler = mock( GetListAllowedAdminExtensionsHandler.class );
+        final GetAdminExtensionIconHandler getExtensionIconHandler = mock( GetAdminExtensionIconHandler.class );
+        final AdminExtensionApiHandler extensionApiHandler = mock( AdminExtensionApiHandler.class );
+
+        final AdminExtensionDispatcherApiHandler handler =
+            new AdminExtensionDispatcherApiHandler( listExtensionsHandler, getExtensionIconHandler, extensionApiHandler );
+
+        final WebRequest rootRequest = new WebRequest();
+        rootRequest.setMethod( HttpMethod.OPTIONS );
+        rootRequest.setRawPath( "/path/_/admin:extension" );
+
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, handler.handlePreflight( rootRequest ).getStatus() );
+        verifyNoInteractions( listExtensionsHandler, getExtensionIconHandler, extensionApiHandler );
+
+        final WebRequest extensionRequest = new WebRequest();
+        extensionRequest.setMethod( HttpMethod.OPTIONS );
+        extensionRequest.setRawPath( "/path/_/admin:extension/myapp:mywidget" );
+
+        final WebResponse response = mock( WebResponse.class );
+        when( extensionApiHandler.handle( extensionRequest ) ).thenReturn( response );
+
+        assertEquals( response, handler.handlePreflight( extensionRequest ) );
     }
 }

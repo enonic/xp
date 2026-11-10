@@ -16,6 +16,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -66,7 +67,8 @@ public class AdminExtensionApiHandler
             throw WebException.notFound( String.format( "Extension [%s] not found", descriptorKey ) );
         }
 
-        if ( webRequest.getMethod() != HttpMethod.OPTIONS )
+        final boolean preflight = webRequest.getMethod() == HttpMethod.OPTIONS;
+        if ( !preflight )
         {
             final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
             if ( !descriptor.isAccessAllowed( principals ) )
@@ -83,7 +85,12 @@ public class AdminExtensionApiHandler
                                                      "admin/extensions/" + descriptorKey.getName() + "/" + descriptorKey.getName() +
                                                          ".js" );
 
-        return controllerScriptFactory.fromScript( script ).execute( portalRequest );
+        final ControllerScript controllerScript = controllerScriptFactory.fromScript( script );
+        if ( preflight )
+        {
+            return controllerScript.executePreflight( portalRequest );
+        }
+        return controllerScript.execute( portalRequest );
     }
 
     private void verifyMounts( final AdminExtensionDescriptor descriptor, final WebRequest webRequest )

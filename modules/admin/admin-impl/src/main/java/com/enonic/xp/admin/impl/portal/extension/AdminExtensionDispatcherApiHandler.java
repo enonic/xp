@@ -65,4 +65,16 @@ public class AdminExtensionDispatcherApiHandler
             return extensionApiHandler.handle( webRequest );
         }
     }
+
+    @Override
+    public WebResponse handlePreflight( final WebRequest webRequest )
+    {
+        requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
+
+        if ( WebHandlerHelper.findApiPath( webRequest, EXTENSIONS_API ).isEmpty() )
+        {
+            return UniversalApiHandler.super.handlePreflight( webRequest );
+        }
+        return extensionApiHandler.handle( webRequest );
+    }
 }

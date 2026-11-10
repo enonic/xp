@@ -57,6 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -104,7 +105,7 @@ class ServiceHandlerTest
     }
 
     @Test
-    void testOptionsDefaultsWhenTheControllerDoesNotHandleIt()
+    void testOptionsDefaultsWhenTheControllerHasNoOptionsExport()
         throws Exception
     {
         this.request.setMethod( HttpMethod.OPTIONS );
@@ -113,17 +114,18 @@ class ServiceHandlerTest
         this.request.setRawPath( "/_/service/demo/test" );
 
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
+        when( this.controllerScript.executePreflight( Mockito.any() ) ).thenReturn( portalResponse );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
-        verify( this.controllerScript ).execute( this.request );
+        verify( this.controllerScript ).executePreflight( this.request );
+        verify( this.controllerScript, never() ).execute( Mockito.any() );
     }
 
     @Test
-    void testOptionsOfProtectedServiceReachesTheController()
+    void testOptionsOfProtectedServiceReachesTheOptionsExport()
         throws Exception
     {
         // a CORS preflight is sent without credentials and must not be rejected by the access check
@@ -139,13 +141,14 @@ class ServiceHandlerTest
         this.request.setApplicationKey( ApplicationKey.from( "demo" ) );
         this.request.setRawPath( "/_/service/demo/test" );
 
-        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn(
+        when( this.controllerScript.executePreflight( Mockito.any() ) ).thenReturn(
             PortalResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
 
         final WebResponse res = this.handler.handle( this.request );
         assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
         assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
-        verify( this.controllerScript ).execute( this.request );
+        verify( this.controllerScript ).executePreflight( this.request );
+        verify( this.controllerScript, never() ).execute( Mockito.any() );
 
         // the actual request is still authorized
         this.request.setMethod( HttpMethod.POST );
