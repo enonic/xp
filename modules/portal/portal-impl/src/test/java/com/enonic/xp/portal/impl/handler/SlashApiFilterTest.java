@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +18,6 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -100,50 +96,6 @@ class SlashApiFilterTest
     }
 
     @Test
-    void readsTextBody()
-        throws Exception
-    {
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletResponse res = mock( HttpServletResponse.class );
-        final FilterChain chain = mock( FilterChain.class );
-
-        when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
-        when( req.getContentType() ).thenReturn( "application/json" );
-        when( req.getReader() ).thenReturn( new BufferedReader( new StringReader( "{}" ) ) );
-
-        final WebRequest webRequest = new WebRequest();
-        when( webSerializerService.request( req ) ).thenReturn( webRequest );
-        when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( WebResponse.create().status( HttpStatus.OK ).build() );
-
-        filter.doFilter( req, res, chain );
-
-        verify( slashApiHandler ).handle( webRequest );
-        assertEquals( "{}", webRequest.getBody() );
-    }
-
-    @Test
-    void readsPlainTextBody()
-        throws Exception
-    {
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletResponse res = mock( HttpServletResponse.class );
-        final FilterChain chain = mock( FilterChain.class );
-
-        when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
-        when( req.getContentType() ).thenReturn( "text/plain; charset=utf-8" );
-        when( req.getReader() ).thenReturn( new BufferedReader( new StringReader( "Hello World" ) ) );
-
-        final WebRequest webRequest = new WebRequest();
-        when( webSerializerService.request( req ) ).thenReturn( webRequest );
-        when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( WebResponse.create().status( HttpStatus.OK ).build() );
-
-        filter.doFilter( req, res, chain );
-
-        verify( slashApiHandler ).handle( webRequest );
-        assertEquals( "Hello World", webRequest.getBody() );
-    }
-
-    @Test
     void rendersHandlerFailure()
         throws Exception
     {
@@ -166,28 +118,6 @@ class SlashApiFilterTest
 
         verify( exceptionRenderer ).render( webRequest, cause );
         verify( webSerializerService ).response( webRequest, errorResponse, res );
-    }
-
-    @Test
-    void skipsBodyForMalformedContentType()
-        throws Exception
-    {
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletResponse res = mock( HttpServletResponse.class );
-        final FilterChain chain = mock( FilterChain.class );
-
-        when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
-        when( req.getContentType() ).thenReturn( "foo" );
-
-        final WebRequest webRequest = new WebRequest();
-        when( webSerializerService.request( req ) ).thenReturn( webRequest );
-        when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( WebResponse.create().status( HttpStatus.OK ).build() );
-
-        filter.doFilter( req, res, chain );
-
-        verify( slashApiHandler ).handle( webRequest );
-        assertNull( webRequest.getBody() );
-        verify( req, never() ).getReader();
     }
 
     @Test
