@@ -46,6 +46,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.security.token.Client;
@@ -532,6 +533,10 @@ public class OAuthHandler
         {
             return beyondGrant( issued.audience() );
         }
+        if ( !maySignIn( issued.subject() ) )
+        {
+            return userRefused();
+        }
         final GrantWithRefreshToken grant = grantService.create( CreateGrantParams.create()
                                                                      .subject( issued.subject() )
                                                                      .clientId( issued.clientId() )
@@ -891,6 +896,10 @@ public class OAuthHandler
                 {
                     yield beyondGrant( pending.audience() );
                 }
+                if ( !maySignIn( pending.subject() ) )
+                {
+                    yield userRefused();
+                }
                 final GrantWithRefreshToken grant = grantService.create( CreateGrantParams.create()
                                                                              .subject( pending.subject() )
                                                                              .clientId( pending.clientId() )
@@ -948,13 +957,18 @@ public class OAuthHandler
     }
 
     /**
-     * Why a refresh is refused for the grant as it is: beyond the client's lists, which ends the
-     * grant, or asking for a resource the grant does not hold. Checked before the refresh token is
-     * redeemed, so a refusal leaves it as it was, and again on the grant as redeemed, since the
-     * grant may have been changed in between.
+     * Why a refresh is refused for the grant as it is: its user may not sign in, which leaves the
+     * grant as it was, beyond the client's lists, which ends the grant, or asking for a resource
+     * the grant does not hold. Checked before the refresh token is redeemed, so a refusal leaves it
+     * as it was, and again on the grant as redeemed, since the grant may have been changed in
+     * between.
      */
     private @Nullable PortalResponse refusedAtRefresh( final PortalRequest request, final @Nullable Client client, final Grant grant )
     {
+        if ( !maySignIn( grant.getSubject() ) )
+        {
+            return userRefused();
+        }
         final PortalResponse beyond = client == null ? null : beyondClient( client, grant.getScope(), grant.getAudience() );
         if ( beyond != null )
         {
@@ -962,6 +976,16 @@ public class OAuthHandler
             return beyond;
         }
         return tokenAudience( request, grant.getAudience() ) == null ? beyondGrant( grant.getAudience() ) : null;
+    }
+
+    private boolean maySignIn( final PrincipalKey subject )
+    {
+        return securityService.authenticate( new VerifiedUserKeyAuthToken( subject ) ).isAuthenticated();
+    }
+
+    private static PortalResponse userRefused()
+    {
+        return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "The user is not allowed to sign in" );
     }
 
     /**
