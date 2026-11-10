@@ -450,7 +450,7 @@ interface ModifyUserHandler {
  * @param {string} params.key Principal key of the user to modify.
  * @param {function} params.editor User editor function to apply to user. It may change
  * `displayName`, `email` and `disabled`; a disabled user cannot log in.
- * The super user and the anonymous user cannot be modified.
+ * The super user and the anonymous user cannot be modified; their profile can, with `modifyProfile`.
  * @returns {User | null} The updated user, or null if user not found.
  */
 export function modifyUser(params: ModifyUserParams): User | null {

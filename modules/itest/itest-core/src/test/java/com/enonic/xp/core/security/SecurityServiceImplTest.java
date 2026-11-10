@@ -851,6 +851,32 @@ class SecurityServiceImplTest
     }
 
     @Test
+    void testSystemUserProfileCanBeModified()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey su = PrincipalKey.ofSuperUser();
+            final String displayName = securityService.getUser( su ).orElseThrow().getDisplayName();
+
+            final User updated = securityService.updateUser(
+                UpdateUserParams.create().userKey( su ).editor( edit -> edit.profile.setString( "dismissed", "banner" ) ).build() );
+
+            assertEquals( "banner", updated.getProfile().getString( "dismissed" ) );
+            assertEquals( "banner", securityService.getUser( su ).orElseThrow().getProfile().getString( "dismissed" ) );
+
+            final UpdateUserParams profileAndName = UpdateUserParams.create().userKey( su ).editor( edit -> {
+                edit.profile.setString( "dismissed", "again" );
+                edit.displayName = "Renamed";
+            } ).build();
+            assertThatThrownBy( () -> securityService.updateUser( profileAndName ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "cannot be modified" );
+
+            final User unchanged = securityService.getUser( su ).orElseThrow();
+            assertEquals( displayName, unchanged.getDisplayName() );
+            assertEquals( "banner", unchanged.getProfile().getString( "dismissed" ) );
+        } );
+    }
+
+    @Test
     void testAuthenticateDisabledUser()
     {
         runAsAdmin( () -> {

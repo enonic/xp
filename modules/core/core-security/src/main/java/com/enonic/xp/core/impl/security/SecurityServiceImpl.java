@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -510,7 +511,6 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        requireModifiable( updateUserParams.getKey() );
         if ( updateUserParams.getEmail() == null && updateUserParams.getEditor() == null )
         {
             return doUpdateUser( updateUserParams );
@@ -526,6 +526,13 @@ public final class SecurityServiceImpl
         }
     }
 
+    private static boolean sameExceptProfile( final User current, final User changed )
+    {
+        return current.getKey().equals( changed.getKey() ) && Objects.equals( current.getDisplayName(), changed.getDisplayName() ) &&
+            Objects.equals( current.getEmail(), changed.getEmail() ) && Objects.equals( current.getLogin(), changed.getLogin() ) &&
+            current.isDisabled() == changed.isDisabled();
+    }
+
     private User doUpdateUser( final UpdateUserParams updateUserParams )
     {
         return callWithContext( () -> {
@@ -538,6 +545,10 @@ public final class SecurityServiceImpl
             final Node updatedNode =
                 nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode, current -> {
                     final User changed = updateUserParams.update( current );
+                    if ( !sameExceptProfile( current, changed ) )
+                    {
+                        requireModifiable( key );
+                    }
                     if ( changed.getEmail() != null && !changed.getEmail().equals( current.getEmail() ) )
                     {
                         duplicateEmailValidation( key, changed.getEmail() );
