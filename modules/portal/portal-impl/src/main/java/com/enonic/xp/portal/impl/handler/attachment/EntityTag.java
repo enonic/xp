@@ -16,12 +16,7 @@ public record EntityTag(String value)
 
     public boolean matchesIfNoneMatch( final String headerValue )
     {
-        final String trimmed = headerValue.trim();
-        if ( "*".equals( trimmed ) )
-        {
-            return true;
-        }
-        return Arrays.stream( trimmed.split( "," ) ).map( String::trim ).map( EntityTag::stripWeakPrefix ).anyMatch( this::isHeaderValue );
+        return Arrays.stream( headerValue.split( "," ) ).map( String::trim ).map( EntityTag::stripWeakPrefix ).anyMatch( this::isHeaderValue );
     }
 
     public boolean matchesIfRange( final String headerValue )

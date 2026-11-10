@@ -49,6 +49,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AttachmentHandlerTest
@@ -510,14 +512,27 @@ class AttachmentHandlerTest
     }
 
     @Test
-    void ifNoneMatchWithoutEtag()
+    void ifNoneMatchTagWithoutEtag()
         throws Exception
     {
-        this.request.getHeaders().put( "If-None-Match", "*" );
+        this.request.getHeaders().put( "If-None-Match", "\"ec25d6e4126c7064f82aaab8b34693fc\"" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchStarWithoutEtag()
+        throws Exception
+    {
+        this.request.getHeaders().put( "If-None-Match", " * " );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertNull( res.getHeaders().get( "ETag" ) );
+        assertNull( res.getBody() );
+        verify( this.contentService, never() ).getBinary( any(), any() );
     }
 
     @Test

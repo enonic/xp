@@ -141,7 +141,11 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
     private boolean isNotModified( final Optional<EntityTag> entityTag )
     {
         final String ifNoneMatchHeader = this.request.getHeaders().get( HttpHeaders.IF_NONE_MATCH );
-        return ifNoneMatchHeader != null && entityTag.filter( tag -> tag.matchesIfNoneMatch( ifNoneMatchHeader ) ).isPresent();
+        if ( ifNoneMatchHeader == null )
+        {
+            return false;
+        }
+        return "*".equals( ifNoneMatchHeader.trim() ) || entityTag.filter( tag -> tag.matchesIfNoneMatch( ifNoneMatchHeader ) ).isPresent();
     }
 
     protected BinaryTransform prepareTransform( final T content, final BinaryReference binaryReference, final MediaType contentType )

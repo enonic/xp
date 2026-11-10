@@ -23,8 +23,8 @@ class EntityTagTest
         assertTrue( tag.matchesIfNoneMatch( "W/\"abc123\"" ) );
         assertTrue( tag.matchesIfNoneMatch( "\"x\", \"abc123\"" ) );
         assertTrue( tag.matchesIfNoneMatch( " \"x\" ,W/\"abc123\" " ) );
-        assertTrue( tag.matchesIfNoneMatch( "*" ) );
         assertFalse( tag.matchesIfNoneMatch( "\"x\"" ) );
+        assertFalse( tag.matchesIfNoneMatch( "*" ) );
         assertFalse( tag.matchesIfNoneMatch( "abc123" ) );
         assertFalse( tag.matchesIfNoneMatch( "" ) );
     }
