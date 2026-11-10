@@ -440,6 +440,7 @@ public final class SecurityServiceImpl
     public User setPassword( final PrincipalKey key, final String password )
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
+        requireModifiable( key );
 
         return callWithContext( () -> {
             final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
@@ -508,15 +509,20 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        if ( NON_MODIFIABLE_USERS.contains( updateUserParams.getKey() ) )
-        {
-            throw new IllegalArgumentException( String.format( "[%s] user cannot be modified", updateUserParams.getKey() ) );
-        }
+        requireModifiable( updateUserParams.getKey() );
         if ( updateUserParams.getEmail() == null && updateUserParams.getEditor() == null )
         {
             return doUpdateUser( updateUserParams );
         }
         return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> doUpdateUser( updateUserParams ) );
+    }
+
+    private static void requireModifiable( final PrincipalKey key )
+    {
+        if ( NON_MODIFIABLE_USERS.contains( key ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] user cannot be modified", key ) );
+        }
     }
 
     private User doUpdateUser( final UpdateUserParams updateUserParams )

@@ -277,7 +277,7 @@ interface ChangePasswordHandler {
 }
 
 /**
- * Changes or clears password for specified user.
+ * Changes or clears password for specified user. The password of the super user and the anonymous user cannot be changed.
  *
  * @example-ref examples/auth/changePassword.js
  *

@@ -832,7 +832,12 @@ class SecurityServiceImplTest
                     UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.displayName = "Renamed" ).build();
                 assertThatThrownBy( () -> securityService.updateUser( rename ) ).isInstanceOf( IllegalArgumentException.class );
 
+                assertThatThrownBy( () -> securityService.setPassword( userKey, "password" ) ).isInstanceOf(
+                    IllegalArgumentException.class ).hasMessageContaining( "cannot be modified" );
+                assertThatThrownBy( () -> securityService.setPassword( userKey, null ) ).isInstanceOf( IllegalArgumentException.class );
+
                 final User user = securityService.getUser( userKey ).orElseThrow();
+                assertNull( user.getAuthenticationHash() );
                 assertFalse( user.isDisabled() );
                 assertNotEquals( "Renamed", user.getDisplayName() );
             }
