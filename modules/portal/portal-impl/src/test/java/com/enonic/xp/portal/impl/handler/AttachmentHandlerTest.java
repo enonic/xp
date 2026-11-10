@@ -38,6 +38,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -547,5 +548,28 @@ class AttachmentHandlerTest
         assertNull( res.getHeaders().get( "Content-Range" ) );
         assertEquals( "bytes", res.getHeaders().get( "Accept-Ranges" ) );
         assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchStarDoesNotBypassAccessCheck()
+    {
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
+        when( this.contentService.contentExists( any( ContentId.class ) ) ).thenReturn( true );
+        this.request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.UNAUTHORIZED );
+    }
+
+    @Test
+    void ifNoneMatchStarForMissingContent()
+    {
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
+        this.request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.NOT_FOUND );
     }
 }

@@ -14,6 +14,7 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
@@ -39,6 +40,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -481,5 +483,43 @@ class AttachmentMediaHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchDoesNotBypassAccessCheck()
+    {
+        final WebRequest request = attachmentRequest();
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
+        when( this.contentService.contentExists( any( ContentId.class ) ) ).thenReturn( true );
+        request.getHeaders().put( "If-None-Match", ETAG );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.UNAUTHORIZED );
+    }
+
+    @Test
+    void ifNoneMatchStarDoesNotBypassAccessCheck()
+    {
+        final WebRequest request = attachmentRequest();
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
+        when( this.contentService.contentExists( any( ContentId.class ) ) ).thenReturn( true );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.UNAUTHORIZED );
+    }
+
+    @Test
+    void ifNoneMatchStarForMissingContent()
+    {
+        final WebRequest request = attachmentRequest();
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.NOT_FOUND );
     }
 }
