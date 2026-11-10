@@ -16,6 +16,7 @@ class PrincipalIndexConfigFactory
             add( PrincipalPropertyNames.ID_PROVIDER_KEY, IndexConfig.MINIMAL ).
             add( PrincipalPropertyNames.EMAIL_KEY, IndexConfig.FULLTEXT ).
             add( PrincipalPropertyNames.LOGIN_KEY, IndexConfig.MINIMAL ).
+            add( PrincipalPropertyNames.DISABLED_KEY, IndexConfig.MINIMAL ).
             add( PrincipalPropertyNames.PRINCIPAL_KEY, IndexConfig.MINIMAL ).
             add( PrincipalPropertyNames.MEMBER_KEY, IndexConfig.MINIMAL ).
             add( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, IndexConfig.NONE ).

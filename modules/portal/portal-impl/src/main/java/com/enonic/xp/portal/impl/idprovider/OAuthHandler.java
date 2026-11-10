@@ -46,6 +46,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.security.token.Client;
@@ -532,6 +533,10 @@ public class OAuthHandler
         {
             return beyondGrant( issued.audience() );
         }
+        if ( !maySignIn( issued.subject() ) )
+        {
+            return userRefused();
+        }
         final GrantWithRefreshToken grant = grantService.create( CreateGrantParams.create()
                                                                      .subject( issued.subject() )
                                                                      .clientId( issued.clientId() )
@@ -891,6 +896,10 @@ public class OAuthHandler
                 {
                     yield beyondGrant( pending.audience() );
                 }
+                if ( !maySignIn( pending.subject() ) )
+                {
+                    yield userRefused();
+                }
                 final GrantWithRefreshToken grant = grantService.create( CreateGrantParams.create()
                                                                              .subject( pending.subject() )
                                                                              .clientId( pending.clientId() )
@@ -927,6 +936,10 @@ public class OAuthHandler
         final Optional<Grant> found = grantService.lookup( params );
         if ( found.isPresent() )
         {
+            if ( !maySignIn( found.get().getSubject() ) )
+            {
+                return userRefused();
+            }
             final PortalResponse refusedBefore = refusedAtRefresh( request, client.orElse( null ), found.get() );
             if ( refusedBefore != null )
             {
@@ -962,6 +975,16 @@ public class OAuthHandler
             return beyond;
         }
         return tokenAudience( request, grant.getAudience() ) == null ? beyondGrant( grant.getAudience() ) : null;
+    }
+
+    private boolean maySignIn( final PrincipalKey subject )
+    {
+        return securityService.authenticate( new VerifiedUserKeyAuthToken( subject ) ).isAuthenticated();
+    }
+
+    private static PortalResponse userRefused()
+    {
+        return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "The user is not allowed to sign in" );
     }
 
     /**

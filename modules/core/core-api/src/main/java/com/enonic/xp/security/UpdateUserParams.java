@@ -1,5 +1,7 @@
 package com.enonic.xp.security;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.mail.EmailValidator;
@@ -17,6 +19,8 @@ public final class UpdateUserParams
 
     private final String login;
 
+    private final @Nullable Boolean disabled;
+
     private final UserEditor editor;
 
     private UpdateUserParams( final Builder builder )
@@ -29,6 +33,7 @@ public final class UpdateUserParams
         }
         this.email = builder.email;
         this.login = builder.login;
+        this.disabled = builder.disabled;
         this.editor = builder.editor;
     }
 
@@ -50,6 +55,16 @@ public final class UpdateUserParams
     public String getLogin()
     {
         return login;
+    }
+
+    /**
+     * The disabled state to set on the user. A disabled user cannot authenticate.
+     *
+     * @return the disabled state to set, or {@code null} to leave it unchanged
+     */
+    public @Nullable Boolean getDisabled()
+    {
+        return disabled;
     }
 
     public UserEditor getEditor()
@@ -79,6 +94,10 @@ public final class UpdateUserParams
         {
             result.login( this.getLogin() );
         }
+        if ( this.disabled != null )
+        {
+            result.disabled( this.disabled );
+        }
         return result.build();
     }
 
@@ -102,6 +121,8 @@ public final class UpdateUserParams
 
         private String login;
 
+        private @Nullable Boolean disabled;
+
         private UserEditor editor;
 
         private Builder()
@@ -114,6 +135,7 @@ public final class UpdateUserParams
             this.displayName = user.getDisplayName();
             this.email = user.getEmail();
             this.login = user.getLogin();
+            this.disabled = user.isDisabled();
         }
 
         public Builder userKey( final PrincipalKey value )
@@ -138,6 +160,18 @@ public final class UpdateUserParams
         public Builder email( final String value )
         {
             this.email = value;
+            return this;
+        }
+
+        /**
+         * Sets the disabled state of the user. A disabled user cannot authenticate. Left unset, the state is unchanged.
+         *
+         * @param value {@code true} to disable the user, {@code false} to enable it
+         * @return this builder
+         */
+        public Builder disabled( final boolean value )
+        {
+            this.disabled = value;
             return this;
         }
 

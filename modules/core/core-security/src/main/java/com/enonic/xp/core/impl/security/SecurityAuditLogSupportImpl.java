@@ -67,6 +67,7 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "email", params.getEmail() );
             paramsSet.setString( "login", params.getLogin() );
             paramsSet.setString( "displayName", params.getDisplayName() );
+            paramsSet.setBoolean( "disabled", params.isDisabled() );
 
             log( "system.security.principal.create", data, AuditLogUris.from( params.getKey().toString() ) );
         }
@@ -83,6 +84,7 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "email", params.getEmail() );
             paramsSet.setString( "login", params.getLogin() );
             paramsSet.setString( "displayName", params.getDisplayName() );
+            paramsSet.setBoolean( "disabled", params.getDisabled() );
 
             log( "system.security.principal.update", data, AuditLogUris.from( params.getKey().toString() ) );
         }

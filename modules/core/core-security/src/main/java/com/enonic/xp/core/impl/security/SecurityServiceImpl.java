@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -107,6 +108,9 @@ public final class SecurityServiceImpl
     private static final Set<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = Set.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
+
+    private static final Set<NodePath> NON_MODIFIABLE_USER_PATHS =
+        Set.of( PrincipalKey.ofSuperUser().toPath(), PrincipalKey.ofAnonymous().toPath() );
 
     static final String ID_PROVIDER_LOCKS = "com.enonic.xp.security.lock.idprovider";
 
@@ -438,6 +442,7 @@ public final class SecurityServiceImpl
     public User setPassword( final PrincipalKey key, final String password )
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
+        requireModifiable( key );
 
         return callWithContext( () -> {
             final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
@@ -466,6 +471,7 @@ public final class SecurityServiceImpl
             .login( createUser.getLogin() )
             .email( createUser.getEmail() )
             .displayName( createUser.getDisplayName() )
+            .disabled( createUser.isDisabled() )
             .modifiedTime( Millis.now() )
             .build();
 
@@ -512,6 +518,21 @@ public final class SecurityServiceImpl
         return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> doUpdateUser( updateUserParams ) );
     }
 
+    private static void requireModifiable( final PrincipalKey key )
+    {
+        if ( NON_MODIFIABLE_USER_PATHS.contains( key.toPath() ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] user cannot be modified", key ) );
+        }
+    }
+
+    private static boolean sameExceptProfile( final User current, final User changed )
+    {
+        return current.getKey().equals( changed.getKey() ) && Objects.equals( current.getDisplayName(), changed.getDisplayName() ) &&
+            Objects.equals( current.getEmail(), changed.getEmail() ) && Objects.equals( current.getLogin(), changed.getLogin() ) &&
+            current.isDisabled() == changed.isDisabled();
+    }
+
     private User doUpdateUser( final UpdateUserParams updateUserParams )
     {
         return callWithContext( () -> {
@@ -524,6 +545,10 @@ public final class SecurityServiceImpl
             final Node updatedNode =
                 nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode, current -> {
                     final User changed = updateUserParams.update( current );
+                    if ( !sameExceptProfile( current, changed ) )
+                    {
+                        requireModifiable( key );
+                    }
                     if ( changed.getEmail() != null && !changed.getEmail().equals( current.getEmail() ) )
                     {
                         duplicateEmailValidation( key, changed.getEmail() );

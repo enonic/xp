@@ -24,6 +24,8 @@ public final class CreateUserHandler
 
     private String email;
 
+    private boolean disabled;
+
     public void setIdProvider( final String idProvider )
     {
         this.idProviderKey = IdProviderKey.from( idProvider );
@@ -44,12 +46,18 @@ public final class CreateUserHandler
         this.email = email;
     }
 
+    public void setDisabled( final Boolean disabled )
+    {
+        this.disabled = Boolean.TRUE.equals( disabled );
+    }
+
     public PrincipalMapper createUser()
     {
         final User user = this.securityService.get().createUser( CreateUserParams.create().
             displayName( this.displayName != null ? this.displayName : this.name ).
             email( this.email ).
             login( this.name ).
+            disabled( this.disabled ).
             userKey( PrincipalKey.ofUser( this.idProviderKey, this.name ) ).
             build() );
         return new PrincipalMapper( user );

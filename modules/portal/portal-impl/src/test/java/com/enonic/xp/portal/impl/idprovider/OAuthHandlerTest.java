@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.security.token.AccessTokenService;
@@ -138,6 +141,10 @@ class OAuthHandlerTest
         } );
         when( securityService.getScopes( any() ) ).thenReturn( Scopes.empty() );
         when( securityService.getClient( any(), any() ) ).thenReturn( Optional.empty() );
+        when( securityService.authenticate( any() ) ).thenReturn( AuthenticationInfo.create()
+                                                                      .user( User.create().key( ALICE ).login( "alice" ).build() )
+                                                                      .principals( RoleKeys.AUTHENTICATED )
+                                                                      .build() );
         handler = new OAuthHandler( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService,
                                           new InMemorySharedMapService(), new Clock()
         {
@@ -684,6 +691,117 @@ class OAuthHandlerTest
             request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) ),
             IdProviderKey.from( "other" ), "token", UNRESTRICTED );
         assertThat( body( otherIdp ).get( "error" ).asText() ).as( "a grant of another id provider's user" ).isEqualTo( "invalid_grant" );
+    }
+
+    @Test
+    void a_refresh_for_a_user_who_may_not_sign_in_is_refused_and_keeps_the_grant()
+        throws Exception
+    {
+        final Grant grant = Grant.create()
+            .id( "grant-1" )
+            .subject( ALICE )
+            .clientId( "cli" )
+            .scope( Set.of() )
+            .audience( Set.of( "api" ) )
+            .restriction( RoleRestriction.none() )
+            .createdAt( now )
+            .rotatedAt( now )
+            .expiresAt( now.plusSeconds( 3600 ) )
+            .build();
+        when( grantService.lookup( any() ) ).thenReturn( Optional.of( grant ) );
+        when( grantService.redeem( any() ) ).thenReturn( Optional.of( new GrantWithRefreshToken( grant, "refresh-2" ) ) );
+        when( securityService.authenticate( any() ) ).thenReturn( AuthenticationInfo.unAuthenticated() );
+        final PortalRequest refresh =
+            request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) );
+
+        final PortalResponse refused = handler.handle( refresh, IDP, "token", UNRESTRICTED );
+
+        assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        final ArgumentCaptor<AuthenticationToken> asked = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( securityService ).authenticate( asked.capture() );
+        assertThat( asked.getValue() ).isInstanceOfSatisfying( VerifiedUserKeyAuthToken.class,
+                                                               token -> assertThat( token.getUserKey() ).isEqualTo( ALICE ) );
+        verify( grantService, never() ).redeem( any() );
+        verify( grantService, never() ).revoke( any(), any() );
+        verify( accessTokenService, never() ).issue( any() );
+
+        when( securityService.authenticate( any() ) ).thenReturn(
+            AuthenticationInfo.create().user( User.create().key( ALICE ).login( "alice" ).build() ).principals( RoleKeys.AUTHENTICATED ).build() );
+        assertThat( handler.handle( refresh, IDP, "token", UNRESTRICTED ).getStatus() ).as( "the same refresh token, once the user may sign in" )
+            .isEqualTo( HttpStatus.OK );
+    }
+
+    @Test
+    void a_refresh_token_once_redeemed_is_answered_with_its_successor_whatever_becomes_of_the_user()
+        throws Exception
+    {
+        final Grant grant = Grant.create()
+            .id( "grant-1" )
+            .subject( ALICE )
+            .clientId( "cli" )
+            .scope( Set.of() )
+            .audience( Set.of( "api" ) )
+            .restriction( RoleRestriction.none() )
+            .createdAt( now )
+            .rotatedAt( now )
+            .expiresAt( now.plusSeconds( 3600 ) )
+            .build();
+        when( grantService.lookup( any() ) ).thenReturn( Optional.of( grant ) );
+        final AuthenticationInfo alice =
+            AuthenticationInfo.create().user( User.create().key( ALICE ).login( "alice" ).build() ).principals( RoleKeys.AUTHENTICATED ).build();
+        final AtomicBoolean disabled = new AtomicBoolean();
+        when( securityService.authenticate( any() ) ).thenAnswer( i -> disabled.get() ? AuthenticationInfo.unAuthenticated() : alice );
+        when( grantService.redeem( any() ) ).thenAnswer( i -> {
+            disabled.set( true );
+            return Optional.of( new GrantWithRefreshToken( grant, "refresh-2" ) );
+        } );
+
+        final PortalResponse answered = handler.handle(
+            request( HttpMethod.POST, "token", Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "cli" ) ),
+            IDP, "token", UNRESTRICTED );
+
+        assertThat( answered.getStatus() ).isEqualTo( HttpStatus.OK );
+        assertThat( body( answered ).get( "refresh_token" ).asText() ).isEqualTo( "refresh-2" );
+    }
+
+    @Test
+    void a_device_code_approved_by_a_user_who_may_no_longer_sign_in_gets_no_grant()
+        throws Exception
+    {
+        final JsonNode issued = body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP,
+                                                      "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        when( securityService.authenticate( any() ) ).thenReturn( AuthenticationInfo.unAuthenticated() );
+
+        final PortalResponse polled = handler.handle( request( HttpMethod.POST, "token",
+                                                               Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                       issued.get( "device_code" ).asText(), "client_id", "cli" ) ),
+                                                      IDP, "token", UNRESTRICTED );
+
+        assertThat( polled.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( polled ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        verify( grantService, never() ).create( any() );
+        verify( accessTokenService, never() ).issue( any() );
+    }
+
+    @Test
+    void a_code_issued_to_a_user_who_may_no_longer_sign_in_gets_no_grant()
+        throws Exception
+    {
+        final String redirectUri = "http://127.0.0.1:51234/callback";
+        final String code = query( decide( authorizeParams( redirectUri ), true ) ).get( "code" );
+        when( securityService.authenticate( any() ) ).thenReturn( AuthenticationInfo.unAuthenticated() );
+
+        final PortalResponse exchanged = handler.handle( request( HttpMethod.POST, "token",
+                                                                  Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code", code,
+                                                                          "client_id", "cli", "redirect_uri", redirectUri, "code_verifier",
+                                                                          VERIFIER ) ), IDP, "token", UNRESTRICTED );
+
+        assertThat( exchanged.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( exchanged ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
+        verify( grantService, never() ).create( any() );
+        verify( accessTokenService, never() ).issue( any() );
     }
 
     @Test

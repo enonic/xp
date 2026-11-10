@@ -1,5 +1,6 @@
 package com.enonic.xp.core.security;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -69,13 +70,16 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
+import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -787,6 +791,118 @@ class SecurityServiceImplTest
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
+        } );
+    }
+
+    @Test
+    void testDisabledUserIsPersisted()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
+            securityService.createUser( CreateUserParams.create()
+                                            .userKey( userKey )
+                                            .displayName( "User 1" )
+                                            .login( "User1" )
+                                            .disabled( true )
+                                            .build() );
+            assertTrue( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.loginDisabled = false ).build() );
+            assertFalse( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).disabled( true ).build() );
+            assertTrue( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).displayName( "Renamed" ).build() );
+            assertTrue( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+        } );
+    }
+
+    @Test
+    void testSystemUsersCannotBeModified()
+    {
+        runAsAdmin( () -> {
+            final List<PrincipalKey> userKeys =
+                List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous(), PrincipalKey.from( "user:system:SU" ),
+                         PrincipalKey.from( "user:System:Anonymous" ) );
+            for ( PrincipalKey userKey : userKeys )
+            {
+                final UpdateUserParams disable = UpdateUserParams.create().userKey( userKey ).disabled( true ).build();
+                assertThatThrownBy( () -> securityService.updateUser( disable ) ).isInstanceOf( IllegalArgumentException.class )
+                    .hasMessageContaining( "cannot be modified" );
+
+                final UpdateUserParams rename =
+                    UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.displayName = "Renamed" ).build();
+                assertThatThrownBy( () -> securityService.updateUser( rename ) ).isInstanceOf( IllegalArgumentException.class );
+
+                assertThatThrownBy( () -> securityService.setPassword( userKey, "password" ) ).isInstanceOf(
+                    IllegalArgumentException.class ).hasMessageContaining( "cannot be modified" );
+                assertThatThrownBy( () -> securityService.setPassword( userKey, null ) ).isInstanceOf( IllegalArgumentException.class );
+            }
+
+            for ( PrincipalKey userKey : List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() ) )
+            {
+                final User user = securityService.getUser( userKey ).orElseThrow();
+                assertNull( user.getAuthenticationHash() );
+                assertFalse( user.isDisabled() );
+                assertNotEquals( "Renamed", user.getDisplayName() );
+            }
+        } );
+    }
+
+    @Test
+    void testSystemUserProfileCanBeModified()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey su = PrincipalKey.ofSuperUser();
+            final String displayName = securityService.getUser( su ).orElseThrow().getDisplayName();
+
+            final User updated = securityService.updateUser(
+                UpdateUserParams.create().userKey( su ).editor( edit -> edit.profile.setString( "dismissed", "banner" ) ).build() );
+
+            assertEquals( "banner", updated.getProfile().getString( "dismissed" ) );
+            assertEquals( "banner", securityService.getUser( su ).orElseThrow().getProfile().getString( "dismissed" ) );
+
+            final UpdateUserParams profileAndName = UpdateUserParams.create().userKey( su ).editor( edit -> {
+                edit.profile.setString( "dismissed", "again" );
+                edit.displayName = "Renamed";
+            } ).build();
+            assertThatThrownBy( () -> securityService.updateUser( profileAndName ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "cannot be modified" );
+
+            final User unchanged = securityService.getUser( su ).orElseThrow();
+            assertEquals( displayName, unchanged.getDisplayName() );
+            assertEquals( "banner", unchanged.getProfile().getString( "dismissed" ) );
+        } );
+    }
+
+    @Test
+    void testAuthenticateDisabledUser()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
+            securityService.createUser( CreateUserParams.create()
+                                            .userKey( userKey )
+                                            .displayName( "User 1" )
+                                            .email( "user1@enonic.com" )
+                                            .login( "User1" )
+                                            .password( "password" )
+                                            .build() );
+
+            assertTrue( securityService.authenticate( new UsernamePasswordAuthToken( SYSTEM, "user1", "password" ) ).isAuthenticated() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.loginDisabled = true ).build() );
+
+            assertFalse( securityService.authenticate( new UsernamePasswordAuthToken( SYSTEM, "user1", "password" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com", "password" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new VerifiedUsernameAuthToken( SYSTEM, "user1" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new VerifiedEmailAuthToken( SYSTEM, "user1@enonic.com" ) ).isAuthenticated() );
+            assertFalse( securityService.authenticate( new VerifiedUserKeyAuthToken( userKey ) ).isAuthenticated() );
+
+            securityService.updateUser( UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.loginDisabled = false ).build() );
+
+            assertTrue( securityService.authenticate( new UsernamePasswordAuthToken( SYSTEM, "user1", "password" ) ).isAuthenticated() );
+            assertTrue( securityService.authenticate( new VerifiedUserKeyAuthToken( userKey ) ).isAuthenticated() );
         } );
     }
 
