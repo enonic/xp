@@ -108,6 +108,8 @@ public final class SecurityServiceImpl
 
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
 
+    private static final Set<PrincipalKey> NON_MODIFIABLE_USERS = Set.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() );
+
     static final String ID_PROVIDER_LOCKS = "com.enonic.xp.security.lock.idprovider";
 
     private final PasswordSecurityService passwordSecurityService;
@@ -506,6 +508,10 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
+        if ( NON_MODIFIABLE_USERS.contains( updateUserParams.getKey() ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] user cannot be modified", updateUserParams.getKey() ) );
+        }
         if ( updateUserParams.getEmail() == null && updateUserParams.getEditor() == null )
         {
             return doUpdateUser( updateUserParams );

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.security;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -75,8 +76,10 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -812,6 +815,27 @@ class SecurityServiceImplTest
 
             securityService.updateUser( UpdateUserParams.create().userKey( userKey ).displayName( "Renamed" ).build() );
             assertTrue( securityService.getUser( userKey ).orElseThrow().isDisabled() );
+        } );
+    }
+
+    @Test
+    void testSystemUsersCannotBeModified()
+    {
+        runAsAdmin( () -> {
+            for ( PrincipalKey userKey : List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() ) )
+            {
+                final UpdateUserParams disable = UpdateUserParams.create().userKey( userKey ).disabled( true ).build();
+                assertThatThrownBy( () -> securityService.updateUser( disable ) ).isInstanceOf( IllegalArgumentException.class )
+                    .hasMessageContaining( "cannot be modified" );
+
+                final UpdateUserParams rename =
+                    UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.displayName = "Renamed" ).build();
+                assertThatThrownBy( () -> securityService.updateUser( rename ) ).isInstanceOf( IllegalArgumentException.class );
+
+                final User user = securityService.getUser( userKey ).orElseThrow();
+                assertFalse( user.isDisabled() );
+                assertNotEquals( "Renamed", user.getDisplayName() );
+            }
         } );
     }
 
