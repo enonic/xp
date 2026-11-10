@@ -60,10 +60,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
 
-    ethlo-time (ITU)
-    Apache License 2.0
-    https://github.com/ethlo/itu
-
     Google Guava
     Apache License 2.0
     https://github.com/google/guava/blob/master/COPYING
@@ -196,10 +192,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Netty
     Apache License 2.0
     http://netty.io/
-
-    networknt JSON Schema Validator
-    Apache License 2.0
-    https://github.com/networknt/json-schema-validator
 
     Objenesis
     Apache License 2.0
