@@ -125,7 +125,7 @@ class JettyActivatorTest
         final DispatchServlet management = mock( DispatchServlet.class );
         when( management.getConnector() ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
         final JettyActivator activator =
-            new JettyActivator( config, bundleContext, Mockito.mock( JettySessionStoreConfigurator.class ), new WebSocketSessionTracker(),
+            new JettyActivator( config, bundleContext, mock( JettySessionStoreConfigurator.class ), new WebSocketSessionTracker(),
                                 List.of( web, management ) );
 
         activator.activate();
