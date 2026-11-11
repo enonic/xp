@@ -319,6 +319,25 @@ class VirtualHostFilterTest
     }
 
     @Test
+    void testWellKnown_onTheManagementConnector_resolvedByTheDescribedPath_notRewritten()
+        throws Exception
+    {
+        this.virtualHosts.add( new VirtualHostMapping( "mgmt", "mgmt.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0,
+                                                       Map.of(), DispatchConstants.MANAGEMENT_CONNECTOR ) );
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+        when( req.getServerName() ).thenReturn( "mgmt.enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/.well-known/oauth-protected-resource/repo:list" );
+        when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/repo:list" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( this.chain ).doFilter( eq( this.req ), eq( this.res ) );
+    }
+
+    @Test
     void testWellKnown_nothingServedAtTheDescribedPath_notFound()
         throws Exception
     {

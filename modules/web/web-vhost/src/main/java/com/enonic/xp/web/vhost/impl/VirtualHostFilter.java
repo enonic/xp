@@ -60,7 +60,8 @@ public final class VirtualHostFilter
         if ( virtualHostService.isEnabled() )
         {
             final String resourcePath = WellKnownPaths.resourcePath( req.getPathInfo() );
-            if ( resourcePath != null && DispatchConstants.WEB_CONNECTOR.equals( connector ) )
+            if ( resourcePath != null && ( DispatchConstants.WEB_CONNECTOR.equals( connector ) ||
+                DispatchConstants.MANAGEMENT_CONNECTOR.equals( connector ) ) )
             {
                 final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( new PathInfoRequestWrapper( req, resourcePath ) );
                 if ( virtualHost != null )

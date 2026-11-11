@@ -52,7 +52,7 @@ public final class IdProviderFilter
         final HttpServletResponse response =
             DispatchConstants.WEB_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
                 ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
-                : res;
+                : new BearerChallengeResponseWrapper( req, res );
 
         if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {

@@ -73,6 +73,18 @@ class ManagementRestFilterTest
     }
 
     @Test
+    void restDisabledKeepsTheWellKnownDocuments()
+        throws Exception
+    {
+        vhost( Map.of( ManagementRestFilter.REST_ENABLED, "false" ) );
+        when( request.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/repo/list" );
+
+        filter.doFilter( request, response, chain );
+
+        verify( chain ).doFilter( request, response );
+    }
+
+    @Test
     void restDisabledKeepsUniversalApis()
         throws Exception
     {

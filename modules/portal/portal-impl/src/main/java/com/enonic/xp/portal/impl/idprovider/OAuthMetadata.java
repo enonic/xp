@@ -89,9 +89,22 @@ final class OAuthMetadata
         {
             return null;
         }
+        return protectedResource( origin, resourcePath, authorizationServer( origin, mapping, idProvider ), scopes );
+    }
+
+    /**
+     * The protected resource metadata of a resource whose tokens are issued by an authorization
+     * server elsewhere: on a web mapping, for a resource on the management connector.
+     *
+     * @param resourcePath        the resource's path as the client sent it
+     * @param authorizationServer the external base of the id provider endpoints that issue its tokens
+     */
+    static Map<String, Object> protectedResource( final String origin, final String resourcePath, final String authorizationServer,
+                                                  final Scopes scopes )
+    {
         final Map<String, Object> document = new LinkedHashMap<>();
         document.put( "resource", origin + ( "/".equals( resourcePath ) ? "" : resourcePath ) );
-        document.put( "authorization_servers", List.of( authorizationServer( origin, mapping, idProvider ) ) );
+        document.put( "authorization_servers", List.of( authorizationServer ) );
         document.put( "bearer_methods_supported", List.of( "header" ) );
         if ( !scopes.isEmpty() )
         {
