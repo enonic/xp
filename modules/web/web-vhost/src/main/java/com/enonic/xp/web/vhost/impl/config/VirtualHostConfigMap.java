@@ -230,7 +230,8 @@ final class VirtualHostConfigMap
 
     /**
      * An authorization server is named by its issuer URL (RFC 8414): http or https, with a host, and
-     * neither query nor fragment. A trailing slash is dropped, as clients append paths to it.
+     * neither query nor fragment. It is kept as written, a trailing slash included: a client compares
+     * it with the issuer the authorization server states about itself.
      */
     private static String authorizationServer( final String idProviderName, final String value )
     {
@@ -241,7 +242,7 @@ final class VirtualHostConfigMap
             if ( ( "https".equals( uri.getScheme() ) || "http".equals( uri.getScheme() ) ) && uri.getHost() != null &&
                 uri.getRawQuery() == null && uri.getRawFragment() == null )
             {
-                return url.endsWith( "/" ) ? url.substring( 0, url.length() - 1 ) : url;
+                return url;
             }
         }
         catch ( URISyntaxException e )
