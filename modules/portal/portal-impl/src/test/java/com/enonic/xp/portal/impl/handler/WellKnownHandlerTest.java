@@ -1,9 +1,11 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.enonic.xp.portal.impl.idprovider.OAuthMetadataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -202,6 +205,35 @@ class WellKnownHandlerTest
             assertThat( protectedResource( DispatchConstants.WEB_CONNECTOR, web ) ).containsEntry( "authorization_servers",
                                                                                                   List.of( "https://h/_/idprovider/enonic-cloud" ) );
         }
+    }
+
+    @Test
+    void every_enabled_id_provider_adds_its_authorization_server_the_default_first()
+    {
+        final IdProviderKey auth0 = IdProviderKey.from( "auth0" );
+        final IdProviderKey okta = IdProviderKey.from( "okta" );
+        final IdProviderKey ldap = IdProviderKey.from( "ldap" );
+        final Map<IdProviderKey, VirtualHostIdProvider> idProviders = new LinkedHashMap<>();
+        idProviders.put( auth0, VirtualHostIdProvider.create().authorizationServer( "https://tenant.auth0.com/" ).build() );
+        idProviders.put( ldap, VirtualHostIdProvider.create().flows( Set.of( "login" ) ).build() );
+        idProviders.put( okta, VirtualHostIdProvider.create().authorizationServer( "https://tenant.auth0.com/" ).build() );
+        idProviders.put( IdProviderKey.system(), VirtualHostIdProvider.create().flows( Set.of( "login", "device" ) ).build() );
+        final VirtualHost web = mock( VirtualHost.class );
+        when( web.getConnector() ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( web.getSource() ).thenReturn( "/" );
+        when( web.getIdProviders() ).thenReturn( idProviders );
+        when( securityService.getScopes( auth0 ) ).thenReturn( scopes( auth0, "content:read" ) );
+        when( securityService.getScopes( ldap ) ).thenReturn( scopes( ldap, "ldap:only" ) );
+        when( securityService.getScopes( okta ) ).thenReturn( scopes( okta, "content:read", "content:write" ) );
+
+        assertThat( protectedResource( DispatchConstants.WEB_CONNECTOR, web ) ).as( "an id provider with no server adds nothing, a server is named once" )
+            .containsEntry( "authorization_servers", List.of( "https://tenant.auth0.com/", "https://h/_/idprovider/system" ) )
+            .containsEntry( "scopes_supported", List.of( "content:read", "content:write" ) );
+    }
+
+    private static Scopes scopes( final IdProviderKey idProvider, final String... ids )
+    {
+        return Stream.of( ids ).map( id -> Scope.create().idProvider( idProvider ).id( id ).build() ).collect( Scopes.collector() );
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,21 +76,22 @@ final class OAuthMetadata
 
     /**
      * The protected resource metadata of a resource: its own URL as its identifier, the
-     * authorization server that issues its tokens, and the id provider's scopes.
+     * authorization servers that issue its tokens, and the scopes to ask them for.
      *
-     * @param resourcePath        the resource's path as the client sent it
-     * @param authorizationServer the issuer URL of the id provider endpoints that issue its tokens
+     * @param resourcePath         the resource's path as the client sent it
+     * @param authorizationServers the issuer URLs, the one a client should prefer first
+     * @param scopes               the scope ids
      */
-    static Map<String, Object> protectedResource( final String origin, final String resourcePath, final String authorizationServer,
-                                                  final Scopes scopes )
+    static Map<String, Object> protectedResource( final String origin, final String resourcePath,
+                                                  final Collection<String> authorizationServers, final Collection<String> scopes )
     {
         final Map<String, Object> document = new LinkedHashMap<>();
         document.put( "resource", origin + ( "/".equals( resourcePath ) ? "" : resourcePath ) );
-        document.put( "authorization_servers", List.of( authorizationServer ) );
+        document.put( "authorization_servers", List.copyOf( authorizationServers ) );
         document.put( "bearer_methods_supported", List.of( "header" ) );
         if ( !scopes.isEmpty() )
         {
-            document.put( "scopes_supported", scopes.stream().map( Scope::getId ).toList() );
+            document.put( "scopes_supported", List.copyOf( scopes ) );
         }
         return document;
     }

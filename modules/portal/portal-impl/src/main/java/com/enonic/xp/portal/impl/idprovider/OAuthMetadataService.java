@@ -1,6 +1,8 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
@@ -35,32 +37,32 @@ public class OAuthMetadataService
 
     /**
      * The protected resource metadata of a path under the request's mapping, or null when nothing
-     * says where a token for it is issued. The authorization server is the one the mapping names for
-     * its default id provider; without one, a web mapping that serves the id provider's
-     * {@code device} or {@code code} flow is its own.
+     * says where a token for it is issued. Every id provider enabled on the mapping adds its
+     * authorization server, the default id provider first, as a client that is given no other reason
+     * to choose takes the first: the one the mapping names for the id provider, or without one, on
+     * a web mapping that serves the id provider's {@code device} or {@code code} flow, the mapping
+     * itself. The scopes are those of the id providers that have one.
      */
     public @Nullable Map<String, Object> protectedResource( final WebRequest request, final String resourcePath )
     {
         final VirtualHost mapping = request.getVirtualHost();
-        final IdProviderKey idProvider = mapping.getDefaultIdProviderKey();
-        if ( idProvider == null )
-        {
-            return null;
-        }
         final String origin = origin( request );
-        final String authorizationServer = authorizationServer( origin, mapping, idProvider );
-        return authorizationServer == null
-            ? null
-            : OAuthMetadata.protectedResource( origin, resourcePath, authorizationServer, securityService.getScopes( idProvider ) );
+        final Set<String> authorizationServers = new LinkedHashSet<>();
+        final Set<String> scopes = new LinkedHashSet<>();
+        mapping.getIdProviders().forEach( ( idProvider, settings ) -> {
+            final String authorizationServer = authorizationServer( origin, mapping, idProvider, settings );
+            if ( authorizationServer != null )
+            {
+                authorizationServers.add( authorizationServer );
+                scopes.addAll( securityService.getScopes( idProvider ).getIds() );
+            }
+        } );
+        return authorizationServers.isEmpty() ? null : OAuthMetadata.protectedResource( origin, resourcePath, authorizationServers, scopes );
     }
 
-    private static @Nullable String authorizationServer( final String origin, final VirtualHost mapping, final IdProviderKey idProvider )
+    private static @Nullable String authorizationServer( final String origin, final VirtualHost mapping, final IdProviderKey idProvider,
+                                                         final VirtualHostIdProvider settings )
     {
-        final VirtualHostIdProvider settings = mapping.getIdProviders().get( idProvider );
-        if ( settings == null )
-        {
-            return null;
-        }
         if ( settings.getAuthorizationServer() != null )
         {
             return settings.getAuthorizationServer();

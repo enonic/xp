@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.token.GrantTypes;
-import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -45,17 +44,17 @@ class OAuthMetadataTest
     }
 
     @Test
-    void the_protected_resource_is_the_url_asked_about_with_the_authorization_server_it_is_given()
+    void the_protected_resource_is_the_url_asked_about_with_the_authorization_servers_it_is_given()
     {
-        final Scopes scopes = Scopes.from( Scope.create().idProvider( IDP ).id( "content:read" ).build() );
-
-        final Map<String, Object> root = OAuthMetadata.protectedResource( "https://h", "/", "https://h/_/idprovider/system", scopes );
+        final Map<String, Object> root =
+            OAuthMetadata.protectedResource( "https://h", "/", List.of( "https://h/_/idprovider/system", "https://tenant.auth0.com/" ),
+                                             List.of( "content:read" ) );
         assertThat( root ).containsEntry( "resource", "https://h" )
-            .containsEntry( "authorization_servers", List.of( "https://h/_/idprovider/system" ) )
+            .containsEntry( "authorization_servers", List.of( "https://h/_/idprovider/system", "https://tenant.auth0.com/" ) )
             .containsEntry( "bearer_methods_supported", List.of( "header" ) )
             .containsEntry( "scopes_supported", List.of( "content:read" ) );
 
-        final Map<String, Object> mcp = OAuthMetadata.protectedResource( "https://h", "/api/mcp", "https://h/_/idprovider/system", Scopes.empty() );
+        final Map<String, Object> mcp = OAuthMetadata.protectedResource( "https://h", "/api/mcp", List.of( "https://h/_/idprovider/system" ), List.of() );
         assertThat( mcp ).containsEntry( "resource", "https://h/api/mcp" ).doesNotContainKey( "scopes_supported" );
     }
 
