@@ -36,22 +36,11 @@ final class ControllerScriptImpl
     @Override
     public PortalResponse execute( final PortalRequest request )
     {
-        return execute( request, true );
-    }
-
-    @Override
-    public PortalResponse executePreflight( final PortalRequest request )
-    {
-        return execute( request, false );
-    }
-
-    private PortalResponse execute( final PortalRequest request, final boolean fallbackToAll )
-    {
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( this.scriptExports.getScript().getApplicationKey() );
         try
         {
-            return PortalRequestAccessor.callWith( request, () -> doExecute( request, fallbackToAll ) );
+            return PortalRequestAccessor.callWith( request, () -> doExecute( request ) );
         }
         finally
         {
@@ -60,18 +49,14 @@ final class ControllerScriptImpl
     }
 
     @Traced("controllerScript")
-    private PortalResponse doExecute( final PortalRequest portalRequest, final boolean fallbackToAll )
+    private PortalResponse doExecute( final PortalRequest portalRequest )
     {
         Tracer.attribute( "script", this.scriptExports.getScript().toString() );
 
         final HttpMethod method = portalRequest.getMethod();
         final String methodName = method == HttpMethod.HEAD ? HttpMethod.GET.name() : method.name();
 
-        final Stream<String> exportNames = fallbackToAll
-            ? Stream.of( methodName, methodName.toLowerCase( Locale.ROOT ), "all" )
-            : Stream.of( methodName, methodName.toLowerCase( Locale.ROOT ) );
-
-        return exportNames
+        return Stream.of( methodName, methodName.toLowerCase( Locale.ROOT ), "all" )
             .filter( this.scriptExports::hasMethod )
             .findFirst()
             .map( n -> new PortalResponseSerializer( this.scriptExports.executeMethod( n, new PortalRequestMapper( portalRequest ) ) ) )

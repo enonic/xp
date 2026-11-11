@@ -87,27 +87,19 @@ class ControllerScriptImpl_allMethodsTest
     }
 
     @Test
-    void testPreflight_neverFallsBackToAll()
+    void testOPTIONS_explicitExportWinsOverAll()
     {
         this.portalRequest.setMethod( HttpMethod.OPTIONS );
-        executePreflight( "myapplication:/controller/allHandler.js" );
-        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, this.portalResponse.getStatus() );
-    }
-
-    @Test
-    void testPreflight_explicitOptionsExport()
-    {
-        this.portalRequest.setMethod( HttpMethod.OPTIONS );
-        executePreflight( "myapplication:/controller/optionsHandler.js" );
+        execute( "myapplication:/controller/optionsHandler.js" );
         assertEquals( HttpStatus.NO_CONTENT, this.portalResponse.getStatus() );
         assertEquals( "https://example.com", this.portalResponse.getHeaders().get( "Access-Control-Allow-Origin" ) );
     }
 
     @Test
-    void testPreflight_lowercaseOptionsExport()
+    void testOPTIONS_lowercaseExportWinsOverAll()
     {
         this.portalRequest.setMethod( HttpMethod.OPTIONS );
-        executePreflight( "myapplication:/controller/lowercaseOptionsHandler.js" );
+        execute( "myapplication:/controller/lowercaseOptionsHandler.js" );
         assertEquals( HttpStatus.NO_CONTENT, this.portalResponse.getStatus() );
     }
 }

@@ -43,6 +43,11 @@ public class AdminExtensionDispatcherApiHandler
     {
         requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
 
+        if ( HttpMethod.OPTIONS.equals( webRequest.getMethod() ) && WebHandlerHelper.findApiPath( webRequest, EXTENSIONS_API ).isEmpty() )
+        {
+            return AdminExtensionApiHandler.defaultOptions();
+        }
+
         if ( HttpMethod.GET.equals( webRequest.getMethod() ) && WebHandlerHelper.findApiPath( webRequest, EXTENSIONS_API ).isEmpty() )
         {
             final Multimap<String, String> params = webRequest.getParams();
@@ -64,17 +69,5 @@ public class AdminExtensionDispatcherApiHandler
         {
             return extensionApiHandler.handle( webRequest );
         }
-    }
-
-    @Override
-    public WebResponse handlePreflight( final WebRequest webRequest )
-    {
-        requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
-
-        if ( WebHandlerHelper.findApiPath( webRequest, EXTENSIONS_API ).isEmpty() )
-        {
-            return UniversalApiHandler.super.handlePreflight( webRequest );
-        }
-        return extensionApiHandler.handle( webRequest );
     }
 }

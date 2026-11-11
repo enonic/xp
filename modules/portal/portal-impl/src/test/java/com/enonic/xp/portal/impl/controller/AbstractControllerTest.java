@@ -87,12 +87,6 @@ public abstract class AbstractControllerTest
         this.portalResponse = controllerScript.execute( this.portalRequest );
     }
 
-    protected final void executePreflight( final String script )
-    {
-        final ControllerScript controllerScript = this.factory.fromScript( ResourceKey.from( script ) );
-        this.portalResponse = controllerScript.executePreflight( this.portalRequest );
-    }
-
     protected final String getResponseAsString()
     {
         final Object body = this.portalResponse.getBody();

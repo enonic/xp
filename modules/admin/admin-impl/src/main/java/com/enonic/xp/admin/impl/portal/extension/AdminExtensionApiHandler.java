@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.portal.extension;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -16,11 +17,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -38,11 +41,15 @@ public class AdminExtensionApiHandler
 
     private final AdminToolDescriptorService adminToolDescriptorService;
 
+    private final PortalScriptService scriptService;
+
     @Activate
     public AdminExtensionApiHandler( @Reference final AdminExtensionDescriptorService descriptorService,
                                      @Reference final ControllerScriptFactory controllerScriptFactory,
-                                     @Reference final AdminToolDescriptorService adminToolDescriptorService )
+                                     @Reference final AdminToolDescriptorService adminToolDescriptorService,
+                                     @Reference final PortalScriptService scriptService )
     {
+        this.scriptService = scriptService;
         this.descriptorService = descriptorService;
         this.controllerScriptFactory = controllerScriptFactory;
         this.adminToolDescriptorService = adminToolDescriptorService;
@@ -67,6 +74,7 @@ public class AdminExtensionApiHandler
             throw WebException.notFound( String.format( "Extension [%s] not found", descriptorKey ) );
         }
 
+        // a CORS preflight is sent without credentials: it is not rejected, but reaches only an explicit OPTIONS export
         final boolean preflight = webRequest.getMethod() == HttpMethod.OPTIONS;
         if ( !preflight )
         {
@@ -85,12 +93,25 @@ public class AdminExtensionApiHandler
                                                      "admin/extensions/" + descriptorKey.getName() + "/" + descriptorKey.getName() +
                                                          ".js" );
 
-        final ControllerScript controllerScript = controllerScriptFactory.fromScript( script );
-        if ( preflight )
+        if ( preflight && !handlesPreflight( scriptService.execute( script ) ) )
         {
-            return controllerScript.executePreflight( portalRequest );
+            return defaultOptions();
         }
-        return controllerScript.execute( portalRequest );
+
+        return controllerScriptFactory.fromScript( script ).execute( portalRequest );
+    }
+
+    private static boolean handlesPreflight( final ScriptExports exports )
+    {
+        return exports.hasMethod( "OPTIONS" ) || exports.hasMethod( "options" );
+    }
+
+    static WebResponse defaultOptions()
+    {
+        return WebResponse.create()
+            .status( HttpStatus.OK )
+            .header( "Allow", HttpMethod.standard().stream().map( Object::toString ).collect( Collectors.joining( "," ) ) )
+            .build();
     }
 
     private void verifyMounts( final AdminExtensionDescriptor descriptor, final WebRequest webRequest )

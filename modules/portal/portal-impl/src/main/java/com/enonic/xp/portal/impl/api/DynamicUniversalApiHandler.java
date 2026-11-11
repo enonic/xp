@@ -27,12 +27,6 @@ public final class DynamicUniversalApiHandler
     }
 
     @Override
-    public WebResponse handlePreflight( final WebRequest request )
-    {
-        return apiHandler.handlePreflight( request );
-    }
-
-    @Override
     public void onSocketEvent( final WebSocketEvent event )
     {
         apiHandler.onSocketEvent( event );

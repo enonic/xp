@@ -62,7 +62,7 @@ class AdminExtensionDispatcherApiHandlerTest
     }
 
     @Test
-    void testPreflightIsDispatchedToExtensionOnly()
+    void testOptionsIsDispatchedToExtensionOnly()
     {
         final GetListAllowedAdminExtensionsHandler listExtensionsHandler = mock( GetListAllowedAdminExtensionsHandler.class );
         final GetAdminExtensionIconHandler getExtensionIconHandler = mock( GetAdminExtensionIconHandler.class );
@@ -75,7 +75,9 @@ class AdminExtensionDispatcherApiHandlerTest
         rootRequest.setMethod( HttpMethod.OPTIONS );
         rootRequest.setRawPath( "/path/_/admin:extension" );
 
-        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, handler.handlePreflight( rootRequest ).getStatus() );
+        final WebResponse rootResponse = handler.handle( rootRequest );
+        assertEquals( HttpStatus.OK, rootResponse.getStatus() );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", rootResponse.getHeaders().get( "Allow" ) );
         verifyNoInteractions( listExtensionsHandler, getExtensionIconHandler, extensionApiHandler );
 
         final WebRequest extensionRequest = new WebRequest();
@@ -85,6 +87,6 @@ class AdminExtensionDispatcherApiHandlerTest
         final WebResponse response = mock( WebResponse.class );
         when( extensionApiHandler.handle( extensionRequest ) ).thenReturn( response );
 
-        assertEquals( response, handler.handlePreflight( extensionRequest ) );
+        assertEquals( response, handler.handle( extensionRequest ) );
     }
 }

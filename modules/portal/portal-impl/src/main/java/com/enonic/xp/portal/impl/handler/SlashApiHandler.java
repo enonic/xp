@@ -32,6 +32,7 @@ import com.enonic.xp.portal.impl.sse.SseApiEndpointImpl;
 import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketApiEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.SiteConfig;
@@ -56,6 +57,8 @@ import com.enonic.xp.webapp.WebappService;
 @Component(service = SlashApiHandler.class, configurationPid = "com.enonic.xp.portal")
 public class SlashApiHandler
 {
+    private static final DescriptorKey ADMIN_EXTENSION_API = DescriptorKey.from( "admin:extension" );
+
     private final ControllerScriptFactory controllerScriptFactory;
 
     private final ApiDescriptorService apiDescriptorService;
@@ -70,6 +73,8 @@ public class SlashApiHandler
 
     private final SseManager sseManager;
 
+    private final PortalScriptService scriptService;
+
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
@@ -78,7 +83,7 @@ public class SlashApiHandler
                             @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
                             @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry,
-                            @Reference final SseManager sseManager )
+                            @Reference final SseManager sseManager, @Reference final PortalScriptService scriptService )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -87,6 +92,7 @@ public class SlashApiHandler
         this.adminToolDescriptorService = adminToolDescriptorService;
         this.universalApiHandlerRegistry = universalApiHandlerRegistry;
         this.sseManager = sseManager;
+        this.scriptService = scriptService;
     }
 
     @Activate
@@ -137,18 +143,14 @@ public class SlashApiHandler
         }
 
         final MountContext mountContext = resolveMountContext( portalRequest );
-        if ( !HandlerHelper.isPreflight( portalRequest ) )
-        {
-            verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
-        }
+        final boolean preflight = HandlerHelper.isPreflight( portalRequest );
+        final boolean accessAllowed = verifyAccessToApi( apiDescriptor, portalRequest, mountContext, preflight );
         verifyRequestMounted( apiDescriptor, portalRequest, mountContext );
 
         final Supplier<WebResponse> handler;
-        if ( HandlerHelper.isPreflight( portalRequest ) )
+        if ( preflight )
         {
-            handler = dynamicApiHandler != null
-                ? () -> HandlerHelper.defaultOptionsIfNotHandled( dynamicApiHandler.handlePreflight( portalRequest ) )
-                : () -> HandlerHelper.defaultOptionsIfNotHandled( getScript( descriptorKey ).executePreflight( portalRequest ) );
+            handler = () -> executePreflight( portalRequest, dynamicApiHandler, descriptorKey, accessAllowed );
         }
         else
         {
@@ -299,6 +301,27 @@ public class SlashApiHandler
         }
     }
 
+    /**
+     * A CORS preflight is sent without credentials, so it is not rejected: the result tells if it passed the access check.
+     */
+    private boolean verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest,
+                                       final MountContext mountContext, final boolean preflight )
+    {
+        try
+        {
+            verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
+            return true;
+        }
+        catch ( WebException e )
+        {
+            if ( preflight )
+            {
+                return false;
+            }
+            throw e;
+        }
+    }
+
     private void verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest, final MountContext mountContext )
     {
         final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
@@ -397,6 +420,26 @@ public class SlashApiHandler
         }
 
         return res;
+    }
+
+    private WebResponse executePreflight( final PortalRequest req, final DynamicUniversalApiHandler dynamicApiHandler,
+                                          final DescriptorKey descriptorKey, final boolean accessAllowed )
+    {
+        if ( dynamicApiHandler != null )
+        {
+            // native handlers rely on the access check, so they never receive a preflight. The only exception is
+            // the built-in dispatcher of admin extensions, which passes it to an explicit OPTIONS export only
+            return ADMIN_EXTENSION_API.equals( descriptorKey )
+                ? executeDynamicApiHandler( req, dynamicApiHandler )
+                : HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+        }
+
+        if ( !accessAllowed &&
+            !HandlerHelper.handlesPreflight( scriptService.execute( apiDescriptorService.getControllerResourceKey( descriptorKey ) ) ) )
+        {
+            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+        }
+        return HandlerHelper.defaultOptionsIfNotHandled( executeController( req, descriptorKey ) );
     }
 
     private PortalResponse executeController( final PortalRequest req, final DescriptorKey descriptorKey )

@@ -29,12 +29,14 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -100,6 +102,8 @@ class SlashApiHandlerTest
 
     private ControllerScript controllerScript;
 
+    private ScriptExports scriptExports;
+
     private PortalRequest request;
 
     HttpServletRequest servletRequestMock;
@@ -116,8 +120,12 @@ class SlashApiHandlerTest
         universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
         sseManager = mock( SseManager.class );
 
+        scriptExports = mock( ScriptExports.class );
+        final PortalScriptService scriptService = mock( PortalScriptService.class );
+        when( scriptService.execute( any( ResourceKey.class ) ) ).thenReturn( scriptExports );
+
         handler = new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
-                                       universalApiHandlerRegistry, sseManager );
+                                       universalApiHandlerRegistry, sseManager, scriptService );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
@@ -166,35 +174,56 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHttpOptionsReachesTheOptionsExport()
+    void testHttpOptionsOfAccessibleApiIsDispatchedAsUsual()
     {
+        // the access check is passed, so the controller is free to handle OPTIONS by its "all" export
         request.setMethod( HttpMethod.OPTIONS );
         mountedOnWeb();
 
-        when( controllerScript.executePreflight( any( PortalRequest.class ) ) ).thenReturn(
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
             PortalResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
 
         final WebResponse res = this.handler.handle( request );
 
         assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
         assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
-        verify( controllerScript ).executePreflight( request );
-        verify( controllerScript, never() ).execute( any() );
+        verify( controllerScript ).execute( request );
     }
 
     @Test
-    void testHttpOptionsDefaultsWhenTheControllerHasNoOptionsExport()
+    void testHttpOptionsDefaultsWhenTheControllerDoesNotHandleIt()
     {
         request.setMethod( HttpMethod.OPTIONS );
         mountedOnWeb();
 
-        when( controllerScript.executePreflight( any( PortalRequest.class ) ) ).thenReturn(
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
             PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build() );
 
         final WebResponse res = this.handler.handle( request );
 
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        verify( controllerScript ).execute( request );
+    }
+
+    @Test
+    void testHttpOptionsOfProtectedApiWithoutOptionsExportIsNotExecuted()
+    {
+        // the access check is not passed, so the request must not fall through to the "all" export
+        request.setMethod( HttpMethod.OPTIONS );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( PrincipalKey.from( "role:principalKey" ) ) )
+            .mount( "web" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        final WebResponse res = this.handler.handle( request );
+
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        verify( controllerScript, never() ).execute( any() );
     }
 
     @Test
@@ -210,15 +239,15 @@ class SlashApiHandlerTest
             .build();
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
-        when( controllerScript.executePreflight( any( PortalRequest.class ) ) ).thenReturn(
+        when( scriptExports.hasMethod( "OPTIONS" ) ).thenReturn( true );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
             PortalResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
 
         final WebResponse res = this.handler.handle( request );
 
         assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
         assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
-        verify( controllerScript ).executePreflight( request );
-        verify( controllerScript, never() ).execute( any() );
+        verify( controllerScript ).execute( request );
 
         // the actual request is still authorized
         request.setMethod( HttpMethod.POST );
@@ -249,13 +278,13 @@ class SlashApiHandlerTest
             .build();
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptor.getKey() ) ) ).thenReturn( adminToolDescriptor );
 
-        when( controllerScript.executePreflight( any( PortalRequest.class ) ) ).thenReturn(
+        when( scriptExports.hasMethod( "options" ) ).thenReturn( true );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
             PortalResponse.create().status( HttpStatus.NO_CONTENT ).build() );
 
         final WebResponse res = this.handler.handle( request );
         assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
-        verify( controllerScript ).executePreflight( request );
-        verify( controllerScript, never() ).execute( any() );
+        verify( controllerScript ).execute( request );
 
         request.setMethod( HttpMethod.GET );
         assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
@@ -264,9 +293,9 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHttpOptionsNeverReachesTheOrdinaryDynamicApiHandler()
+    void testHttpOptionsNeverReachesTheDynamicApiHandler()
     {
-        final UniversalApiHandler apiHandler = mock( UniversalApiHandler.class, CALLS_REAL_METHODS );
+        final UniversalApiHandler apiHandler = mock( UniversalApiHandler.class );
         universalApiHandlerRegistry.addApiHandler( apiHandler, Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
                                                                        RoleKeys.ADMIN.toString(), "mount", "web" ) );
 
@@ -283,22 +312,20 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHttpOptionsReachesThePreflightHandlerOfDynamicApiHandler()
+    void testHttpOptionsReachesTheAdminExtensionDispatcher()
     {
         final UniversalApiHandler apiHandler = mock( UniversalApiHandler.class );
-        when( apiHandler.handlePreflight( any() ) ).thenReturn(
-            WebResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
-        universalApiHandlerRegistry.addApiHandler( apiHandler, Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
-                                                                       RoleKeys.ADMIN.toString(), "mount", "web" ) );
+        when( apiHandler.handle( any() ) ).thenReturn( WebResponse.create().status( HttpStatus.NO_CONTENT ).build() );
+        universalApiHandlerRegistry.addApiHandler( apiHandler, Map.of( "key", "admin:extension", "allowedPrincipals",
+                                                                       RoleKeys.ADMIN_LOGIN.toString(), "mount", "web" ) );
 
         request.setMethod( HttpMethod.OPTIONS );
-        request.setRawPath( "/api/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/api/admin:extension" );
 
         final WebResponse res = this.handler.handle( request );
 
         assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
-        assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
-        verify( apiHandler, never() ).handle( any() );
+        verify( apiHandler ).handle( request );
 
         universalApiHandlerRegistry.removeApiHandler( apiHandler );
     }
