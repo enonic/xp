@@ -1,8 +1,12 @@
 package com.enonic.xp.web.jetty.impl;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
+import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.VirtualThreadPool;
 import org.junit.jupiter.api.Test;
@@ -101,6 +105,45 @@ class JettyActivatorTest
 
         // stopping the server stops the managed VirtualThreadPool bean
         assertFalse( virtualThreadPool.isRunning() );
+    }
+
+    @Test
+    void every_connector_context_knows_the_web_port()
+        throws Exception
+    {
+        final ArgumentCaptor<Server> serverCaptor = ArgumentCaptor.forClass( Server.class );
+        when( bundleContext.registerService( eq( Server.class ), serverCaptor.capture(), any() ) ).
+            thenReturn( serverServiceRegistration );
+
+        this.config = mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( this.config.http_web_port() ).thenReturn( 0 );
+        when( this.config.http_statistics_port() ).thenReturn( 0 );
+        when( this.config.http_management_port() ).thenReturn( 0 );
+
+        final DispatchServlet web = mock( DispatchServlet.class );
+        when( web.getConnector() ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final DispatchServlet management = mock( DispatchServlet.class );
+        when( management.getConnector() ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+        final JettyActivator activator =
+            new JettyActivator( config, bundleContext, Mockito.mock( JettySessionStoreConfigurator.class ), new WebSocketSessionTracker(),
+                                List.of( web, management ) );
+
+        activator.activate();
+
+        final Server server = serverCaptor.getValue();
+        final int webPort = Stream.of( server.getConnectors() )
+            .map( ServerConnector.class::cast )
+            .filter( connector -> DispatchConstants.WEB_CONNECTOR.equals( connector.getName() ) )
+            .findFirst()
+            .orElseThrow()
+            .getLocalPort();
+        assertTrue( webPort > 0 );
+        final List<ServletContextHandler> contexts = server.getDescendants( ServletContextHandler.class );
+        assertEquals( 2, contexts.size() );
+        contexts.forEach(
+            context -> assertEquals( webPort, context.getServletContext().getAttribute( DispatchConstants.WEB_PORT_ATTRIBUTE ) ) );
+
+        activator.deactivate();
     }
 
     @Test

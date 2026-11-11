@@ -1,5 +1,7 @@
 package com.enonic.xp.web.vhost.impl.config;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -32,6 +34,8 @@ final class VirtualHostConfigMap
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
 
     private static final String FLOWS_ID_PROVIDER_SETTING = "flows";
+
+    private static final String AUTHORIZATION_SERVER_ID_PROVIDER_SETTING = "authorizationServer";
 
     private static final String API_CONTEXT_PREFIX = "api.";
 
@@ -158,6 +162,7 @@ final class VirtualHostConfigMap
             {
                 case FLOWS_ID_PROVIDER_SETTING -> settings.flows =
                     list( value ).map( flow -> flow.toLowerCase( Locale.ROOT ) ).collect( Collectors.toUnmodifiableSet() );
+                case AUTHORIZATION_SERVER_ID_PROVIDER_SETTING -> settings.authorizationServer = authorizationServer( idProviderName, value );
                 default -> throw new IllegalArgumentException(
                     "Unknown setting [" + setting + "] for id provider [" + idProviderName + "] in vhost mapping" +
                         " (an id provider whose name contains a dot cannot be configured in a vhost mapping)" );
@@ -210,15 +215,41 @@ final class VirtualHostConfigMap
 
         Set<String> flows;
 
+        String authorizationServer;
+
         VirtualHostIdProvider build()
         {
-            final VirtualHostIdProvider.Builder builder = VirtualHostIdProvider.create();
+            final VirtualHostIdProvider.Builder builder = VirtualHostIdProvider.create().authorizationServer( authorizationServer );
             if ( flows != null )
             {
                 builder.flows( flows );
             }
             return builder.build();
         }
+    }
+
+    /**
+     * An authorization server is named by its issuer URL (RFC 8414): http or https, with a host, and
+     * neither query nor fragment. A trailing slash is dropped, as clients append paths to it.
+     */
+    private static String authorizationServer( final String idProviderName, final String value )
+    {
+        final String url = value.trim();
+        try
+        {
+            final URI uri = new URI( url );
+            if ( ( "https".equals( uri.getScheme() ) || "http".equals( uri.getScheme() ) ) && uri.getHost() != null &&
+                uri.getRawQuery() == null && uri.getRawFragment() == null )
+            {
+                return url.endsWith( "/" ) ? url.substring( 0, url.length() - 1 ) : url;
+            }
+        }
+        catch ( URISyntaxException e )
+        {
+            // reported below
+        }
+        throw new IllegalArgumentException( "Invalid authorizationServer [" + value + "] for id provider [" + idProviderName +
+                                                "] in vhost mapping, must be an http or https URL without query or fragment" );
     }
 
     private Map<String, String> getVirtualHostContext( final String mappingPrefix )

@@ -107,18 +107,21 @@ class ManagementWellKnownFilterTest
     }
 
     @Test
-    void other_paths_methods_and_requests_without_a_mapping_go_on()
+    void other_paths_methods_and_the_authorization_server_metadata_go_on()
         throws Exception
     {
         when( req.getPathInfo() ).thenReturn( "/repo:list" );
         VirtualHostHelper.setVirtualHost( req, mapping );
         filter.doFilter( req, res, chain );
 
+        when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-authorization-server/_/idprovider/system" );
+        filter.doFilter( req, res, chain );
+
         when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource" );
         when( req.getMethod() ).thenReturn( "POST" );
         filter.doFilter( req, res, chain );
 
-        verify( chain, times( 2 ) ).doFilter( req, res );
+        verify( chain, times( 3 ) ).doFilter( req, res );
         verify( webSerializerService, never() ).request( any() );
     }
 }

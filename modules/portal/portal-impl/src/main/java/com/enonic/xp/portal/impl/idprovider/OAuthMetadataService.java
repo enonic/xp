@@ -1,8 +1,6 @@
 package com.enonic.xp.portal.impl.idprovider;
 
-import java.util.Comparator;
 import java.util.Map;
-import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
@@ -18,7 +16,6 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
-import com.enonic.xp.web.vhost.VirtualHostService;
 
 /**
  * The OAuth metadata documents for a request, from its mapping and the scopes of the id provider
@@ -30,21 +27,17 @@ public class OAuthMetadataService
 {
     private final SecurityService securityService;
 
-    private final VirtualHostService virtualHostService;
-
     @Activate
-    public OAuthMetadataService( @Reference final SecurityService securityService,
-                                 @Reference final VirtualHostService virtualHostService )
+    public OAuthMetadataService( @Reference final SecurityService securityService )
     {
         this.securityService = securityService;
-        this.virtualHostService = virtualHostService;
     }
 
     /**
-     * The protected resource metadata of a path under the request's mapping, or null when the
-     * mapping has no id provider. A web mapping is its own authorization server. A mapping on another
-     * connector names a web mapping that serves its default id provider's token flows, on the
-     * request's scheme and port, as when both hosts sit behind the same proxy; null when there is none.
+     * The protected resource metadata of a path under the request's mapping, or null when nothing
+     * says where a token for it is issued. The authorization server is the one the mapping names for
+     * its default id provider; without one, a web mapping that serves the id provider's
+     * {@code device} or {@code code} flow is its own.
      */
     public @Nullable Map<String, Object> protectedResource( final WebRequest request, final String resourcePath )
     {
@@ -54,18 +47,27 @@ public class OAuthMetadataService
         {
             return null;
         }
-        if ( DispatchConstants.WEB_CONNECTOR.equals( mapping.getConnector() ) )
-        {
-            return OAuthMetadata.protectedResource( origin( request ), mapping, resourcePath, securityService.getScopes( idProvider ) );
-        }
-        final Optional<VirtualHost> web = tokenMapping( idProvider );
-        if ( web.isEmpty() )
+        final String origin = origin( request );
+        final String authorizationServer = authorizationServer( origin, mapping, idProvider );
+        return authorizationServer == null
+            ? null
+            : OAuthMetadata.protectedResource( origin, resourcePath, authorizationServer, securityService.getScopes( idProvider ) );
+    }
+
+    private static @Nullable String authorizationServer( final String origin, final VirtualHost mapping, final IdProviderKey idProvider )
+    {
+        final VirtualHostIdProvider settings = mapping.getIdProviders().get( idProvider );
+        if ( settings == null )
         {
             return null;
         }
-        final String webOrigin = OAuthMetadata.origin( request.getScheme(), web.get().getHost(), request.getPort() );
-        final String authorizationServer = OAuthMetadata.authorizationServer( webOrigin, web.get(), idProvider );
-        return OAuthMetadata.protectedResource( origin( request ), resourcePath, authorizationServer, securityService.getScopes( idProvider ) );
+        if ( settings.getAuthorizationServer() != null )
+        {
+            return settings.getAuthorizationServer();
+        }
+        final boolean issuesTokens = DispatchConstants.WEB_CONNECTOR.equals( mapping.getConnector() ) &&
+            ( settings.serves( IdProviderFlow.DEVICE ) || settings.serves( IdProviderFlow.CODE ) );
+        return issuesTokens ? OAuthMetadata.authorizationServer( origin, mapping, idProvider ) : null;
     }
 
     /**
@@ -87,26 +89,6 @@ public class OAuthMetadataService
     public Map<String, Object> authorizationServer( final WebRequest request, final IdProviderKey idProvider )
     {
         return OAuthMetadata.authorizationServer( origin( request ), request.getVirtualHost(), idProvider, securityService.getScopes( idProvider ) );
-    }
-
-    private Optional<VirtualHost> tokenMapping( final IdProviderKey idProvider )
-    {
-        return virtualHostService.getVirtualHosts()
-            .stream()
-            .filter( mapping -> DispatchConstants.WEB_CONNECTOR.equals( mapping.getConnector() ) )
-            .filter( mapping -> isSingleHost( mapping.getHost() ) )
-            .filter( mapping -> servesTokenFlows( mapping.getIdProviders().get( idProvider ) ) )
-            .min( Comparator.comparingInt( VirtualHost::getOrder ) );
-    }
-
-    private static boolean isSingleHost( final String host )
-    {
-        return !host.isEmpty() && !host.startsWith( "~" ) && !host.contains( " " );
-    }
-
-    private static boolean servesTokenFlows( final @Nullable VirtualHostIdProvider settings )
-    {
-        return settings != null && ( settings.serves( IdProviderFlow.DEVICE ) || settings.serves( IdProviderFlow.CODE ) );
     }
 
     private static String origin( final WebRequest request )

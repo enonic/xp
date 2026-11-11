@@ -45,24 +45,26 @@ class OAuthMetadataTest
     }
 
     @Test
-    void the_protected_resource_is_the_url_asked_about_and_its_server_the_mappings_default_id_provider()
+    void the_protected_resource_is_the_url_asked_about_with_the_authorization_server_it_is_given()
     {
         final Scopes scopes = Scopes.from( Scope.create().idProvider( IDP ).id( "content:read" ).build() );
 
-        final Map<String, Object> root = OAuthMetadata.protectedResource( "https://h", mapping( "/", IDP ), "/", scopes );
+        final Map<String, Object> root = OAuthMetadata.protectedResource( "https://h", "/", "https://h/_/idprovider/system", scopes );
         assertThat( root ).containsEntry( "resource", "https://h" )
             .containsEntry( "authorization_servers", List.of( "https://h/_/idprovider/system" ) )
             .containsEntry( "bearer_methods_supported", List.of( "header" ) )
             .containsEntry( "scopes_supported", List.of( "content:read" ) );
 
-        final Map<String, Object> mcp = OAuthMetadata.protectedResource( "https://h", mapping( "/", IDP ), "/api/mcp", Scopes.empty() );
+        final Map<String, Object> mcp = OAuthMetadata.protectedResource( "https://h", "/api/mcp", "https://h/_/idprovider/system", Scopes.empty() );
         assertThat( mcp ).containsEntry( "resource", "https://h/api/mcp" ).doesNotContainKey( "scopes_supported" );
+    }
 
-        final Map<String, Object> underAdmin = OAuthMetadata.protectedResource( "https://h", mapping( "/admin", IDP ), "/admin/tool", Scopes.empty() );
-        assertThat( underAdmin ).containsEntry( "resource", "https://h/admin/tool" )
-            .containsEntry( "authorization_servers", List.of( "https://h/admin/_/idprovider/system" ) );
-
-        assertThat( OAuthMetadata.protectedResource( "https://h", mapping( "/", null ), "/", Scopes.empty() ) ).as( "nothing to authorize with" ).isNull();
+    @Test
+    void a_mappings_id_provider_endpoints_sit_under_its_source()
+    {
+        assertThat( OAuthMetadata.authorizationServer( "https://h", mapping( "/", IDP ), IDP ) ).isEqualTo( "https://h/_/idprovider/system" );
+        assertThat( OAuthMetadata.authorizationServer( "https://h", mapping( "/admin", IDP ), IDP ) ).isEqualTo(
+            "https://h/admin/_/idprovider/system" );
     }
 
     @Test

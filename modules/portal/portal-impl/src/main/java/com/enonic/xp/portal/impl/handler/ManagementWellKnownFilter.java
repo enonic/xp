@@ -22,8 +22,9 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.WellKnownPaths;
 
 /**
- * Serves the OAuth well-known documents on a management mapping, before authentication: a client
- * that knows only the management URL learns from them where to get a token for it.
+ * Serves the protected resource metadata of a management mapping, before authentication: a client
+ * that knows only the management URL learns from it where to get a token for it. The authorization
+ * server metadata is not served here: tokens are issued on the web connector.
  */
 @Component(immediate = true, service = Filter.class, property = {"connector=api"})
 @Order(-50)
@@ -52,7 +53,8 @@ public final class ManagementWellKnownFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        if ( WellKnownPaths.documentOf( req.getPathInfo() ) == null || VirtualHostHelper.getVirtualHost( req ) == null ||
+        if ( !WellKnownPaths.PROTECTED_RESOURCE.equals( WellKnownPaths.documentOf( req.getPathInfo() ) ) ||
+            VirtualHostHelper.getVirtualHost( req ) == null ||
             !isServedMethod( req.getMethod() ) )
         {
             chain.doFilter( req, res );

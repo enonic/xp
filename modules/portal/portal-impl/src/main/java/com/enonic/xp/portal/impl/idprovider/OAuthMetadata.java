@@ -74,30 +74,11 @@ final class OAuthMetadata
     }
 
     /**
-     * The protected resource metadata of a resource under the mapping: its own URL as its
-     * identifier, the mapping's default id provider as its authorization server, and that id
-     * provider's scopes.
-     *
-     * @param resourcePath the resource's path as the client sent it
-     * @return the document, or null when the mapping has no id provider to authorize with
-     */
-    static @Nullable Map<String, Object> protectedResource( final String origin, final VirtualHost mapping, final String resourcePath,
-                                                            final Scopes scopes )
-    {
-        final IdProviderKey idProvider = mapping.getDefaultIdProviderKey();
-        if ( idProvider == null )
-        {
-            return null;
-        }
-        return protectedResource( origin, resourcePath, authorizationServer( origin, mapping, idProvider ), scopes );
-    }
-
-    /**
-     * The protected resource metadata of a resource whose tokens are issued by an authorization
-     * server elsewhere: on a web mapping, for a resource on the management connector.
+     * The protected resource metadata of a resource: its own URL as its identifier, the
+     * authorization server that issues its tokens, and the id provider's scopes.
      *
      * @param resourcePath        the resource's path as the client sent it
-     * @param authorizationServer the external base of the id provider endpoints that issue its tokens
+     * @param authorizationServer the issuer URL of the id provider endpoints that issue its tokens
      */
     static Map<String, Object> protectedResource( final String origin, final String resourcePath, final String authorizationServer,
                                                   final Scopes scopes )
