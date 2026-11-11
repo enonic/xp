@@ -20,6 +20,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
@@ -28,6 +29,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -57,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,6 +74,8 @@ class ServiceHandlerTest
     protected ServiceDescriptorService serviceDescriptorService;
 
     private ControllerScript controllerScript;
+
+    private ScriptExports scriptExports;
 
     @BeforeEach
     public final void setup()
@@ -95,7 +100,11 @@ class ServiceHandlerTest
         final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().key( serviceDescriptorKey ).build();
         when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
-        this.handler = new ServiceHandler( serviceDescriptorService, controllerScriptFactory );
+        this.scriptExports = mock( ScriptExports.class );
+        final PortalScriptService scriptService = mock( PortalScriptService.class );
+        when( scriptService.execute( Mockito.any() ) ).thenReturn( this.scriptExports );
+
+        this.handler = new ServiceHandler( serviceDescriptorService, controllerScriptFactory, scriptService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
@@ -104,18 +113,95 @@ class ServiceHandlerTest
     }
 
     @Test
-    void testOptions()
+    void testOptionsDefaultsWhenTheControllerDoesNotHandleIt()
         throws Exception
     {
         this.request.setMethod( HttpMethod.OPTIONS );
+        this.request.setBaseUri( "/webapp/demo" );
+        this.request.setApplicationKey( ApplicationKey.from( "demo" ) );
+        this.request.setRawPath( "/_/service/demo/test" );
+
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
-        this.request.setRawPath( "/_/service/demo/test" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        verify( this.controllerScript ).execute( this.request );
+    }
+
+    @Test
+    void testOptionsOfAccessibleServiceIsDispatchedAsUsual()
+        throws Exception
+    {
+        // the access check is passed, so the controller is free to handle OPTIONS by its "all" export
+        this.request.setMethod( HttpMethod.OPTIONS );
+        this.request.setBaseUri( "/webapp/demo" );
+        this.request.setApplicationKey( ApplicationKey.from( "demo" ) );
+        this.request.setRawPath( "/_/service/demo/test" );
+
+        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).build() );
+
+        final WebResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
+        verify( this.controllerScript ).execute( this.request );
+    }
+
+    @Test
+    void testOptionsOfProtectedServiceWithoutOptionsExportIsNotExecuted()
+        throws Exception
+    {
+        // the access check is not passed, so the request must not fall through to the "all" export
+        final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
+        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create()
+            .key( serviceDescriptorKey )
+            .allowedPrincipals( PrincipalKeys.from( PrincipalKey.from( "role:system.admin" ) ) )
+            .build();
+        when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
+
+        this.request.setMethod( HttpMethod.OPTIONS );
+        this.request.setBaseUri( "/webapp/demo" );
+        this.request.setApplicationKey( ApplicationKey.from( "demo" ) );
+        this.request.setRawPath( "/_/service/demo/test" );
+
+        final WebResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        verify( this.controllerScript, never() ).execute( Mockito.any() );
+    }
+
+    @Test
+    void testOptionsOfProtectedServiceReachesTheOptionsExport()
+        throws Exception
+    {
+        // a CORS preflight is sent without credentials and must not be rejected by the access check
+        final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
+        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create()
+            .key( serviceDescriptorKey )
+            .allowedPrincipals( PrincipalKeys.from( PrincipalKey.from( "role:system.admin" ) ) )
+            .build();
+        when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
+
+        this.request.setMethod( HttpMethod.OPTIONS );
+        this.request.setBaseUri( "/webapp/demo" );
+        this.request.setApplicationKey( ApplicationKey.from( "demo" ) );
+        this.request.setRawPath( "/_/service/demo/test" );
+
+        when( this.scriptExports.hasMethod( "OPTIONS" ) ).thenReturn( true );
+        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
+
+        final WebResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
+        assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
+        verify( this.controllerScript ).execute( this.request );
+
+        // the actual request is still authorized
+        this.request.setMethod( HttpMethod.POST );
+        final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
     }
 
     @Test

@@ -17,6 +17,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
@@ -41,12 +42,16 @@ public class ServiceHandler
 
     private final ControllerScriptFactory controllerScriptFactory;
 
+    private final PortalScriptService scriptService;
+
     @Activate
     public ServiceHandler( @Reference final ServiceDescriptorService serviceDescriptorService,
-                           @Reference final ControllerScriptFactory controllerScriptFactory )
+                           @Reference final ControllerScriptFactory controllerScriptFactory,
+                           @Reference final PortalScriptService scriptService )
     {
         this.serviceDescriptorService = serviceDescriptorService;
         this.controllerScriptFactory = controllerScriptFactory;
+        this.scriptService = scriptService;
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -64,11 +69,6 @@ public class ServiceHandler
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
 
-        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
-        {
-            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
-        }
-
         final DescriptorKey descriptorKey = parseDescriptorKey( matcher.group( 1 ), matcher.group( 2 ) );
         final ApplicationKey applicationKey = descriptorKey.getApplicationKey();
         final String name = descriptorKey.getName();
@@ -77,8 +77,16 @@ public class ServiceHandler
         final PortalRequest portalRequest = createPortalRequest( webRequest, servicePath, descriptorKey );
 
         //Executes the service
-        final ControllerScript controllerScript =
-            controllerScriptFactory.fromScript( ResourceKey.from( applicationKey, "services/" + name + "/" + name + ".js" ) );
+        final ResourceKey script = ResourceKey.from( applicationKey, "services/" + name + "/" + name + ".js" );
+
+        final boolean preflight = HandlerHelper.isPreflight( portalRequest );
+
+        if ( preflight && !isAccessAllowed( descriptorKey ) && !HandlerHelper.handlesPreflight( scriptService.execute( script ) ) )
+        {
+            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+        }
+
+        final ControllerScript controllerScript = controllerScriptFactory.fromScript( script );
 
         // bound execution: a websocket opened by this request stays on the exact context that
         // executed it
@@ -87,6 +95,11 @@ public class ServiceHandler
             boundRef[0] = bound;
             return bound.execute( portalRequest );
         } );
+
+        if ( preflight )
+        {
+            return HandlerHelper.defaultOptionsIfNotHandled( portalResponse );
+        }
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = portalRequest.getWebSocketContext();
@@ -97,6 +110,17 @@ public class ServiceHandler
         }
 
         return portalResponse;
+    }
+
+    private boolean isAccessAllowed( final DescriptorKey descriptorKey )
+    {
+        return isAccessAllowed( serviceDescriptorService.getByKey( descriptorKey ) );
+    }
+
+    private static boolean isAccessAllowed( final ServiceDescriptor serviceDescriptor )
+    {
+        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+        return serviceDescriptor.isAccessAllowed( principals );
     }
 
     private static DescriptorKey parseDescriptorKey( final String applicationKey, final String name )
@@ -126,9 +150,9 @@ public class ServiceHandler
             throw WebException.notFound( String.format( "Service [%s] not found", descriptorKey ) );
         }
 
-        //Checks if the access to ServiceDescriptor is allowed
-        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
-        if ( !serviceDescriptor.isAccessAllowed( principals ) )
+        //Checks if the access to ServiceDescriptor is allowed. A preflight is sent without credentials: it is not rejected,
+        //but reaches only an explicit OPTIONS export of the controller
+        if ( !HandlerHelper.isPreflight( portalRequest ) && !isAccessAllowed( serviceDescriptor ) )
         {
             throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }

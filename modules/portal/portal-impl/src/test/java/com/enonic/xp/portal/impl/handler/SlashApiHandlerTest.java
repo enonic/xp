@@ -29,12 +29,14 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -78,6 +80,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -99,6 +102,8 @@ class SlashApiHandlerTest
 
     private ControllerScript controllerScript;
 
+    private ScriptExports scriptExports;
+
     private PortalRequest request;
 
     HttpServletRequest servletRequestMock;
@@ -115,8 +120,12 @@ class SlashApiHandlerTest
         universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
         sseManager = mock( SseManager.class );
 
+        scriptExports = mock( ScriptExports.class );
+        final PortalScriptService scriptService = mock( PortalScriptService.class );
+        when( scriptService.execute( any( ResourceKey.class ) ) ).thenReturn( scriptExports );
+
         handler = new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
-                                       universalApiHandlerRegistry, sseManager );
+                                       universalApiHandlerRegistry, sseManager, scriptService );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
@@ -165,26 +174,183 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHttpOptions()
-        throws Exception
+    void testHttpOptionsOfAccessibleApiIsDispatchedAsUsual()
     {
-        final WebRequest webRequest1 = new WebRequest();
-        webRequest1.setMethod( HttpMethod.OPTIONS );
-        webRequest1.setRawPath( "/path/_/com.enonic.app.myapp:api-key" );
+        // the access check is passed, so the controller is free to handle OPTIONS by its "all" export
+        request.setMethod( HttpMethod.OPTIONS );
+        mountedOnWeb();
 
-        WebResponse res = this.handler.handle( webRequest1 );
-        assertNotNull( res );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
+
+        final WebResponse res = this.handler.handle( request );
+
+        assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
+        assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
+        verify( controllerScript ).execute( request );
+    }
+
+    @Test
+    void testHttpOptionsDefaultsWhenTheControllerDoesNotHandleIt()
+    {
+        request.setMethod( HttpMethod.OPTIONS );
+        mountedOnWeb();
+
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build() );
+
+        final WebResponse res = this.handler.handle( request );
+
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        verify( controllerScript ).execute( request );
+    }
 
-        final WebRequest webRequest2 = new WebRequest();
-        webRequest2.setMethod( HttpMethod.OPTIONS );
-        webRequest2.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+    @Test
+    void testHttpOptionsOfProtectedApiWithoutOptionsExportIsNotExecuted()
+    {
+        // the access check is not passed, so the request must not fall through to the "all" export
+        request.setMethod( HttpMethod.OPTIONS );
 
-        res = this.handler.handle( webRequest2 );
-        assertNotNull( res );
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( PrincipalKey.from( "role:principalKey" ) ) )
+            .mount( "web" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        final WebResponse res = this.handler.handle( request );
+
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        verify( controllerScript, never() ).execute( any() );
+    }
+
+    @Test
+    void testHttpOptionsOfProtectedApiReachesTheOptionsExport()
+    {
+        // a CORS preflight is sent without credentials and must not be rejected by the access check
+        request.setMethod( HttpMethod.OPTIONS );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( PrincipalKey.from( "role:principalKey" ) ) )
+            .mount( "web" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        when( scriptExports.hasMethod( "OPTIONS" ) ).thenReturn( true );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).header( "Access-Control-Allow-Origin", "*" ).build() );
+
+        final WebResponse res = this.handler.handle( request );
+
+        assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
+        assertEquals( "*", res.getHeaders().get( "Access-Control-Allow-Origin" ) );
+        verify( controllerScript ).execute( request );
+
+        // the actual request is still authorized
+        request.setMethod( HttpMethod.POST );
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.UNAUTHORIZED );
+    }
+
+    @Test
+    void testHttpOptionsOfProtectedAdminToolApiReachesTheOptionsExport()
+    {
+        request.setMethod( HttpMethod.OPTIONS );
+        request.setRawPath( "/admin/com.enonic.app.myapp/tool/_/com.enonic.app.myapp:api-key" );
+        // anonymous caller: no admin login role
+        when( servletRequestMock.isUserInRole( any() ) ).thenReturn( false );
+
+        final DescriptorKey apiKey = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" );
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( apiKey )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.ADMIN ) )
+            .build();
+        when( apiDescriptorService.getByKey( eq( apiKey ) ) ).thenReturn( apiDescriptor );
+
+        final AdminToolDescriptor adminToolDescriptor = AdminToolDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "tool" ) )
+            .addAllowedPrincipals( RoleKeys.ADMIN )
+            .apiMounts( DescriptorKeys.from( apiKey ) )
+            .build();
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptor.getKey() ) ) ).thenReturn( adminToolDescriptor );
+
+        when( scriptExports.hasMethod( "options" ) ).thenReturn( true );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).build() );
+
+        final WebResponse res = this.handler.handle( request );
+        assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
+        verify( controllerScript ).execute( request );
+
+        request.setMethod( HttpMethod.GET );
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.UNAUTHORIZED );
+    }
+
+    @Test
+    void testHttpOptionsNeverReachesTheDynamicApiHandler()
+    {
+        final UniversalApiHandler apiHandler = mock( UniversalApiHandler.class );
+        universalApiHandlerRegistry.addApiHandler( apiHandler, Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                                       RoleKeys.ADMIN.toString(), "mount", "web" ) );
+
+        request.setMethod( HttpMethod.OPTIONS );
+        request.setRawPath( "/api/com.enonic.app.external.app:myapi" );
+
+        final WebResponse res = this.handler.handle( request );
+
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
+        verify( apiHandler, never() ).handle( any() );
+
+        universalApiHandlerRegistry.removeApiHandler( apiHandler );
+    }
+
+    @Test
+    void testHttpOptionsReachesTheAdminExtensionDispatcher()
+    {
+        final UniversalApiHandler apiHandler = mock( UniversalApiHandler.class );
+        when( apiHandler.handle( any() ) ).thenReturn( WebResponse.create().status( HttpStatus.NO_CONTENT ).build() );
+        universalApiHandlerRegistry.addApiHandler( apiHandler, Map.of( "key", "admin:extension", "allowedPrincipals",
+                                                                       RoleKeys.ADMIN_LOGIN.toString(), "mount", "web" ) );
+
+        request.setMethod( HttpMethod.OPTIONS );
+        request.setRawPath( "/api/admin:extension" );
+
+        final WebResponse res = this.handler.handle( request );
+
+        assertEquals( HttpStatus.NO_CONTENT, res.getStatus() );
+        verify( apiHandler ).handle( request );
+
+        universalApiHandlerRegistry.removeApiHandler( apiHandler );
+    }
+
+    @Test
+    void testHttpOptionsOfUnknownApiIsNotFound()
+    {
+        request.setMethod( HttpMethod.OPTIONS );
+        request.setRawPath( "/api/app:unknown" );
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    private void mountedOnWeb()
+    {
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
     }
 
     @Test
