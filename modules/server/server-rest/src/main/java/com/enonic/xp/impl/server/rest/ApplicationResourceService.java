@@ -161,6 +161,16 @@ public class ApplicationResourceService
             .toList();
     }
 
+    public List<ApplicationInfoJson> getGlobalApplications()
+    {
+        return getInstalledApplications().stream().filter( application -> !application.getLocal() && !application.getSystem() ).toList();
+    }
+
+    public boolean isLocalApplication( final ApplicationKey applicationKey )
+    {
+        return applicationService.isLocalApplication( applicationKey );
+    }
+
     public ApplicationInfoJson getInstalledApplication( final ApplicationKey applicationKey )
     {
         final Application application = applicationService.getInstalledApplication( applicationKey );

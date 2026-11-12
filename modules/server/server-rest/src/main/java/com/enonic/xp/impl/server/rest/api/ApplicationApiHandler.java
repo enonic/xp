@@ -40,6 +40,10 @@ import com.enonic.xp.web.sse.SseMessage;
  * fetches it from a URL the server can reach (with its own allow-list and checksum policy, see
  * {@code com.enonic.xp.server.management.app.cfg}), so a vhost can grant one without the other. {@code /installUrl} and
  * {@code /events} are aliases of {@code /pull} and {@code /watch}.
+ * <p>
+ * {@code list} reports every application on this node. {@code watch} covers only the applications installed cluster-wide: its
+ * initial {@code list} event and the changes that follow leave out local and system applications, and report a change
+ * whichever node it was made through.
  */
 @Component(service = {UniversalApiHandler.class, EventListener.class}, property = {"key=server:app", "title=Applications API",
     "mount=management", "allowedPrincipals=role:system.admin"})
@@ -114,7 +118,7 @@ public class ApplicationApiHandler
 
             try
             {
-                final ApplicationsJson list = new ApplicationsJson( applicationResourceService.getInstalledApplications() );
+                final ApplicationsJson list = new ApplicationsJson( applicationResourceService.getGlobalApplications() );
                 sseManager.send( id, SseMessage.create()
                     .id( UuidHelper.newUUIDv7().toString() )
                     .event( "list" )
@@ -131,7 +135,7 @@ public class ApplicationApiHandler
     @Override
     public void onEvent( final Event event )
     {
-        if ( !EVENT_TYPE.equals( event.getType() ) || !event.isLocalOrigin() )
+        if ( !EVENT_TYPE.equals( event.getType() ) )
         {
             return;
         }
@@ -153,6 +157,12 @@ public class ApplicationApiHandler
         }
 
         event.getValue( APPLICATION_KEY_PARAM ).ifPresent( keyValue -> {
+            final ApplicationKey applicationKey = ApplicationKey.from( keyValue.toString() );
+            if ( applicationResourceService.isLocalApplication( applicationKey ) )
+            {
+                LOG.debug( "Ignoring {} {} for local application {}", EVENT_TYPE, eventSubType, applicationKey );
+                return;
+            }
             try
             {
                 final String data;
@@ -162,11 +172,10 @@ public class ApplicationApiHandler
                 }
                 else
                 {
-                    final ApplicationKey applicationKey = ApplicationKey.from( keyValue.toString() );
                     final ApplicationInfoJson applicationInfo = applicationResourceService.getInstalledApplication( applicationKey );
                     if ( applicationInfo == null )
                     {
-                        LOG.warn( "Application {} not found", applicationKey );
+                        LOG.debug( "Application {} is not installed on this node", applicationKey );
                         return;
                     }
                     data = OBJECT_MAPPER.writeValueAsString( applicationInfo );

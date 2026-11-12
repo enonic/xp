@@ -11,6 +11,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
@@ -177,6 +178,21 @@ class ApplicationResourceServiceTest
                                                             new ApplicationActionResultJson.ActionResult( "com.enonic.app2", false ) );
     }
 
+    @Test
+    void getGlobalApplications_leavesOutLocalAndSystem()
+    {
+        final Application global = createApplication( "global" );
+        final Application local = createApplication( "local" );
+        final Application system = createApplication( "system" );
+        when( system.isSystem() ).thenReturn( true );
+        when( applicationService.getInstalledApplications() ).thenReturn( Applications.from( global, local, system ) );
+        when( applicationService.isLocalApplication( ApplicationKey.from( "local" ) ) ).thenReturn( true );
+
+        assertThat( service.getInstalledApplications() ).extracting( ApplicationInfoJson::getKey )
+            .containsExactly( "global", "local", "system" );
+        assertThat( service.getGlobalApplications() ).extracting( ApplicationInfoJson::getKey ).containsExactly( "global" );
+    }
+
     private static ApplicationParams createApplicationParams( final String... keys )
     {
         final ApplicationParams params = new ApplicationParams();
@@ -216,8 +232,13 @@ class ApplicationResourceServiceTest
 
     private Application createApplication()
     {
+        return createApplication( "testapplication" );
+    }
+
+    private Application createApplication( final String key )
+    {
         final Application application = mock( Application.class );
-        when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( key ) );
         when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
         when( application.getMinSystemVersion() ).thenReturn( "5.0" );
         when( application.getMaxSystemVersion() ).thenReturn( "5.1" );

@@ -212,7 +212,7 @@ class ApplicationApiHandlerTest
     @Test
     void onSseEvent_open_addsToGroupAndSendsList()
     {
-        when( applicationResourceService.getInstalledApplications() ).thenReturn( List.of() );
+        when( applicationResourceService.getGlobalApplications() ).thenReturn( List.of() );
 
         final UUID clientId = UUID.randomUUID();
         final SseEvent event = SseEvent.create()
@@ -253,13 +253,54 @@ class ApplicationApiHandlerTest
     }
 
     @Test
-    void onEvent_nonLocalOrigin_ignored()
+    void onEvent_nonLocalOrigin_sendsToGroup()
     {
-        final Event event = Event.create( "application.cluster" ).localOrigin( false ).value( "eventType", "installed" ).build();
+        when( sseManager.getGroupSize( "server:app:events" ) ).thenReturn( 1 );
+        final ApplicationInfoJson info = ApplicationInfoJson.create( createApplication(), null, false );
+        when( applicationResourceService.getInstalledApplication( ApplicationKey.from( "testapplication" ) ) ).thenReturn( info );
+
+        final Event event = Event.create( "application.cluster" )
+            .localOrigin( false )
+            .value( "eventType", "installed" )
+            .value( "key", "testapplication" )
+            .build();
+
+        handler.onEvent( event );
+
+        verify( sseManager ).sendToGroup( eq( "server:app:events" ), any( SseMessage.class ) );
+    }
+
+    @Test
+    void onEvent_localApplication_skipsSend()
+    {
+        when( sseManager.getGroupSize( "server:app:events" ) ).thenReturn( 1 );
+        when( applicationResourceService.isLocalApplication( ApplicationKey.from( "testapplication" ) ) ).thenReturn( true );
+
+        final Event event = Event.create( "application.cluster" )
+            .localOrigin( false )
+            .value( "eventType", "uninstalled" )
+            .value( "key", "testapplication" )
+            .build();
 
         handler.onEvent( event );
 
         verify( sseManager, never() ).sendToGroup( any(), any() );
+    }
+
+    @Test
+    void onSseEvent_open_listsGlobalApplicationsOnly()
+    {
+        final UUID clientId = UUID.randomUUID();
+        final SseEvent event = SseEvent.create()
+            .type( SseEventType.OPEN )
+            .clientId( clientId )
+            .attributes( GenericValue.newObject().build() )
+            .build();
+
+        handler.onSseEvent( event );
+
+        verify( applicationResourceService ).getGlobalApplications();
+        verify( applicationResourceService, never() ).getInstalledApplications();
     }
 
     @Test
