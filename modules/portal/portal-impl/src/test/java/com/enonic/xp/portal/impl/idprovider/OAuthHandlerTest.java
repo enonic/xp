@@ -343,7 +343,8 @@ class OAuthHandlerTest
             final PortalResponse form = handler.handle( page, IDP, "device", UNRESTRICTED );
             assertThat( form.getBody() ).isEqualTo( "page:confirm" );
             assertThat( lastContext ).containsEntry( "idProvider", "system" ).containsEntry( "userCode", userCode )
-                .containsEntry( "clientId", "my-cli" ).containsEntry( "audience", List.of( "xp" ) );
+                .containsEntry( "clientId", "my-cli" ).containsEntry( "audience", List.of( "xp" ) )
+                .as( "device login sends the browser nowhere" ).doesNotContainKey( "redirectOrigin" );
             assertThat( scopeIds( lastContext ) ).isEmpty();
             assertThat( lastContext ).as( "the page can say the token gets the user's full rights" ).containsEntry( "unrestricted", true );
             assertThat( user( lastContext ) ).containsEntry( "key", ALICE.toString() ).containsEntry( "displayName", "Alice" );
@@ -1794,6 +1795,7 @@ class OAuthHandlerTest
             .containsEntry( "clientId", "cli" )
             .containsEntry( "audience", List.of( "xp" ) )
             .containsEntry( "unrestricted", true )
+            .containsEntry( "redirectOrigin", "http://127.0.0.1:51234" )
             .doesNotContainKey( "userCode" );
         assertThat( (String) lastContextOfConfirm.get( "requestId" ) ).hasSize( 43 );
         final Map<String, String> query = query( back );

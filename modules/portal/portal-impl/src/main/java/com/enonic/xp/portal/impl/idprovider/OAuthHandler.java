@@ -424,7 +424,8 @@ public class OAuthHandler
                                  user.get().getKey() );
         return render( request, idProvider,
                        OAuthConsentContext.Confirm.forCode( idProvider, user.get(), pending.id(), clientId, client.orElse( null ),
-                                                           pending.scope(), pending.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
+                                                           pending.scope(), pending.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ),
+                                                           pending.redirectUri() ) );
     }
 
     /**
@@ -462,7 +463,8 @@ public class OAuthHandler
             return render( request, idProvider,
                            OAuthConsentContext.Confirm.forCode( idProvider, user.get(), p.id(), p.clientId(),
                                                                client( idProvider, p.clientId() ).orElse( null ), p.scope(),
-                                                               p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
+                                                               p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ),
+                                                               p.redirectUri() ) );
         }
         final AuthorizationCodeStore.PendingAuthorization pending = taken.get();
         if ( !"true".equals( param( request, "approve" ) ) )

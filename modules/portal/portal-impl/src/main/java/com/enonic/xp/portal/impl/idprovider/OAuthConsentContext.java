@@ -1,7 +1,10 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -78,7 +81,8 @@ sealed interface OAuthConsentContext
      * the name and links the page shows.
      */
     record Confirm(IdProviderKey idProvider, User user, String flow, @Nullable String userCode, @Nullable String requestId, String clientId,
-                   ClientInfo client, List<RequestedScope> scope, List<String> audience, boolean unrestricted, String csrf)
+                   ClientInfo client, List<RequestedScope> scope, List<String> audience, boolean unrestricted, String csrf,
+                   @Nullable String redirectOrigin)
         implements OAuthConsentContext
     {
         public Confirm
@@ -97,22 +101,55 @@ sealed interface OAuthConsentContext
                                   final @Nullable Client client, final Set<String> scope, final Set<String> audience,
                                   final Scopes known, final String csrf )
         {
-            return of( idProvider, user, DEVICE_FLOW, userCode, null, clientId, client, scope, audience, known, csrf );
+            return of( idProvider, user, DEVICE_FLOW, userCode, null, clientId, client, scope, audience, known, csrf, null );
         }
 
         /**
          * An authorization code flow's confirmation, by request id.
+         *
+         * @param redirectUri the redirect URI the request was checked against, where approving sends the browser
          */
         static Confirm forCode( final IdProviderKey idProvider, final User user, final String requestId, final String clientId,
                                 final @Nullable Client client, final Set<String> scope, final Set<String> audience,
-                                final Scopes known, final String csrf )
+                                final Scopes known, final String csrf, final String redirectUri )
         {
-            return of( idProvider, user, CODE_FLOW, null, requestId, clientId, client, scope, audience, known, csrf );
+            return of( idProvider, user, CODE_FLOW, null, requestId, clientId, client, scope, audience, known, csrf,
+                       redirectOrigin( redirectUri ) );
+        }
+
+        /**
+         * Where approving sends the browser, as a page's policy names it: the redirect URI's scheme, host and
+         * port, or its scheme alone for a URI without a host, such as a native app's private-use scheme. A page
+         * keeps its forms to itself and this, since browsers hold the redirect that follows a form post to the
+         * form's policy too.
+         */
+        static @Nullable String redirectOrigin( final String redirectUri )
+        {
+            final URI uri;
+            try
+            {
+                uri = new URI( redirectUri );
+            }
+            catch ( URISyntaxException e )
+            {
+                return null;
+            }
+            if ( uri.getScheme() == null )
+            {
+                return null;
+            }
+            final String scheme = uri.getScheme().toLowerCase( Locale.ROOT );
+            if ( uri.getHost() == null )
+            {
+                return scheme + ":";
+            }
+            return scheme + "://" + uri.getHost().toLowerCase( Locale.ROOT ) + ( uri.getPort() >= 0 ? ":" + uri.getPort() : "" );
         }
 
         private static Confirm of( final IdProviderKey idProvider, final User user, final String flow, final @Nullable String userCode,
                                    final @Nullable String requestId, final String clientId, final @Nullable Client client,
-                                   final Set<String> scope, final Set<String> audience, final Scopes known, final String csrf )
+                                   final Set<String> scope, final Set<String> audience, final Scopes known, final String csrf,
+                                   final @Nullable String redirectOrigin )
         {
             final List<RequestedScope> scopes = scope.stream().map( id -> {
                 final Scope found = known.get( id ).orElse( null );
@@ -122,7 +159,7 @@ sealed interface OAuthConsentContext
                                           found.getRoles().stream().map( PrincipalKey::toString ).toList(), found.isRequired() );
             } ).toList();
             return new Confirm( idProvider, user, flow, userCode, requestId, clientId, ClientInfo.of( clientId, client ), scopes,
-                                List.copyOf( audience ), scope.isEmpty(), csrf );
+                                List.copyOf( audience ), scope.isEmpty(), csrf, redirectOrigin );
         }
     }
 
@@ -192,7 +229,7 @@ sealed interface OAuthConsentContext
                 }
             }
             case Confirm( _, _, var flow, var userCode, var requestId, var clientId, var client, var scope, var audience, var unrestricted,
-                          var csrf ) ->
+                          var csrf, var redirectOrigin ) ->
             {
                 map.put( "action", "confirm" );
                 map.put( "flow", flow );
@@ -223,6 +260,7 @@ sealed interface OAuthConsentContext
                 map.put( "audience", audience );
                 map.put( "unrestricted", unrestricted );
                 map.put( "csrf", csrf );
+                putIfPresent( map, "redirectOrigin", redirectOrigin );
             }
             case Done( _, _, var approved ) ->
             {
