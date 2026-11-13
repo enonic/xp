@@ -104,7 +104,9 @@ public final class SecurityInitializer
      * The clients every installation has: the Enonic CLI, registered with the system id provider.
      */
     /**
-     * The Enonic CLI's client id: registered with the system id provider on every installation, and never removed.
+     * The Enonic CLI's client id: registered with the system id provider on every installation, and never removed. The CLI
+     * logs in with device login, or with the authorization code flow and a loopback redirect when the browser runs on the
+     * same machine ({@code enonic login --browser}), and keeps its login with refresh tokens.
      */
     public static final String ENONIC_CLI = "enonic-cli";
 
@@ -114,6 +116,7 @@ public final class SecurityInitializer
                                                                                    .displayName( "Enonic CLI" )
                                                                                    .uri( "https://developer.enonic.com/docs/enonic-cli" )
                                                                                    .grantTypes( List.of( GrantTypes.DEVICE_CODE,
+                                                                                                         GrantTypes.AUTHORIZATION_CODE,
                                                                                                          GrantTypes.REFRESH_TOKEN ) )
                                                                                    .build() );
 

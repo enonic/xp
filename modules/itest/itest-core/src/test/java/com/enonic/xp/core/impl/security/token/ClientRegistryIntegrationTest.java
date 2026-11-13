@@ -88,7 +88,8 @@ class ClientRegistryIntegrationTest
         final Client cli = service.getClient( SYSTEM, "enonic-cli" ).orElseThrow();
 
         assertThat( cli.getDisplayName() ).isEqualTo( "Enonic CLI" );
-        assertThat( cli.getGrantTypes() ).containsExactlyInAnyOrder( GrantTypes.DEVICE_CODE, GrantTypes.REFRESH_TOKEN );
+        assertThat( cli.getGrantTypes() ).containsExactlyInAnyOrder( GrantTypes.DEVICE_CODE, GrantTypes.AUTHORIZATION_CODE,
+                                                                GrantTypes.REFRESH_TOKEN );
         assertThat( cli.getScope() ).as( "no cap" ).isEmpty();
         assertThat( cli.getResource() ).isEmpty();
         assertThat( cli.isEnabled() ).isTrue();
