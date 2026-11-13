@@ -139,6 +139,12 @@ public final class ApplicationImpl
     }
 
     @Override
+    public boolean isLocal()
+    {
+        return ApplicationHelper.isLocalApplication( this.bundle );
+    }
+
+    @Override
     public ServiceRegistration<Application> getRegistration()
     {
         return reference;
