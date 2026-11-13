@@ -3,6 +3,7 @@ package com.enonic.xp.impl.server.rest;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -14,10 +15,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
@@ -180,6 +183,15 @@ public class ApplicationResourceService
         }
         return ApplicationInfoJson.create( application, applicationDescriptorService.get( applicationKey ),
                                         applicationService.isLocalApplication( application.getKey() ) );
+    }
+
+    public Optional<Icon> getApplicationIcon( final ApplicationKey applicationKey )
+    {
+        if ( applicationService.getInstalledApplication( applicationKey ) == null )
+        {
+            return Optional.empty();
+        }
+        return Optional.ofNullable( applicationDescriptorService.get( applicationKey ) ).map( ApplicationDescriptor::getIcon );
     }
 
     public ApplicationActionResultJson uninstall( final ApplicationParams params )
