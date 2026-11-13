@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.token.GrantTypes;
-import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -45,24 +44,26 @@ class OAuthMetadataTest
     }
 
     @Test
-    void the_protected_resource_is_the_url_asked_about_and_its_server_the_mappings_default_id_provider()
+    void the_protected_resource_is_the_url_asked_about_with_the_authorization_servers_it_is_given()
     {
-        final Scopes scopes = Scopes.from( Scope.create().idProvider( IDP ).id( "content:read" ).build() );
-
-        final Map<String, Object> root = OAuthMetadata.protectedResource( "https://h", mapping( "/", IDP ), "/", scopes );
+        final Map<String, Object> root =
+            OAuthMetadata.protectedResource( "https://h", "/", List.of( "https://h/_/idprovider/system", "https://tenant.auth0.com/" ),
+                                             List.of( "content:read" ) );
         assertThat( root ).containsEntry( "resource", "https://h" )
-            .containsEntry( "authorization_servers", List.of( "https://h/_/idprovider/system" ) )
+            .containsEntry( "authorization_servers", List.of( "https://h/_/idprovider/system", "https://tenant.auth0.com/" ) )
             .containsEntry( "bearer_methods_supported", List.of( "header" ) )
             .containsEntry( "scopes_supported", List.of( "content:read" ) );
 
-        final Map<String, Object> mcp = OAuthMetadata.protectedResource( "https://h", mapping( "/", IDP ), "/api/mcp", Scopes.empty() );
+        final Map<String, Object> mcp = OAuthMetadata.protectedResource( "https://h", "/api/mcp", List.of( "https://h/_/idprovider/system" ), List.of() );
         assertThat( mcp ).containsEntry( "resource", "https://h/api/mcp" ).doesNotContainKey( "scopes_supported" );
+    }
 
-        final Map<String, Object> underAdmin = OAuthMetadata.protectedResource( "https://h", mapping( "/admin", IDP ), "/admin/tool", Scopes.empty() );
-        assertThat( underAdmin ).containsEntry( "resource", "https://h/admin/tool" )
-            .containsEntry( "authorization_servers", List.of( "https://h/admin/_/idprovider/system" ) );
-
-        assertThat( OAuthMetadata.protectedResource( "https://h", mapping( "/", null ), "/", Scopes.empty() ) ).as( "nothing to authorize with" ).isNull();
+    @Test
+    void a_mappings_id_provider_endpoints_sit_under_its_source()
+    {
+        assertThat( OAuthMetadata.authorizationServer( "https://h", mapping( "/", IDP ), IDP ) ).isEqualTo( "https://h/_/idprovider/system" );
+        assertThat( OAuthMetadata.authorizationServer( "https://h", mapping( "/admin", IDP ), IDP ) ).isEqualTo(
+            "https://h/admin/_/idprovider/system" );
     }
 
     @Test

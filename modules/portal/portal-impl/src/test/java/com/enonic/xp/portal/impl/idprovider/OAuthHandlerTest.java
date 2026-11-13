@@ -1224,6 +1224,26 @@ class OAuthHandlerTest
     }
 
     @Test
+    void a_management_mapping_is_a_resource_and_a_statistics_mapping_is_not()
+        throws Exception
+    {
+        final VirtualHost mgmt = new VirtualHostMapping( "mgmt", "mgmt.example.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0,
+                                                         Map.of(), DispatchConstants.MANAGEMENT_CONNECTOR );
+        final VirtualHost status = new VirtualHostMapping( "status", "status.example.com", "/", "/",
+                                                           VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
+                                                           DispatchConstants.STATISTICS_CONNECTOR );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( mgmt, status ) );
+
+        final PortalRequest refused = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        refused.getParams().put( "resource", "https://status.example.com" );
+        assertThat( body( handler.handle( refused, IDP, "device/code", UNRESTRICTED ) ).get( "error" ).asText() ).isEqualTo( "invalid_target" );
+
+        final PortalRequest served = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        served.getParams().put( "resource", "https://mgmt.example.com" );
+        assertThat( body( handler.handle( served, IDP, "device/code", UNRESTRICTED ) ).has( "device_code" ) ).isTrue();
+    }
+
+    @Test
     void the_mapping_the_request_came_through_is_a_resource_where_nothing_is_configured()
         throws Exception
     {

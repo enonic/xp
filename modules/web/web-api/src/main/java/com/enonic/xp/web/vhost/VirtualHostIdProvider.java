@@ -3,10 +3,12 @@ package com.enonic.xp.web.vhost;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An id provider's settings on one virtual host mapping ({@code mapping.<name>.idProvider.<idp>.*}):
- * the flows it serves there. Read through {@link VirtualHost#getIdProviders()}.
+ * the flows it serves there, and where its tokens are issued when that is elsewhere. Read through
+ * {@link VirtualHost#getIdProviders()}.
  */
 @NullMarked
 public final class VirtualHostIdProvider
@@ -15,10 +17,13 @@ public final class VirtualHostIdProvider
 
     private final boolean allFlows;
 
+    private final @Nullable String authorizationServer;
+
     private VirtualHostIdProvider( final Builder builder )
     {
         this.flows = Set.copyOf( builder.flows );
         this.allFlows = builder.allFlows;
+        this.authorizationServer = builder.authorizationServer;
     }
 
     /**
@@ -53,6 +58,16 @@ public final class VirtualHostIdProvider
     }
 
     /**
+     * The authorization server (RFC 8414 issuer URL) that issues the tokens this mapping accepts for
+     * the id provider, when the mapping does not issue them itself: the id provider's endpoints on
+     * another mapping, {@code https://host/_/idprovider/<idp>}. Null when none is named.
+     */
+    public @Nullable String getAuthorizationServer()
+    {
+        return authorizationServer;
+    }
+
+    /**
      * Builds the settings, normally from the vhost configuration. Each value replaces the previous.
      */
     public static final class Builder
@@ -60,6 +75,8 @@ public final class VirtualHostIdProvider
         private Set<String> flows = Set.of();
 
         private boolean allFlows;
+
+        private @Nullable String authorizationServer;
 
         private Builder()
         {
@@ -81,6 +98,16 @@ public final class VirtualHostIdProvider
         public Builder allFlows()
         {
             this.allFlows = true;
+            return this;
+        }
+
+        /**
+         * The authorization server issuing the id provider's tokens for this mapping. See
+         * {@link #getAuthorizationServer()}.
+         */
+        public Builder authorizationServer( final @Nullable String authorizationServer )
+        {
+            this.authorizationServer = authorizationServer;
             return this;
         }
 

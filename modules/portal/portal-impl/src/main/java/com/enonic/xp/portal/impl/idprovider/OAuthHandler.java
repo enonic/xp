@@ -101,6 +101,8 @@ public class OAuthHandler
 
     private static final Set<String> LOOPBACK_HOSTS = Set.of( "127.0.0.1", "[::1]", "localhost" );
 
+    private static final Set<String> SERVED_CONNECTORS = Set.of( DispatchConstants.WEB_CONNECTOR, DispatchConstants.MANAGEMENT_CONNECTOR );
+
     /**
      * The request attribute holding the {@link OAuthConsentContext} data for the consent page.
      */
@@ -1280,8 +1282,8 @@ public class OAuthHandler
 
     /**
      * Whether XP serves the resource (RFC 8707): its issuer name, for XP as a whole; an audience a
-     * vhost mapping is configured with; or a URL under a web mapping, at or below the URL its
-     * source path is served at for a host it matches.
+     * vhost mapping is configured with; or a URL under a web or management mapping, at or below the
+     * URL its source path is served at for a host it matches.
      */
     private boolean isServed( final PortalRequest request, final String resource )
     {
@@ -1311,7 +1313,7 @@ public class OAuthHandler
             return false;
         }
         return mappings.stream()
-            .filter( mapping -> DispatchConstants.WEB_CONNECTOR.equals( mapping.getConnector() ) )
+            .filter( mapping -> SERVED_CONNECTORS.contains( mapping.getConnector() ) )
             .filter( mapping -> mapping.matchesHost( host ) )
             .anyMatch( mapping -> {
                 final String identifier = mapping.identifier( scheme, host, uri.getPort() );

@@ -120,6 +120,8 @@ public final class JettyActivator
 
         this.server.start();
 
+        publishWebPort( server, contexts );
+
         this.serverServiceRegistration = bundleContext.registerService( Server.class, this.server, null );
 
         LOG.info( "Started Jetty" );
@@ -140,6 +142,24 @@ public final class JettyActivator
         catch ( IOException e )
         {
             LOG.warn( "Could not report bound addresses", e );
+        }
+    }
+
+    /**
+     * Tells every connector's servlet context which port the web connector is bound to.
+     */
+    private static void publishWebPort( final Server server, final ContextHandlerCollection contexts )
+    {
+        for ( final Connector connector : server.getConnectors() )
+        {
+            if ( connector instanceof final ServerConnector serverConnector &&
+                DispatchConstants.WEB_CONNECTOR.equals( serverConnector.getName() ) && serverConnector.getLocalPort() > 0 )
+            {
+                contexts.getHandlers()
+                    .forEach( handler -> ( (ServletContextHandler) handler ).setAttribute( DispatchConstants.WEB_PORT_ATTRIBUTE,
+                                                                                         serverConnector.getLocalPort() ) );
+                return;
+            }
         }
     }
 

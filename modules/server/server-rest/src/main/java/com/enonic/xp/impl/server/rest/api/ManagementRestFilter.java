@@ -14,6 +14,7 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+import com.enonic.xp.web.vhost.WellKnownPaths;
 
 /**
  * Lets a management vhost switch off the legacy JAX-RS resources ({@code /repo/...}, {@code /system/...}, ...) with
@@ -38,7 +39,7 @@ public final class ManagementRestFilter
         if ( virtualHost != null && "false".equalsIgnoreCase( virtualHost.getContext().get( REST_ENABLED ) ) )
         {
             final String pathInfo = req.getPathInfo();
-            if ( pathInfo == null || !API_PATTERN.matcher( pathInfo ).find() )
+            if ( pathInfo == null || !( API_PATTERN.matcher( pathInfo ).find() || WellKnownPaths.documentOf( pathInfo ) != null ) )
             {
                 res.sendError( HttpServletResponse.SC_NOT_FOUND );
                 return;

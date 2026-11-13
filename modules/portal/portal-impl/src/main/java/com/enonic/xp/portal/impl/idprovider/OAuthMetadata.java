@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,28 +75,23 @@ final class OAuthMetadata
     }
 
     /**
-     * The protected resource metadata of a resource under the mapping: its own URL as its
-     * identifier, the mapping's default id provider as its authorization server, and that id
-     * provider's scopes.
+     * The protected resource metadata of a resource: its own URL as its identifier, the
+     * authorization servers that issue its tokens, and the scopes to ask them for.
      *
-     * @param resourcePath the resource's path as the client sent it
-     * @return the document, or null when the mapping has no id provider to authorize with
+     * @param resourcePath         the resource's path as the client sent it
+     * @param authorizationServers the issuer URLs, the one a client should prefer first
+     * @param scopes               the scope ids
      */
-    static @Nullable Map<String, Object> protectedResource( final String origin, final VirtualHost mapping, final String resourcePath,
-                                                            final Scopes scopes )
+    static Map<String, Object> protectedResource( final String origin, final String resourcePath,
+                                                  final Collection<String> authorizationServers, final Collection<String> scopes )
     {
-        final IdProviderKey idProvider = mapping.getDefaultIdProviderKey();
-        if ( idProvider == null )
-        {
-            return null;
-        }
         final Map<String, Object> document = new LinkedHashMap<>();
         document.put( "resource", origin + ( "/".equals( resourcePath ) ? "" : resourcePath ) );
-        document.put( "authorization_servers", List.of( authorizationServer( origin, mapping, idProvider ) ) );
+        document.put( "authorization_servers", List.copyOf( authorizationServers ) );
         document.put( "bearer_methods_supported", List.of( "header" ) );
         if ( !scopes.isEmpty() )
         {
-            document.put( "scopes_supported", scopes.stream().map( Scope::getId ).toList() );
+            document.put( "scopes_supported", List.copyOf( scopes ) );
         }
         return document;
     }

@@ -60,7 +60,8 @@ public final class VirtualHostFilter
         if ( virtualHostService.isEnabled() )
         {
             final String resourcePath = WellKnownPaths.resourcePath( req.getPathInfo() );
-            if ( resourcePath != null && DispatchConstants.WEB_CONNECTOR.equals( connector ) )
+            if ( resourcePath != null && ( DispatchConstants.WEB_CONNECTOR.equals( connector ) ||
+                DispatchConstants.MANAGEMENT_CONNECTOR.equals( connector ) ) )
             {
                 final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( new PathInfoRequestWrapper( req, resourcePath ) );
                 if ( virtualHost != null )
@@ -86,12 +87,13 @@ public final class VirtualHostFilter
             }
             else
             {
-                applyDefaultVirtualHost( req, res, chain, connector );
+                // With vhosts on, the web connector has no default virtual host to issue this one's tokens.
+                applyDefaultVirtualHost( req, res, chain, connector, null );
             }
         }
         else
         {
-            applyDefaultVirtualHost( req, res, chain, connector );
+            applyDefaultVirtualHost( req, res, chain, connector, defaultAuthorizationServer( req, connector ) );
         }
     }
 
@@ -150,12 +152,30 @@ public final class VirtualHostFilter
             .anyMatch( virtualHost -> Objects.equals( connector, virtualHost.getConnector() ) );
     }
 
+    /**
+     * Where the tokens of the default virtual host of another connector are issued when vhosts are
+     * off: by the default virtual host of the web connector, the same host on the web port over
+     * HTTP. A host reached through a proxy names its authorization server in a mapping. Null on the
+     * web connector, which issues its own, and where the web port is unknown.
+     */
+    private static @Nullable String defaultAuthorizationServer( final HttpServletRequest req, final String connector )
+    {
+        if ( DispatchConstants.WEB_CONNECTOR.equals( connector ) || req.getServletContext() == null ||
+            !( req.getServletContext().getAttribute( DispatchConstants.WEB_PORT_ATTRIBUTE ) instanceof final Integer webPort ) )
+        {
+            return null;
+        }
+        // The port is the one the web connector listens on, which speaks plain HTTP whatever scheme a proxy forwarded here.
+        return "http://" + req.getServerName() + ( webPort == 80 ? "" : ":" + webPort ) + "/_/idprovider/" + IdProviderKey.system();
+    }
+
     private static void applyDefaultVirtualHost( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain,
-                                                 final String connector )
+                                                 final String connector, final @Nullable String authorizationServer )
         throws Exception
     {
         final VirtualHostIdProvidersMapping idProvidersMapping = VirtualHostIdProvidersMapping.create()
-            .addIdProviderWithSettings( IdProviderKey.system(), VirtualHostIdProvider.create().allFlows().build() )
+            .addIdProviderWithSettings( IdProviderKey.system(),
+                                        VirtualHostIdProvider.create().allFlows().authorizationServer( authorizationServer ).build() )
             .setDefaultIdProvider( IdProviderKey.system() )
             .build();
 

@@ -242,6 +242,46 @@ class VirtualHostConfigMapTest
     }
 
     @Test
+    void testIdProvider_authorizationServer()
+    {
+        map.put( "mapping.mgmt.endpoint", "management" );
+        map.put( "mapping.mgmt.idProvider.system", "default" );
+        map.put( "mapping.mgmt.idProvider.system.authorizationServer", " https://admin.example.com/_/idprovider/system " );
+        map.put( "mapping.mgmt.idProvider.other", "enabled" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "https://admin.example.com/_/idprovider/system",
+                      virtualHost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+        assertNull( virtualHost.getIdProviders().get( IdProviderKey.from( "other" ) ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testIdProvider_authorizationServer_keptAsWritten()
+    {
+        // an issuer is compared as a string, and some end with a slash
+        map.put( "mapping.api.idProvider.auth0", "default" );
+        map.put( "mapping.api.idProvider.auth0.authorizationServer", "https://tenant.auth0.com/" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "https://tenant.auth0.com/", virtualHost.getIdProviders().get( IdProviderKey.from( "auth0" ) ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testIdProvider_authorizationServer_invalid()
+    {
+        for ( final String invalid : List.of( "admin.example.com", "/_/idprovider/system", "ftp://admin.example.com/idp",
+                                              "https://admin.example.com/idp?x=1", "https://admin.example.com/idp#x", "https://", "" ) )
+        {
+            map.clear();
+            map.put( "mapping.mgmt.idProvider.system", "default" );
+            map.put( "mapping.mgmt.idProvider.system.authorizationServer", invalid );
+            assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings(), invalid );
+        }
+    }
+
+    @Test
     void testIdProvider_invalidValues()
     {
         map.put( "mapping.myapp1.idProvider.system", "yes" );
