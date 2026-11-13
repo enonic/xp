@@ -1,8 +1,10 @@
 package com.enonic.xp.impl.server.rest.api;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,11 +12,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.impl.server.rest.ApplicationResourceService;
+import com.enonic.xp.impl.server.rest.IconHash;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.portal.sse.SseManager;
@@ -30,6 +37,7 @@ import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseEventType;
 import com.enonic.xp.web.sse.SseMessage;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -461,5 +469,150 @@ class ApplicationApiHandlerTest
         final WebRequest legacy = ManagementApiTestSupport.request( HttpMethod.POST, "/server:app/installUrl", "{\"URL\":\"https://x/app.jar\"}" );
         assertEquals( HttpStatus.FORBIDDEN, ManagementApiTestSupport.withVirtualHostContext( uploadOnly, () -> handler.handle( legacy ) ).getStatus() );
         verify( applicationResourceService, never() ).installUrl( any() );
+    }
+
+    @Test
+    void listReportsIconHash()
+    {
+        final Icon icon = pngIcon();
+        final ApplicationDescriptor descriptor = mock( ApplicationDescriptor.class );
+        when( descriptor.getIcon() ).thenReturn( icon );
+        final List<ApplicationInfoJson> infos = List.of( ApplicationInfoJson.create( createApplication(), descriptor, false ),
+                                                         ApplicationInfoJson.create( createApplication(), null, false ) );
+        when( applicationResourceService.getInstalledApplications() ).thenReturn( infos );
+
+        final WebResponse response = handler.handle( ManagementApiTestSupport.request( HttpMethod.GET, "/server:app" ) );
+
+        assertThat( String.valueOf( response.getBody() ) ).containsOnlyOnce( "\"iconHash\":\"" + IconHash.of( icon ) + "\"" );
+    }
+
+    @Test
+    void iconWithCurrentHashIsImmutable()
+    {
+        final Icon icon = pngIcon();
+        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
+
+        final WebResponse response = handler.handle( iconRequest( "testapplication", IconHash.of( icon ) ) );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertThat( (byte[]) response.getBody() ).isEqualTo( icon.toByteArray() );
+        assertEquals( MediaType.PNG, response.getContentType() );
+        assertThat( response.getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL, "private, max-age=31536000, immutable" )
+            .containsEntry( HttpHeaders.ETAG, "\"" + IconHash.of( icon ) + "\"" )
+            .containsEntry( HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff" )
+            .doesNotContainKey( HttpHeaders.CONTENT_SECURITY_POLICY );
+    }
+
+    @Test
+    void iconWithoutCurrentHashIsRevalidated()
+    {
+        final Icon icon = pngIcon();
+        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
+
+        assertThat( handler.handle( iconRequest( "testapplication", null ) ).getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL,
+                                                                                                       "private, no-cache" );
+        assertThat( handler.handle( iconRequest( "testapplication", "stale" ) ).getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL,
+                                                                                                          "private, no-cache" );
+    }
+
+    @Test
+    void iconNotModified()
+    {
+        final Icon icon = pngIcon();
+        final String etag = "\"" + IconHash.of( icon ) + "\"";
+        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
+
+        for ( final String ifNoneMatch : List.of( etag, "W/" + etag, "\"other\", " + etag, "*" ) )
+        {
+            final WebRequest request = iconRequest( "testapplication", null );
+            request.getHeaders().put( HttpHeaders.IF_NONE_MATCH, ifNoneMatch );
+
+            final WebResponse response = handler.handle( request );
+
+            assertEquals( HttpStatus.NOT_MODIFIED, response.getStatus(), ifNoneMatch );
+            assertThat( response.getBody() ).isNull();
+            assertThat( response.getHeaders() ).containsEntry( HttpHeaders.ETAG, etag );
+        }
+
+        final WebRequest stale = iconRequest( "testapplication", null );
+        stale.getHeaders().put( HttpHeaders.IF_NONE_MATCH, "\"other\"" );
+        assertEquals( HttpStatus.OK, handler.handle( stale ).getStatus() );
+    }
+
+    @Test
+    void iconIsSentForAnEntityTagThatContainsAWildcard()
+    {
+        final Icon icon = pngIcon();
+        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
+
+        final WebRequest request = iconRequest( "testapplication", null );
+        request.getHeaders().put( HttpHeaders.IF_NONE_MATCH, "\"a,*,b\"" );
+
+        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+    }
+
+    @Test
+    void svgIconIsSandboxed()
+    {
+        final Icon icon = Icon.from( "<svg xmlns=\"http://www.w3.org/2000/svg\"/>".getBytes( StandardCharsets.UTF_8 ), "image/svg+xml",
+                                     Instant.EPOCH );
+        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
+
+        final WebResponse response = handler.handle( iconRequest( "testapplication", null ) );
+
+        assertThat( response.getHeaders().get( HttpHeaders.CONTENT_SECURITY_POLICY ) ).startsWith( "sandbox;" );
+        assertThat( response.getHeaders() ).containsEntry( HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff" );
+    }
+
+    @Test
+    void iconNotFound()
+    {
+        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.empty() );
+
+        final WebResponse response = handler.handle( iconRequest( "testapplication", null ) );
+
+        assertEquals( HttpStatus.NOT_FOUND, response.getStatus() );
+        assertThat( String.valueOf( response.getBody() ) ).contains( "\"status\":404" );
+    }
+
+    @Test
+    void iconWithoutKeyIsBadRequest()
+    {
+        final WebResponse response = handler.handle( ManagementApiTestSupport.request( HttpMethod.GET, "/server:app/icon" ) );
+
+        assertEquals( HttpStatus.BAD_REQUEST, response.getStatus() );
+    }
+
+    @Test
+    void iconIsServedUnderTheListVerb()
+    {
+        final Icon icon = pngIcon();
+        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
+
+        final WebRequest allowed = iconRequest( "testapplication", null );
+        assertEquals( HttpStatus.OK,
+                      ManagementApiTestSupport.withVirtualHostContext( Map.of( "api.server:app.verbs", "list" ), () -> handler.handle( allowed ) )
+                          .getStatus() );
+
+        final WebRequest denied = iconRequest( "testapplication", null );
+        assertEquals( HttpStatus.FORBIDDEN,
+                      ManagementApiTestSupport.withVirtualHostContext( Map.of( "api.server:app.verbs", "watch" ), () -> handler.handle( denied ) )
+                          .getStatus() );
+    }
+
+    private static Icon pngIcon()
+    {
+        return Icon.from( new byte[]{1, 2, 3}, "image/png", Instant.EPOCH );
+    }
+
+    private static WebRequest iconRequest( final String key, final String version )
+    {
+        final WebRequest request = ManagementApiTestSupport.request( HttpMethod.GET, "/server:app/icon" );
+        request.getParams().put( "key", key );
+        if ( version != null )
+        {
+            request.getParams().put( "v", version );
+        }
+        return request;
     }
 }
