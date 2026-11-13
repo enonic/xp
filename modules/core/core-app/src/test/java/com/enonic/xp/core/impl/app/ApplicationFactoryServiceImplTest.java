@@ -15,6 +15,7 @@ import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.data.PropertyTree;
@@ -130,16 +131,59 @@ class ApplicationFactoryServiceImplTest
         final String appName = "app1";
         final ApplicationKey applicationKey = ApplicationKey.from( appName );
 
-        // a local application is never persisted: nothing is served until it is started, then the bundle only
-        final Bundle bundle = deploy( "local:" + appName, newBundle( appName, true ) );
+        // a local application is never persisted: its descriptor and icon are served from the bundle while it is not started,
+        // everything else once it is
+        final Bundle bundle = deploy( "local:" + appName, newBundle( appName, true ).addResource( "enonic.yaml", stream( "kind: \"Application\"" ) )
+            .addResource( "enonic.svg", stream( "<svg/>" ) )
+            .addResource( "lib/util.js", stream( "library" ) ) );
 
-        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
+        ResourceSource source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isNull();
+        assertThat( source.resolver() ).isInstanceOf( FilteredApplicationUrlResolver.class );
+        assertThat( source.resolver().findResource( "/enonic.yaml" ) ).isNotNull();
+        assertThat( source.resolver().findResource( "/enonic.svg" ) ).isNotNull();
+        assertThat( source.resolver().findResource( "/lib/util.js" ) ).isNull();
+        assertThat( source.resolver().findFiles() ).containsExactlyInAnyOrder( "enonic.yaml", "enonic.svg" );
+        assertThat( service.findResourceSource( applicationKey, "bundle" ).resolver() ).isNull();
 
         bundle.start();
-        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( BundleApplicationUrlResolver.class );
+        source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isEqualTo( bundle );
+        assertThat( source.resolver() ).isInstanceOf( BundleApplicationUrlResolver.class );
+        assertThat( source.resolver().findResource( "/lib/util.js" ) ).isNotNull();
 
         bundle.stop();
-        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
+        source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isNull();
+        assertThat( source.resolver() ).isInstanceOf( FilteredApplicationUrlResolver.class );
+        assertThat( source.resolver().findResource( "/lib/util.js" ) ).isNull();
+    }
+
+    @Test
+    void findBundle()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        assertThat( service.findBundle( applicationKey ) ).isEmpty();
+
+        // the bundle is found in every state but uninstalled
+        final Bundle bundle = deploy( appName, newBundle( appName, true ) );
+        assertThat( service.findBundle( applicationKey ) ).contains( bundle );
+
+        bundle.start();
+        assertThat( service.findBundle( applicationKey ) ).contains( bundle );
+
+        bundle.stop();
+        assertThat( service.findBundle( applicationKey ) ).contains( bundle );
+
+        bundle.uninstall();
+        assertThat( service.findBundle( applicationKey ) ).isEmpty();
     }
 
     @Test
@@ -185,9 +229,10 @@ class ApplicationFactoryServiceImplTest
         bundle.start();
         assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNotNull();
 
-        // a local application is never persisted: nothing is served once stopped
+        // a local application is never persisted: once stopped, nothing but its descriptor and icon is served
         bundle.stop();
-        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( FilteredApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, null ).resolver().findResource( "/cms/cms.yaml" ) ).isNull();
     }
 
     @Test

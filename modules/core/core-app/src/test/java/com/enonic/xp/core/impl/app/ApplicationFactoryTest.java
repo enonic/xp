@@ -19,6 +19,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -327,6 +328,62 @@ class ApplicationFactoryTest
         assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
         assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
     }
+
+    @Test
+    void inactive_local_app_serves_its_descriptor_and_icon_only()
+    {
+        final Bundle bundle = deploy( "local:app1", newBundle( "app1", true ).addResource( "enonic.yaml", stream( "kind: \"Application\"" ) )
+            .addResource( "enonic.svg", stream( "<svg/>" ) )
+            .addResource( LIB_PATH, stream( "library" ) )
+            .addResource( CONTENT_TYPE_PATH, stream( "kind: \"ContentType\"" ) ) );
+
+        RunModeSupport.set( RunMode.PROD );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createInactiveUrlResolver( bundle );
+
+        assertTrue( resolver.isStable() );
+        assertNotNull( resolver.findResource( "/enonic.yaml" ) );
+        assertNotNull( resolver.findResource( "/enonic.svg" ) );
+        assertNull( resolver.findResource( "/" + LIB_PATH ) );
+        assertNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
+        assertEquals( Set.of( "enonic.yaml", "enonic.svg" ), resolver.findFiles() );
+    }
+
+    @Test
+    void inactive_global_app_serves_its_persisted_resources_only()
+    {
+        final Bundle bundle = deploy( "app1", newBundle( "app1", true ).addResource( "enonic.yaml", stream( "kind: \"Application\"" ) ) );
+
+        RunModeSupport.set( RunMode.PROD );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createInactiveUrlResolver( bundle );
+
+        assertInstanceOf( NodeResourceApplicationUrlResolver.class, resolver );
+        assertNull( resolver.findResource( "/enonic.yaml" ) );
+    }
+
+    @Test
+    void system_app_serves_everything_from_its_bundle()
+    {
+        // the system application is provisioned by the launcher at a plain location, never installed through the application
+        // service: nothing is persisted for it, its style descriptor and phrases are read from the bundle like the rest
+        final Bundle bundle = deploy( "file:/system/app-system.jar", newBundle( "com.enonic.xp.app.system", false )
+            .setHeader( ApplicationManifestConstants.X_BUNDLE_TYPE, "system" )
+            .addResource( STYLE_PATH, stream( "kind: \"Style\"" ) )
+            .addResource( LIB_PATH, stream( "library" ) ) );
+
+        RunModeSupport.set( RunMode.PROD );
+
+        final ApplicationFactory factory = new ApplicationFactory( nodeService );
+
+        final ApplicationUrlResolver resolver = factory.createUrlResolver( bundle, null );
+        assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
+        assertNotNull( resolver.findResource( "/" + STYLE_PATH ) );
+        assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
+        assertTrue( resolver.findFiles().contains( STYLE_PATH ) );
+    }
+
+    private static final String STYLE_PATH = "cms/style/style.yaml";
 
     private static final String CONTENT_TYPE_PATH = "cms/content-types/mytype/mytype.yaml";
 

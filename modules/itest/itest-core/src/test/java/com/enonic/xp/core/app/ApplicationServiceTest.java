@@ -22,7 +22,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.service.component.ComponentContext;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -72,7 +71,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ApplicationServiceTest
     extends AbstractNodeTest
@@ -114,12 +112,9 @@ class ApplicationServiceTest
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
-        final ComponentContext componentContext = mock( ComponentContext.class );
-        when( componentContext.getBundleContext() ).thenReturn( bundleContext );
         this.applicationDescriptorService =
-            new ApplicationDescriptorServiceImpl( nodeService, repoService, mock( DynamicSchemaAuditLogSupport.class ),
-                                                  mock( EventPublisher.class ) );
-        this.applicationDescriptorService.start( componentContext );
+            new ApplicationDescriptorServiceImpl( resourceService, applicationFactoryService, repoService,
+                                                  mock( DynamicSchemaAuditLogSupport.class ), mock( EventPublisher.class ) );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         applicationAuditLogSupport.activate( appConfig );
@@ -515,13 +510,19 @@ class ApplicationServiceTest
                 "enonic.svg", "<svg>app</svg>" ) ) );
 
             final ResourceService otherNode = new ResourceServiceImpl( applicationFactoryService );
+            final ApplicationDescriptorServiceImpl otherNodeDescriptors =
+                new ApplicationDescriptorServiceImpl( otherNode, applicationFactoryService, new ApplicationRepoServiceImpl( nodeService ),
+                                                      mock( DynamicSchemaAuditLogSupport.class ), mock( EventPublisher.class ) );
             assertTrue( processed( otherNode, appKey, "/enonic.yaml" ).contains( "Shipped" ) );
             assertEquals( "<svg>app</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
             assertEquals( "<svg>app</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+            assertEquals( "Shipped", otherNodeDescriptors.get( appKey ).getTitle() );
+            assertEquals( "<svg>app</svg>", new String( otherNodeDescriptors.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
 
             applicationDescriptorService.createOrUpdate(
                 CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Edited" ).build() );
             assertTrue( processed( otherNode, appKey, "/enonic.yaml" ).contains( "Edited" ) );
+            assertEquals( "Edited", otherNodeDescriptors.get( appKey ).getTitle() );
 
             applicationDescriptorService.createOrUpdate( CreateOrUpdateApplicationDescriptorParams.create()
                                                              .key( appKey )
@@ -529,10 +530,56 @@ class ApplicationServiceTest
                                                                  StandardCharsets.UTF_8 ), "image/svg+xml", Instant.now() ) )
                                                              .build() );
             assertEquals( "<svg>edited</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+            assertEquals( "<svg>edited</svg>",
+                          new String( otherNodeDescriptors.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
 
             applicationDescriptorService.createOrUpdate(
                 CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.icon = null ).build() );
             assertNull( processed( otherNode, appKey, "/enonic.svg" ) );
+            assertNull( otherNodeDescriptors.get( appKey ).getIcon() );
+        } );
+    }
+
+    // every edit starts from the descriptor as last written, whichever node of the cluster wrote it: the cached base of an
+    // instance is checked against the version of the application node, no event needed
+    @Test
+    void sequentialEditsThroughDifferentInstancesStartFromTheLatestDescriptor()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of(
+                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n" ) ) );
+
+            final ApplicationDescriptorServiceImpl otherNodeDescriptors =
+                new ApplicationDescriptorServiceImpl( new ResourceServiceImpl( applicationFactoryService ), applicationFactoryService,
+                                                      new ApplicationRepoServiceImpl( nodeService ), mock( DynamicSchemaAuditLogSupport.class ),
+                                                      mock( EventPublisher.class ) );
+            // both instances hold the shipped descriptor in their cache
+            assertEquals( "Shipped", applicationDescriptorService.get( appKey ).getTitle() );
+            assertEquals( "Shipped", otherNodeDescriptors.get( appKey ).getTitle() );
+
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Renamed" ).build() );
+
+            final ApplicationDescriptor second = otherNodeDescriptors.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> {
+                    assertEquals( "Renamed", edit.title );
+                    edit.description = "Described";
+                } ).build() );
+            assertEquals( "Renamed", second.getTitle() );
+            assertEquals( "Described", second.getDescription() );
+
+            final ApplicationDescriptor third = applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> {
+                    assertEquals( "Renamed", edit.title );
+                    assertEquals( "Described", edit.description );
+                    edit.vendorName = "Enonic";
+                } ).build() );
+            assertEquals( "Renamed", third.getTitle() );
+            assertEquals( "Described", third.getDescription() );
+            assertEquals( "Enonic", third.getVendorName() );
+            assertEquals( "Enonic", otherNodeDescriptors.get( appKey ).getVendorName() );
         } );
     }
 

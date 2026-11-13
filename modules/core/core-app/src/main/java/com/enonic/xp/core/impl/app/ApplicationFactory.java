@@ -15,6 +15,7 @@ import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -53,20 +54,25 @@ public final class ApplicationFactory
     /**
      * The descriptor and schema of a globally installed application live in nodes. A local application is never persisted
      * and must not be shadowed by what is persisted for a global installation of the same application, so everything
-     * comes from its bundle.
+     * comes from its bundle. So does everything of a system application ({@code X-Bundle-Type: system}): it is provisioned by
+     * the launcher, never installed through the application service, so nothing is ever persisted for it, while it ships
+     * resources at the persisted paths ({@code cms/style/style.yaml}).
      */
     private static boolean isPersisted( final Bundle bundle )
     {
-        return !ApplicationHelper.isLocalApplication( bundle );
+        return !ApplicationHelper.isLocalApplication( bundle ) && !ApplicationBundleUtils.isSystemApplication( bundle );
     }
 
     /**
-     * Resolver for an application whose bundle is not active: only the persisted descriptor and schema are served,
-     * bundle resources (controllers, assets, ...) are not available until the application is started.
+     * Resolver for an application whose bundle is not active: the persisted descriptor and schema of a global application, the
+     * descriptor and icon of a local one straight from its bundle, which is all a local application has. Bundle resources
+     * (controllers, assets, ...) are not available until the application is started.
      */
     ApplicationUrlResolver createInactiveUrlResolver( final Bundle bundle )
     {
-        return isPersisted( bundle ) ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService ) : null;
+        return isPersisted( bundle )
+            ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService )
+            : new FilteredApplicationUrlResolver( createBundleUrlResolver( bundle ), () -> SchemaResourcePaths::isAppDescriptorOrIconPath );
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
