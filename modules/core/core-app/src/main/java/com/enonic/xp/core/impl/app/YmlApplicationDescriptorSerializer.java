@@ -29,6 +29,10 @@ final class YmlApplicationDescriptorSerializer
         final ObjectNode root = PARSER.newObjectNode();
         root.put( "kind", KIND );
         root.put( "name", descriptor.getKey().getName() );
+        // the descriptor holds versions the way the version of a bundle is written, the file declares semantic versions
+        putIfPresent( root, "version", ApplicationHelper.toSemVer( "version", descriptor.getVersion() ) );
+        putIfPresent( root, "minSystemVersion", ApplicationHelper.toSemVer( "minSystemVersion", descriptor.getMinSystemVersion() ) );
+        putIfPresent( root, "maxSystemVersion", ApplicationHelper.toSemVer( "maxSystemVersion", descriptor.getMaxSystemVersion() ) );
         putLocalized( root, "title", descriptor.getTitle(), descriptor.getTitleI18nKey() );
         putLocalized( root, "description", descriptor.getDescription(), descriptor.getDescriptionI18nKey() );
         putIfPresent( root, "vendorName", descriptor.getVendorName() );

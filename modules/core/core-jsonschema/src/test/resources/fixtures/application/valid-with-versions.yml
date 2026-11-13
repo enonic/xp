@@ -1,0 +1,4 @@
+kind: "Application"
+version: "1.0.0"
+minSystemVersion: "8.0.0"
+maxSystemVersion: "9.0.0"

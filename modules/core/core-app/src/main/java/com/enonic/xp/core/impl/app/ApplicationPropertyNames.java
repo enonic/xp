@@ -15,6 +15,12 @@ class ApplicationPropertyNames
     static final String STARTED = "started";
 
     /**
+     * Whether installing over and uninstalling the application are prevented. Kept on the application node only, never in the
+     * application descriptor; absent means {@code false}.
+     */
+    static final String LOCKED = "locked";
+
+    /**
      * How many times the persisted definition of the application, its descriptor and icon or its schema, was changed through the
      * schema and descriptor APIs since it was installed or created: {@code 0} as the bundle shipped it, or as the application was
      * created. Every write of it gives the application node a new version, which is what every reader checks its cached schema

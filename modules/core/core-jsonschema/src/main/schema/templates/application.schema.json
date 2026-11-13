@@ -16,7 +16,7 @@
       "type": "string",
       "pattern": "^\\w+(?:\\.\\w+)*$",
       "maxLength": 63,
-      "description": "Application name, e.g. com.example.myapp. Required only for Schema Applications."
+      "description": "Application name, e.g. com.example.myapp. Required only for Codeless Applications."
     },
     "title": {
       "$ref": "#/$defs/localizedTextDef"
@@ -32,6 +32,21 @@
     },
     "url": {
       "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+      "description": "Application version, a semantic version (https://semver.org), e.g. 1.0.0 or 1.0.0-SNAPSHOT"
+    },
+    "minSystemVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+      "description": "Minimum Enonic XP version the application runs on (inclusive), a semantic version, e.g. 8.0.0"
+    },
+    "maxSystemVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+      "description": "Maximum Enonic XP version the application runs on (exclusive), a semantic version, e.g. 9.0.0"
     },
     "config": {
       "$ref": "#/$defs/genericValueDef"

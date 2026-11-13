@@ -36,7 +36,21 @@ export interface Application {
     modifiedTime: string | null;
     started: boolean;
     system: boolean;
-    schema: boolean;
+    /**
+     * Whether the application is codeless: it owns its schema without shipping any code, is always started and can neither
+     * be started nor stopped.
+     */
+    codeless: boolean;
+    /**
+     * Whether the application is locked: while it is, it can neither be installed over (uploaded or pulled) nor
+     * uninstalled. Set and reset with {@link createOrUpdate}.
+     */
+    locked: boolean;
+    /**
+     * Whether the application was changed since it was installed or created: its schema, or its descriptor and icon, through
+     * the Schema and App libraries. Installing the application anew makes it unmodified again.
+     */
+    schemaModified: boolean;
 }
 
 export interface GetApplicationParams {
@@ -104,6 +118,20 @@ export interface ApplicationDescriptor {
     vendorName: string | null;
     vendorUrl: string | null;
     url: string | null;
+    /**
+     * The version the application declares, reported the way {@link Application} reports versions (`1.2.3.SNAPSHOT`); the
+     * descriptor file (`enonic.yaml`) declares it as a semantic version (`1.2.3-SNAPSHOT`). Read-only: it cannot be set or
+     * changed with {@link createOrUpdate}.
+     */
+    version: string | null;
+    /**
+     * The minimum XP version the application runs on (inclusive).
+     */
+    minSystemVersion: string | null;
+    /**
+     * The maximum XP version the application runs on (exclusive).
+     */
+    maxSystemVersion: string | null;
     config: Record<string, ConfigValue>;
     icon?: Icon;
 }
@@ -149,13 +177,24 @@ export type ApplicationDescriptorEditor = (descriptor: EditableApplicationDescri
 
 export interface CreateOrUpdateApplicationDescriptorParams {
     key: string;
-    editor: ApplicationDescriptorEditor;
+    /**
+     * Edits the descriptor. Optional when `locked` is given: the descriptor is then left as is.
+     */
+    editor?: ApplicationDescriptorEditor;
+    /**
+     * Locks the application (`true`) or unlocks it (`false`): a locked application can neither be installed
+     * over (uploaded or pulled) nor uninstalled. Left out, the flag stays as it is; it is `false` by default.
+     * The flag is kept on the application node, it is not part of the descriptor.
+     */
+    locked?: boolean;
 }
 
 interface CreateOrUpdateApplicationDescriptorHandler {
     setKey(value: string): void;
 
     setEditor(value: ScriptValue | null): void;
+
+    setLocked(value: boolean | null): void;
 
     execute(): ApplicationDescriptor;
 }
@@ -173,23 +212,38 @@ interface CreateOrUpdateApplicationDescriptorHandler {
  * bundle's descriptor over it.
  *
  * Requires the `system.admin` or `system.schema.admin` role. The system applications shipped with XP are never written, nor is
- * a local application deployed from the deploy directory.
+ * a local application deployed from the deploy directory. The descriptor of an application built with Gradle is never edited
+ * either: for such an application `locked` alone, without an `editor`, is accepted.
+ *
+ * The `version` cannot be set or changed. `minSystemVersion` and `maxSystemVersion` are given as semantic versions
+ * (https://semver.org, `8.1.0-SNAPSHOT`) or the way they are reported (`8.1.0.SNAPSHOT`); they are persisted in the
+ * descriptor file as semantic versions and reported the way {@link Application} reports versions. The range they declare
+ * (minimum inclusive, maximum exclusive) must include the running XP version.
  *
  * @example-ref examples/app/createOrUpdate.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
- * @param {Function} params.editor Function that receives the editable descriptor, mutates fields, and returns it.
+ * @param {Function} [params.editor] Function that receives the editable descriptor, mutates fields, and returns it.
+ * @param {boolean} [params.locked] Locks the application, so that it is neither installed over nor uninstalled, or
+ * unlocks it. Either `editor` or `locked` is required.
  *
  * @returns {ApplicationDescriptor} The descriptor as read after the change.
  */
 export function createOrUpdate(params: CreateOrUpdateApplicationDescriptorParams): ApplicationDescriptor {
     const key = checkRequired(params, 'key');
-    const editor = checkRequired(params, 'editor');
+    if (params.editor == null && params.locked == null) {
+        throw new Error('Either parameter editor or locked is required');
+    }
 
     const bean: CreateOrUpdateApplicationDescriptorHandler = __.newBean<CreateOrUpdateApplicationDescriptorHandler>(
         'com.enonic.xp.lib.app.CreateOrUpdateApplicationDescriptorHandler');
     bean.setKey(key);
-    bean.setEditor(__.toScriptValue(editor));
+    if (params.editor != null) {
+        bean.setEditor(__.toScriptValue(params.editor));
+    }
+    if (params.locked != null) {
+        bean.setLocked(params.locked);
+    }
     return __.toNativeObject(bean.execute());
 }

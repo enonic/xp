@@ -280,6 +280,19 @@ public class DynamicSchemaAuditLogSupportImpl
         }
     }
 
+    @Override
+    public void updateLocked( final ApplicationKey key, final boolean locked )
+    {
+        if ( isEnabledAuditLog )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.addString( "application", key.toString() );
+            paramsSet.addBoolean( "locked", locked );
+            log( "system.schema.application.locked", data, applicationDescriptorUris( key ) );
+        }
+    }
+
     private static PropertyTree applicationDescriptorData( final ApplicationKey key, final String resource, final String iconMimeType,
                                                            final long iconSize, final boolean iconRemoved )
     {

@@ -72,6 +72,11 @@
     },
     "config": {
       "$ref": "#/$defs/genericValueDef"
+    },
+    "protected": {
+      "type": "boolean",
+      "default": false,
+      "description": "Protects the schema of the application: when true, the schema cannot be modified through the schema API. Declared by the application only, changed by installing a new version of it."
     }
   },
   "required": [
