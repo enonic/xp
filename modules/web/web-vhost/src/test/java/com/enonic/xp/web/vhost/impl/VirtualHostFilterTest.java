@@ -343,6 +343,16 @@ class VirtualHostFilterTest
     }
 
     @Test
+    void testNotEnabled_managementDefaultVhost_behindATlsProxy_namesThePlainHttpWebConnector()
+        throws Exception
+    {
+        final VirtualHost vhost = defaultVhost( DispatchConstants.MANAGEMENT_CONNECTOR, "https", 8080 );
+
+        assertEquals( "http://localhost:8080/_/idprovider/system",
+                      vhost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+    }
+
+    @Test
     void testNotEnabled_managementDefaultVhost_webPortUnknown_namesNone()
         throws Exception
     {

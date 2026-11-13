@@ -154,8 +154,9 @@ public final class VirtualHostFilter
 
     /**
      * Where the tokens of the default virtual host of another connector are issued when vhosts are
-     * off: by the default virtual host of the web connector, the same host on the web port. Null on
-     * the web connector, which issues its own, and where the web port is unknown.
+     * off: by the default virtual host of the web connector, the same host on the web port over
+     * HTTP. A host reached through a proxy names its authorization server in a mapping. Null on the
+     * web connector, which issues its own, and where the web port is unknown.
      */
     private static @Nullable String defaultAuthorizationServer( final HttpServletRequest req, final String connector )
     {
@@ -164,9 +165,8 @@ public final class VirtualHostFilter
         {
             return null;
         }
-        final String scheme = req.getScheme();
-        final boolean defaultPort = "https".equals( scheme ) ? webPort == 443 : webPort == 80;
-        return scheme + "://" + req.getServerName() + ( defaultPort ? "" : ":" + webPort ) + "/_/idprovider/" + IdProviderKey.system();
+        // The port is the one the web connector listens on, which speaks plain HTTP whatever scheme a proxy forwarded here.
+        return "http://" + req.getServerName() + ( webPort == 80 ? "" : ":" + webPort ) + "/_/idprovider/" + IdProviderKey.system();
     }
 
     private static void applyDefaultVirtualHost( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain,

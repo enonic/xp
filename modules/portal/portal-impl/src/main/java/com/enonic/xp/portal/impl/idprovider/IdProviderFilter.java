@@ -47,12 +47,12 @@ public final class IdProviderFilter
         throws Exception
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
+        final Object connector = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
 
         // handle401 (interactive login) exists on the web connector only.
-        final HttpServletResponse response =
-            DispatchConstants.WEB_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
-                ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
-                : new BearerChallengeResponseWrapper( req, res );
+        final HttpServletResponse response = DispatchConstants.WEB_CONNECTOR.equals( connector )
+            ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
+            : new BearerChallengeResponseWrapper( req, res );
 
         if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {
@@ -89,6 +89,12 @@ public final class IdProviderFilter
                 final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
                 if ( !authInfo.isAuthenticated() )
                 {
+                    if ( DispatchConstants.MANAGEMENT_CONNECTOR.equals( connector ) )
+                    {
+                        // The request ends here, before the filter that challenges on this connector: challenge as it does.
+                        response.addHeader( BearerChallenge.HEADER, "Basic" );
+                        response.addHeader( BearerChallenge.HEADER, "Bearer" );
+                    }
                     response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
                     return;
                 }

@@ -24,6 +24,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -256,6 +257,53 @@ class IdProviderFilterTest
 
         Mockito.verify( httpServletResponse ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
         Mockito.verify( filterChain, Mockito.times( 0 ) ).doFilter( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    void testAllowedPrincipals_unauthenticatedOnManagement_isChallengedWithTheResourceMetadata()
+        throws Exception
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+        final FilterChain filterChain = Mockito.mock( FilterChain.class );
+
+        Mockito.when( httpServletRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
+            .thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() + ".requestedPath" ) ).thenReturn( "/repo:list" );
+        Mockito.when( httpServletRequest.getScheme() ).thenReturn( "https" );
+        Mockito.when( httpServletRequest.getServerName() ).thenReturn( "mgmt.example.com" );
+        Mockito.when( httpServletRequest.getServerPort() ).thenReturn( 443 );
+        final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN ) );
+
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+
+        Mockito.verify( httpServletResponse ).addHeader( "WWW-Authenticate", "Basic" );
+        Mockito.verify( httpServletResponse )
+            .addHeader( "WWW-Authenticate",
+                        "Bearer resource_metadata=\"https://mgmt.example.com/.well-known/oauth-protected-resource/repo:list\"" );
+        Mockito.verify( httpServletResponse ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
+        Mockito.verify( filterChain, Mockito.times( 0 ) ).doFilter( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    void testAllowedPrincipals_unauthenticatedOffManagement_isNotChallenged()
+        throws Exception
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+
+        Mockito.when( httpServletRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
+            .thenReturn( DispatchConstants.STATISTICS_CONNECTOR );
+        final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN ) );
+
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, Mockito.mock( FilterChain.class ) );
+
+        Mockito.verify( httpServletResponse, Mockito.never() ).addHeader( Mockito.any(), Mockito.any() );
+        Mockito.verify( httpServletResponse ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
     }
 
     @Test
