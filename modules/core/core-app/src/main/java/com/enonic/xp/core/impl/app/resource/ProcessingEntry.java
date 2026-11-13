@@ -1,20 +1,11 @@
 package com.enonic.xp.core.impl.app.resource;
 
-final class ProcessingEntry
+import com.enonic.xp.app.ApplicationKey;
+
+/**
+ * A value computed from one resource of a stable resolver: the application the resource belongs to and the stamp the value was
+ * computed under. While the stamp holds, neither the key translation nor the resource is looked at again.
+ */
+record ProcessingEntry(Object value, ApplicationKey applicationKey, CacheStamp stamp)
 {
-    final Object value;
-
-    final long timestamp;
-
-    final BundleStamp stamp;
-
-    final boolean stable;
-
-    ProcessingEntry( final Object value, final long timestamp, final BundleStamp stamp, final boolean stable )
-    {
-        this.value = value;
-        this.timestamp = timestamp;
-        this.stamp = stamp;
-        this.stable = stable;
-    }
 }

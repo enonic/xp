@@ -65,4 +65,9 @@ public class ApplicationJson
     {
         return info.getLocal();
     }
+
+    public boolean getSchema()
+    {
+        return info.getSchema();
+    }
 }

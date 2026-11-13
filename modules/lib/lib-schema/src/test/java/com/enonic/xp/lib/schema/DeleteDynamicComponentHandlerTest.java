@@ -1,10 +1,8 @@
 package com.enonic.xp.lib.schema;
 
-
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.resource.DeleteDynamicComponentParams;
-import com.enonic.xp.resource.DynamicComponentType;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
@@ -15,11 +13,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
-            final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
-
-            return DynamicComponentType.PART == componentParams.getType();
-        } );
+        when( dynamicSchemaService.deletePart( isA( DescriptorKey.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deletePart.js" );
     }
@@ -27,11 +21,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
-            final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
-
-            return DynamicComponentType.LAYOUT == componentParams.getType();
-        } );
+        when( dynamicSchemaService.deleteLayout( isA( DescriptorKey.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deleteLayout.js" );
     }
@@ -39,15 +29,10 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
-            final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
-
-            return DynamicComponentType.PAGE == componentParams.getType();
-        } );
+        when( dynamicSchemaService.deletePage( isA( DescriptorKey.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deletePage.js" );
     }
-
 
     @Test
     void testInvalidSchemaType()

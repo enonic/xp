@@ -7,7 +7,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
+import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
@@ -57,13 +59,7 @@ public class PageDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        final String basePath = PATH + "/" + key.getName() + "/" + key.getName();
-        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
-        if ( resourceService.getResource( yamlKey ).exists() )
-        {
-            return yamlKey;
-        }
-        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
+        return CmsResourceKeys.descriptorKey( resourceService, key.getApplicationKey(), PATH, key.getName() );
     }
 
     @Override
@@ -72,6 +68,16 @@ public class PageDescriptorLoader
         return YmlPageDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .key( key )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
+            .build();
+    }
+
+    // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node.
+    // A failure of the expansion is the caller's to see, unlike a descriptor that fails to parse
+    @Override
+    public PageDescriptor postProcess( final PageDescriptor descriptor )
+    {
+        return PageDescriptor.copyOf( descriptor )
+            .config( FormFragmentInlining.inline( this.formFragmentService, descriptor.getConfig(), "page [" + descriptor.getKey() + "]" ) )
             .build();
     }
 
@@ -85,11 +91,5 @@ public class PageDescriptorLoader
             .regions( RegionDescriptors.create().build() )
             .modifiedTime( Millis.now() )
             .build();
-    }
-
-    @Override
-    public PageDescriptor postProcess( final PageDescriptor descriptor )
-    {
-        return PageDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 }

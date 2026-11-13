@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 
 public interface ApplicationFactoryService
 {
@@ -13,7 +12,10 @@ public interface ApplicationFactoryService
 
     Optional<ApplicationAdaptor> findActiveApplication( ApplicationKey applicationKey );
 
-    Optional<Bundle> findActiveBundle( ApplicationKey applicationKey );
-
-    Optional<ApplicationUrlResolver> findResolver( ApplicationKey applicationKey, String resolverSource );
+    /**
+     * The active bundle of the application and the resolver serving its resources, of one lookup. With a {@code resolverSource}
+     * ({@code bundle}), the resolver over that source of the active bundle alone; without one, the resolver of the active
+     * application, else the persisted descriptor and schema of an installed or merely persisted application.
+     */
+    ResourceSource findResourceSource( ApplicationKey applicationKey, String resolverSource );
 }
