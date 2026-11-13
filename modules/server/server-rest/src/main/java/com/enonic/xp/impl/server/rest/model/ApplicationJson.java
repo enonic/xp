@@ -66,8 +66,8 @@ public class ApplicationJson
         return info.getLocal();
     }
 
-    public boolean getSchema()
+    public boolean getCodeless()
     {
-        return info.getSchema();
+        return info.getCodeless();
     }
 }

@@ -157,3 +157,72 @@ exports.rejectLocalApplication = function () {
         });
     });
 };
+
+exports.setSystemVersions = function () {
+    appLib.createOrUpdate({
+        key: 'my_app',
+        editor: function (descriptor) {
+            assert.assertEquals('1.0.0', descriptor.version);
+            assert.assertEquals('9.0.0', descriptor.maxSystemVersion);
+            descriptor.minSystemVersion = '8.0.0';
+            descriptor.maxSystemVersion = null;
+            return descriptor;
+        }
+    });
+};
+
+exports.changeVersion = function () {
+    assert.assertThrows(function () {
+        appLib.createOrUpdate({
+            key: 'my_app',
+            editor: function (descriptor) {
+                descriptor.version = '2.0.0';
+                return descriptor;
+            }
+        });
+    });
+    assert.assertThrows(function () {
+        appLib.createOrUpdate({
+            key: 'my_app',
+            editor: function (descriptor) {
+                descriptor.version = null;
+                return descriptor;
+            }
+        });
+    });
+
+    // returned as received, or left out of a new object: accepted
+    appLib.createOrUpdate({
+        key: 'my_app',
+        editor: function (descriptor) {
+            assert.assertEquals('1.0.0', descriptor.version);
+            return descriptor;
+        }
+    });
+    appLib.createOrUpdate({
+        key: 'my_app',
+        editor: function () {
+            return {title: 'New title'};
+        }
+    });
+};
+
+exports.lockedAlone = function () {
+    var result = appLib.createOrUpdate({
+        key: 'my_app',
+        locked: true
+    });
+
+    assert.assertEquals('Old title', result.title);
+};
+
+exports.resetLockedWithEdit = function () {
+    appLib.createOrUpdate({
+        key: 'my_app',
+        locked: false,
+        editor: function (descriptor) {
+            descriptor.title = 'New title';
+            return descriptor;
+        }
+    });
+};

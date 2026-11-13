@@ -90,12 +90,13 @@ public interface Application
     boolean isSystem();
 
     /**
-     * Returns whether the application is a schema application: one that owns a CMS schema, with content types, components
-     * and other schema resources served through the schema service.
+     * Returns whether the application is codeless: it owns its schema ({@code cms/cms.yaml}), with content types, components
+     * and other schema resources served through the schema service, without shipping any code. A codeless application is
+     * always started and can neither be started nor stopped.
      *
-     * @return {@code true} for a schema application
+     * @return {@code true} for a codeless application
      */
-    boolean isSchema();
+    boolean isCodeless();
 
     /**
      * Returns whether the application is a local application: one deployed from the deploy directory of this node only.
@@ -105,4 +106,22 @@ public interface Application
      * @return {@code true} for a local application
      */
     boolean isLocal();
+
+    /**
+     * Returns whether the application is locked: while it is, the application can neither be installed over (uploaded or
+     * pulled) nor uninstalled. The flag is kept on the node of the application, never in its descriptor, and is set and reset
+     * through {@link ApplicationDescriptorService#createOrUpdate}.
+     *
+     * @return {@code true} when installing over and uninstalling the application are prevented, {@code false} by default
+     */
+    boolean isLocked();
+
+    /**
+     * Returns whether the definition of the application, its schema or its descriptor and icon, was changed through the schema
+     * and application descriptor services since the application was installed or created. Installing the application anew
+     * makes it unmodified again.
+     *
+     * @return {@code true} when the application is no longer as it was installed or created
+     */
+    boolean isSchemaModified();
 }

@@ -49,6 +49,7 @@ form:
     min: 0
     max: 1`,
     modifiedTime: '2021-09-25T10:00:00Z',
+    protected: false,
     form: [
         {
             'formItemType': 'Input',

@@ -20,6 +20,8 @@ public final class CmsDescriptor
 
     private final GenericValue schemaConfig;
 
+    private final boolean protectedSchema;
+
     private CmsDescriptor( final Builder builder )
     {
         this.applicationKey = requireNonNull( builder.applicationKey );
@@ -27,6 +29,7 @@ public final class CmsDescriptor
         this.mixinMappings = requireNonNullElse( builder.mixinMappings, MixinMappings.empty() );
         this.modifiedTime = builder.modifiedTime;
         this.schemaConfig = builder.schemaConfig.build();
+        this.protectedSchema = builder.protectedSchema;
     }
 
     public ApplicationKey getApplicationKey()
@@ -65,6 +68,18 @@ public final class CmsDescriptor
         return schemaConfig;
     }
 
+    /**
+     * Whether the schema of the application is protected, as declared by the {@code protected} field of the cms descriptor: the
+     * schema of a protected application is not modified through the schema service. The flag is declared by the descriptor the
+     * application ships and changes with a new installation of the application only.
+     *
+     * @return {@code true} when the schema is protected, {@code false} by default
+     */
+    public boolean isProtected()
+    {
+        return protectedSchema;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -87,6 +102,8 @@ public final class CmsDescriptor
 
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
+        private boolean protectedSchema;
+
         private Builder()
         {
         }
@@ -97,6 +114,7 @@ public final class CmsDescriptor
             this.form = cmsDescriptor.form != null ? Form.create( cmsDescriptor.form ).build() : Form.empty();
             this.mixinMappings = cmsDescriptor.mixinMappings;
             this.modifiedTime = cmsDescriptor.modifiedTime;
+            this.protectedSchema = cmsDescriptor.protectedSchema;
         }
 
         public Builder applicationKey( final ApplicationKey applicationKey )
@@ -126,6 +144,15 @@ public final class CmsDescriptor
         public Builder schemaConfig( final GenericValue value )
         {
             value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
+            return this;
+        }
+
+        /**
+         * Sets whether the schema of the application is protected, see {@link CmsDescriptor#isProtected()}.
+         */
+        public Builder protectedSchema( final boolean protectedSchema )
+        {
+            this.protectedSchema = protectedSchema;
             return this;
         }
 
