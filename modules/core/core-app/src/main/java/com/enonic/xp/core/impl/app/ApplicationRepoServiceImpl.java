@@ -425,6 +425,24 @@ public class ApplicationRepoServiceImpl
     }
 
     @Override
+    public Node updateLocked( final ApplicationKey applicationKey, final boolean locked )
+    {
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath appPath = applicationNodePath( applicationKey );
+            if ( !this.nodeService.nodeExists( appPath ) )
+            {
+                throw new NodeNotFoundException( String.format( "Application node [%s] not found", appPath ) );
+            }
+            return this.nodeService.update( UpdateNodeParams.create()
+                                                .path( appPath )
+                                                .editor( toBeEdited -> toBeEdited.data.setBoolean(
+                                                    ApplicationPropertyNames.LOCKED, locked ) )
+                                                .refresh( RefreshMode.ALL )
+                                                .build() );
+        } );
+    }
+
+    @Override
     public Node updateStartedState( final ApplicationKey appKey, final boolean started )
     {
         final Node applicationNode = doGetNodeByName( appKey.getName() );

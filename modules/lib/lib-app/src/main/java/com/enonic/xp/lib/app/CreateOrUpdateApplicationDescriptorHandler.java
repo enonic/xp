@@ -42,13 +42,16 @@ public final class CreateOrUpdateApplicationDescriptorHandler
 
     private ScriptValue editor;
 
+    private Boolean locked;
+
     private Supplier<ApplicationDescriptorService> applicationDescriptorServiceSupplier;
 
     public ApplicationDescriptorMapper execute()
     {
         final CreateOrUpdateApplicationDescriptorParams params = CreateOrUpdateApplicationDescriptorParams.create()
             .key( ApplicationKey.from( key ) )
-            .editor( this::edit )
+            .editor( this.editor != null ? this::edit : null )
+            .locked( this.locked )
             .build();
 
         return new ApplicationDescriptorMapper( applicationDescriptorServiceSupplier.get().createOrUpdate( params ) );
@@ -76,6 +79,10 @@ public final class CreateOrUpdateApplicationDescriptorHandler
         edit( map, "vendorName", val -> target.vendorName = val.orElse( null ) );
         edit( map, "vendorUrl", val -> target.vendorUrl = val.orElse( null ) );
         edit( map, "url", val -> target.url = val.orElse( null ) );
+        // the version is declared by the descriptor the application ships: returned as received, or not at all
+        edit( map, "version", val -> requireSameVersion( target, val.orElse( null ) ) );
+        edit( map, "minSystemVersion", val -> target.minSystemVersion = val.orElse( null ) );
+        edit( map, "maxSystemVersion", val -> target.maxSystemVersion = val.orElse( null ) );
 
         if ( map.containsKey( "config" ) )
         {
@@ -85,6 +92,19 @@ public final class CreateOrUpdateApplicationDescriptorHandler
         {
             editIcon( target, map.get( "icon" ) );
         }
+    }
+
+    private static void requireSameVersion( final EditableApplicationDescriptor target, final String version )
+    {
+        if ( !Objects.equals( emptyToNull( target.source.getVersion() ), emptyToNull( version ) ) )
+        {
+            throw new IllegalArgumentException( "Cannot modify version of application: " + target.source.getKey() );
+        }
+    }
+
+    private static String emptyToNull( final String value )
+    {
+        return value == null || value.isEmpty() ? null : value;
     }
 
     private static void edit( final Map<String, ?> map, final String key, final Consumer<Optional<String>> fieldEditor )
@@ -193,6 +213,11 @@ public final class CreateOrUpdateApplicationDescriptorHandler
     public void setEditor( final ScriptValue editor )
     {
         this.editor = editor;
+    }
+
+    public void setLocked( final Boolean locked )
+    {
+        this.locked = locked;
     }
 
     @Override

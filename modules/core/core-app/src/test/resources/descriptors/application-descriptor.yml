@@ -1,5 +1,8 @@
 kind: "Application"
 description: "Brief description of the application"
+version: "1.2.3"
+minSystemVersion: "8.0.0"
+maxSystemVersion: "9.0.0"
 title: "Title"
 vendorName: "Vendor Name"
 vendorUrl: "Vendor URL"

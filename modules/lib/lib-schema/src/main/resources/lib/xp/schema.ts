@@ -520,6 +520,10 @@ interface CreateOrUpdateCmsHandler {
  * the App library. The system applications shipped with XP are never written, nor is a local application deployed from the
  * deploy directory.
  *
+ * An application whose CMS descriptor declares `protected: true` is protected: nothing of its schema, the CMS descriptor
+ * included, is created, updated or deleted through this library. The flag is declared by the descriptor the application ships
+ * only: it cannot be set here, and it changes with a new installation of the application.
+ *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  * @param {string} params.resource CMS schema resource value.
@@ -718,6 +722,11 @@ export interface CmsDescriptor {
      * apart here.
      */
     modifiedTime: string;
+    /**
+     * Whether the schema of the application is protected, as declared by `protected` in its CMS descriptor: nothing of a
+     * protected schema is created, updated or deleted through this library.
+     */
+    protected: boolean;
     form: FormItem[];
     mixinMappings?: {
         name: string;

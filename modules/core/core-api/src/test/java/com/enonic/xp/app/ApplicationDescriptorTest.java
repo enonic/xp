@@ -9,6 +9,7 @@ import com.enonic.xp.icon.Icon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ApplicationDescriptorTest
@@ -40,6 +41,26 @@ class ApplicationDescriptorTest
         assertNotNull( desc );
         assertSame( key, desc.getKey() );
         assertEquals( "", desc.getDescription() );
+    }
+
+    @Test
+    void versions()
+    {
+        final ApplicationKey key = ApplicationKey.from( "app" );
+        final ApplicationDescriptor desc =
+            ApplicationDescriptor.create().key( key ).version( "1.2.3" ).minSystemVersion( "8.0.0" ).maxSystemVersion( "9.0.0" ).build();
+
+        assertEquals( "1.2.3", desc.getVersion() );
+        assertEquals( "8.0.0", desc.getMinSystemVersion() );
+        assertEquals( "9.0.0", desc.getMaxSystemVersion() );
+        assertEquals( desc, new EditableApplicationDescriptor( desc ).build() );
+        assertEquals( desc, ApplicationDescriptor.copyOf( desc ).build() );
+        assertNotEquals( desc, ApplicationDescriptor.create().key( key ).version( "1.2.3" ).build() );
+
+        final ApplicationDescriptor empty = ApplicationDescriptor.create().key( key ).build();
+        assertNull( empty.getVersion() );
+        assertNull( empty.getMinSystemVersion() );
+        assertNull( empty.getMaxSystemVersion() );
     }
 
     @Test

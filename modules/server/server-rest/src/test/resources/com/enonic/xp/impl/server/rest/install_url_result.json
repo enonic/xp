@@ -1,13 +1,13 @@
 {
   "applicationInstalledJson": {
     "application": {
+      "codeless": false,
       "displayName": "application name",
       "key": "testapplication",
       "local": false,
       "maxSystemVersion": "5.1",
       "minSystemVersion": "5.0",
       "modifiedTime": "2012-01-01T00:00:00Z",
-      "schema": false,
       "state": "started",
       "url": "https://enonic.net",
       "vendorName": "Enonic",

@@ -278,6 +278,7 @@ public class ApplicationRegistryImpl
             LOG.debug( "Starting application {} bundle {}", applicationKey, bundle.getBundleId() );
 
             ApplicationHelper.checkSystemVersion( bundle, context.getBundle().getVersion() );
+            ApplicationHelper.checkDescriptorSystemVersion( applicationKey, application.getUrlResolver(), context.getBundle().getVersion() );
 
             try
             {

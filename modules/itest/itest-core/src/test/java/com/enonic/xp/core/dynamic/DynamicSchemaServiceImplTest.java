@@ -58,6 +58,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ProjectName;
@@ -1053,6 +1054,71 @@ class DynamicSchemaServiceImplTest
         assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/base" ) ) ) );
         assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/com.enonic.xp.app.system" ) ) ) );
         assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/com.enonic.app.systembundle/cms" ) ) ) );
+    }
+
+    @Test
+    void protectedSchemaIsNeverWritten()
+        throws Exception
+    {
+        final ApplicationKey key = ApplicationKey.from( "com.enonic.app.protected" );
+        createApplicationNodes( key );
+
+        final String contentType = readResource( "_contentType.yaml" );
+        final String part = readResource( "_part.yaml" );
+        final String styles = readResource( "_styles.yaml" );
+        final String macro = readResource( "_macro.yaml" );
+
+        // the flag cannot be set through the schema service: it is declared by the descriptor the application ships
+        final String protectedCms = "kind: \"CMS\"\nprotected: true\n";
+        assertThatThrownBy( () -> createAdminContext().runWith( () -> dynamicSchemaService.createOrUpdateCms(
+            CreateOrUpdateCmsParams.create().key( key ).resource( protectedCms ).build() ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "cannot be protected through the schema service" );
+
+        // unprotected, the schema is written
+        createAdminContext().runWith( () -> dynamicSchemaService.createOrUpdateContentType(
+            CreateOrUpdateContentSchemaParams.create().name( ContentTypeName.from( key, "mytype" ) ).resource( contentType ).build() ) );
+
+        // the cms descriptor as an installation of the application persists it
+        appRepoAdminContext().runWith( () -> nodeService.update( UpdateNodeParams.create()
+                                                                     .path( new NodePath( "/" + key + "/cms/cms" ) )
+                                                                     .editor( node -> node.data.setString( "resource", protectedCms ) )
+                                                                     .refresh( RefreshMode.ALL )
+                                                                     .build() ) );
+        applicationEvents.clear();
+
+        final List<Runnable> writes = List.of( () -> dynamicSchemaService.createOrUpdateCms(
+                                                   CreateOrUpdateCmsParams.create().key( key ).resource( CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdateContentType( CreateOrUpdateContentSchemaParams.create()
+                                                                                                         .name( ContentTypeName.from( key, "mytype" ) )
+                                                                                                         .resource( contentType )
+                                                                                                         .build() ),
+                                               () -> dynamicSchemaService.createOrUpdatePart(
+                                                   CreateOrUpdateComponentParams.create().key( DescriptorKey.from( key, "mypart" ) ).resource( part ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdateStyles(
+                                                   CreateOrUpdateStylesParams.create().key( key ).resource( styles ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdateMacro(
+                                                   CreateOrUpdateMacroParams.create().key( MacroKey.from( key, "mymacro" ) ).resource( macro ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdatePhrases(
+                                                   CreateOrUpdatePhrasesParams.create().key( key ).name( "phrases_en" ).resource( "a=b\n" ).build() ),
+                                               () -> dynamicSchemaService.deleteContentType( ContentTypeName.from( key, "mytype" ) ),
+                                               () -> dynamicSchemaService.deletePart( DescriptorKey.from( key, "mypart" ) ),
+                                               () -> dynamicSchemaService.deleteStyles( key ),
+                                               () -> dynamicSchemaService.deleteMacro( MacroKey.from( key, "mymacro" ) ),
+                                               () -> dynamicSchemaService.deletePhrases(
+                                                   DeleteDynamicPhrasesParams.create().key( key ).name( "phrases_en" ).build() ),
+                                               () -> dynamicSchemaService.deleteCms( key ) );
+        for ( final Runnable write : writes )
+        {
+            assertThatThrownBy( () -> createAdminContext().runWith( write ) )
+                .isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "Cannot modify schema of protected application: " + key );
+        }
+
+        // nothing changed, nobody is told; the schema is still read
+        assertTrue( applicationEvents.isEmpty() );
+        assertTrue( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( key ) ).getSchema().isProtected() );
+        assertNotNull( createAdminContext().callWith( () -> dynamicSchemaService.getContentType( ContentTypeName.from( key, "mytype" ) ) ) );
     }
 
     @Test

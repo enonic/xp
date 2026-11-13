@@ -66,6 +66,11 @@ public interface DynamicSchemaAuditLogSupport
      */
     void updateApplicationDescriptor( ApplicationKey key, String resource, String iconMimeType, long iconSize, boolean iconRemoved );
 
+    /**
+     * The flag preventing the application from being installed over and uninstalled was set or reset.
+     */
+    void updateLocked( ApplicationKey key, boolean locked );
+
     void createPhrases( CreateOrUpdatePhrasesParams params, Resource result );
 
     void updatePhrases( CreateOrUpdatePhrasesParams params, Resource result );

@@ -32,6 +32,10 @@ public final class EditableApplicationDescriptor
 
     public String url;
 
+    public String minSystemVersion;
+
+    public String maxSystemVersion;
+
     public GenericValue schemaConfig;
 
     public Icon icon;
@@ -46,6 +50,8 @@ public final class EditableApplicationDescriptor
         this.vendorName = source.getVendorName();
         this.vendorUrl = source.getVendorUrl();
         this.url = source.getUrl();
+        this.minSystemVersion = source.getMinSystemVersion();
+        this.maxSystemVersion = source.getMaxSystemVersion();
         this.schemaConfig = source.getSchemaConfig();
         this.icon = source.getIcon();
     }
@@ -61,7 +67,11 @@ public final class EditableApplicationDescriptor
             .description( new LocalizedText( description, descriptionI18nKey ) )
             .vendorName( vendorName )
             .vendorUrl( vendorUrl )
-            .url( url );
+            .url( url )
+            // the version is declared by the descriptor the application ships: it is not editable
+            .version( source.getVersion() )
+            .minSystemVersion( minSystemVersion )
+            .maxSystemVersion( maxSystemVersion );
         if ( schemaConfig != null )
         {
             builder.schemaConfig( schemaConfig );

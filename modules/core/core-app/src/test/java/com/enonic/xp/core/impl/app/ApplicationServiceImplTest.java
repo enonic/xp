@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -174,7 +175,7 @@ class ApplicationServiceImplTest
         final Application persisted = result.get( 1 );
         assertInstanceOf( PersistedApplication.class, persisted );
         assertEquals( ApplicationKey.from( "app2" ), persisted.getKey() );
-        assertTrue( persisted.isSchema() );
+        assertTrue( persisted.isCodeless() );
         assertTrue( persisted.isStarted() );
         assertFalse( persisted.isSystem() );
         assertNull( persisted.getClassLoader() );
@@ -207,10 +208,10 @@ class ApplicationServiceImplTest
         assertEquals( applicationKey, result.getKey() );
         assertEquals( applicationKey, this.service.getInstalledApplication( applicationKey ).getKey() );
 
-        // a descriptor alone makes no schema application: the cms descriptor does
-        assertFalse( result.isSchema() );
+        // a descriptor alone makes no codeless application: the cms descriptor does
+        assertFalse( result.isCodeless() );
         when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
-        assertTrue( this.service.get( applicationKey ).isSchema() );
+        assertTrue( this.service.get( applicationKey ).isCodeless() );
     }
 
     @Test
@@ -237,12 +238,12 @@ class ApplicationServiceImplTest
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
             .hasMessageContaining( "without bundle" );
 
-        // ...and a schema application, owning a schema, is always started
+        // ...and a codeless application, owning a schema, is always started
         when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
         assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
 
         verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
         verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
@@ -281,6 +282,74 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void persisted_only_application_tells_whether_it_was_modified()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        // as created: nothing counted, or no counter at all
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
+        assertFalse( this.service.get( applicationKey ).isSchemaModified() );
+
+        final PropertyTree created = persistedNodeData();
+        created.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 0L );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", created ) );
+        assertFalse( this.service.get( applicationKey ).isSchemaModified() );
+
+        // changed since
+        final PropertyTree changed = persistedNodeData();
+        changed.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 2L );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", changed ) );
+        assertTrue( this.service.get( applicationKey ).isSchemaModified() );
+    }
+
+    @Test
+    void uninstall_is_refused_for_a_protected_application()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        final PropertyTree data = persistedNodeData();
+        data.setBoolean( ApplicationPropertyNames.LOCKED, true );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", data ) );
+
+        final ApplicationBundleException e =
+            assertThrows( ApplicationBundleException.class, () -> this.service.uninstallApplication( applicationKey ) );
+        assertEquals( "Cannot uninstall application app1: it is locked", e.getMessage() );
+
+        verify( this.repoService, never() ).deleteApplicationNode( any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+        assertTrue( this.service.get( applicationKey ).isLocked() );
+
+        // the flag reset, the application is uninstalled
+        final PropertyTree reset = persistedNodeData();
+        reset.setBoolean( ApplicationPropertyNames.LOCKED, false );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", reset ) );
+        assertFalse( this.service.get( applicationKey ).isLocked() );
+
+        this.service.uninstallApplication( applicationKey );
+
+        verify( this.repoService ).deleteApplicationNode( applicationKey );
+    }
+
+    @Test
+    void install_global_is_refused_over_a_protected_application()
+    {
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+        final PropertyTree data = persistedNodeData();
+        data.setBoolean( ApplicationPropertyNames.LOCKED, true );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( bundleName, data ) );
+
+        final ByteSource byteSource = createBundleSource( bundleName );
+        final ApplicationBundleException e =
+            assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( byteSource ) );
+        assertEquals( "Cannot install application my.bundle: it is locked", e.getMessage() );
+
+        // nothing is written, nobody is told
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
     void uninstall_event_for_persisted_only_application_publishes_the_local_event_only()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
@@ -310,6 +379,46 @@ class ApplicationServiceImplTest
     }
 
     // the node of an application created through the descriptor service: no bundle
+    @Test
+    void persisted_only_application_reads_its_versions_from_the_persisted_descriptor()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        final PropertyTree data = persistedNodeData();
+        data.setString( SchemaNodePropertyNames.DESCRIPTOR,
+                        "kind: \"Application\"\nversion: \"1.2.3\"\nminSystemVersion: \"8.0.0\"\nmaxSystemVersion: \"9.0.0\"\n" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", data ) );
+
+        final Application result = this.service.get( applicationKey );
+        assertInstanceOf( PersistedApplication.class, result );
+        assertEquals( "1.2.3", result.getVersion().toString() );
+        assertEquals( "8.0.0", result.getMinSystemVersion() );
+        assertEquals( "9.0.0", result.getMaxSystemVersion() );
+        assertEquals( "[8.0.0,9.0.0)", result.getSystemVersion() );
+
+        // a minimum alone leaves the range open
+        data.setString( SchemaNodePropertyNames.DESCRIPTOR, "kind: \"Application\"\nminSystemVersion: \"8.0.0\"\n" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", data ) );
+        final Application minOnly = this.service.get( applicationKey );
+        assertEquals( Version.emptyVersion, minOnly.getVersion() );
+        assertEquals( "8.0.0", minOnly.getMinSystemVersion() );
+        assertNull( minOnly.getMaxSystemVersion() );
+
+        // a descriptor declaring none has none
+        data.setString( SchemaNodePropertyNames.DESCRIPTOR, "kind: \"Application\"\n" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", data ) );
+        final Application none = this.service.get( applicationKey );
+        assertEquals( Version.emptyVersion, none.getVersion() );
+        assertNull( none.getSystemVersion() );
+        assertNull( none.getMinSystemVersion() );
+        assertNull( none.getMaxSystemVersion() );
+    }
+
+    // the repo service is mocked, nothing is persisted for a global application to read its version from: its bundle tells
+    private static String bundleVersion( final Application application )
+    {
+        return ( (ApplicationAdaptor) application ).getBundle().getVersion().toString();
+    }
+
     private static PropertyTree persistedNodeData()
     {
         final PropertyTree data = new PropertyTree();
@@ -467,7 +576,7 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
 
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
         verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
@@ -485,7 +594,7 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
 
         assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "schema application" );
+            .hasMessageContaining( "codeless application" );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
@@ -513,7 +622,7 @@ class ApplicationServiceImplTest
         final String bundleName = "schemaApp";
         final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
 
-        // stored as stopped: a schema application is started regardless
+        // stored as stopped: a codeless application is started regardless
         final PropertyTree data = bundleNodeData();
         data.setBoolean( ApplicationPropertyNames.STARTED, false );
         final Node node = Node.create()
@@ -532,7 +641,7 @@ class ApplicationServiceImplTest
 
         final Application application = this.service.getInstalledApplication( applicationKey );
         assertNotNull( application );
-        assertTrue( application.isSchema() );
+        assertTrue( application.isCodeless() );
         assertTrue( application.isStarted() );
     }
 
@@ -578,7 +687,7 @@ class ApplicationServiceImplTest
         assertFalse( this.service.isLocalApplication( applicationKey ) );
 
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
-            resources -> resources.size() == 7 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
+            resources -> resources.size() == 7 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) &&
                 "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) &&
                 CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
                 CONTENT_TYPE.equals( readResource( resources, "cms/content-types/mytype.yaml" ) ) &&
@@ -614,8 +723,110 @@ class ApplicationServiceImplTest
                                                          .build() ) );
 
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
-            resources -> resources.size() == 2 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
+            resources -> resources.size() == 2 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) &&
                 "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) ) );
+    }
+
+    @Test
+    void install_global_declares_the_versions_of_the_manifest_in_the_descriptor()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // the descriptor declares neither a version nor a system version range: both are taken from the manifest
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true, "2.3.4" )
+                                                         .setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, "[5.0,99)" )
+                                                         .addResource( "enonic.yaml", stream( "kind: \"Application\"\ntitle: \"My app\"\n" ) )
+                                                         .build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat( resources -> (
+            "kind: \"Application\"\nname: \"my.bundle\"\nversion: \"2.3.4\"\nminSystemVersion: \"5.0.0\"\n" +
+                "maxSystemVersion: \"99.0.0\"\ntitle: \"My app\"\n" ).equals( readResource( resources, "enonic.yaml" ) ) ) );
+    }
+
+    @Test
+    void install_global_declares_the_version_of_the_manifest_as_a_semantic_version()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // the qualifier of the bundle version is the pre-release of the semantic version
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true, "2.3.4.SNAPSHOT" ).build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> "kind: \"Application\"\nname: \"my.bundle\"\nversion: \"2.3.4-SNAPSHOT\"\n".equals(
+                readResource( resources, "enonic.yaml" ) ) ) );
+    }
+
+    @Test
+    void install_global_accepts_a_semantic_version_matching_the_bundle_version()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        final String descriptor = "kind: \"Application\"\nname: \"my.bundle\"\nversion: \"2.3.4-SNAPSHOT\"\n";
+        this.service.installGlobalApplication(
+            wrap( newBundle( bundleName, true, "2.3.4.SNAPSHOT" ).addResource( "enonic.yaml", stream( descriptor ) ).build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> descriptor.equals( readResource( resources, "enonic.yaml" ) ) ) );
+    }
+
+    @Test
+    void install_global_keeps_the_versions_the_descriptor_declares()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // the same version as the manifest, and a range of its own declared by one end: nothing to complete
+        final String descriptor = "kind: \"Application\"\nname: \"my.bundle\"\nversion: \"2.3.4\"\nminSystemVersion: \"5.0.0\"\n";
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true, "2.3.4" )
+                                                         .setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, "[5.0,99)" )
+                                                         .addResource( "enonic.yaml", stream( descriptor ) )
+                                                         .build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> descriptor.equals( readResource( resources, "enonic.yaml" ) ) ) );
+    }
+
+    @Test
+    void install_global_rejects_versions_differing_between_descriptor_and_manifest()
+    {
+        final String bundleName = "my.bundle";
+
+        // the manifest declares 2.3.4 and [5.0,99)
+        for ( final String versions : List.of( "version: \"2.3.5\"\n", "minSystemVersion: \"6.0.0\"\n", "maxSystemVersion: \"98.0.0\"\n" ) )
+        {
+            final ByteSource source = wrap( newBundle( bundleName, true, "2.3.4" )
+                                                .setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, "[5.0,99)" )
+                                                .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" + versions ) )
+                                                .build() );
+
+            final ApplicationBundleException e =
+                assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( source ) );
+            assertTrue( e.getMessage().startsWith( "Application [my.bundle] declares " ), e.getMessage() );
+            assertTrue( e.getMessage().contains( "in its manifest" ), e.getMessage() );
+        }
+
+        // nothing is written for a rejected application
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
     }
 
     @Test
@@ -629,8 +840,9 @@ class ApplicationServiceImplTest
 
         this.service.installGlobalApplication( wrap( newBundle( bundleName, true ).addResource( "lib/util.js", stream( "library" ) ).build() ) );
 
-        // an empty set of resources: the repo service removes what an earlier version persisted
-        verify( this.repoService ).persistApplicationSchema( eq( ApplicationKey.from( bundleName ) ), argThat( Map::isEmpty ) );
+        // nothing but the descriptor declaring the version of the manifest: the repo service removes what an earlier version persisted
+        verify( this.repoService ).persistApplicationSchema( eq( ApplicationKey.from( bundleName ) ), argThat(
+            resources -> resources.size() == 1 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) ) );
     }
 
     @Test
@@ -687,7 +899,8 @@ class ApplicationServiceImplTest
                                                          .build() ) );
 
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
-            resources -> resources.size() == 2 && CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
+            resources -> resources.size() == 3 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) &&
+                CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
                 PART.equals( readResource( resources, "cms/parts/mypart.yaml" ) ) ) );
     }
 
@@ -879,8 +1092,8 @@ class ApplicationServiceImplTest
         final Application updatedApplication = this.service.installGlobalApplication(
             ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).build() ) ) );
 
-        assertEquals( "1.0.0", originalApplication.getVersion().toString() );
-        assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
+        assertEquals( "1.0.0", bundleVersion( originalApplication ) );
+        assertEquals( "1.0.1", bundleVersion( updatedApplication ) );
         assertFalse( this.service.isLocalApplication( updatedApplication.getKey() ) );
     }
 
@@ -1006,7 +1219,7 @@ class ApplicationServiceImplTest
         final Application updatedApplication = this.service.installLocalApplication(
             ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).build() ) ) );
 
-        assertEquals( "1.0.0", originalApplication.getVersion().toString() );
+        assertEquals( "1.0.0", bundleVersion( originalApplication ) );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
         assertTrue( this.service.isLocalApplication( updatedApplication.getKey() ) );
         assertEquals( updatedApplication, this.service.getInstalledApplication( updatedApplication.getKey() ) );
@@ -1077,7 +1290,7 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = originalApplication.getKey();
 
         assertFalse( this.service.isLocalApplication( applicationKey ) );
-        assertEquals( "1.0.0", originalApplication.getVersion().toString() );
+        assertEquals( "1.0.0", bundleVersion( originalApplication ) );
 
         final Application updatedApplication = this.service.installLocalApplication(
             ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).build() ) ) );
@@ -1250,6 +1463,8 @@ class ApplicationServiceImplTest
     {
         return wrap( newBundle( bundleName, isApp ).build() );
     }
+
+    private static final String APP_DESCRIPTOR_WITH_VERSION = "kind: \"Application\"\nname: \"my.bundle\"\nversion: \"1.0.0\"\n";
 
     private static final String CMS_DESCRIPTOR = "kind: \"CMS\"\n";
 
