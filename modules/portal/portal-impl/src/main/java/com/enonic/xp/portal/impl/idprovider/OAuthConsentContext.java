@@ -41,6 +41,9 @@ import com.enonic.xp.security.token.Scopes;
  *   unrestricted: true | false,            // confirm: the request carries no scope, the token gets the user's full rights
  *   audience: [ "api" ],                   // confirm
  *   csrf: "...",                           // confirm: the form must post it back as _csrf
+ *   redirectOrigin: "http://127.0.0.1:51234",
+ *                                          // confirm, code flow: where approving sends the browser, for the
+ *                                          //          page's form-action; absent for an IPv6 address
  *   approved: true | false                 // done
  * }
  * </pre>
@@ -124,7 +127,8 @@ sealed interface OAuthConsentContext
          * Where approving sends the browser, as a page's policy names it: the redirect URI's scheme, host and
          * port, or its scheme alone for a URI without a host, such as a native app's private-use scheme. A page
          * keeps its forms to itself and this, since browsers hold the redirect that follows a form post to the
-         * form's policy too.
+         * form's policy too. None for an IPv6 address, which a policy cannot name: the page then leaves its
+         * forms' targets open.
          */
         static @Nullable String redirectOrigin( final String redirectUri )
         {
@@ -145,6 +149,10 @@ sealed interface OAuthConsentContext
             if ( uri.getHost() == null )
             {
                 return scheme + ":";
+            }
+            if ( uri.getHost().startsWith( "[" ) )
+            {
+                return null;
             }
             return scheme + "://" + uri.getHost().toLowerCase( Locale.ROOT ) + ( uri.getPort() >= 0 ? ":" + uri.getPort() : "" );
         }
