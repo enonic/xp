@@ -20,7 +20,10 @@ import com.enonic.xp.security.token.Scopes;
 /**
  * What the consent page shows, for device login and for the authorization code flow. The id
  * provider's {@code oauthConsent(req)} function receives it as {@code req.oauthConsent}, as
- * plain data:
+ * plain data. An id provider without the function gets the {@code system} id provider's page: that
+ * function then runs as the {@code system} id provider's, for a request to the id provider in
+ * {@code idProvider}, so the page takes the request's data from here and posts its form back to the
+ * URL it was served at:
  * <pre>
  * {
  *   idProvider: "system",

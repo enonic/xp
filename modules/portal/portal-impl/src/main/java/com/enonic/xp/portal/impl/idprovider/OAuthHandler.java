@@ -87,8 +87,10 @@ import static java.util.Objects.requireNonNull;
  * </ul>
  * What may be asked for and granted is checked here: against the id provider's scopes, the
  * client's record when it has one, the audiences XP serves, and the choice the user posted from
- * the page (see {@link OAuthConsentContext}). An id provider without {@code oauthConsent}
- * answers 404 on these endpoints.
+ * the page (see {@link OAuthConsentContext}). The page is the id provider's {@code oauthConsent}
+ * function. An id provider without one gets the page of the {@code system} id provider when the vhost
+ * serves that id provider and its app has the function; otherwise these endpoints answer 404. Sign-in
+ * is always the id provider's own.
  */
 @Component(service = OAuthHandler.class)
 public class OAuthHandler
@@ -181,12 +183,21 @@ public class OAuthHandler
     }
 
     /**
-     * Whether the id provider supports device login and the authorization code flow, that is, has
-     * the consent page function.
+     * The id provider whose {@code oauthConsent} renders the consent page for the id provider's
+     * requests on the request's vhost: its own, else the {@code system} id provider's when the vhost
+     * serves that id provider. Empty when there is no page, so device login and the authorization code
+     * flow are not supported.
      */
-    public boolean supports( final IdProviderKey idProvider )
+    Optional<IdProviderKey> consentPage( final PortalRequest request, final IdProviderKey idProvider )
     {
-        return idProviderControllerService.hasFunction( idProvider, CONSENT_FUNCTION );
+        if ( idProviderControllerService.hasFunction( idProvider, CONSENT_FUNCTION ) )
+        {
+            return Optional.of( idProvider );
+        }
+        final IdProviderKey fallback = IdProviderKey.system();
+        final VirtualHost virtualHost = request.getVirtualHost();
+        return virtualHost != null && virtualHost.getIdProviders().containsKey( fallback ) &&
+            idProviderControllerService.hasFunction( fallback, CONSENT_FUNCTION ) ? Optional.of( fallback ) : Optional.empty();
     }
 
     /**
@@ -199,7 +210,7 @@ public class OAuthHandler
         return switch ( endpoint )
         {
             case OAuthEndpoints.DEVICE_CODE -> requirePost( method, () -> {
-                requireSupport( idProvider );
+                requireSupport( request, idProvider );
                 return deviceAuthorization( request, idProvider );
             } );
             case OAuthEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings ) );
@@ -208,12 +219,12 @@ public class OAuthHandler
             {
                 case GET, HEAD ->
                 {
-                    requireSupport( idProvider );
+                    requireSupport( request, idProvider );
                     yield authorizationRequest( request, idProvider, settings );
                 }
                 case POST ->
                 {
-                    requireSupport( idProvider );
+                    requireSupport( request, idProvider );
                     yield authorizationSubmit( request, idProvider, settings );
                 }
                 default -> throw methodNotAllowed( method );
@@ -222,12 +233,12 @@ public class OAuthHandler
             {
                 case GET, HEAD ->
                 {
-                    requireSupport( idProvider );
+                    requireSupport( request, idProvider );
                     yield verificationPage( request, idProvider, settings );
                 }
                 case POST ->
                 {
-                    requireSupport( idProvider );
+                    requireSupport( request, idProvider );
                     yield verificationSubmit( request, idProvider, settings );
                 }
                 default -> throw methodNotAllowed( method );
@@ -236,12 +247,11 @@ public class OAuthHandler
         };
     }
 
-    private void requireSupport( final IdProviderKey idProvider )
+    private IdProviderKey requireSupport( final PortalRequest request, final IdProviderKey idProvider )
     {
-        if ( !supports( idProvider ) )
-        {
-            throw WebException.notFound( String.format( "'%s' id provider has no consent page (%s)", idProvider, CONSENT_FUNCTION ) );
-        }
+        return consentPage( request, idProvider ).orElseThrow( () -> WebException.notFound(
+            String.format( "'%s' id provider has no consent page (%s), nor has '%s' id provider on this vhost", idProvider,
+                           CONSENT_FUNCTION, IdProviderKey.system() ) ) );
     }
 
     private static PortalResponse requirePost( final HttpMethod method, final java.util.function.Supplier<PortalResponse> handler )
@@ -831,10 +841,11 @@ public class OAuthHandler
     }
 
     /**
-     * Renders the page through the id provider's {@code oauthConsent} function.
+     * Renders the page through the {@code oauthConsent} function of the id provider's {@link #consentPage}.
      */
     private PortalResponse render( final PortalRequest request, final IdProviderKey idProvider, final OAuthConsentContext context )
     {
+        final IdProviderKey owner = requireSupport( request, idProvider );
         if ( request.getRawRequest() != null )
         {
             request.getRawRequest().setAttribute( CONTEXT_ATTRIBUTE, context.toMap() );
@@ -842,14 +853,13 @@ public class OAuthHandler
         try
         {
             final PortalResponse page = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
-                                                                                 .idProviderKey( idProvider )
+                                                                                 .idProviderKey( owner )
                                                                                  .functionName( CONSENT_FUNCTION )
                                                                                  .portalRequest( request )
                                                                                  .build() );
             if ( page == null )
             {
-                requireSupport( idProvider );
-                throw WebException.internalServerError( String.format( "'%s' id provider's %s returned no response", idProvider,
+                throw WebException.internalServerError( String.format( "'%s' id provider's %s returned no response", owner,
                                                                         CONSENT_FUNCTION ) );
             }
             return page;
@@ -869,7 +879,7 @@ public class OAuthHandler
             {
                 return oauthError( HttpStatus.BAD_REQUEST, "unauthorized_client", "The device flow is disabled here" );
             }
-            requireSupport( idProvider );
+            requireSupport( request, idProvider );
             return deviceCodeGrant( request, idProvider );
         }
         if ( AUTHORIZATION_CODE_GRANT.equals( grantType ) )
@@ -878,7 +888,7 @@ public class OAuthHandler
             {
                 return oauthError( HttpStatus.BAD_REQUEST, "unauthorized_client", "The authorization code flow is disabled here" );
             }
-            requireSupport( idProvider );
+            requireSupport( request, idProvider );
             return authorizationCodeGrant( request, idProvider );
         }
         if ( REFRESH_TOKEN_GRANT.equals( grantType ) )
