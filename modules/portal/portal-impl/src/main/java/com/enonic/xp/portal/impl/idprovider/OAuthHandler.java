@@ -88,9 +88,11 @@ import static java.util.Objects.requireNonNull;
  * What may be asked for and granted is checked here: against the id provider's scopes, the
  * client's record when it has one, the audiences XP serves, and the choice the user posted from
  * the page (see {@link OAuthConsentContext}). The page is the id provider's {@code oauthConsent}
- * function. An id provider without one gets the page of the {@code system} id provider when that id
- * provider serves the {@link IdProviderFlow#CONSENT} flow on the vhost and its app has the function;
- * otherwise these endpoints answer 404. Sign-in is always the id provider's own.
+ * function. An id provider without one gets the page of the {@code system} id provider when the vhost
+ * serves that id provider and its app has the function; otherwise these endpoints answer 404. Sign-in
+ * is always the id provider's own. The page's assets are served from the {@code system} id provider's
+ * endpoint, so a vhost that offers the page and nothing else of that id provider gives it a flow list
+ * without {@code login}, {@code autologin} and {@code logout}, e.g. a flow of its app's own.
  */
 @Component(service = OAuthHandler.class)
 public class OAuthHandler
@@ -184,8 +186,8 @@ public class OAuthHandler
 
     /**
      * The id provider whose {@code oauthConsent} renders the consent page for the id provider's
-     * requests on the request's vhost: its own, else the {@code system} id provider's when that id
-     * provider serves the {@link IdProviderFlow#CONSENT} flow there. Empty when there is no page, so device login and the authorization code
+     * requests on the request's vhost: its own, else the {@code system} id provider's when the vhost
+     * serves that id provider. Empty when there is no page, so device login and the authorization code
      * flow are not supported.
      */
     Optional<IdProviderKey> consentPage( final PortalRequest request, final IdProviderKey idProvider )
@@ -196,8 +198,7 @@ public class OAuthHandler
         }
         final IdProviderKey fallback = IdProviderKey.system();
         final VirtualHost virtualHost = request.getVirtualHost();
-        final VirtualHostIdProvider settings = virtualHost != null ? virtualHost.getIdProviders().get( fallback ) : null;
-        return settings != null && settings.serves( IdProviderFlow.CONSENT ) &&
+        return virtualHost != null && virtualHost.getIdProviders().containsKey( fallback ) &&
             idProviderControllerService.hasFunction( fallback, CONSENT_FUNCTION ) ? Optional.of( fallback ) : Optional.empty();
     }
 
@@ -251,8 +252,8 @@ public class OAuthHandler
     private IdProviderKey requireSupport( final PortalRequest request, final IdProviderKey idProvider )
     {
         return consentPage( request, idProvider ).orElseThrow( () -> WebException.notFound(
-            String.format( "'%s' id provider has no consent page (%s), and '%s' id provider does not serve the '%s' flow here",
-                           idProvider, CONSENT_FUNCTION, IdProviderKey.system(), IdProviderFlow.CONSENT ) ) );
+            String.format( "'%s' id provider has no consent page (%s), nor has '%s' id provider on this vhost", idProvider,
+                           CONSENT_FUNCTION, IdProviderKey.system() ) ) );
     }
 
     private static PortalResponse requirePost( final HttpMethod method, final java.util.function.Supplier<PortalResponse> handler )

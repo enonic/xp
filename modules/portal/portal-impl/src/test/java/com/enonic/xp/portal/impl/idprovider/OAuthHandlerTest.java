@@ -99,7 +99,7 @@ class OAuthHandlerTest
 
     private static final PrincipalKey BOB = PrincipalKey.ofUser( OTHER, "bob" );
 
-    private static final VirtualHostIdProvider CONSENT_ONLY = VirtualHostIdProvider.create().flows( Set.of( "consent" ) ).build();
+    private static final VirtualHostIdProvider ASSETS_ONLY = VirtualHostIdProvider.create().flows( Set.of( "consent" ) ).build();
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
@@ -574,12 +574,12 @@ class OAuthHandlerTest
     {
         onlySystemHasThePage();
         final JsonNode issued = body( handler.handle(
-            onVhost( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), CONSENT_ONLY ),
+            onVhost( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), ASSETS_ONLY ),
             OTHER, "device/code", UNRESTRICTED ) );
         final String userCode = issued.get( "user_code" ).asText();
 
         asUser( BOB, () -> {
-            final PortalRequest page = onVhost( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), CONSENT_ONLY );
+            final PortalRequest page = onVhost( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), ASSETS_ONLY );
             final PortalResponse response = handler.handle( page, OTHER, "device", UNRESTRICTED );
 
             assertThat( response.getBody() ).isEqualTo( "page:confirm" );
@@ -594,7 +594,7 @@ class OAuthHandlerTest
 
             final PortalResponse done = handler.handle( onVhost(
                 request( HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "true", "_csrf",
-                                                            (String) lastContext.get( "csrf" ) ) ), CONSENT_ONLY ),
+                                                            (String) lastContext.get( "csrf" ) ) ), ASSETS_ONLY ),
                                                         OTHER, "device", UNRESTRICTED );
             assertThat( done.getBody() ).isEqualTo( "page:done" );
             assertThat( lastContext ).containsEntry( "approved", true );
@@ -603,7 +603,7 @@ class OAuthHandlerTest
 
         handler.handle( onVhost( request( HttpMethod.POST, "token",
                                                  Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
-                                                         issued.get( "device_code" ).asText(), "client_id", "cli" ) ), CONSENT_ONLY ), OTHER, "token", UNRESTRICTED );
+                                                         issued.get( "device_code" ).asText(), "client_id", "cli" ) ), ASSETS_ONLY ), OTHER, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getSubject() ).isEqualTo( BOB );
@@ -646,24 +646,6 @@ class OAuthHandlerTest
     }
 
     @Test
-    void the_system_id_providers_page_is_no_default_where_its_flows_leave_out_consent()
-        throws Exception
-    {
-        onlySystemHasThePage();
-
-        asUser( BOB, () -> {
-            assertThatThrownBy( () -> handler.handle(
-                onVhost( request( HttpMethod.GET, "device", Map.of() ), withFlows( "login", "autologin" ) ), OTHER, "device",
-                UNRESTRICTED ) ).isInstanceOf( WebException.class )
-                .hasMessageContaining( "does not serve the 'consent' flow" )
-                .extracting( e -> ( (WebException) e ).getStatus() )
-                .isEqualTo( HttpStatus.NOT_FOUND );
-            return null;
-        } );
-        verify( idProviderControllerService, never() ).execute( any() );
-    }
-
-    @Test
     void without_the_page_on_the_system_id_provider_either_there_is_none()
         throws Exception
     {
@@ -671,7 +653,7 @@ class OAuthHandlerTest
 
         asUser( BOB, () -> {
             assertThatThrownBy( () -> handler.handle(
-                onVhost( request( HttpMethod.GET, "authorize", Map.of() ), CONSENT_ONLY ), OTHER, "authorize",
+                onVhost( request( HttpMethod.GET, "authorize", Map.of() ), ASSETS_ONLY ), OTHER, "authorize",
                 UNRESTRICTED ) ).isInstanceOf( WebException.class )
                 .extracting( e -> ( (WebException) e ).getStatus() )
                 .isEqualTo( HttpStatus.NOT_FOUND );
@@ -685,7 +667,7 @@ class OAuthHandlerTest
         throws Exception
     {
         onlySystemHasThePage();
-        final PortalRequest page = onVhost( request( HttpMethod.GET, "device", Map.of() ), CONSENT_ONLY );
+        final PortalRequest page = onVhost( request( HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY );
 
         final PortalResponse response = handler.handle( page, OTHER, "device", UNRESTRICTED );
 
@@ -704,7 +686,7 @@ class OAuthHandlerTest
 
         asAlice( () -> {
             final PortalResponse response = handler.handle(
-                onVhost( request( HttpMethod.GET, "device", Map.of() ), CONSENT_ONLY ), OTHER, "device",
+                onVhost( request( HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY ), OTHER, "device",
                 UNRESTRICTED );
             assertThat( response.getBody() ).isEqualTo( "page:wrongAccount" );
             assertThat( lastContext ).containsEntry( "idProvider", "other" );
