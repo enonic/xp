@@ -12,6 +12,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,24 @@ class PortalUrlServiceImpl_identityUrlTest
 
         final String url = this.service.identityUrl( params );
         assertEquals( "/_/idprovider/system/login", url );
+    }
+
+    @Test
+    void createUrl_defaultIdProvider()
+    {
+        when( this.virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.from( "myidprovider" ) );
+
+        final String url = this.service.identityUrl( new IdentityUrlParams().idProviderFunction( "login" ) );
+        assertEquals( "/_/idprovider/myidprovider/login", url );
+    }
+
+    @Test
+    void createUrl_noDefaultIdProvider()
+    {
+        when( this.virtualHost.getName() ).thenReturn( "api" );
+
+        final String url = this.service.identityUrl( new IdentityUrlParams().idProviderFunction( "login" ) );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test

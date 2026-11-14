@@ -181,6 +181,31 @@ class VirtualHostConfigMapTest
     }
 
     @Test
+    void enabled_id_providers_without_a_default_have_no_default()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "enabled" );
+        map.put( "mapping.myapp1.idProvider.myProvider", "enabled" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertNull( virtualHost.getDefaultIdProviderKey() );
+        assertEquals( Set.of( IdProviderKey.system(), IdProviderKey.from( "myProvider" ) ), virtualHost.getIdProviders().keySet() );
+    }
+
+    @Test
+    void the_default_id_provider_comes_first()
+    {
+        map.put( "mapping.myapp1.idProvider.aProvider", "enabled" );
+        map.put( "mapping.myapp1.idProvider.zProvider", "default" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( IdProviderKey.from( "zProvider" ), virtualHost.getDefaultIdProviderKey() );
+        assertThat( virtualHost.getIdProviders().keySet() ).containsExactly( IdProviderKey.from( "zProvider" ),
+                                                                           IdProviderKey.from( "aProvider" ) );
+    }
+
+    @Test
     void testIdProviderFlows_default()
     {
         map.put( "mapping.myapp1.idProvider.system", "default" );

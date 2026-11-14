@@ -50,6 +50,7 @@ class IdProviderResponseWrapperTest
 
         // unrestricted default id provider, as the default vhost provides
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.system() );
         Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider() ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
@@ -105,6 +106,7 @@ class IdProviderResponseWrapperTest
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.system() );
         Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider( IdProviderFlow.AUTOLOGIN ) ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
@@ -144,6 +146,27 @@ class IdProviderResponseWrapperTest
     }
 
     @Test
+    void testHandle401_noDefaultIdProvider()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+
+        final VirtualHost virtualHost = new VirtualHostMapping( "m", "localhost", "/", "/", VirtualHostIdProvidersMapping.create()
+            .addIdProviderWithSettings( IdProviderKey.system(), idProvider( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) )
+            .build(), 0 );
+        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final IdProviderResponseWrapper responseWrapper =
+            new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
+
+        responseWrapper.sendError( 401 );
+
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( httpServletResponse ).sendError( 401 );
+    }
+
+    @Test
     void testAuthenticated403_notIntercepted()
         throws Exception
     {
@@ -171,6 +194,7 @@ class IdProviderResponseWrapperTest
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.system() );
         Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider( IdProviderFlow.LOGIN ) ) );
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
@@ -230,6 +254,7 @@ class IdProviderResponseWrapperTest
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
         final VirtualHost virtualHost = new VirtualHostMapping( "m", "localhost", "/", "/", VirtualHostIdProvidersMapping.create()
             .addIdProviderWithSettings( IdProviderKey.system(), idProvider() )
+            .setDefaultIdProvider( IdProviderKey.system() )
             .build(), 0 );
         final Map<String, Object> attributes = new HashMap<>();
         Mockito.doAnswer( i -> attributes.put( i.getArgument( 0 ), i.getArgument( 1 ) ) ).when( httpServletRequest ).setAttribute( Mockito.any(), Mockito.any() );

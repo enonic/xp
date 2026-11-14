@@ -229,6 +229,30 @@ class IdProviderControllerServiceImplTest
         assertEquals( "myapplication/myfunction", portalResponse.getBody() );
     }
 
+    @Test
+    void executeWithVirtualHostWithoutDefaultIdProvider()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = createHttpServletRequest();
+
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        when( virtualHost.getIdProviders() )
+            .thenReturn( Map.of( IdProviderKey.from( "myuserstore" ), VirtualHostIdProvider.create().build() ) );
+        when( virtualHost.getTarget() ).thenReturn( "/" );
+        VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
+        when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final HttpServletResponse response = mock();
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .servletRequest( httpServletRequest )
+            .response( response )
+            .functionName( "myfunction" )
+            .build();
+
+        assertNull( idProviderControllerService.execute( executionParams ) );
+        Mockito.verifyNoInteractions( response );
+    }
+
     private HttpServletRequest createHttpServletRequest()
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
