@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
@@ -106,6 +107,11 @@ public class VirtualHostResolverImpl
         {
             final VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
             virtualHost.getIdProviders().forEach( idProvidersMapping::addIdProviderWithSettings );
+            final IdProviderKey defaultIdProvider = virtualHost.getDefaultIdProviderKey();
+            if ( defaultIdProvider != null )
+            {
+                idProvidersMapping.setDefaultIdProvider( defaultIdProvider );
+            }
             return idProvidersMapping.build();
         }
 

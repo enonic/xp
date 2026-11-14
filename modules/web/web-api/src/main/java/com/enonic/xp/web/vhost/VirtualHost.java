@@ -37,8 +37,16 @@ public interface VirtualHost
     String getTarget();
 
     /**
-     * Returns the vhost's default id provider - the first key of {@link #getIdProviders()} - or
-     * null when none is enabled.
+     * Returns the vhost's default id provider: the one marked {@code default} in the mapping
+     * ({@code mapping.<name>.idProvider.<idp> = default}), or null when none is. An id provider
+     * that is only {@code enabled} never becomes the default, so a mapping can enable id providers
+     * and have no default.
+     * <p>
+     * The default id provider serves what a request does not name an id provider for: the
+     * identity URLs built without an id provider, the login page shown on a 401, and the id
+     * provider of the request in an application. Without a default, only what names an id provider
+     * works, such as {@code /_/idprovider/<idp>/...}, and flows that need none, such as
+     * {@code autologin} and the OAuth endpoints. A 401 is then answered without a login page.
      */
     @Nullable
     IdProviderKey getDefaultIdProviderKey();

@@ -99,6 +99,8 @@ class OAuthHandlerTest
 
     private final GrantService grantService = mock( GrantService.class );
 
+    private static final Set<String> KNOWN_CLIENTS = Set.of( "cli", "my-cli", "other", "x" );
+
     private final AccessTokenService accessTokenService = mock( AccessTokenService.class );
 
     private final SecurityService securityService = mock( SecurityService.class );
@@ -140,7 +142,16 @@ class OAuthHandlerTest
                 .build();
         } );
         when( securityService.getScopes( any() ) ).thenReturn( Scopes.empty() );
-        when( securityService.getClient( any(), any() ) ).thenReturn( Optional.empty() );
+        when( securityService.getClient( any(), any() ) ).thenAnswer( i -> {
+            final IdProviderKey idProvider = i.getArgument( 0 );
+            final String id = i.getArgument( 1 );
+            return KNOWN_CLIENTS.contains( id ) ? Optional.of( Client.create()
+                                                                   .idProvider( idProvider )
+                                                                   .id( id )
+                                                                   .grantTypes( List.of( GrantTypes.DEVICE_CODE, GrantTypes.AUTHORIZATION_CODE,
+                                                                                         GrantTypes.REFRESH_TOKEN ) )
+                                                                   .build() ) : Optional.empty();
+        } );
         when( securityService.authenticate( any() ) ).thenReturn( AuthenticationInfo.create()
                                                                       .user( User.create().key( ALICE ).login( "alice" ).build() )
                                                                       .principals( RoleKeys.AUTHENTICATED )
@@ -343,7 +354,8 @@ class OAuthHandlerTest
             final PortalResponse form = handler.handle( page, IDP, "device", UNRESTRICTED );
             assertThat( form.getBody() ).isEqualTo( "page:confirm" );
             assertThat( lastContext ).containsEntry( "idProvider", "system" ).containsEntry( "userCode", userCode )
-                .containsEntry( "clientId", "my-cli" ).containsEntry( "audience", List.of( "xp" ) );
+                .containsEntry( "clientId", "my-cli" ).containsEntry( "audience", List.of( "xp" ) )
+                .as( "device login sends the browser nowhere" ).doesNotContainKey( "redirectOrigin" );
             assertThat( scopeIds( lastContext ) ).isEmpty();
             assertThat( lastContext ).as( "the page can say the token gets the user's full rights" ).containsEntry( "unrestricted", true );
             assertThat( user( lastContext ) ).containsEntry( "key", ALICE.toString() ).containsEntry( "displayName", "Alice" );
@@ -610,10 +622,11 @@ class OAuthHandlerTest
     }
 
     @Test
-    void client_id_is_required_on_every_request_and_any_value_is_accepted()
+    void client_id_is_required_on_every_request_and_trimmed()
         throws Exception
     {
-        final String odd = "any string the client calls itself";
+        final String odd = "a client id with spaces";
+        registered( cli().id( odd ) );
         final JsonNode issued = body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", " " + odd + " " ) ), IDP,
                                                       "device/code", UNRESTRICTED ) );
         approve( issued.get( "user_code" ).asText() );
@@ -1004,22 +1017,23 @@ class OAuthHandlerTest
         final VirtualHostIdProvider settings = withScopes(
             Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app", "role:cms.project.site.viewer" ), "profile",
                     PrincipalKeys.empty() ) );
+        final String self = selfRegistered( cli() ).getId();
 
         final PortalResponse omitted =
-            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", settings );
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", self ) ), IDP, "device/code", settings );
         assertThat( omitted.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
         assertThat( body( omitted ).get( "error" ).asText() ).isEqualTo( "invalid_scope" );
         assertThat( body( omitted ).get( "error_description" ).asText() ).contains( "content:read" ).contains( "profile" );
 
         final PortalResponse refused = handler.handle(
-            request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read content:write" ) ), IDP,
+            request( HttpMethod.POST, "device/code", Map.of( "client_id", self, "scope", "content:read content:write" ) ), IDP,
             "device/code", settings );
         assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
         assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_scope" );
         assertThat( body( refused ).get( "error_description" ).asText() ).startsWith( "Unknown scope [content:write]" );
 
         final JsonNode issued = body( handler.handle(
-            request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read profile" ) ), IDP, "device/code",
+            request( HttpMethod.POST, "device/code", Map.of( "client_id", self, "scope", "content:read profile" ) ), IDP, "device/code",
             settings ) );
         approve( settings, issued.get( "user_code" ).asText(), "content:read", "profile", "admin" );
         assertThat( lastContextOfConfirm ).containsEntry( "unrestricted", false );
@@ -1034,7 +1048,7 @@ class OAuthHandlerTest
 
         handler.handle( request( HttpMethod.POST, "token",
                                  Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
-                                         "client_id", "cli" ) ), IDP, "token", UNRESTRICTED );
+                                         "client_id", self ) ), IDP, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getRestriction() ).isEqualTo(
@@ -1138,10 +1152,6 @@ class OAuthHandlerTest
         throws Exception
     {
         final VirtualHostIdProvider settings = withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
-        final PortalResponse unknownClient =
-            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", settings );
-        assertThat( body( unknownClient ).get( "error" ).asText() ).as( "a client with no record must ask" ).isEqualTo( "invalid_scope" );
-
         registered( cli() );
         final JsonNode issued =
             body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", settings ) );
@@ -1296,6 +1306,14 @@ class OAuthHandlerTest
         return built;
     }
 
+    private Client selfRegistered( final Client.Builder client )
+    {
+        final Client built = client.id( "eyJhbGciOiJIUzI1NiJ9.self.registered" ).idProvider( IDP ).build();
+        when( accessTokenService.isSelfRegisteredClientId( built.getId() ) ).thenReturn( true );
+        when( accessTokenService.getRegisteredClient( IDP, built.getId() ) ).thenReturn( Optional.of( built ) );
+        return built;
+    }
+
     private static Client.Builder cli()
     {
         return Client.create().id( "cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE, GrantTypes.REFRESH_TOKEN ) );
@@ -1322,16 +1340,125 @@ class OAuthHandlerTest
     }
 
     @Test
-    void an_unregistered_client_has_its_id_as_its_name()
+    void an_unknown_client_is_refused_at_every_step()
         throws Exception
     {
+        final String stranger = "stranger";
+
+        PortalResponse refused =
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", stranger ) ), IDP, "device/code", UNRESTRICTED );
+        assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).startsWith( "Unknown client" );
+
+        final Map<String, String> authorize = authorizeParams( "http://127.0.0.1:7/cb" );
+        authorize.put( "client_id", stranger );
+        refused = handler.handle( request( HttpMethod.GET, "authorize", authorize ), IDP, "authorize", UNRESTRICTED );
+        assertThat( refused.getStatus() ).as( "not redirected, even to a loopback address" ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+
+        refused = handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.AUTHORIZATION_CODE_GRANT, "code", "c",
+                                                                             "client_id", stranger, "redirect_uri", "http://127.0.0.1:7/cb",
+                                                                             "code_verifier", VERIFIER ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+
+        refused = handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.REFRESH_TOKEN_GRANT, "refresh_token", "r",
+                                                                             "client_id", stranger ) ), IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+        verifyNoInteractions( grantService );
+    }
+
+    @Test
+    void the_default_cli_client_is_known_on_every_id_provider_unless_one_registers_its_own()
+        throws Exception
+    {
+        for ( IdProviderKey idProvider : List.of( IDP, IdProviderKey.from( "corporate-oidc" ) ) )
+        {
+            final PortalResponse issued = handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ),
+                                                          idProvider, "device/code", UNRESTRICTED );
+            assertThat( issued.getStatus() ).as( "%s", idProvider ).isEqualTo( HttpStatus.OK );
+        }
+        final Map<String, String> authorize = authorizeParams( "http://127.0.0.1:7/cb" );
+        authorize.put( "client_id", "enonic-cli" );
+        assertThat( handler.handle( request( HttpMethod.GET, "authorize", authorize ), IDP, "authorize", UNRESTRICTED ).getStatus() )
+            .as( "the code flow too" ).isEqualTo( HttpStatus.UNAUTHORIZED );
+
         final JsonNode issued = body(
-            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "my-cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        @SuppressWarnings("unchecked") final Map<String, Object> client = (Map<String, Object>) lastContextOfConfirm.get( "client" );
+        assertThat( client ).containsEntry( "displayName", "Enonic CLI" ).containsEntry( "registered", true );
+
+        registered( Client.create().id( "enonic-cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE ) ).enabled( false ) );
+        final PortalResponse refused =
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).as( "the id provider's own registration overrides XP's" ).isEqualTo( "unauthorized_client" );
+    }
+
+    @Test
+    void without_the_default_cli_client_the_cli_is_known_only_where_registered()
+        throws Exception
+    {
+        System.setProperty( OAuthHandler.DEFAULT_CLI_CLIENT_PROPERTY, "false" );
+        try
+        {
+            final OAuthHandler strict =
+                new OAuthHandler( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService,
+                                  new InMemorySharedMapService(), Clock.systemUTC() );
+            final PortalResponse refused =
+                strict.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
+            assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+
+            registered( Client.create().id( "enonic-cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE ) ) );
+            final PortalResponse issued =
+                strict.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
+            assertThat( issued.getStatus() ).isEqualTo( HttpStatus.OK );
+        }
+        finally
+        {
+            System.clearProperty( OAuthHandler.DEFAULT_CLI_CLIENT_PROPERTY );
+        }
+    }
+
+    @Test
+    void a_device_code_of_a_client_removed_since_cannot_be_approved()
+        throws Exception
+    {
+        final Client client = registered( cli() );
+        final JsonNode issued =
+            body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        when( securityService.getClient( IDP, client.getId() ) ).thenReturn( Optional.empty() );
+
+        asUser( ALICE, () -> {
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", issued.get( "user_code" ).asText() ) ), IDP, "device",
+                            UNRESTRICTED );
+            return null;
+        } );
+        assertThat( lastContext ).containsEntry( "action", "enter" ).containsEntry( "error", OAuthConsentContext.INVALID_CODE );
+
+        final PortalResponse refused = handler.handle( request( HttpMethod.POST, "token",
+                                                                Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                        issued.get( "device_code" ).asText(), "client_id", "cli" ) ),
+                                                       IDP, "token", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).isIn( "invalid_client", "authorization_pending" );
+    }
+
+    @Test
+    void a_self_registered_client_is_shown_as_naming_itself()
+        throws Exception
+    {
+        final Client registered = cli().id( "eyJhbGciOiJIUzI1NiJ9.x.y" ).displayName( "Claude" ).idProvider( IDP ).build();
+        when( accessTokenService.isSelfRegisteredClientId( registered.getId() ) ).thenReturn( true );
+        when( accessTokenService.getRegisteredClient( IDP, registered.getId() ) ).thenReturn( Optional.of( registered ) );
+        final JsonNode issued = body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", registered.getId() ) ), IDP,
+                                                      "device/code", UNRESTRICTED ) );
 
         approve( issued.get( "user_code" ).asText() );
 
         @SuppressWarnings("unchecked") final Map<String, Object> client = (Map<String, Object>) lastContextOfConfirm.get( "client" );
-        assertThat( client ).containsEntry( "id", "my-cli" ).containsEntry( "displayName", "my-cli" ).containsEntry( "registered", false );
+        assertThat( client ).containsEntry( "displayName", "Claude" )
+            .as( "the name is the client's own claim, not the administrators'" )
+            .containsEntry( "registered", false );
     }
 
     @Test
@@ -1794,6 +1921,7 @@ class OAuthHandlerTest
             .containsEntry( "clientId", "cli" )
             .containsEntry( "audience", List.of( "xp" ) )
             .containsEntry( "unrestricted", true )
+            .containsEntry( "redirectOrigin", "http://127.0.0.1:51234" )
             .doesNotContainKey( "userCode" );
         assertThat( (String) lastContextOfConfirm.get( "requestId" ) ).hasSize( 43 );
         final Map<String, String> query = query( back );
