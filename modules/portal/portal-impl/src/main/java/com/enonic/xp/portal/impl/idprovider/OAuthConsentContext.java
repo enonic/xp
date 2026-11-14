@@ -32,8 +32,9 @@ import com.enonic.xp.security.token.Scopes;
  *   requestId: "...",                      // confirm, code flow: the form must post it back as request
  *   clientId: "my-cli",                    // confirm
  *   client: { id, displayName, uri, logoUri, policyUri, tosUri, registered },
- *                                          // confirm: the client as registered with the id provider;
- *                                          //          an unregistered one has its id as its name
+ *                                          // confirm: the client as XP knows it; registered is true when the
+ *                                          //          id provider's administrators registered it, false when
+ *                                          //          it registered itself and its name is only its own claim
  *   scope: [ { id, title, description, roles: [...], required } ],
  *                                          // confirm: the scopes asked for, each as the id provider
  *                                          //          defines it, and whether the user may drop it
@@ -94,14 +95,16 @@ sealed interface OAuthConsentContext
         /**
          * A device login's confirmation, by user code.
          *
-         * @param client    the client's record with the id provider, if it has one
-         * @param known     the id provider's scopes
+         * @param client         the client's record
+         * @param selfRegistered whether the client registered itself, rather than the id provider's administrators
+         * @param known          the id provider's scopes
          */
         static Confirm forDevice( final IdProviderKey idProvider, final User user, final String userCode, final String clientId,
-                                  final @Nullable Client client, final Set<String> scope, final Set<String> audience,
-                                  final Scopes known, final String csrf )
+                                  final Client client, final boolean selfRegistered, final Set<String> scope,
+                                  final Set<String> audience, final Scopes known, final String csrf )
         {
-            return of( idProvider, user, DEVICE_FLOW, userCode, null, clientId, client, scope, audience, known, csrf, null );
+            return of( idProvider, user, DEVICE_FLOW, userCode, null, clientId, ClientInfo.of( client, selfRegistered ), scope, audience,
+                       known, csrf, null );
         }
 
         /**
@@ -110,11 +113,11 @@ sealed interface OAuthConsentContext
          * @param redirectUri the redirect URI the request was checked against, where approving sends the browser
          */
         static Confirm forCode( final IdProviderKey idProvider, final User user, final String requestId, final String clientId,
-                                final @Nullable Client client, final Set<String> scope, final Set<String> audience,
-                                final Scopes known, final String csrf, final String redirectUri )
+                                final Client client, final boolean selfRegistered, final Set<String> scope,
+                                final Set<String> audience, final Scopes known, final String csrf, final String redirectUri )
         {
-            return of( idProvider, user, CODE_FLOW, null, requestId, clientId, client, scope, audience, known, csrf,
-                       redirectOrigin( redirectUri ) );
+            return of( idProvider, user, CODE_FLOW, null, requestId, clientId, ClientInfo.of( client, selfRegistered ), scope, audience,
+                       known, csrf, redirectOrigin( redirectUri ) );
         }
 
         /**
@@ -147,7 +150,7 @@ sealed interface OAuthConsentContext
         }
 
         private static Confirm of( final IdProviderKey idProvider, final User user, final String flow, final @Nullable String userCode,
-                                   final @Nullable String requestId, final String clientId, final @Nullable Client client,
+                                   final @Nullable String requestId, final String clientId, final ClientInfo client,
                                    final Set<String> scope, final Set<String> audience, final Scopes known, final String csrf,
                                    final @Nullable String redirectOrigin )
         {
@@ -158,24 +161,22 @@ sealed interface OAuthConsentContext
                     : new RequestedScope( id, found.getTitle(), found.getDescription(),
                                           found.getRoles().stream().map( PrincipalKey::toString ).toList(), found.isRequired() );
             } ).toList();
-            return new Confirm( idProvider, user, flow, userCode, requestId, clientId, ClientInfo.of( clientId, client ), scopes,
+            return new Confirm( idProvider, user, flow, userCode, requestId, clientId, client, scopes,
                                 List.copyOf( audience ), scope.isEmpty(), csrf, redirectOrigin );
         }
     }
 
     /**
-     * The client as the page may present it: its registered name and links, or, unregistered, its
-     * id alone.
+     * The client as the page may present it: its name and links, and whether the id provider's
+     * administrators registered it, rather than the client itself.
      */
     record ClientInfo(String id, String displayName, @Nullable String uri, @Nullable String logoUri, @Nullable String policyUri,
                       @Nullable String tosUri, boolean registered)
     {
-        static ClientInfo of( final String clientId, final @Nullable Client client )
+        static ClientInfo of( final Client client, final boolean selfRegistered )
         {
-            return client == null
-                ? new ClientInfo( clientId, clientId, null, null, null, null, false )
-                : new ClientInfo( client.getId(), client.getDisplayName(), client.getUri(), client.getLogoUri(), client.getPolicyUri(),
-                                  client.getTosUri(), true );
+            return new ClientInfo( client.getId(), client.getDisplayName(), client.getUri(), client.getLogoUri(), client.getPolicyUri(),
+                                   client.getTosUri(), !selfRegistered );
         }
     }
 

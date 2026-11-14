@@ -254,7 +254,7 @@ public class OAuthHandler
         {
             return refused;
         }
-        final Asked asked = asked( request, idProvider, client.orElse( null ) );
+        final Asked asked = asked( request, idProvider, client.get() );
         if ( asked.error() != null )
         {
             return oauthError( HttpStatus.BAD_REQUEST, asked.error(), asked.description() );
@@ -291,12 +291,12 @@ public class OAuthHandler
 
     /**
      * Resolves the {@code scope} and {@code resource} parameters against the id provider's scopes,
-     * what XP serves, and the client's lists when it is registered.
+     * what XP serves, and the client's lists.
      */
-    private Asked asked( final PortalRequest request, final IdProviderKey idProvider, final @Nullable Client client )
+    private Asked asked( final PortalRequest request, final IdProviderKey idProvider, final Client client )
     {
         final Scopes known = securityService.getScopes( idProvider );
-        final Set<String> clientScope = client == null ? Set.of() : client.getScope();
+        final Set<String> clientScope = client.getScope();
         final Set<String> scope = withinClient( scopes( param( request, "scope" ) ), clientScope );
         if ( scope == null )
         {
@@ -311,7 +311,7 @@ public class OAuthHandler
         }
         else
         {
-            if ( scope.isEmpty() && ( client == null || accessTokenService.isSelfRegisteredClientId( client.getId() ) ) )
+            if ( scope.isEmpty() && accessTokenService.isSelfRegisteredClientId( client.getId() ) )
             {
                 return Asked.refused( "invalid_scope", "scope is required; known scopes: " + known.getIds() );
             }
@@ -322,7 +322,7 @@ public class OAuthHandler
                 return Asked.refused( "invalid_scope", "Unknown scope " + unknown + "; known scopes: " + known.getIds() );
             }
         }
-        final Set<String> clientResource = client == null ? Set.of() : client.getResource();
+        final Set<String> clientResource = client.getResource();
         final Set<String> requestedAudience = withinClient( audience( request ), clientResource );
         if ( requestedAudience == null )
         {
@@ -384,11 +384,12 @@ public class OAuthHandler
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing redirect_uri" );
         }
         final Optional<Client> client = client( idProvider, clientId );
-        if ( client.isEmpty() && accessTokenService.isSelfRegisteredClientId( clientId ) )
+        if ( client.isEmpty() )
         {
-            return registrationRunOut();
+            // not redirected: a redirect URI is only trusted for a client XP knows
+            return unknownClient( clientId );
         }
-        if ( !redirectAllowed( redirectUri.trim(), client.orElse( null ) ) )
+        if ( !redirectAllowed( redirectUri.trim(), client.get() ) )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request",
                                "redirect_uri must be a loopback address or one registered for the client" );
@@ -398,7 +399,7 @@ public class OAuthHandler
         {
             return redirectError( redirectUri.trim(), state, "unsupported_response_type", "response_type must be code" );
         }
-        final PortalResponse refused = client.map( c -> refusal( c, GrantTypes.AUTHORIZATION_CODE ) ).orElse( null );
+        final PortalResponse refused = refusal( client.get(), GrantTypes.AUTHORIZATION_CODE );
         if ( refused != null )
         {
             return redirectError( redirectUri.trim(), state, "unauthorized_client", errorDescription( refused ) );
@@ -408,7 +409,7 @@ public class OAuthHandler
         {
             return redirectError( redirectUri.trim(), state, "invalid_request", "A code_challenge with code_challenge_method S256 is required" );
         }
-        final Asked asked = asked( request, idProvider, client.orElse( null ) );
+        final Asked asked = asked( request, idProvider, client.get() );
         if ( asked.error() != null )
         {
             return redirectError( redirectUri.trim(), state, asked.error(), asked.description() );
@@ -423,7 +424,8 @@ public class OAuthHandler
             codes.createRequest( idProvider, clientId, redirectUri.trim(), state, codeChallenge, asked.scope(), asked.audience(),
                                  user.get().getKey() );
         return render( request, idProvider,
-                       OAuthConsentContext.Confirm.forCode( idProvider, user.get(), pending.id(), clientId, client.orElse( null ),
+                       OAuthConsentContext.Confirm.forCode( idProvider, user.get(), pending.id(), clientId, client.get(),
+                                                           accessTokenService.isSelfRegisteredClientId( clientId ),
                                                            pending.scope(), pending.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ),
                                                            pending.redirectUri() ) );
     }
@@ -460,9 +462,11 @@ public class OAuthHandler
                 throw WebException.badRequest( "The authorization request is unknown, decided or timed out" );
             }
             final AuthorizationCodeStore.PendingAuthorization p = reshown.get();
+            final Client client = client( idProvider, p.clientId() )
+                .orElseThrow( () -> WebException.badRequest( "The client of the authorization request is no longer known" ) );
             return render( request, idProvider,
-                           OAuthConsentContext.Confirm.forCode( idProvider, user.get(), p.id(), p.clientId(),
-                                                               client( idProvider, p.clientId() ).orElse( null ), p.scope(),
+                           OAuthConsentContext.Confirm.forCode( idProvider, user.get(), p.id(), p.clientId(), client,
+                                                               accessTokenService.isSelfRegisteredClientId( p.clientId() ), p.scope(),
                                                                p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ),
                                                                p.redirectUri() ) );
         }
@@ -527,7 +531,7 @@ public class OAuthHandler
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "The code was not issued to this client, redirect_uri and verifier" );
         }
-        final PortalResponse beyond = client.map( c -> beyondClient( c, issued.scope(), issued.audience() ) ).orElse( null );
+        final PortalResponse beyond = beyondClient( client.get(), issued.scope(), issued.audience() );
         if ( beyond != null )
         {
             return beyond;
@@ -547,9 +551,9 @@ public class OAuthHandler
                                                                      .scope( issued.scope() )
                                                                      .audience( issued.audience() )
                                                                      .restriction( issued.restriction() )
-                                                                     .ttl( client.map( Client::getGrantTtl ).orElse( null ) )
+                                                                     .ttl( client.get().getGrantTtl() )
                                                                      .build() );
-        return tokenResponse( grant, client.orElse( null ), audience );
+        return tokenResponse( grant, client.get(), audience );
     }
 
     /**
@@ -654,10 +658,10 @@ public class OAuthHandler
     }
 
     /**
-     * Whether the browser may be sent to the redirect URI: a loopback address, for any client, or
-     * one the client registered.
+     * Whether the browser may be sent to the redirect URI: a loopback address, for any client XP
+     * knows, or one the client registered.
      */
-    static boolean redirectAllowed( final String redirectUri, final @Nullable Client client )
+    static boolean redirectAllowed( final String redirectUri, final Client client )
     {
         final URI uri;
         try
@@ -676,7 +680,7 @@ public class OAuthHandler
         {
             return true;
         }
-        return client != null && client.getRedirectUris().contains( redirectUri );
+        return client.getRedirectUris().contains( redirectUri );
     }
 
     private static PortalResponse redirectError( final String redirectUri, final @Nullable String state, final String error,
@@ -755,13 +759,16 @@ public class OAuthHandler
             return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
         final DeviceCodeStore.Pending p = pending.get();
-        if ( !store.show( idProvider, userCode, user.get().getKey() ) )
+        // a client removed since the code was issued cannot get a token for it, so its code is no use
+        final Optional<Client> client = client( idProvider, p.clientId() );
+        if ( client.isEmpty() || !store.show( idProvider, userCode, user.get().getKey() ) )
         {
             return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
         return render( request, idProvider,
                        OAuthConsentContext.Confirm.forDevice( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ),
-                                                             p.clientId(), client( idProvider, p.clientId() ).orElse( null ),
+                                                             p.clientId(), client.get(),
+                                                             accessTokenService.isSelfRegisteredClientId( p.clientId() ),
                                                              p.scope(), p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
     }
 
@@ -889,7 +896,7 @@ public class OAuthHandler
             {
                 final Optional<Client> client = client( idProvider, clientId );
                 final PortalResponse refused = Optional.ofNullable( refusal( clientId, client, GrantTypes.DEVICE_CODE ) )
-                    .or( () -> client.map( c -> beyondClient( c, pending.approvedScope(), pending.audience() ) ) )
+                    .or( () -> Optional.ofNullable( beyondClient( client.get(), pending.approvedScope(), pending.audience() ) ) )
                     .orElse( null );
                 if ( refused != null )
                 {
@@ -910,9 +917,9 @@ public class OAuthHandler
                                                                              .scope( pending.approvedScope() )
                                                                              .audience( pending.audience() )
                                                                              .restriction( pending.approvedRestriction() )
-                                                                             .ttl( client.map( Client::getGrantTtl ).orElse( null ) )
+                                                                             .ttl( client.get().getGrantTtl() )
                                                                              .build() );
-                yield tokenResponse( grant, client.orElse( null ), audience );
+                yield tokenResponse( grant, client.get(), audience );
             }
         };
     }
@@ -944,7 +951,7 @@ public class OAuthHandler
             {
                 return userRefused();
             }
-            final PortalResponse refusedBefore = refusedAtRefresh( request, client.orElse( null ), found.get() );
+            final PortalResponse refusedBefore = refusedAtRefresh( request, client.get(), found.get() );
             if ( refusedBefore != null )
             {
                 return refusedBefore;
@@ -956,12 +963,12 @@ public class OAuthHandler
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "Invalid or expired refresh_token" );
         }
         final Grant grant = redeemed.get().grant();
-        final PortalResponse refusedAfter = refusedAtRefresh( request, client.orElse( null ), grant );
+        final PortalResponse refusedAfter = refusedAtRefresh( request, client.get(), grant );
         if ( refusedAfter != null )
         {
             return refusedAfter;
         }
-        return tokenResponse( redeemed.get(), client.orElse( null ), requireNonNull( tokenAudience( request, grant.getAudience() ) ) );
+        return tokenResponse( redeemed.get(), client.get(), requireNonNull( tokenAudience( request, grant.getAudience() ) ) );
     }
 
     /**
@@ -970,9 +977,9 @@ public class OAuthHandler
      * redeemed, so a refusal leaves it as it was, and again on the grant as redeemed, since the
      * grant may have been changed in between.
      */
-    private @Nullable PortalResponse refusedAtRefresh( final PortalRequest request, final @Nullable Client client, final Grant grant )
+    private @Nullable PortalResponse refusedAtRefresh( final PortalRequest request, final Client client, final Grant grant )
     {
-        final PortalResponse beyond = client == null ? null : beyondClient( client, grant.getScope(), grant.getAudience() );
+        final PortalResponse beyond = beyondClient( client, grant.getScope(), grant.getAudience() );
         if ( beyond != null )
         {
             grantService.revoke( grant.getSubject(), grant.getId() );
@@ -1020,7 +1027,7 @@ public class OAuthHandler
      * The token response: an access token for the audiences, ending with the grant at the latest,
      * and the refresh token when the client may use one.
      */
-    private PortalResponse tokenResponse( final GrantWithRefreshToken grant, final @Nullable Client client, final Set<String> audience )
+    private PortalResponse tokenResponse( final GrantWithRefreshToken grant, final Client client, final Set<String> audience )
     {
         final Grant g = grant.grant();
         final AccessToken accessToken = accessTokenService.issue( IssueAccessTokenParams.create()
@@ -1035,7 +1042,7 @@ public class OAuthHandler
         body.put( "access_token", accessToken.value() );
         body.put( "token_type", "Bearer" );
         body.put( "expires_in", accessToken.claims().getExpiresAt().getEpochSecond() - accessToken.claims().getIssuedAt().getEpochSecond() );
-        if ( client == null || client.getGrantTypes().contains( GrantTypes.REFRESH_TOKEN ) )
+        if ( client.getGrantTypes().contains( GrantTypes.REFRESH_TOKEN ) )
         {
             body.put( "refresh_token", grant.refreshToken() );
         }
@@ -1047,17 +1054,32 @@ public class OAuthHandler
     }
 
     /**
-     * Why the client may not use the grant type now, as an OAuth error, or null if it may. An id the
-     * registration endpoint issued names no client once its registration has run out, and is refused
-     * as such rather than taken for a client with no record.
+     * Why the client may not use the grant type now, as an OAuth error, or null if it may. A client
+     * XP does not know is refused: every client is registered with the id provider or registers
+     * itself. An id the registration endpoint issued names no client once its registration has run
+     * out, and is refused as such.
      */
     private @Nullable PortalResponse refusal( final String clientId, final Optional<Client> client, final String grantType )
     {
         if ( client.isEmpty() )
         {
-            return accessTokenService.isSelfRegisteredClientId( clientId ) ? registrationRunOut() : null;
+            return unknownClient( clientId );
         }
         return refusal( client.get(), grantType );
+    }
+
+    /**
+     * The refusal of a client XP does not know: an id that is neither registered with the id
+     * provider nor a live self-registration.
+     */
+    private PortalResponse unknownClient( final String clientId )
+    {
+        if ( accessTokenService.isSelfRegisteredClientId( clientId ) )
+        {
+            return registrationRunOut();
+        }
+        return oauthError( HttpStatus.BAD_REQUEST, "invalid_client",
+                           "Unknown client: register it with the id provider, or let it register itself" );
     }
 
     private static PortalResponse registrationRunOut()
@@ -1273,7 +1295,7 @@ public class OAuthHandler
 
     /**
      * The client's record: registered with the id provider, or carried by a self-registered id;
-     * empty for a client XP does not know.
+     * empty for a client XP does not know, which is refused.
      */
     private Optional<Client> client( final IdProviderKey idProvider, final String clientId )
     {
