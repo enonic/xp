@@ -142,7 +142,6 @@ class OAuthHandlerTest
                 .build();
         } );
         when( securityService.getScopes( any() ) ).thenReturn( Scopes.empty() );
-        // The clients these tests use are registered with every grant and no limits; any other id is unknown
         when( securityService.getClient( any(), any() ) ).thenAnswer( i -> {
             final IdProviderKey idProvider = i.getArgument( 0 );
             final String id = i.getArgument( 1 );
@@ -1018,7 +1017,6 @@ class OAuthHandlerTest
         final VirtualHostIdProvider settings = withScopes(
             Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app", "role:cms.project.site.viewer" ), "profile",
                     PrincipalKeys.empty() ) );
-        // a self-registered client, whose scopes nobody vouched for, must name them
         final String self = selfRegistered( cli() ).getId();
 
         final PortalResponse omitted =
@@ -1395,6 +1393,31 @@ class OAuthHandlerTest
         final PortalResponse refused =
             handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
         assertThat( body( refused ).get( "error" ).asText() ).as( "the id provider's own registration overrides XP's" ).isEqualTo( "unauthorized_client" );
+    }
+
+    @Test
+    void the_enonic_cli_is_known_only_where_registered_when_turned_off_in_system_properties()
+        throws Exception
+    {
+        System.setProperty( OAuthHandler.ENONIC_CLI_PROPERTY, "false" );
+        try
+        {
+            final OAuthHandler strict =
+                new OAuthHandler( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService,
+                                  new InMemorySharedMapService(), Clock.systemUTC() );
+            final PortalResponse refused =
+                strict.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
+            assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_client" );
+
+            registered( Client.create().id( "enonic-cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE ) ) );
+            final PortalResponse issued =
+                strict.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
+            assertThat( issued.getStatus() ).isEqualTo( HttpStatus.OK );
+        }
+        finally
+        {
+            System.clearProperty( OAuthHandler.ENONIC_CLI_PROPERTY );
+        }
     }
 
     @Test

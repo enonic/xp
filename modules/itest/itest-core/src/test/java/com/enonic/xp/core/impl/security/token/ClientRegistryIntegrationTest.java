@@ -55,6 +55,8 @@ class ClientRegistryIntegrationTest
 
     private SecurityServiceImpl service;
 
+    private List<String> initializedClients;
+
     ClientRegistryIntegrationTest()
     {
         super( true );
@@ -81,7 +83,6 @@ class ClientRegistryIntegrationTest
         } );
         service = securityService;
         initializedClients = service.getClients( SYSTEM ).stream().map( Client::getId ).toList();
-        // an id provider's own registration of the CLI, overriding the one XP knows
         asAdmin( () -> service.createClient( CreateClientParams.create()
                                                  .idProvider( SYSTEM )
                                                  .id( "enonic-cli" )
@@ -89,8 +90,6 @@ class ClientRegistryIntegrationTest
                                                  .grantTypes( List.of( GrantTypes.DEVICE_CODE, GrantTypes.REFRESH_TOKEN ) )
                                                  .build() ) );
     }
-
-    private List<String> initializedClients;
 
     @Test
     void a_fresh_installation_stores_no_clients()

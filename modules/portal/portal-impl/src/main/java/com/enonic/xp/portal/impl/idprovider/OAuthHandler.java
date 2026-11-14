@@ -93,6 +93,19 @@ import static java.util.Objects.requireNonNull;
 @Component(service = OAuthHandler.class)
 public class OAuthHandler
 {
+    /**
+     * The Enonic CLI's client id. XP knows the CLI for every id provider, so it logs in wherever a vhost
+     * mapping serves the device or code flow, without a registration: with device login, or with the
+     * authorization code flow and a loopback redirect when the browser runs on the same machine, and it
+     * keeps its login with refresh tokens. An id provider that registers a client with this id overrides
+     * it, e.g. to cap its scopes or disable it; removing that registration restores XP's. With
+     * {@value #ENONIC_CLI_PROPERTY} set to {@code false} in {@code system.properties}, XP does not know
+     * the CLI, and it logs in only on an id provider that registers it.
+     */
+    public static final String ENONIC_CLI = "enonic-cli";
+
+    static final String ENONIC_CLI_PROPERTY = "xp.oauth.enonicCli";
+
     static final String DEVICE_CODE_GRANT = GrantTypes.DEVICE_CODE;
 
     static final String REFRESH_TOKEN_GRANT = GrantTypes.REFRESH_TOKEN;
@@ -139,6 +152,8 @@ public class OAuthHandler
 
     private final Clock clock;
 
+    private final boolean enonicCli;
+
     @Activate
     public OAuthHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
                                @Reference final SecurityService securityService, @Reference final VirtualHostService virtualHostService,
@@ -161,6 +176,7 @@ public class OAuthHandler
         this.store = new DeviceCodeStore( sharedMapService, clock );
         this.codes = new AuthorizationCodeStore( sharedMapService, clock );
         this.clock = clock;
+        this.enonicCli = Boolean.parseBoolean( System.getProperty( ENONIC_CLI_PROPERTY, "true" ) );
     }
 
     /**
@@ -386,7 +402,6 @@ public class OAuthHandler
         final Optional<Client> client = client( idProvider, clientId );
         if ( client.isEmpty() )
         {
-            // not redirected: a redirect URI is only trusted for a client XP knows
             return unknownClient( clientId );
         }
         if ( !redirectAllowed( redirectUri.trim(), client.get() ) )
@@ -759,7 +774,6 @@ public class OAuthHandler
             return render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
         final DeviceCodeStore.Pending p = pending.get();
-        // a client removed since the code was issued cannot get a token for it, so its code is no use
         final Optional<Client> client = client( idProvider, p.clientId() );
         if ( client.isEmpty() || !store.show( idProvider, userCode, user.get().getKey() ) )
         {
@@ -1070,7 +1084,7 @@ public class OAuthHandler
 
     /**
      * The refusal of a client XP does not know: an id that is neither registered with the id
-     * provider, nor a live self-registration, nor the Enonic CLI.
+     * provider, nor a live self-registration, nor the Enonic CLI XP knows.
      */
     private PortalResponse unknownClient( final String clientId )
     {
@@ -1306,18 +1320,9 @@ public class OAuthHandler
         return securityService.getClient( idProvider, clientId ).or( () -> builtIn( idProvider, clientId ) );
     }
 
-    /**
-     * The Enonic CLI's client id. XP knows the CLI for every id provider, so it logs in wherever a vhost
-     * mapping serves the device or code flow, without a registration: with device login, or with the
-     * authorization code flow and a loopback redirect when the browser runs on the same machine, and it
-     * keeps its login with refresh tokens. An id provider that registers a client with this id overrides
-     * it, e.g. to cap its scopes or disable it; removing that registration restores XP's.
-     */
-    public static final String ENONIC_CLI = "enonic-cli";
-
-    static Optional<Client> builtIn( final IdProviderKey idProvider, final String clientId )
+    private Optional<Client> builtIn( final IdProviderKey idProvider, final String clientId )
     {
-        if ( !ENONIC_CLI.equals( clientId ) )
+        if ( !enonicCli || !ENONIC_CLI.equals( clientId ) )
         {
             return Optional.empty();
         }
