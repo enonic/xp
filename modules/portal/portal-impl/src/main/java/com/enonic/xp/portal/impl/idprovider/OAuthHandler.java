@@ -97,14 +97,15 @@ public class OAuthHandler
      * The Enonic CLI's client id. XP knows the CLI for every id provider, so it logs in wherever a vhost
      * mapping serves the device or code flow, without a registration: with device login, or with the
      * authorization code flow and a loopback redirect when the browser runs on the same machine, and it
-     * keeps its login with refresh tokens. An id provider that registers a client with this id overrides
-     * it, e.g. to cap its scopes or disable it; removing that registration restores XP's. With
-     * {@value #ENONIC_CLI_PROPERTY} set to {@code false} in {@code system.properties}, XP does not know
-     * the CLI, and it logs in only on an id provider that registers it.
+     * keeps its login with refresh tokens. This implicit client is overridden by an id provider that
+     * registers a client with this id, e.g. to cap its scopes or disable it; removing that registration
+     * restores the implicit one. With {@value #IMPLICIT_CLI_CLIENT_PROPERTY} set to {@code false} in
+     * {@code system.properties} there is no implicit client, and the CLI logs in only on an id provider
+     * that registers it.
      */
     public static final String ENONIC_CLI = "enonic-cli";
 
-    static final String ENONIC_CLI_PROPERTY = "xp.oauth.enonicCli";
+    static final String IMPLICIT_CLI_CLIENT_PROPERTY = "xp.implicitCliClient";
 
     static final String DEVICE_CODE_GRANT = GrantTypes.DEVICE_CODE;
 
@@ -152,7 +153,7 @@ public class OAuthHandler
 
     private final Clock clock;
 
-    private final boolean enonicCli;
+    private final boolean implicitCliClient;
 
     @Activate
     public OAuthHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
@@ -176,7 +177,7 @@ public class OAuthHandler
         this.store = new DeviceCodeStore( sharedMapService, clock );
         this.codes = new AuthorizationCodeStore( sharedMapService, clock );
         this.clock = clock;
-        this.enonicCli = Boolean.parseBoolean( System.getProperty( ENONIC_CLI_PROPERTY, "true" ) );
+        this.implicitCliClient = Boolean.parseBoolean( System.getProperty( IMPLICIT_CLI_CLIENT_PROPERTY, "true" ) );
     }
 
     /**
@@ -1084,7 +1085,7 @@ public class OAuthHandler
 
     /**
      * The refusal of a client XP does not know: an id that is neither registered with the id
-     * provider, nor a live self-registration, nor the Enonic CLI XP knows.
+     * provider, nor a live self-registration, nor the implicit Enonic CLI client.
      */
     private PortalResponse unknownClient( final String clientId )
     {
@@ -1309,7 +1310,7 @@ public class OAuthHandler
 
     /**
      * The client's record: carried by a self-registered id, or registered with the id provider, or else
-     * XP's own Enonic CLI; empty for a client XP does not know, which is refused.
+     * the implicit Enonic CLI client; empty for a client XP does not know, which is refused.
      */
     private Optional<Client> client( final IdProviderKey idProvider, final String clientId )
     {
@@ -1317,12 +1318,12 @@ public class OAuthHandler
         {
             return accessTokenService.getRegisteredClient( idProvider, clientId );
         }
-        return securityService.getClient( idProvider, clientId ).or( () -> builtIn( idProvider, clientId ) );
+        return securityService.getClient( idProvider, clientId ).or( () -> implicitClient( idProvider, clientId ) );
     }
 
-    private Optional<Client> builtIn( final IdProviderKey idProvider, final String clientId )
+    private Optional<Client> implicitClient( final IdProviderKey idProvider, final String clientId )
     {
-        if ( !enonicCli || !ENONIC_CLI.equals( clientId ) )
+        if ( !implicitCliClient || !ENONIC_CLI.equals( clientId ) )
         {
             return Optional.empty();
         }
