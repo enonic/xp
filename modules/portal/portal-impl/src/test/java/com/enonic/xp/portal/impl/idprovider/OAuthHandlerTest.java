@@ -1371,6 +1371,33 @@ class OAuthHandlerTest
     }
 
     @Test
+    void the_enonic_cli_is_known_on_every_id_provider_unless_one_registers_its_own()
+        throws Exception
+    {
+        for ( IdProviderKey idProvider : List.of( IDP, IdProviderKey.from( "corporate-oidc" ) ) )
+        {
+            final PortalResponse issued = handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ),
+                                                          idProvider, "device/code", UNRESTRICTED );
+            assertThat( issued.getStatus() ).as( "%s", idProvider ).isEqualTo( HttpStatus.OK );
+        }
+        final Map<String, String> authorize = authorizeParams( "http://127.0.0.1:7/cb" );
+        authorize.put( "client_id", "enonic-cli" );
+        assertThat( handler.handle( request( HttpMethod.GET, "authorize", authorize ), IDP, "authorize", UNRESTRICTED ).getStatus() )
+            .as( "the code flow too" ).isEqualTo( HttpStatus.UNAUTHORIZED );
+
+        final JsonNode issued = body(
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED ) );
+        approve( issued.get( "user_code" ).asText() );
+        @SuppressWarnings("unchecked") final Map<String, Object> client = (Map<String, Object>) lastContextOfConfirm.get( "client" );
+        assertThat( client ).containsEntry( "displayName", "Enonic CLI" ).containsEntry( "registered", true );
+
+        registered( Client.create().id( "enonic-cli" ).grantTypes( List.of( GrantTypes.DEVICE_CODE ) ).enabled( false ) );
+        final PortalResponse refused =
+            handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
+        assertThat( body( refused ).get( "error" ).asText() ).as( "the id provider's own registration overrides XP's" ).isEqualTo( "unauthorized_client" );
+    }
+
+    @Test
     void a_device_code_of_a_client_removed_since_cannot_be_approved()
         throws Exception
     {

@@ -1070,7 +1070,7 @@ public class OAuthHandler
 
     /**
      * The refusal of a client XP does not know: an id that is neither registered with the id
-     * provider nor a live self-registration.
+     * provider, nor a live self-registration, nor the Enonic CLI.
      */
     private PortalResponse unknownClient( final String clientId )
     {
@@ -1294,14 +1294,40 @@ public class OAuthHandler
     }
 
     /**
-     * The client's record: registered with the id provider, or carried by a self-registered id;
-     * empty for a client XP does not know, which is refused.
+     * The client's record: carried by a self-registered id, or registered with the id provider, or else
+     * XP's own Enonic CLI; empty for a client XP does not know, which is refused.
      */
     private Optional<Client> client( final IdProviderKey idProvider, final String clientId )
     {
-        return accessTokenService.isSelfRegisteredClientId( clientId )
-            ? accessTokenService.getRegisteredClient( idProvider, clientId )
-            : securityService.getClient( idProvider, clientId );
+        if ( accessTokenService.isSelfRegisteredClientId( clientId ) )
+        {
+            return accessTokenService.getRegisteredClient( idProvider, clientId );
+        }
+        return securityService.getClient( idProvider, clientId ).or( () -> builtIn( idProvider, clientId ) );
+    }
+
+    /**
+     * The Enonic CLI's client id. XP knows the CLI for every id provider, so it logs in wherever a vhost
+     * mapping serves the device or code flow, without a registration: with device login, or with the
+     * authorization code flow and a loopback redirect when the browser runs on the same machine, and it
+     * keeps its login with refresh tokens. An id provider that registers a client with this id overrides
+     * it, e.g. to cap its scopes or disable it; removing that registration restores XP's.
+     */
+    public static final String ENONIC_CLI = "enonic-cli";
+
+    static Optional<Client> builtIn( final IdProviderKey idProvider, final String clientId )
+    {
+        if ( !ENONIC_CLI.equals( clientId ) )
+        {
+            return Optional.empty();
+        }
+        return Optional.of( Client.create()
+                                .idProvider( idProvider )
+                                .id( ENONIC_CLI )
+                                .displayName( "Enonic CLI" )
+                                .uri( "https://developer.enonic.com/docs/enonic-cli" )
+                                .grantTypes( List.of( GrantTypes.DEVICE_CODE, GrantTypes.AUTHORIZATION_CODE, GrantTypes.REFRESH_TOKEN ) )
+                                .build() );
     }
 
     /**
