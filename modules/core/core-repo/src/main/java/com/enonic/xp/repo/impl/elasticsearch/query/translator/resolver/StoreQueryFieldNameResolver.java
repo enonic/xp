@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
@@ -16,5 +18,11 @@ public final class StoreQueryFieldNameResolver
     public String resolve( final IndexPath queryFieldName, final IndexValueType indexValueType )
     {
         return queryFieldName.getPath();
+    }
+
+    @Override
+    public @Nullable String resolveNumberOrderByFieldName( final IndexPath queryFieldName )
+    {
+        return null;
     }
 }
