@@ -1369,7 +1369,7 @@ class OAuthHandlerTest
     }
 
     @Test
-    void the_implicit_cli_client_is_known_on_every_id_provider_unless_one_registers_its_own()
+    void the_default_cli_client_is_known_on_every_id_provider_unless_one_registers_its_own()
         throws Exception
     {
         for ( IdProviderKey idProvider : List.of( IDP, IdProviderKey.from( "corporate-oidc" ) ) )
@@ -1396,10 +1396,10 @@ class OAuthHandlerTest
     }
 
     @Test
-    void without_the_implicit_cli_client_the_cli_is_known_only_where_registered()
+    void without_the_default_cli_client_the_cli_is_known_only_where_registered()
         throws Exception
     {
-        System.setProperty( OAuthHandler.IMPLICIT_CLI_CLIENT_PROPERTY, "false" );
+        System.setProperty( OAuthHandler.DEFAULT_CLI_CLIENT_PROPERTY, "false" );
         try
         {
             final OAuthHandler strict =
@@ -1416,7 +1416,7 @@ class OAuthHandlerTest
         }
         finally
         {
-            System.clearProperty( OAuthHandler.IMPLICIT_CLI_CLIENT_PROPERTY );
+            System.clearProperty( OAuthHandler.DEFAULT_CLI_CLIENT_PROPERTY );
         }
     }
 
