@@ -221,12 +221,18 @@ class OAuthHandlerTest
 
     private static PortalRequest request( final HttpMethod method, final String endpoint, final Map<String, String> params )
     {
+        return request( IDP, method, endpoint, params );
+    }
+
+    private static PortalRequest request( final IdProviderKey idProvider, final HttpMethod method, final String endpoint,
+                                          final Map<String, String> params )
+    {
         final PortalRequest request = new PortalRequest();
         request.setMethod( method );
         request.setScheme( "https" );
         request.setHost( "admin.example.com" );
-        request.setRawPath( "/_/idprovider/system/" + endpoint );
-        request.setUrl( "https://admin.example.com/_/idprovider/system/" + endpoint + ( method == HttpMethod.GET ? "?x=1" : "" ) );
+        request.setRawPath( "/_/idprovider/" + idProvider + "/" + endpoint );
+        request.setUrl( "https://admin.example.com/_/idprovider/" + idProvider + "/" + endpoint + ( method == HttpMethod.GET ? "?x=1" : "" ) );
         params.forEach( ( k, v ) -> request.getParams().put( k, v ) );
 
         final Map<String, Object> attributes = new HashMap<>();
@@ -574,12 +580,15 @@ class OAuthHandlerTest
     {
         onlySystemHasThePage();
         final JsonNode issued = body( handler.handle(
-            onVhost( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), ASSETS_ONLY ),
+            onVhost( request( OTHER, HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), ASSETS_ONLY ),
             OTHER, "device/code", UNRESTRICTED ) );
         final String userCode = issued.get( "user_code" ).asText();
+        assertThat( issued.get( "verification_uri" ).asText() ).isEqualTo( "https://admin.example.com/_/idprovider/other/device" );
+        assertThat( issued.get( "verification_uri_complete" ).asText() ).isEqualTo(
+            "https://admin.example.com/_/idprovider/other/device?user_code=" + userCode );
 
         asUser( BOB, () -> {
-            final PortalRequest page = onVhost( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), ASSETS_ONLY );
+            final PortalRequest page = onVhost( request( OTHER, HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), ASSETS_ONLY );
             final PortalResponse response = handler.handle( page, OTHER, "device", UNRESTRICTED );
 
             assertThat( response.getBody() ).isEqualTo( "page:confirm" );
@@ -593,7 +602,7 @@ class OAuthHandlerTest
             assertThat( user( lastContext ) ).containsEntry( "key", "user:other:bob" );
 
             final PortalResponse done = handler.handle( onVhost(
-                request( HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "true", "_csrf",
+                request( OTHER, HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "true", "_csrf",
                                                             (String) lastContext.get( "csrf" ) ) ), ASSETS_ONLY ),
                                                         OTHER, "device", UNRESTRICTED );
             assertThat( done.getBody() ).isEqualTo( "page:done" );
@@ -601,7 +610,7 @@ class OAuthHandlerTest
             return null;
         } );
 
-        handler.handle( onVhost( request( HttpMethod.POST, "token",
+        handler.handle( onVhost( request( OTHER, HttpMethod.POST, "token",
                                                  Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                          issued.get( "device_code" ).asText(), "client_id", "cli" ) ), ASSETS_ONLY ), OTHER, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
@@ -616,13 +625,13 @@ class OAuthHandlerTest
         onlySystemHasThePage();
 
         assertThatThrownBy( () -> handler.handle(
-            onVhostWithoutSystem( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ) ), OTHER, "device/code",
+            onVhostWithoutSystem( request( OTHER, HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ) ), OTHER, "device/code",
             UNRESTRICTED ) ).isInstanceOf( WebException.class )
             .extracting( e -> ( (WebException) e ).getStatus() )
             .isEqualTo( HttpStatus.NOT_FOUND );
         asUser( BOB, () -> {
             assertThatThrownBy(
-                () -> handler.handle( onVhostWithoutSystem( request( HttpMethod.GET, "device", Map.of() ) ), OTHER, "device",
+                () -> handler.handle( onVhostWithoutSystem( request( OTHER, HttpMethod.GET, "device", Map.of() ) ), OTHER, "device",
                                       UNRESTRICTED ) ).isInstanceOf( WebException.class )
                 .hasMessageContaining( "'other' id provider has no consent page" );
             return null;
@@ -638,7 +647,7 @@ class OAuthHandlerTest
 
         asUser( BOB, () -> {
             final PortalResponse response = handler.handle(
-                onVhost( request( HttpMethod.GET, "device", Map.of() ), VirtualHostIdProvider.create().build() ), OTHER, "device",
+                onVhost( request( OTHER, HttpMethod.GET, "device", Map.of() ), VirtualHostIdProvider.create().build() ), OTHER, "device",
                 UNRESTRICTED );
             assertThat( response.getBody() ).isEqualTo( "page:enter" );
             return null;
@@ -653,7 +662,7 @@ class OAuthHandlerTest
 
         asUser( BOB, () -> {
             assertThatThrownBy( () -> handler.handle(
-                onVhost( request( HttpMethod.GET, "authorize", Map.of() ), ASSETS_ONLY ), OTHER, "authorize",
+                onVhost( request( OTHER, HttpMethod.GET, "authorize", Map.of() ), ASSETS_ONLY ), OTHER, "authorize",
                 UNRESTRICTED ) ).isInstanceOf( WebException.class )
                 .extracting( e -> ( (WebException) e ).getStatus() )
                 .isEqualTo( HttpStatus.NOT_FOUND );
@@ -667,7 +676,7 @@ class OAuthHandlerTest
         throws Exception
     {
         onlySystemHasThePage();
-        final PortalRequest page = onVhost( request( HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY );
+        final PortalRequest page = onVhost( request( OTHER, HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY );
 
         final PortalResponse response = handler.handle( page, OTHER, "device", UNRESTRICTED );
 
@@ -686,7 +695,7 @@ class OAuthHandlerTest
 
         asAlice( () -> {
             final PortalResponse response = handler.handle(
-                onVhost( request( HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY ), OTHER, "device",
+                onVhost( request( OTHER, HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY ), OTHER, "device",
                 UNRESTRICTED );
             assertThat( response.getBody() ).isEqualTo( "page:wrongAccount" );
             assertThat( lastContext ).containsEntry( "idProvider", "other" );
