@@ -22,8 +22,8 @@ public final class ProjectName
 
     /**
      * ProjectName validator.
-     * The Project name is a suffix of RepositoryId identifier, hence the length is even more constrained.
-     *
+     * The Project name is a suffix of RepositoryId identifier. Its length is limited by
+     * {@link ProjectConstants#PROJECT_NAME_MAX_LENGTH}, well within what RepositoryId allows.
      */
     private static final NameValidator PROJECT_NAME_VALIDATOR = NameValidator.builder( ProjectName.class )
         .maxLength( ProjectConstants.PROJECT_NAME_MAX_LENGTH )
