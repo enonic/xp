@@ -22,7 +22,7 @@ public final class ProjectConstants
     /**
      * Project names are kept short on purpose; this is not derived from {@link com.enonic.xp.repository.RepositoryConstants#REPOSITORY_ID_MAX_LENGTH}.
      */
-    public static final int PROJECT_NAME_MAX_LENGTH = 48;
+    public static final int PROJECT_NAME_MAX_LENGTH = 63;
 
     private ProjectConstants()
     {

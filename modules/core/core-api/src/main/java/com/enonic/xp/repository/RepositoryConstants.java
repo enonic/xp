@@ -30,10 +30,11 @@ public final class RepositoryConstants
     public static final Branch MASTER_BRANCH = Branch.from( "master" );
 
     /**
-     * RepositoryId becomes part of the storage and search index names ({@code storage-<id>}, {@code search-<id>}),
-     * which are limited to 255 bytes. The id is ASCII-only, so the longer prefix leaves 255 - 8 characters.
+     * RepositoryId becomes part of the index names ({@code storage-<id>}, {@code search-<id>}), limited to 255 bytes.
+     * A branch may become part of an index name too: {@code storage-} (8) + id + separator (1) + branch (63) leaves 183.
+     * 127 keeps headroom below that for a longer prefix or suffix. The id is ASCII-only, so characters are bytes.
      */
-    public static final int REPOSITORY_ID_MAX_LENGTH = 247;
+    public static final int REPOSITORY_ID_MAX_LENGTH = 127;
 
     private RepositoryConstants()
     {

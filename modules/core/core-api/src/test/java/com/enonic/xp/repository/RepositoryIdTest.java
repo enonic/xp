@@ -40,8 +40,8 @@ class RepositoryIdTest
     @Test
     void maxLength()
     {
-        RepositoryId.from( "a".repeat( 247 ) );
-        assertThrows( IllegalArgumentException.class, () -> RepositoryId.from( "a".repeat( 248 ) ) );
+        RepositoryId.from( "a".repeat( 127 ) );
+        assertThrows( IllegalArgumentException.class, () -> RepositoryId.from( "a".repeat( 128 ) ) );
     }
 
     @Test
