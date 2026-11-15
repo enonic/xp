@@ -8,10 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
@@ -46,6 +48,7 @@ import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderAlreadyExistsException;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -92,6 +95,9 @@ class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
 {
     private static final IdProviderKey SYSTEM = IdProviderKey.system();
+
+    private static final IdProviderAccessControlList USER_ADMIN_ACL = IdProviderAccessControlList.of(
+        IdProviderAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access( ADMINISTRATOR ).build() );
 
     protected EventPublisher eventPublisher;
 
@@ -1236,6 +1242,253 @@ class SecurityServiceImplTest
             assertEquals( user1, queryResult.getPrincipals().getPrincipal( userKey1 ) );
         } );
 
+    }
+
+    @Test
+    void testOnlyAdministratorChangesAdministratorMembership()
+    {
+        final PrincipalKey user = createUser( "user1" );
+        final PrincipalKey admins = runAsAdmin( () -> {
+            final PrincipalKey group = PrincipalKey.ofGroup( SYSTEM, "admins" );
+            securityService.createGroup( CreateGroupParams.create().groupKey( group ).displayName( "Admins" ).build() );
+            securityService.addRelationship( PrincipalRelationship.from( RoleKeys.ADMIN ).to( group ) );
+            return group;
+        } );
+
+        runAsUserAdmin( () -> {
+            assertThatThrownBy( () -> securityService.addRelationship( PrincipalRelationship.from( RoleKeys.ADMIN ).to( user ) ) )
+                .isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "only be changed by an administrator" );
+            assertThatThrownBy( () -> securityService.addRelationship( PrincipalRelationship.from( admins ).to( user ) ) ).isInstanceOf(
+                IllegalArgumentException.class );
+            assertThatThrownBy( () -> securityService.removeRelationship( PrincipalRelationship.from( RoleKeys.ADMIN ).to( admins ) ) )
+                .isInstanceOf( IllegalArgumentException.class );
+
+            // other roles stay delegated
+            securityService.addRelationship( PrincipalRelationship.from( RoleKeys.USER_MANAGER_ADMIN ).to( user ) );
+        } );
+
+        runAsAdmin( () -> {
+            assertFalse( securityService.getAllMemberships( user ).contains( RoleKeys.ADMIN ) );
+            assertTrue( securityService.getMemberships( user ).contains( RoleKeys.USER_MANAGER_ADMIN ) );
+
+            securityService.addRelationship( PrincipalRelationship.from( admins ).to( user ) );
+            assertTrue( securityService.getAllMemberships( user ).contains( RoleKeys.ADMIN ) );
+            securityService.removeRelationship( PrincipalRelationship.from( admins ).to( user ) );
+            assertFalse( securityService.getAllMemberships( user ).contains( RoleKeys.ADMIN ) );
+        } );
+    }
+
+    @Test
+    void testOnlyAdministratorModifiesAdministrator()
+    {
+        final PrincipalKey admin = createUser( "admin1" );
+        final PrincipalKey user = createUser( "user1" );
+        runAsAdmin( () -> {
+            final PrincipalKey group = PrincipalKey.ofGroup( SYSTEM, "admins" );
+            securityService.createGroup( CreateGroupParams.create().groupKey( group ).displayName( "Admins" ).build() );
+            securityService.addRelationship( PrincipalRelationship.from( RoleKeys.ADMIN ).to( group ) );
+            securityService.addRelationship( PrincipalRelationship.from( group ).to( admin ) );
+        } );
+
+        runAsUserAdmin( () -> {
+            assertThatThrownBy( () -> securityService.setPassword( admin, "taken-over" ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "only be modified by an administrator" );
+            assertThatThrownBy( () -> securityService.setPassword( admin, null ) ).isInstanceOf( IllegalArgumentException.class );
+            assertThatThrownBy(
+                () -> securityService.updateUser( UpdateUserParams.create().userKey( admin ).email( "attacker@example.com" ).build() ) )
+                .isInstanceOf( IllegalArgumentException.class );
+            assertThatThrownBy( () -> securityService.updateUser(
+                UpdateUserParams.create().userKey( admin ).editor( edit -> edit.profile.setString( "publicKey", "planted" ) ).build() ) )
+                .isInstanceOf( IllegalArgumentException.class );
+            assertThatThrownBy( () -> securityService.deletePrincipal( admin ) ).isInstanceOf( IllegalArgumentException.class );
+            assertThatThrownBy( () -> securityService.deletePrincipal( PrincipalKey.ofGroup( SYSTEM, "admins" ) ) ).isInstanceOf(
+                IllegalArgumentException.class );
+
+            // everyone else stays manageable
+            securityService.setPassword( user, "password" );
+            securityService.updateUser( UpdateUserParams.create().userKey( user ).email( "user1@example.com" ).build() );
+            securityService.deletePrincipal( user );
+        } );
+
+        runAsAdmin( () -> {
+            final User unchanged = securityService.getUser( admin ).orElseThrow();
+            assertNull( unchanged.getAuthenticationHash() );
+            assertEquals( "admin1@enonic.com", unchanged.getEmail() );
+            assertNull( unchanged.getProfile().getString( "publicKey" ) );
+
+            securityService.setPassword( admin, "password" );
+            securityService.updateUser(
+                UpdateUserParams.create().userKey( admin ).editor( edit -> edit.profile.setString( "publicKey", "own" ) ).build() );
+            assertEquals( "own", securityService.getUser( admin ).orElseThrow().getProfile().getString( "publicKey" ) );
+        } );
+    }
+
+    @Test
+    void testPlatformPrincipalsCannotBeRemoved()
+    {
+        final List<PrincipalKey> platformPrincipals =
+            List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous(), PrincipalKey.from( "user:system:Anonymous" ), RoleKeys.ADMIN,
+                     RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED, RoleKeys.ADMIN_LOGIN, RoleKeys.USER_MANAGER_APP,
+                     RoleKeys.USER_MANAGER_ADMIN, RoleKeys.CONTENT_MANAGER_EXPERT, RoleKeys.CONTENT_MANAGER_ADMIN, RoleKeys.AUDIT_LOG,
+                     RoleKeys.SCHEMA_ADMIN );
+        runAsAdmin( () -> {
+            for ( PrincipalKey key : platformPrincipals )
+            {
+                assertThatThrownBy( () -> securityService.deletePrincipal( key ) ).isInstanceOf( IllegalArgumentException.class )
+                    .hasMessageContaining( "cannot be removed" );
+                assertTrue( securityService.getPrincipal( key ).isPresent(), key.toString() );
+            }
+        } );
+    }
+
+    @Test
+    void testReservedRoleNamespaces()
+    {
+        final PrincipalKey projectOwner = PrincipalKey.ofRole( "cms.project.payroll.owner" );
+        runAsUserAdmin( () -> {
+            for ( PrincipalKey key : List.of( projectOwner, PrincipalKey.ofRole( "system.anything" ),
+                                              PrincipalKey.ofRole( "CMS.Something" ) ) )
+            {
+                final CreateRoleParams params = CreateRoleParams.create().roleKey( key ).displayName( "x" ).build();
+                assertThatThrownBy( () -> securityService.createRole( params ) )
+                    .isInstanceOf( IllegalArgumentException.class )
+                    .hasMessageContaining( "reserved namespace" );
+            }
+            securityService.createRole( CreateRoleParams.create().roleKey( PrincipalKey.ofRole( "editors" ) ).displayName( "x" ).build() );
+        } );
+
+        runAsAdmin(
+            () -> securityService.createRole( CreateRoleParams.create().roleKey( projectOwner ).displayName( "Owner" ).build() ) );
+
+        runAsUserAdmin( () -> assertThatThrownBy( () -> securityService.deletePrincipal( projectOwner ) ).isInstanceOf(
+            IllegalArgumentException.class ).hasMessageContaining( "removed with its project" ) );
+
+        runAsAdmin( () -> {
+            securityService.deletePrincipal( projectOwner );
+            assertTrue( securityService.getRole( projectOwner ).isEmpty() );
+        } );
+    }
+
+    @Test
+    void testSystemIdProviderCannotBeRemoved()
+    {
+        runAsAdmin( () -> {
+            assertThatThrownBy( () -> securityService.deleteIdProvider( IdProviderKey.system() ) ).isInstanceOf(
+                IllegalArgumentException.class ).hasMessageContaining( "cannot be removed" );
+            assertNotNull( securityService.getIdProvider( IdProviderKey.system() ) );
+            assertTrue( securityService.getUser( PrincipalKey.ofSuperUser() ).isPresent() );
+        } );
+    }
+
+    @Test
+    void testIdProviderHoldingAdministratorsRemovedOnlyByAdministrator()
+    {
+        final IdProviderKey corp = IdProviderKey.from( "corp" );
+        final IdProviderKey partners = IdProviderKey.from( "partners" );
+        runAsAdmin( () -> {
+            for ( IdProviderKey key : List.of( corp, partners ) )
+            {
+                securityService.createIdProvider( CreateIdProviderParams.create()
+                                                      .key( key )
+                                                      .displayName( key.toString() )
+                                                      .permissions( USER_ADMIN_ACL )
+                                                      .build() );
+            }
+            final PrincipalKey corpAdmin = PrincipalKey.ofUser( corp, "boss" );
+            securityService.createUser( CreateUserParams.create().userKey( corpAdmin ).login( "boss" ).displayName( "Boss" ).build() );
+            final PrincipalKey group = PrincipalKey.ofGroup( SYSTEM, "admins" );
+            securityService.createGroup( CreateGroupParams.create().groupKey( group ).displayName( "Admins" ).build() );
+            securityService.addRelationship( PrincipalRelationship.from( RoleKeys.ADMIN ).to( group ) );
+            securityService.addRelationship( PrincipalRelationship.from( group ).to( corpAdmin ) );
+        } );
+
+        runAsUserAdmin( () -> {
+            assertThatThrownBy( () -> securityService.deleteIdProvider( corp ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "holds administrators" );
+            securityService.deleteIdProvider( partners );
+        } );
+
+        runAsAdmin( () -> {
+            assertNull( securityService.getIdProvider( partners ) );
+            assertNotNull( securityService.getIdProvider( corp ) );
+            securityService.deleteIdProvider( corp );
+            assertNull( securityService.getIdProvider( corp ) );
+        } );
+    }
+
+    @Test
+    void testSystemIdProviderStaysBound()
+    {
+        runAsAdmin( () -> {
+            assertThatThrownBy( () -> securityService.updateIdProvider(
+                UpdateIdProviderParams.create().key( IdProviderKey.system() ).editor( edit -> edit.idProviderConfig = null ).build() ) )
+                .isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "cannot be unbound" );
+            assertNotNull( securityService.getIdProvider( IdProviderKey.system() ).getIdProviderConfig() );
+        } );
+
+        runAsUserAdmin( () -> {
+            final IdProviderConfig other =
+                IdProviderConfig.create().applicationKey( ApplicationKey.from( "com.example.idp" ) ).config( new PropertyTree() ).build();
+            assertThatThrownBy( () -> securityService.updateIdProvider(
+                UpdateIdProviderParams.create().key( IdProviderKey.system() ).idProviderConfig( other ).build() ) ).isInstanceOf(
+                IllegalArgumentException.class ).hasMessageContaining( "by an administrator" );
+
+            final IdProvider renamed = securityService.updateIdProvider(
+                UpdateIdProviderParams.create().key( IdProviderKey.system() ).displayName( "Staff" ).build() );
+            assertEquals( "Staff", renamed.getDisplayName() );
+            assertNotNull( renamed.getIdProviderConfig() );
+        } );
+    }
+
+    @Test
+    void testIdProviderKeyMustBeUsableForPrincipals()
+    {
+        runAsAdmin( () -> {
+            for ( String key : List.of( "a#b", "corp@eu", "тест", "😀", "a+b" ) )
+            {
+                final CreateIdProviderParams params =
+                    CreateIdProviderParams.create().key( IdProviderKey.from( key ) ).displayName( key ).permissions( USER_ADMIN_ACL ).build();
+                assertThatThrownBy( () -> securityService.createIdProvider( params ) ).as( key )
+                    .isInstanceOf( IllegalArgumentException.class )
+                    .hasMessageContaining( "Invalid IdProviderKey" );
+                assertNull( securityService.getIdProvider( IdProviderKey.from( key ) ) );
+            }
+
+            final IdProviderKey valid = IdProviderKey.from( "My-Provider_1.x" );
+            securityService.createIdProvider(
+                CreateIdProviderParams.create().key( valid ).displayName( "valid" ).permissions( USER_ADMIN_ACL ).build() );
+            securityService.createUser( CreateUserParams.create()
+                                            .userKey( PrincipalKey.ofUser( valid, "user" ) )
+                                            .login( "user" )
+                                            .displayName( "User" )
+                                            .build() );
+        } );
+    }
+
+    private PrincipalKey createUser( final String name )
+    {
+        return runAsAdmin( () -> securityService.createUser( CreateUserParams.create()
+                                                                 .userKey( PrincipalKey.ofUser( SYSTEM, name ) )
+                                                                 .login( name )
+                                                                 .email( name + "@enonic.com" )
+                                                                 .displayName( name )
+                                                                 .build() ).getKey() );
+    }
+
+    private void runAsUserAdmin( Runnable runnable )
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create()
+            .principals( RoleKeys.USER_MANAGER_ADMIN, RoleKeys.ADMIN_LOGIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
+            .user( User.create().key( PrincipalKey.ofUser( SYSTEM, "manager" ) ).login( "manager" ).build() )
+            .build();
+        ContextBuilder.create()
+            .authInfo( authInfo )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .build()
+            .runWith( runnable );
     }
 
     private <T> T runAsAdmin( Callable<T> runnable )
