@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.security;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -800,10 +797,9 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( String.format( "[%s] id provider cannot be removed", idProviderKey ) );
         }
-        if ( !isCallerAdministrator() && holdsAdministrators( idProviderKey ) )
+        if ( !isCallerAdministrator() )
         {
-            throw new IllegalArgumentException(
-                String.format( "[%s] id provider holds administrators and can only be removed by an administrator", idProviderKey ) );
+            throw new IllegalArgumentException( String.format( "[%s] id provider can only be removed by an administrator", idProviderKey ) );
         }
 
         final NodeIds deletedNodes;
@@ -1176,30 +1172,6 @@ public final class SecurityServiceImpl
     {
         return RoleKeys.ADMIN.toPath().equals( key.toPath() ) ||
             callAsAdministrator( () -> resolveMemberships( key ) ).contains( RoleKeys.ADMIN );
-    }
-
-    private boolean holdsAdministrators( final IdProviderKey idProviderKey )
-    {
-        return callAsAdministrator( () -> {
-            final Set<PrincipalKey> visited = new HashSet<>();
-            final Deque<PrincipalKey> containers = new ArrayDeque<>( List.of( RoleKeys.ADMIN ) );
-            while ( !containers.isEmpty() )
-            {
-                for ( PrincipalRelationship relationship : getRelationships( containers.pop() ) )
-                {
-                    final PrincipalKey member = relationship.getTo();
-                    if ( !member.isRole() && idProviderKey.toString().equalsIgnoreCase( member.getIdProviderKey().toString() ) )
-                    {
-                        return true;
-                    }
-                    if ( !member.isUser() && visited.add( member ) )
-                    {
-                        containers.push( member );
-                    }
-                }
-            }
-            return false;
-        } );
     }
 
     /**

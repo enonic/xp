@@ -1382,36 +1382,24 @@ class SecurityServiceImplTest
     }
 
     @Test
-    void testIdProviderHoldingAdministratorsRemovedOnlyByAdministrator()
+    void testIdProviderRemovedOnlyByAdministrator()
     {
         final IdProviderKey corp = IdProviderKey.from( "corp" );
-        final IdProviderKey partners = IdProviderKey.from( "partners" );
+        final PrincipalKey user = PrincipalKey.ofUser( corp, "user" );
         runAsAdmin( () -> {
-            for ( IdProviderKey key : List.of( corp, partners ) )
-            {
-                securityService.createIdProvider( CreateIdProviderParams.create()
-                                                      .key( key )
-                                                      .displayName( key.toString() )
-                                                      .permissions( USER_ADMIN_ACL )
-                                                      .build() );
-            }
-            final PrincipalKey corpAdmin = PrincipalKey.ofUser( corp, "boss" );
-            securityService.createUser( CreateUserParams.create().userKey( corpAdmin ).login( "boss" ).displayName( "Boss" ).build() );
-            final PrincipalKey group = PrincipalKey.ofGroup( SYSTEM, "admins" );
-            securityService.createGroup( CreateGroupParams.create().groupKey( group ).displayName( "Admins" ).build() );
-            securityService.addRelationship( PrincipalRelationship.from( RoleKeys.ADMIN ).to( group ) );
-            securityService.addRelationship( PrincipalRelationship.from( group ).to( corpAdmin ) );
+            securityService.createIdProvider(
+                CreateIdProviderParams.create().key( corp ).displayName( "Corp" ).permissions( USER_ADMIN_ACL ).build() );
+            securityService.createUser( CreateUserParams.create().userKey( user ).login( "user" ).displayName( "User" ).build() );
         } );
 
-        runAsUserAdmin( () -> {
-            assertThatThrownBy( () -> securityService.deleteIdProvider( corp ) ).isInstanceOf( IllegalArgumentException.class )
-                .hasMessageContaining( "holds administrators" );
-            securityService.deleteIdProvider( partners );
-        } );
+        // the provider's own ACL makes system.user.admin its ADMINISTRATOR, and still does not let it remove the provider
+        runAsUserAdmin( () -> assertThatThrownBy( () -> securityService.deleteIdProvider( corp ) ).isInstanceOf(
+            IllegalArgumentException.class ).hasMessageContaining( "can only be removed by an administrator" ) );
 
         runAsAdmin( () -> {
-            assertNull( securityService.getIdProvider( partners ) );
             assertNotNull( securityService.getIdProvider( corp ) );
+            assertTrue( securityService.getUser( user ).isPresent() );
+
             securityService.deleteIdProvider( corp );
             assertNull( securityService.getIdProvider( corp ) );
         } );
