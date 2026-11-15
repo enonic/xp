@@ -129,8 +129,10 @@ public final class SecurityServiceImpl
 
     /**
      * Principals under an id provider are stored with their lower-cased key as node id, which allows only {@code [a-z0-9_.:-]}.
+     * A dot is refused as well: the key becomes a level of the vhost configuration ({@code mapping.<name>.idProvider.<key>}),
+     * where a dot makes nested settings ambiguous. Existing keys with a dot keep working.
      */
-    private static final Pattern ID_PROVIDER_KEY_PATTERN = Pattern.compile( "[A-Za-z0-9_.-]+" );
+    private static final Pattern ID_PROVIDER_KEY_PATTERN = Pattern.compile( "[A-Za-z0-9_-]+" );
 
     private static final Set<NodePath> NON_MODIFIABLE_USER_PATHS =
         Set.of( PrincipalKey.ofSuperUser().toPath(), PrincipalKey.ofAnonymous().toPath() );
@@ -904,7 +906,7 @@ public final class SecurityServiceImpl
         if ( !ID_PROVIDER_KEY_PATTERN.matcher( createIdProviderParams.getKey().toString() ).matches() )
         {
             throw new IllegalArgumentException(
-                String.format( "Invalid IdProviderKey [%s]: only letters A-Z and a-z, digits, '_', '.' and '-' are allowed",
+                String.format( "Invalid IdProviderKey [%s]: only letters A-Z and a-z, digits, '_' and '-' are allowed",
                                createIdProviderParams.getKey() ) );
         }
 

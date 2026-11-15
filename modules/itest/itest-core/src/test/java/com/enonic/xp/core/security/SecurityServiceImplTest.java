@@ -1446,7 +1446,7 @@ class SecurityServiceImplTest
     void testIdProviderKeyMustBeUsableForPrincipals()
     {
         runAsAdmin( () -> {
-            for ( String key : List.of( "a#b", "corp@eu", "тест", "😀", "a+b" ) )
+            for ( String key : List.of( "a#b", "corp@eu", "тест", "😀", "a+b", "corp.eu" ) )
             {
                 final CreateIdProviderParams params =
                     CreateIdProviderParams.create().key( IdProviderKey.from( key ) ).displayName( key ).permissions( USER_ADMIN_ACL ).build();
@@ -1456,7 +1456,7 @@ class SecurityServiceImplTest
                 assertNull( securityService.getIdProvider( IdProviderKey.from( key ) ) );
             }
 
-            final IdProviderKey valid = IdProviderKey.from( "My-Provider_1.x" );
+            final IdProviderKey valid = IdProviderKey.from( "My-Provider_1" );
             securityService.createIdProvider(
                 CreateIdProviderParams.create().key( valid ).displayName( "valid" ).permissions( USER_ADMIN_ACL ).build() );
             securityService.createUser( CreateUserParams.create()
