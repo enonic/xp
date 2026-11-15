@@ -20,7 +20,7 @@ public final class ProjectConstants
     public static final String PROJECT_PARENTS_PROPERTY = "parents";
 
     /**
-     * Project names are kept short on purpose; this is not derived from {@link com.enonic.xp.repository.RepositoryConstants#REPOSITORY_ID_MAX_LENGTH}.
+     * Maximum length of a {@link ProjectName}.
      */
     public static final int PROJECT_NAME_MAX_LENGTH = 63;
 

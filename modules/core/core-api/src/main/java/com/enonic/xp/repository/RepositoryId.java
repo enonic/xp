@@ -21,8 +21,7 @@ public final class RepositoryId
 
     /**
      * RepositoryId validator.
-     * This is translated into the Elasticsearch index name and needs to be limited accordingly,
-     * see {@link RepositoryConstants#REPOSITORY_ID_MAX_LENGTH}.
+     * This is translated into the Elasticsearch index name and needs to be limited accordingly.
      */
     private static final NameValidator REPOSITORY_ID_VALIDATOR = NameValidator.builder( RepositoryId.class )
         .maxLength( RepositoryConstants.REPOSITORY_ID_MAX_LENGTH )

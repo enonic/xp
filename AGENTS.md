@@ -12,6 +12,10 @@
 - Don't add clarifying comments; code should speak for itself. To explain an edge case, write a regression test that covers it
 - In `-api` modules, every class, interface and method has Javadoc. Write it for the API user: what it does and how to use it, not how it is implemented or why it was designed that way
 
+## Writing
+- Applies to comments, Javadoc, commit messages and PR descriptions
+- State what something is or does. Don't phrase it as a contrast: no "rather than", "instead of", "not X but Y", "this, not that"
+
 ## Tests
 - Instead of `assertThrows` use AssertJ's `assertThatThrownBy`
 - To assert a call does not throw, use `assertDoesNotThrow(() -> ...)`; not a bare call with a `// should not throw` comment

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RepositoryIdTest
@@ -40,8 +42,8 @@ class RepositoryIdTest
     @Test
     void maxLength()
     {
-        RepositoryId.from( "a".repeat( 127 ) );
-        assertThrows( IllegalArgumentException.class, () -> RepositoryId.from( "a".repeat( 128 ) ) );
+        assertDoesNotThrow( () -> RepositoryId.from( "a".repeat( 127 ) ) );
+        assertThatThrownBy( () -> RepositoryId.from( "a".repeat( 128 ) ) ).isInstanceOf( IllegalArgumentException.class );
     }
 
     @Test
