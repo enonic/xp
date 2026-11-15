@@ -797,10 +797,7 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( String.format( "[%s] id provider cannot be removed", idProviderKey ) );
         }
-        if ( !isCallerAdministrator() )
-        {
-            throw new IllegalArgumentException( String.format( "[%s] id provider can only be removed by an administrator", idProviderKey ) );
-        }
+        requireAdministratorToManageIdProvider( idProviderKey );
 
         final NodeIds deletedNodes;
         try
@@ -899,6 +896,7 @@ public final class SecurityServiceImpl
     @Override
     public IdProvider createIdProvider( final CreateIdProviderParams createIdProviderParams )
     {
+        requireAdministratorToManageIdProvider( createIdProviderParams.getKey() );
         if ( !ID_PROVIDER_KEY_PATTERN.matcher( createIdProviderParams.getKey().toString() ).matches() )
         {
             throw new IllegalArgumentException(
@@ -980,6 +978,8 @@ public final class SecurityServiceImpl
     @Override
     public IdProvider updateIdProvider( final UpdateIdProviderParams updateIdProviderParams )
     {
+        requireAdministratorToManageIdProvider( updateIdProviderParams.getKey() );
+
         return callWithContext( () -> {
 
             final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( updateIdProviderParams.getKey() );
@@ -1121,21 +1121,22 @@ public final class SecurityServiceImpl
 
     private static void requireSystemIdProviderBound( final IdProvider current, final IdProvider changed )
     {
-        if ( !IdProviderKey.system().equals( current.getKey() ) )
-        {
-            return;
-        }
-        if ( changed.getIdProviderConfig() == null )
+        if ( IdProviderKey.system().equals( current.getKey() ) && changed.getIdProviderConfig() == null )
         {
             throw new IllegalArgumentException(
                 String.format( "[%s] id provider cannot be unbound from its application", current.getKey() ) );
         }
-        final IdProviderConfig currentConfig = current.getIdProviderConfig();
-        if ( ( currentConfig == null || !currentConfig.getApplicationKey().equals( changed.getIdProviderConfig().getApplicationKey() ) ) &&
-            !isCallerAdministrator() )
+    }
+
+    /**
+     * Creating, configuring and removing an id provider is an administrator's task. Its users and groups are managed by whoever the
+     * id provider's permissions name; the id provider itself is not.
+     */
+    private static void requireAdministratorToManageIdProvider( final IdProviderKey idProviderKey )
+    {
+        if ( !isCallerAdministrator() )
         {
-            throw new IllegalArgumentException(
-                String.format( "[%s] id provider can only be bound to another application by an administrator", current.getKey() ) );
+            throw new IllegalArgumentException( String.format( "[%s] id provider can only be managed by an administrator", idProviderKey ) );
         }
     }
 

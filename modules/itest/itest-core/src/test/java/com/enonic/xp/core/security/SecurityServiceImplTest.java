@@ -8,12 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
@@ -48,7 +46,6 @@ import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderAlreadyExistsException;
-import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -1382,7 +1379,7 @@ class SecurityServiceImplTest
     }
 
     @Test
-    void testIdProviderRemovedOnlyByAdministrator()
+    void testIdProviderManagedOnlyByAdministrator()
     {
         final IdProviderKey corp = IdProviderKey.from( "corp" );
         final PrincipalKey user = PrincipalKey.ofUser( corp, "user" );
@@ -1392,14 +1389,36 @@ class SecurityServiceImplTest
             securityService.createUser( CreateUserParams.create().userKey( user ).login( "user" ).displayName( "User" ).build() );
         } );
 
-        // the provider's own ACL makes system.user.admin its ADMINISTRATOR, and still does not let it remove the provider
-        runAsUserAdmin( () -> assertThatThrownBy( () -> securityService.deleteIdProvider( corp ) ).isInstanceOf(
-            IllegalArgumentException.class ).hasMessageContaining( "can only be removed by an administrator" ) );
+        // the provider's own ACL makes system.user.admin its ADMINISTRATOR: that is for its users and groups, not for the provider
+        runAsUserAdmin( () -> {
+            final CreateIdProviderParams create = CreateIdProviderParams.create()
+                .key( IdProviderKey.from( "partners" ) )
+                .displayName( "Partners" )
+                .permissions( USER_ADMIN_ACL )
+                .build();
+            assertThatThrownBy( () -> securityService.createIdProvider( create ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "can only be managed by an administrator" );
+            for ( IdProviderKey key : List.of( corp, IdProviderKey.system() ) )
+            {
+                final UpdateIdProviderParams update = UpdateIdProviderParams.create().key( key ).displayName( "Renamed" ).build();
+                assertThatThrownBy( () -> securityService.updateIdProvider( update ) ).isInstanceOf( IllegalArgumentException.class )
+                    .hasMessageContaining( "can only be managed by an administrator" );
+            }
+            assertThatThrownBy( () -> securityService.deleteIdProvider( corp ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "can only be managed by an administrator" );
+
+            // its users stay manageable
+            securityService.updateUser( UpdateUserParams.create().userKey( user ).displayName( "Renamed user" ).build() );
+        } );
 
         runAsAdmin( () -> {
-            assertNotNull( securityService.getIdProvider( corp ) );
-            assertTrue( securityService.getUser( user ).isPresent() );
+            assertNull( securityService.getIdProvider( IdProviderKey.from( "partners" ) ) );
+            assertEquals( "Corp", securityService.getIdProvider( corp ).getDisplayName() );
+            assertNotEquals( "Renamed", securityService.getIdProvider( IdProviderKey.system() ).getDisplayName() );
+            assertEquals( "Renamed user", securityService.getUser( user ).orElseThrow().getDisplayName() );
 
+            securityService.updateIdProvider( UpdateIdProviderParams.create().key( corp ).displayName( "Corporate" ).build() );
+            assertEquals( "Corporate", securityService.getIdProvider( corp ).getDisplayName() );
             securityService.deleteIdProvider( corp );
             assertNull( securityService.getIdProvider( corp ) );
         } );
@@ -1414,14 +1433,6 @@ class SecurityServiceImplTest
                 .isInstanceOf( IllegalArgumentException.class )
                 .hasMessageContaining( "cannot be unbound" );
             assertNotNull( securityService.getIdProvider( IdProviderKey.system() ).getIdProviderConfig() );
-        } );
-
-        runAsUserAdmin( () -> {
-            final IdProviderConfig other =
-                IdProviderConfig.create().applicationKey( ApplicationKey.from( "com.example.idp" ) ).config( new PropertyTree() ).build();
-            assertThatThrownBy( () -> securityService.updateIdProvider(
-                UpdateIdProviderParams.create().key( IdProviderKey.system() ).idProviderConfig( other ).build() ) ).isInstanceOf(
-                IllegalArgumentException.class ).hasMessageContaining( "by an administrator" );
 
             final IdProvider renamed = securityService.updateIdProvider(
                 UpdateIdProviderParams.create().key( IdProviderKey.system() ).displayName( "Staff" ).build() );
