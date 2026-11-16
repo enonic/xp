@@ -7,6 +7,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.status.BaseReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DeadlockReporterTest
     extends BaseReporterTest<DeadlockReporter>
@@ -27,5 +28,11 @@ class DeadlockReporterTest
         throws Exception
     {
         assertNotNull( textReport() );
+    }
+
+    @Test
+    void testSensitive()
+    {
+        assertTrue( newReporter().isSensitive() );
     }
 }
