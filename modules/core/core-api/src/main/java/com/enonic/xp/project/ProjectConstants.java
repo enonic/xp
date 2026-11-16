@@ -2,8 +2,6 @@ package com.enonic.xp.project;
 
 import org.jspecify.annotations.NullMarked;
 
-import com.enonic.xp.repository.RepositoryConstants;
-
 @NullMarked
 public final class ProjectConstants
 {
@@ -21,7 +19,10 @@ public final class ProjectConstants
 
     public static final String PROJECT_PARENTS_PROPERTY = "parents";
 
-    public static final int PROJECT_NAME_MAX_LENGTH = RepositoryConstants.REPOSITORY_ID_MAX_LENGTH - PROJECT_REPO_ID_PREFIX.length();
+    /**
+     * Maximum length of a {@link ProjectName}.
+     */
+    public static final int PROJECT_NAME_MAX_LENGTH = 63;
 
     private ProjectConstants()
     {
