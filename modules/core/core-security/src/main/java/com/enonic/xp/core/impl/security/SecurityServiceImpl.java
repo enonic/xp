@@ -1041,10 +1041,6 @@ public final class SecurityServiceImpl
     @Override
     public boolean deleteClient( final IdProviderKey idProvider, final String id )
     {
-        if ( IdProviderKey.system().equals( idProvider ) && SecurityInitializer.ENONIC_CLI.equals( id ) )
-        {
-            throw new IllegalArgumentException( String.format( "[%s] client of [%s] cannot be removed", id, idProvider ) );
-        }
         final boolean deleted = clients.delete( idProvider, id );
         if ( deleted )
         {

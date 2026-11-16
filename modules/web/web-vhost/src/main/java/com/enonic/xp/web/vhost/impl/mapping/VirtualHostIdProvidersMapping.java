@@ -16,8 +16,11 @@ public class VirtualHostIdProvidersMapping
 
     private final Map<IdProviderKey, VirtualHostIdProvider> idProviders;
 
+    private final @Nullable IdProviderKey defaultIdProvider;
+
     public VirtualHostIdProvidersMapping( final Builder builder )
     {
+        this.defaultIdProvider = builder.defaultIdProvider;
         final Map<IdProviderKey, VirtualHostIdProvider> map = new LinkedHashMap<>();
         if ( builder.defaultIdProvider != null )
         {
@@ -38,6 +41,14 @@ public class VirtualHostIdProvidersMapping
     public Map<IdProviderKey, VirtualHostIdProvider> getIdProviders()
     {
         return idProviders;
+    }
+
+    /**
+     * The id provider marked {@code default}, or null when none is.
+     */
+    public @Nullable IdProviderKey getDefaultIdProvider()
+    {
+        return defaultIdProvider;
     }
 
     public static class Builder

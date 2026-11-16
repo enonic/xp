@@ -31,7 +31,13 @@ final class IdentityPathSupplier
         final IdProviderKey idProviderKey = requireNonNullElseGet( this.params.getIdProviderKey(), () -> {
             final PortalRequest portalRequest = requireNonNull( PortalRequestAccessor.get(), "no request bound" );
             final VirtualHost virtualHost = portalRequest.getVirtualHost();
-            return virtualHost.getDefaultIdProviderKey();
+            final IdProviderKey defaultIdProvider = virtualHost.getDefaultIdProviderKey();
+            if ( defaultIdProvider == null )
+            {
+                throw new IllegalStateException(
+                    "No id provider named and vhost mapping [" + virtualHost.getName() + "] has no default id provider" );
+            }
+            return defaultIdProvider;
         } );
 
         UrlBuilderHelper.appendPart( url, idProviderKey.toString() );

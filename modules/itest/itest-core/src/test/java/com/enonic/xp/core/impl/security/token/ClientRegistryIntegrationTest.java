@@ -45,8 +45,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 /**
- * The client registry against a real node store: where clients land, who may write them, what a
- * fresh installation gets, and what cannot be deleted.
+ * The client registry against a real node store: where clients land, who may write them, and that a
+ * fresh installation stores none.
  */
 class ClientRegistryIntegrationTest
     extends AbstractNodeTest
@@ -54,6 +54,8 @@ class ClientRegistryIntegrationTest
     private static final IdProviderKey SYSTEM = IdProviderKey.system();
 
     private SecurityServiceImpl service;
+
+    private List<String> initializedClients;
 
     ClientRegistryIntegrationTest()
     {
@@ -80,26 +82,29 @@ class ClientRegistryIntegrationTest
             return null;
         } );
         service = securityService;
+        initializedClients = service.getClients( SYSTEM ).stream().map( Client::getId ).toList();
+        asAdmin( () -> service.createClient( CreateClientParams.create()
+                                                 .idProvider( SYSTEM )
+                                                 .id( "enonic-cli" )
+                                                 .displayName( "Enonic CLI" )
+                                                 .grantTypes( List.of( GrantTypes.DEVICE_CODE, GrantTypes.REFRESH_TOKEN ) )
+                                                 .build() ) );
     }
 
     @Test
-    void a_fresh_installation_has_the_cli_registered_with_the_system_id_provider()
+    void a_fresh_installation_stores_no_clients()
+    {
+        assertThat( initializedClients ).as( "XP knows the Enonic CLI without a registration" ).isEmpty();
+    }
+
+    @Test
+    void a_registration_of_the_enonic_cli_is_an_ordinary_one()
     {
         final Client cli = service.getClient( SYSTEM, "enonic-cli" ).orElseThrow();
-
         assertThat( cli.getDisplayName() ).isEqualTo( "Enonic CLI" );
-        assertThat( cli.getGrantTypes() ).containsExactlyInAnyOrder( GrantTypes.DEVICE_CODE, GrantTypes.REFRESH_TOKEN );
-        assertThat( cli.getScope() ).as( "no cap" ).isEmpty();
-        assertThat( cli.getResource() ).isEmpty();
-        assertThat( cli.isEnabled() ).isTrue();
-        assertThat( service.getClients( SYSTEM ) ).extracting( Client::getId ).containsExactly( "enonic-cli" );
         final Node node = asAdmin( () -> nodeService.getByPath( new NodePath( "/identity/system/clients/mvxg63tjmmwwg3dj" ) ) );
         assertThat( node.getNodeType() ).isEqualTo( ClientNodes.CLIENT_TYPE );
-    }
 
-    @Test
-    void the_enonic_cli_can_be_changed_and_disabled_but_not_removed()
-    {
         final Client disabled = asAdmin( () -> service.updateClient( UpdateClientParams.create()
                                                                    .idProvider( SYSTEM )
                                                                    .id( "enonic-cli" )
@@ -111,8 +116,8 @@ class ClientRegistryIntegrationTest
         assertThat( disabled.isEnabled() ).isFalse();
         assertThat( disabled.getScope() ).containsExactly( "content:read" );
 
-        assertThatThrownBy( () -> asAdmin( () -> service.deleteClient( SYSTEM, "enonic-cli" ) ) ).isInstanceOf( IllegalArgumentException.class );
-        assertThat( service.getClient( SYSTEM, "enonic-cli" ) ).isPresent();
+        assertThat( asAdmin( () -> service.deleteClient( SYSTEM, "enonic-cli" ) ) ).as( "removing it restores XP's own" ).isTrue();
+        assertThat( service.getClient( SYSTEM, "enonic-cli" ) ).isEmpty();
     }
 
     @Test

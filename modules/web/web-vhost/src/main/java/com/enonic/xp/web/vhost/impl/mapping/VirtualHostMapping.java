@@ -1,7 +1,6 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -116,10 +115,9 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public IdProviderKey getDefaultIdProviderKey()
+    public @Nullable IdProviderKey getDefaultIdProviderKey()
     {
-        final Iterator<IdProviderKey> keys = idProvidersMapping.getIdProviders().keySet().iterator();
-        return keys.hasNext() ? keys.next() : null;
+        return idProvidersMapping.getDefaultIdProvider();
     }
 
     @Deprecated
