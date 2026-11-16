@@ -424,6 +424,28 @@ class IdentityHandlerTest
     }
 
     @Test
+    void testDeviceEndpoints_onlyForIdProvidersTheVhostMaps()
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider() ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
+        this.request.setMethod( HttpMethod.POST );
+
+        for ( String endpoint : new String[]{"device/code", "device", "authorize", "token", "register"} )
+        {
+            this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/" + endpoint );
+            assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+                .hasMessage( "'myidprovider' id provider is forbidden" );
+        }
+        Mockito.verifyNoInteractions( oauthHandler );
+    }
+
+    @Test
     void testDeviceEndpoints_webConnectorOnly()
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();

@@ -95,6 +95,12 @@ class OAuthHandlerTest
 
     private static final PrincipalKey ALICE = PrincipalKey.ofUser( IDP, "alice" );
 
+    private static final IdProviderKey OTHER = IdProviderKey.from( "other" );
+
+    private static final PrincipalKey BOB = PrincipalKey.ofUser( OTHER, "bob" );
+
+    private static final VirtualHostIdProvider ASSETS_ONLY = VirtualHostIdProvider.create().flows( Set.of( "consent" ) ).build();
+
     private static final ObjectMapper JSON = new ObjectMapper();
 
     private final GrantService grantService = mock( GrantService.class );
@@ -215,12 +221,18 @@ class OAuthHandlerTest
 
     private static PortalRequest request( final HttpMethod method, final String endpoint, final Map<String, String> params )
     {
+        return request( IDP, method, endpoint, params );
+    }
+
+    private static PortalRequest request( final IdProviderKey idProvider, final HttpMethod method, final String endpoint,
+                                          final Map<String, String> params )
+    {
         final PortalRequest request = new PortalRequest();
         request.setMethod( method );
         request.setScheme( "https" );
         request.setHost( "admin.example.com" );
-        request.setRawPath( "/_/idprovider/system/" + endpoint );
-        request.setUrl( "https://admin.example.com/_/idprovider/system/" + endpoint + ( method == HttpMethod.GET ? "?x=1" : "" ) );
+        request.setRawPath( "/_/idprovider/" + idProvider + "/" + endpoint );
+        request.setUrl( "https://admin.example.com/_/idprovider/" + idProvider + "/" + endpoint + ( method == HttpMethod.GET ? "?x=1" : "" ) );
         params.forEach( ( k, v ) -> request.getParams().put( k, v ) );
 
         final Map<String, Object> attributes = new HashMap<>();
@@ -535,6 +547,160 @@ class OAuthHandlerTest
             "token", UNRESTRICTED );
         assertThat( body( refresh ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
         verify( idProviderControllerService, Mockito.never() ).execute( any() );
+    }
+
+    private static PortalRequest onVhost( final PortalRequest request, final VirtualHostIdProvider system )
+    {
+        return onVhost( request, VirtualHostIdProvidersMapping.create()
+            .addIdProviderWithSettings( OTHER, UNRESTRICTED )
+            .addIdProviderWithSettings( IdProviderKey.system(), system ) );
+    }
+
+    private static PortalRequest onVhostWithoutSystem( final PortalRequest request )
+    {
+        return onVhost( request, VirtualHostIdProvidersMapping.create().addIdProviderWithSettings( OTHER, UNRESTRICTED ) );
+    }
+
+    private static PortalRequest onVhost( final PortalRequest request, final VirtualHostIdProvidersMapping.Builder served )
+    {
+        request.setVirtualHost( new VirtualHostMapping( "m", "admin.example.com", "/", "/", served.build(), 0, Map.of(),
+                                                        DispatchConstants.WEB_CONNECTOR, PrincipalKeys.empty(), Set.of() ) );
+        return request;
+    }
+
+    private void onlySystemHasThePage()
+    {
+        when( idProviderControllerService.hasFunction( any(), eq( OAuthHandler.CONSENT_FUNCTION ) ) ).thenAnswer(
+            i -> IdProviderKey.system().equals( i.getArgument( 0 ) ) );
+    }
+
+    @Test
+    void an_id_provider_without_the_page_gets_the_system_id_providers_page()
+        throws Exception
+    {
+        onlySystemHasThePage();
+        final JsonNode issued = body( handler.handle(
+            onVhost( request( OTHER, HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), ASSETS_ONLY ),
+            OTHER, "device/code", UNRESTRICTED ) );
+        final String userCode = issued.get( "user_code" ).asText();
+        assertThat( issued.get( "verification_uri" ).asText() ).isEqualTo( "https://admin.example.com/_/idprovider/other/device" );
+        assertThat( issued.get( "verification_uri_complete" ).asText() ).isEqualTo(
+            "https://admin.example.com/_/idprovider/other/device?user_code=" + userCode );
+
+        asUser( BOB, () -> {
+            final PortalRequest page = onVhost( request( OTHER, HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), ASSETS_ONLY );
+            final PortalResponse response = handler.handle( page, OTHER, "device", UNRESTRICTED );
+
+            assertThat( response.getBody() ).isEqualTo( "page:confirm" );
+            final ArgumentCaptor<IdProviderControllerExecutionParams> params =
+                ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
+            verify( idProviderControllerService ).execute( params.capture() );
+            assertThat( params.getValue().getIdProviderKey() ).isEqualTo( IdProviderKey.system() );
+            assertThat( params.getValue().getFunctionName() ).isEqualTo( OAuthHandler.CONSENT_FUNCTION );
+            assertThat( params.getValue().getPortalRequest() ).isSameAs( page );
+            assertThat( lastContext ).containsEntry( "idProvider", "other" );
+            assertThat( user( lastContext ) ).containsEntry( "key", "user:other:bob" );
+
+            final PortalResponse done = handler.handle( onVhost(
+                request( OTHER, HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "true", "_csrf",
+                                                            (String) lastContext.get( "csrf" ) ) ), ASSETS_ONLY ),
+                                                        OTHER, "device", UNRESTRICTED );
+            assertThat( done.getBody() ).isEqualTo( "page:done" );
+            assertThat( lastContext ).containsEntry( "approved", true );
+            return null;
+        } );
+
+        handler.handle( onVhost( request( OTHER, HttpMethod.POST, "token",
+                                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
+                                                         issued.get( "device_code" ).asText(), "client_id", "cli" ) ), ASSETS_ONLY ), OTHER, "token", UNRESTRICTED );
+        final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
+        verify( grantService ).create( grant.capture() );
+        assertThat( grant.getValue().getSubject() ).isEqualTo( BOB );
+    }
+
+    @Test
+    void the_system_id_providers_page_is_no_default_on_a_vhost_without_the_system_id_provider()
+        throws Exception
+    {
+        onlySystemHasThePage();
+
+        assertThatThrownBy( () -> handler.handle(
+            onVhostWithoutSystem( request( OTHER, HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ) ), OTHER, "device/code",
+            UNRESTRICTED ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+        asUser( BOB, () -> {
+            assertThatThrownBy(
+                () -> handler.handle( onVhostWithoutSystem( request( OTHER, HttpMethod.GET, "device", Map.of() ) ), OTHER, "device",
+                                      UNRESTRICTED ) ).isInstanceOf( WebException.class )
+                .hasMessageContaining( "'other' id provider has no consent page" );
+            return null;
+        } );
+        verify( idProviderControllerService, never() ).execute( any() );
+    }
+
+    @Test
+    void the_system_id_providers_page_is_the_default_where_its_flows_are_not_restricted()
+        throws Exception
+    {
+        onlySystemHasThePage();
+
+        asUser( BOB, () -> {
+            final PortalResponse response = handler.handle(
+                onVhost( request( OTHER, HttpMethod.GET, "device", Map.of() ), VirtualHostIdProvider.create().build() ), OTHER, "device",
+                UNRESTRICTED );
+            assertThat( response.getBody() ).isEqualTo( "page:enter" );
+            return null;
+        } );
+    }
+
+    @Test
+    void without_the_page_on_the_system_id_provider_either_there_is_none()
+        throws Exception
+    {
+        when( idProviderControllerService.hasFunction( any(), any() ) ).thenReturn( false );
+
+        asUser( BOB, () -> {
+            assertThatThrownBy( () -> handler.handle(
+                onVhost( request( OTHER, HttpMethod.GET, "authorize", Map.of() ), ASSETS_ONLY ), OTHER, "authorize",
+                UNRESTRICTED ) ).isInstanceOf( WebException.class )
+                .extracting( e -> ( (WebException) e ).getStatus() )
+                .isEqualTo( HttpStatus.NOT_FOUND );
+            return null;
+        } );
+        verify( idProviderControllerService, never() ).execute( any() );
+    }
+
+    @Test
+    void sign_in_stays_the_id_providers_own_when_the_page_is_the_system_id_providers()
+        throws Exception
+    {
+        onlySystemHasThePage();
+        final PortalRequest page = onVhost( request( OTHER, HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY );
+
+        final PortalResponse response = handler.handle( page, OTHER, "device", UNRESTRICTED );
+
+        assertThat( response.getBody() ).isEqualTo( "login" );
+        final ArgumentCaptor<IdProviderControllerExecutionParams> params = ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
+        verify( idProviderControllerService ).execute( params.capture() );
+        assertThat( params.getValue().getFunctionName() ).isEqualTo( OAuthHandler.LOGIN_FUNCTION );
+        assertThat( params.getValue().getIdProviderKey() ).isEqualTo( OTHER );
+    }
+
+    @Test
+    void a_signed_in_user_of_another_id_provider_is_told_so_on_the_system_id_providers_page()
+        throws Exception
+    {
+        onlySystemHasThePage();
+
+        asAlice( () -> {
+            final PortalResponse response = handler.handle(
+                onVhost( request( OTHER, HttpMethod.GET, "device", Map.of() ), ASSETS_ONLY ), OTHER, "device",
+                UNRESTRICTED );
+            assertThat( response.getBody() ).isEqualTo( "page:wrongAccount" );
+            assertThat( lastContext ).containsEntry( "idProvider", "other" );
+            return null;
+        } );
     }
 
     @Test
