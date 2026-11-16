@@ -79,7 +79,7 @@ guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.24.1" }
 
-owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20261011.1" }
+owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20261110.1" }
 
 bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.17" }
 
