@@ -9,11 +9,15 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -535,5 +539,47 @@ class VirtualHostConfigMapTest
         map.put( "mapping.mgmt.context.api.not an app:snapshot.verbs", "list" );
 
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
+
+    @Test
+    void testApiAllowList()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.allow", "media:image, com.example.app:* ,admin:event" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+        final VirtualHostApiAllowList allowList = virtualHost.getApiAllowList().orElseThrow();
+
+        assertEquals( Set.of( DescriptorKey.from( "media:image" ), DescriptorKey.from( "admin:event" ) ), allowList.getApis() );
+        assertEquals( Set.of( ApplicationKey.from( "com.example.app" ) ), allowList.getApplications() );
+        assertEquals( "media:image, com.example.app:* ,admin:event", virtualHost.getContext().get( "api.allow" ) );
+    }
+
+    @Test
+    void testNoApiAllowList()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+
+        assertTrue( new VirtualHostConfigMap( map ).buildMappings().get( 0 ).getApiAllowList().isEmpty() );
+    }
+
+    @Test
+    void testApiAllowListWithInvalidEntry()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.allow", "media:image, notAnApi" );
+
+        assertThatThrownBy( () -> new VirtualHostConfigMap( map ).buildMappings() ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "mapping.site.context.api.allow" );
+    }
+
+    @Test
+    void testApiAllowListEmpty()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.allow", " , " );
+
+        assertThatThrownBy( () -> new VirtualHostConfigMap( map ).buildMappings() ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "mapping.site.context.api.allow" );
     }
 }

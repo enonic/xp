@@ -21,6 +21,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
@@ -262,16 +263,16 @@ final class VirtualHostConfigMap
             .filter( entry -> entry.getKey().startsWith( configPrefix ) )
             .collect( Collectors.toMap( entry -> entry.getKey().replace( configPrefix, "" ), Map.Entry::getValue ) );
 
-        context.keySet().forEach( key -> validateApiContextKey( mappingPrefix, key ) );
+        context.forEach( ( key, value ) -> validateApiContextKey( mappingPrefix, key, value ) );
         return context;
     }
 
     /**
-     * The {@code api.} context namespace carries the management API policies of a vhost and is validated eagerly: a
-     * key that fails to parse would otherwise be ignored, leaving the API it was meant to restrict unrestricted.
-     * Accepted forms are {@code api.rest.enabled} and {@code api.<application>:<api>.<setting>}.
+     * The {@code api.} context namespace carries the API policies of a vhost and is validated eagerly: a key that
+     * fails to parse would otherwise be ignored, leaving the API it was meant to restrict unrestricted. Accepted forms
+     * are {@code api.rest.enabled}, {@code api.allow} and {@code api.<application>:<api>.<setting>}.
      */
-    private static void validateApiContextKey( final String mappingPrefix, final String key )
+    private static void validateApiContextKey( final String mappingPrefix, final String key, final String value )
     {
         if ( !key.startsWith( API_CONTEXT_PREFIX ) )
         {
@@ -282,16 +283,35 @@ final class VirtualHostConfigMap
         {
             return;
         }
+        if ( VirtualHostApiAllowList.CONTEXT_KEY.equals( key ) )
+        {
+            validateApiAllowList( mappingPrefix, key, value );
+            return;
+        }
 
         final int colon = remainder.indexOf( ':' );
         final int dot = colon < 0 ? -1 : remainder.indexOf( '.', colon );
         if ( colon <= 0 || dot <= colon + 1 || dot == remainder.length() - 1 )
         {
             throw new IllegalArgumentException(
-                "Invalid context key [" + mappingPrefix + "context." + key + "] in vhost mapping, expected api.rest.enabled or " +
-                    "api.<application>\\:<api>.<setting> (the colon must be escaped in .cfg files)" );
+                "Invalid context key [" + mappingPrefix + "context." + key + "] in vhost mapping, expected api.rest.enabled, " +
+                    "api.allow or api.<application>\\:<api>.<setting> (the colon must be escaped in .cfg files)" );
         }
         ApplicationKey.from( remainder.substring( 0, colon ) );
+    }
+
+    private static void validateApiAllowList( final String mappingPrefix, final String key, final String value )
+    {
+        try
+        {
+            VirtualHostApiAllowList.parse( value );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new IllegalArgumentException(
+                "Invalid value [" + value + "] for [" + mappingPrefix + "context." + key + "] in vhost mapping, expected a comma " +
+                    "separated list of <application>:<api> or <application>:* entries", e );
+        }
     }
 
     private Map<String, String> getIdProviders( final String idProviderPrefix )

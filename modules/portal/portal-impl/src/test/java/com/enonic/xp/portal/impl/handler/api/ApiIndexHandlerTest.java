@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,8 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -243,4 +246,48 @@ class ApiIndexHandlerTest
         assertEquals( "myapplication:myapi-management", resources.get( 1 ).get( "descriptor" ) );
     }
 
+    @Test
+    void testDoHandle_virtualHostAllowList()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+        final Application application = mock( Application.class );
+
+        when( application.getKey() ).thenReturn( applicationKey );
+        when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( application ) );
+
+        final ApiDescriptors apiDescriptors = ApiDescriptors.from( ApiDescriptor.create()
+                                                                       .key( DescriptorKey.from( applicationKey, "allowed" ) )
+                                                                       .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+                                                                       .mount( "web" )
+                                                                       .build(), ApiDescriptor.create()
+                                                                       .key( DescriptorKey.from( applicationKey, "blocked" ) )
+                                                                       .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+                                                                       .mount( "web" )
+                                                                       .build() );
+
+        when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
+
+        universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
+                                                   Map.of( "key", "admin:extension", "mount", new String[]{"web"}, "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getApiAllowList() ).thenReturn( Optional.of( VirtualHostApiAllowList.parse( "myapplication:allowed" ) ) );
+
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setRawRequest( rawRequest );
+
+        final WebResponse webResponse =
+            this.handler.doHandle( webRequest, WebResponse.create().build(), mock( WebHandlerChain.class ) );
+
+        final Map<String, List<Map<String, Object>>> objectAsMap = (Map<String, List<Map<String, Object>>>) webResponse.getBody();
+        final List<Map<String, Object>> resources = objectAsMap.get( "resources" );
+        assertEquals( 1, resources.size() );
+        assertEquals( "myapplication:allowed", resources.get( 0 ).get( "descriptor" ) );
+    }
 }

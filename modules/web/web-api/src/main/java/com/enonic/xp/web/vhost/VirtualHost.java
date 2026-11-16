@@ -1,6 +1,7 @@
 package com.enonic.xp.web.vhost;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
@@ -123,4 +124,11 @@ public interface VirtualHost
      * request's execution context.
      */
     Map<String, String> getContext();
+
+    /**
+     * Returns the APIs this vhost exposes ({@code mapping.<name>.context.api.allow}), or empty when the mapping does
+     * not restrict them. When present, a request for an API that is not on the list gets a 404, even when the API is
+     * mounted.
+     */
+    Optional<VirtualHostApiAllowList> getApiAllowList();
 }

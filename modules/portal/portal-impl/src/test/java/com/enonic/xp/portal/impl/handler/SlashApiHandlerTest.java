@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.handler;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,8 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.sse.SseEndpoint;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -351,6 +354,109 @@ class SlashApiHandlerTest
             .mount( "web" )
             .build();
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+    }
+
+    @Test
+    void testHandleApiAllowedOnVirtualHost()
+    {
+        mountedOnWeb();
+        onVirtualHostAllowing( "com.enonic.app.myapp:api-key" );
+
+        assertEquals( HttpStatus.OK, this.handler.handle( request ).getStatus() );
+    }
+
+    @Test
+    void testHandleApiAllowedOnVirtualHostByApplication()
+    {
+        mountedOnWeb();
+        onVirtualHostAllowing( "com.enonic.app.myapp:*" );
+
+        assertEquals( HttpStatus.OK, this.handler.handle( request ).getStatus() );
+    }
+
+    @Test
+    void testHandleApiNotAllowedOnVirtualHost()
+    {
+        mountedOnWeb();
+        onVirtualHostAllowing( "com.enonic.app.myapp:other, com.enonic.app.other:*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .satisfies( e -> assertEquals( HttpStatus.NOT_FOUND, e.getStatus() ) )
+            .extracting( WebException::getMessage )
+            .isEqualTo( "API [com.enonic.app.myapp:api-key] not found" );
+        verify( controllerScript, never() ).execute( any() );
+    }
+
+    @Test
+    void testHttpOptionsOfApiNotAllowedOnVirtualHostIsNotFound()
+    {
+        request.setMethod( HttpMethod.OPTIONS );
+        mountedOnWeb();
+        onVirtualHostAllowing( "com.enonic.app.myapp:other" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    @Test
+    void testHandleApiAllowedOnVirtualHostButNotMounted()
+    {
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "management" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+        onVirtualHostAllowing( "com.enonic.app.myapp:api-key" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    @Test
+    void testHandleApiOnVirtualHostWithoutAllowList()
+    {
+        mountedOnWeb();
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getApiAllowList() ).thenReturn( Optional.empty() );
+        when( servletRequestMock.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        assertEquals( HttpStatus.OK, this.handler.handle( request ).getStatus() );
+    }
+
+    @Test
+    void testAdminMountNotAllowedOnVirtualHost()
+    {
+        final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
+        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn(
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build() );
+
+        final DescriptorKey toolKey = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "mytool" );
+        when( adminToolDescriptorService.getByKey( eq( toolKey ) ) ).thenReturn( AdminToolDescriptor.create()
+                                                                                    .title( "My Tool" )
+                                                                                    .key( toolKey )
+                                                                                    .addAllowedPrincipals(
+                                                                                        PrincipalKeys.from( RoleKeys.EVERYONE ) )
+                                                                                    .apiMounts( DescriptorKeys.from( apiDescriptorKey ) )
+                                                                                    .build() );
+
+        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
+        when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
+        onVirtualHostAllowing( "media:*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    private void onVirtualHostAllowing( final String allowList )
+    {
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getApiAllowList() ).thenReturn( Optional.of( VirtualHostApiAllowList.parse( allowList ) ) );
+        when( servletRequestMock.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
     }
 
     @Test
