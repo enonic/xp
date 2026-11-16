@@ -223,9 +223,6 @@ final class UpdateContentCommand
         }
 
         validateContentData( editedContent.getType(), editedContent.getData() );
-        validateMixins( editedContent.getMixins() );
-        validatePage( editedContent.getPage() );
-        validateSiteConfigs( editedContent.getData() );
 
         if ( editedContent.getType().isImageMedia() )
         {

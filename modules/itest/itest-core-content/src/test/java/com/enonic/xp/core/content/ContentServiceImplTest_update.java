@@ -19,6 +19,7 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.content.ComponentConfigValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersion;
@@ -28,18 +29,27 @@ import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.content.schema.MixinServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -53,9 +63,12 @@ import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.util.GenericValue;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -629,5 +642,84 @@ class ContentServiceImplTest_update
         when( mixinService.getByName( mixinDescriptor.getName() ) ).thenReturn( mixinDescriptor );
 
         return Mixins.create().add( new Mixin( mixinName, new PropertyTree() ) ).build();
+    }
+
+    @Test
+    void update_with_invalid_layout_config_saves_content_as_invalid()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create()
+                                                                                    .key( pageDescriptorKey )
+                                                                                    .config( Form.create().build() )
+                                                                                    .regions( RegionDescriptors.create().build() )
+                                                                                    .build() );
+
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn(
+            layoutDescriptor( layoutDescriptorKey, "bg-light", "bg-dark" ) );
+
+        final PropertyTree layoutConfig = new PropertyTree();
+        layoutConfig.addString( "backgroundColorClass", "bg-light" );
+        final LayoutComponent layoutComponent = LayoutComponent.create().descriptor( layoutDescriptorKey ).config( layoutConfig ).build();
+        final Regions regions = Regions.create().add( Region.create().name( "main" ).add( layoutComponent ).build() ).build();
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "This is my page" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .page( page )
+                                                                .build() );
+        assertTrue( content.isValid() );
+
+        when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( layoutDescriptor( layoutDescriptorKey, "bg-dark" ) );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.contentId( content.getId() ).editor( edit -> edit.displayName = "Edited unrelated field" );
+
+        assertDoesNotThrow( () -> this.contentService.update( updateContentParams ) );
+
+        final Content updatedContent = this.contentService.getById( content.getId() );
+        assertEquals( "Edited unrelated field", updatedContent.getDisplayName() );
+        assertFalse( updatedContent.isValid() );
+        assertThat( updatedContent.getValidationErrors().stream() ).hasSize( 1 );
+
+        final ValidationError error = updatedContent.getValidationErrors().stream().findFirst().orElseThrow();
+        assertThat( error ).isInstanceOf( ComponentConfigValidationError.class );
+        assertThat( error.getErrorCode().toString() ).isEqualTo( "system:cms.valueInvalid" );
+        assertThat( error.getI18n() ).isEqualTo( "system.cms.validation.valueInvalid.component" );
+        assertThat( ( (ComponentConfigValidationError) error ).getComponentPath().toString() ).isEqualTo( "/main/0" );
+        assertThat( ( (ComponentConfigValidationError) error ).getPropertyPath().toString() ).isEqualTo( "backgroundColorClass" );
+
+        final UpdateContentParams secondUpdate = new UpdateContentParams();
+        secondUpdate.contentId( content.getId() ).editor( edit -> edit.displayName = "Edited again" );
+
+        assertDoesNotThrow( () -> this.contentService.update( secondUpdate ) );
+
+        final Content updatedAgain = this.contentService.getById( content.getId() );
+        assertEquals( "Edited again", updatedAgain.getDisplayName() );
+        assertFalse( updatedAgain.isValid() );
+    }
+
+    private static LayoutDescriptor layoutDescriptor( final DescriptorKey key, final String... options )
+    {
+        final GenericValue.ListBuilder optionsBuilder = GenericValue.newList();
+        for ( final String option : options )
+        {
+            optionsBuilder.add( GenericValue.newObject()
+                                    .put( "value", option )
+                                    .put( "label", GenericValue.newObject().put( "text", option ).build() )
+                                    .build() );
+        }
+        final Form form = Form.create()
+            .addFormItem( Input.create()
+                              .name( "backgroundColorClass" )
+                              .label( "Background" )
+                              .inputType( InputTypeName.COMBO_BOX )
+                              .inputTypeProperty( "options", optionsBuilder.build() )
+                              .build() )
+            .build();
+        return LayoutDescriptor.create().key( key ).config( form ).regions( RegionDescriptors.create().build() ).build();
     }
 }

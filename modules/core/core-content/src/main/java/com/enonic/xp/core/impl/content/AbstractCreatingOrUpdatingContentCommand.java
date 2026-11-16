@@ -37,22 +37,11 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypes;
-import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
-import com.enonic.xp.region.Component;
-import com.enonic.xp.region.DescriptorBasedComponent;
-import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.PartComponent;
-import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
-import com.enonic.xp.region.Region;
-import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -60,14 +49,12 @@ import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.site.MixinOption;
 import com.enonic.xp.site.MixinOptions;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 class AbstractCreatingOrUpdatingContentCommand
@@ -193,87 +180,6 @@ class AbstractCreatingOrUpdatingContentCommand
         }
     }
 
-    void validateMixins( final Mixins mixins )
-    {
-        for ( Mixin mixin : mixins )
-        {
-            MixinDescriptor mixinDescriptor = mixinService.getByName( mixin.getName() );
-            if ( mixinDescriptor != null )
-            {
-                validateForm( mixinDescriptor.getForm(), mixin.getData(), "Incorrect mixin property" );
-            }
-        }
-    }
-
-    void validateSiteConfigs( final PropertyTree siteConfigsData )
-    {
-        SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( siteConfigsData.getRoot() );
-
-        for ( SiteConfig siteConfig : siteConfigs )
-        {
-            CmsDescriptor descriptor = cmsService.getDescriptor( siteConfig.getApplicationKey() );
-            if ( descriptor != null )
-            {
-                validateForm( descriptor.getForm(), siteConfig.getConfig(), "Incorrect site config property" );
-            }
-        }
-    }
-
-    void validatePage( final Page page )
-    {
-        if ( page == null )
-        {
-            return;
-        }
-
-        PageDescriptor descriptor = getPageDescriptor( page );
-        if ( descriptor != null )
-        {
-            validateForm( descriptor.getConfig(), page.getConfig(), "Incorrect page property" );
-        }
-
-        if ( page.hasRegions() )
-        {
-            validateRegions( page.getRegions() );
-        }
-    }
-
-    private void validateRegions( final Regions regions )
-    {
-        for ( Region region : regions )
-        {
-            for ( Component component : region.getComponents() )
-            {
-                if ( !( component instanceof DescriptorBasedComponent descriptorBasedComponent ) ||
-                    !descriptorBasedComponent.hasDescriptor() )
-                {
-                    continue;
-                }
-
-                if ( descriptorBasedComponent instanceof PartComponent part )
-                {
-                    PartDescriptor d = partDescriptorService.getByKey( part.getDescriptor() );
-                    if ( d != null )
-                    {
-                        validateForm( d.getConfig(), part.getConfig(), "Incorrect part component property" );
-                    }
-                }
-                else if ( descriptorBasedComponent instanceof LayoutComponent layout )
-                {
-                    LayoutDescriptor d = layoutDescriptorService.getByKey( layout.getDescriptor() );
-                    if ( d != null )
-                    {
-                        validateForm( d.getConfig(), layout.getConfig(), "Incorrect layout component property" );
-                        if ( layout.hasRegions() )
-                        {
-                            validateRegions( layout.getRegions() );
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private void validateForm( Form form, PropertyTree data, String errorMessage )
     {
         if ( form == null || data == null )
@@ -288,25 +194,6 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             throw new IllegalArgumentException( errorMessage, e );
         }
-    }
-
-    private PageDescriptor getPageDescriptor( final Page page )
-    {
-        if ( page.hasDescriptor() )
-        {
-            return pageDescriptorService.getByKey( page.getDescriptor() );
-        }
-
-        if ( page.hasTemplate() )
-        {
-            final PageTemplate pageTemplate = (PageTemplate) getContent( page.getTemplate().getContentId() );
-            if ( pageTemplate != null && pageTemplate.getPage() != null && pageTemplate.getPage().hasDescriptor() )
-            {
-                return pageDescriptorService.getByKey( pageTemplate.getPage().getDescriptor() );
-            }
-        }
-
-        return null;
     }
 
     void validateCreateAttachments( final CreateAttachments createAttachments )

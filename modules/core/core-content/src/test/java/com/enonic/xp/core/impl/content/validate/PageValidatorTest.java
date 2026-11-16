@@ -36,6 +36,7 @@ import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.GenericValue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,6 +49,8 @@ class PageValidatorTest
     private static final String COMPONENT_MAX_OCCURRENCES_I18N = "system.cms.validation.maxOccurrencesInvalid.component";
 
     private static final String COMPONENT_OPTIONSET_OCCURRENCES_I18N = "system.cms.validation.optionsetOccurrencesInvalid.component";
+
+    private static final String COMPONENT_VALUE_INVALID_I18N = "system.cms.validation.valueInvalid.component";
 
     private PageDescriptorService pageDescriptorService;
 
@@ -791,6 +794,213 @@ class PageValidatorTest
         final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
         validator.validate( params, validationErrorsBuilder );
         return validationErrorsBuilder.build();
+    }
+
+    @Test
+    void layout_component_with_removed_combobox_option_fails_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( emptyPageDescriptor( pageDescriptorKey ) );
+
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        final Form layoutForm = Form.create().addFormItem( comboBox( "backgroundColorClass", "bg-light", "bg-dark" ) ).build();
+        final LayoutDescriptor layoutDescriptor =
+            LayoutDescriptor.create().key( layoutDescriptorKey ).config( layoutForm ).regions( RegionDescriptors.create().build() ).build();
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( layoutDescriptor );
+
+        final PropertyTree layoutConfig = new PropertyTree();
+        layoutConfig.addString( "backgroundColorClass", "bg-lighter-light-blue" );
+        final LayoutComponent layoutComponent = LayoutComponent.create().descriptor( layoutDescriptorKey ).config( layoutConfig ).build();
+
+        final Regions regions = Regions.create().add( Region.create().name( "main" ).add( layoutComponent ).build() ).build();
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ValidationErrors validationErrors = validate( page );
+
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertValueInvalidError( validationErrors.stream().findFirst().orElseThrow(), "backgroundColorClass", "/main/0",
+                                 "Invalid value in [backgroundColorClass: bg-lighter-light-blue]: Value is not a valid option" );
+    }
+
+    @Test
+    void part_inside_layout_with_invalid_value_reports_nested_component_path()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( emptyPageDescriptor( pageDescriptorKey ) );
+
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
+            .key( layoutDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( layoutDescriptor );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem( Input.create()
+                              .name( "count" )
+                              .label( "Count" )
+                              .inputType( InputTypeName.LONG )
+                              .inputTypeProperty( "max", "5" )
+                              .build() )
+            .build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) )
+            .thenReturn( PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build() );
+
+        final PropertyTree partConfig = new PropertyTree();
+        partConfig.addLong( "count", 10L );
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+
+        final Regions layoutRegions = Regions.create().add( Region.create().name( "left" ).add( partComponent ).build() ).build();
+        final LayoutComponent layoutComponent =
+            LayoutComponent.create().descriptor( layoutDescriptorKey ).config( new PropertyTree() ).regions( layoutRegions ).build();
+
+        final Regions pageRegions = Regions.create().add( Region.create().name( "main" ).add( layoutComponent ).build() ).build();
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( pageRegions ).build();
+
+        final ValidationErrors validationErrors = validate( page );
+
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertValueInvalidError( validationErrors.stream().findFirst().orElseThrow(), "count", "/main/0/left/0",
+                                 "Invalid value in [count: 10]: The value cannot be greater than 5" );
+    }
+
+    @Test
+    void page_config_with_regexp_mismatch_fails_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create()
+            .addFormItem( Input.create()
+                              .name( "slug" )
+                              .label( "Slug" )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .inputTypeProperty( "regexp", "^[a-z-]+$" )
+                              .build() )
+            .build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final PropertyTree pageConfig = new PropertyTree();
+        pageConfig.addString( "slug", "Not A Slug" );
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( pageConfig ).build();
+
+        final ValidationErrors validationErrors = validate( page );
+
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertValueInvalidError( validationErrors.stream().findFirst().orElseThrow(), "slug", "/",
+                                 "Invalid value in [slug: Not A Slug]: Value does not match with regular expression" );
+    }
+
+    @Test
+    void invalid_values_in_page_and_component_are_all_collected()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create().addFormItem( comboBox( "theme", "light", "dark" ) ).build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create().addFormItem( comboBox( "align", "left", "right" ) ).build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) )
+            .thenReturn( PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build() );
+
+        final PropertyTree pageConfig = new PropertyTree();
+        pageConfig.addString( "theme", "sepia" );
+        final PropertyTree partConfig = new PropertyTree();
+        partConfig.addString( "align", "center" );
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+
+        final Regions regions = Regions.create().add( Region.create().name( "main" ).add( partComponent ).build() ).build();
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( pageConfig ).regions( regions ).build();
+
+        final ValidationErrors validationErrors = validate( page );
+
+        assertThat( validationErrors.stream() ).hasSize( 2 );
+        assertValueInvalidError( validationErrors.stream().toList().get( 0 ), "theme", "/",
+                                 "Invalid value in [theme: sepia]: Value is not a valid option" );
+        assertValueInvalidError( validationErrors.stream().toList().get( 1 ), "align", "/main/0",
+                                 "Invalid value in [align: center]: Value is not a valid option" );
+    }
+
+    @Test
+    void occurrence_and_value_errors_are_reported_together()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( emptyPageDescriptor( pageDescriptorKey ) );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .addFormItem( comboBox( "align", "left", "right" ) )
+            .build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) )
+            .thenReturn( PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build() );
+
+        final PropertyTree partConfig = new PropertyTree();
+        partConfig.addString( "align", "center" );
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+
+        final Regions regions = Regions.create().add( Region.create().name( "main" ).add( partComponent ).build() ).build();
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ValidationErrors validationErrors = validate( page );
+
+        assertThat( validationErrors.stream() ).hasSize( 2 );
+        assertMinOccurrenceError( validationErrors, "title", "title", "/main/0", 1, 0 );
+        assertValueInvalidError( validationErrors.stream().toList().get( 1 ), "align", "/main/0",
+                                 "Invalid value in [align: center]: Value is not a valid option" );
+    }
+
+    private ValidationErrors validate( final Page page )
+    {
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+        return validationErrorsBuilder.build();
+    }
+
+    private static PageDescriptor emptyPageDescriptor( final DescriptorKey key )
+    {
+        return PageDescriptor.create().key( key ).config( Form.create().build() ).regions( RegionDescriptors.create().build() ).build();
+    }
+
+    private static Input comboBox( final String name, final String... values )
+    {
+        final GenericValue.ListBuilder options = GenericValue.newList();
+        for ( final String value : values )
+        {
+            options.add( GenericValue.newObject()
+                             .put( "value", value )
+                             .put( "label", GenericValue.newObject().put( "text", value ).build() )
+                             .build() );
+        }
+        return Input.create()
+            .name( name )
+            .label( name )
+            .inputType( InputTypeName.COMBO_BOX )
+            .inputTypeProperty( "options", options.build() )
+            .build();
+    }
+
+    private static void assertValueInvalidError( final ValidationError error, final String expectedPropertyPath,
+                                                 final String expectedComponentPath, final String expectedMessage )
+    {
+        assertThat( error ).isInstanceOf( ComponentConfigValidationError.class );
+        assertThat( error.getErrorCode().toString() ).isEqualTo( "system:cms.valueInvalid" );
+        assertThat( error.getI18n() ).isEqualTo( COMPONENT_VALUE_INVALID_I18N );
+        assertThat( error.getArgs() ).containsExactly( expectedComponentPath, expectedMessage );
+
+        final ComponentConfigValidationError componentError = (ComponentConfigValidationError) error;
+        assertThat( componentError.getPropertyPath().toString() ).isEqualTo( expectedPropertyPath );
+        assertThat( componentError.getComponentPath().toString() ).isEqualTo( expectedComponentPath );
+        assertThat( componentError.getApplicationKey() ).isEqualTo( ApplicationKey.from( "myapp" ) );
     }
 
     private void assertMinOccurrenceError( final ValidationErrors validationErrors, final String expectedPropertyPath,
