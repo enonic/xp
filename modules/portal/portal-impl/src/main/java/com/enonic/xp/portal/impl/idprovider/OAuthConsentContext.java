@@ -29,7 +29,7 @@ import com.enonic.xp.security.token.Scopes;
  *   idProvider: "system",
  *   action: "enter" | "confirm" | "done" | "wrongAccount",
  *   flow: "device" | "code",               // confirm, done: which flow the request belongs to
- *   user: { key, login, displayName },
+ *   user: { key, login, displayName, email },   // email: absent when the user has none
  *   error: "invalid_code",                 // enter: why the previous code was refused, if any; the page words it
  *   userCode: "BCDF-GHJK",                 // confirm, device flow
  *   requestId: "...",                      // confirm, code flow: the form must post it back as request
@@ -286,6 +286,7 @@ sealed interface OAuthConsentContext
         user.put( "key", user().getKey().toString() );
         user.put( "login", user().getLogin() );
         user.put( "displayName", user().getDisplayName() );
+        putIfPresent( user, "email", user().getEmail() );
         map.put( "user", user );
         return map;
     }
