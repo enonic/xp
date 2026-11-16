@@ -102,6 +102,11 @@ public final class PageValidator
         {
             validateRegions( page.getRegions(), validationErrorsBuilder );
         }
+
+        if ( page.isFragment() )
+        {
+            validateComponent( page.getFragment(), validationErrorsBuilder );
+        }
     }
 
     private void validateRegions( final Regions regions, final ValidationErrors.Builder validationErrorsBuilder )
@@ -110,14 +115,20 @@ public final class PageValidator
         {
             for ( com.enonic.xp.region.Component component : region.getComponents() )
             {
-                if ( component instanceof PartComponent )
-                {
-                    validatePartComponent( (PartComponent) component, validationErrorsBuilder );
-                }
-                else if ( component instanceof LayoutComponent )
-                {
-                    validateLayoutComponent( (LayoutComponent) component, validationErrorsBuilder );
-                }
+                validateComponent( component, validationErrorsBuilder );
+            }
+        }
+    }
+
+    private void validateComponent( final com.enonic.xp.region.Component component,
+                                    final ValidationErrors.Builder validationErrorsBuilder )
+    {
+        switch ( component )
+        {
+            case PartComponent part -> validatePartComponent( part, validationErrorsBuilder );
+            case LayoutComponent layout -> validateLayoutComponent( layout, validationErrorsBuilder );
+            default ->
+            {
             }
         }
     }
