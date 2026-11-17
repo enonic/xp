@@ -318,6 +318,7 @@ export interface OAuthConsentUser {
     key: string;
     login: string;
     displayName: string;
+    email?: string;
 }
 
 export interface OAuthConsentScope {
