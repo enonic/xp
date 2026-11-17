@@ -13,6 +13,7 @@ import com.google.common.io.CharSource;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.ServletResponseBody;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.csp.ContentSecurityPolicy;
@@ -84,7 +85,16 @@ public final class ResponseSerializer
     private void serializeBody( final HttpServletResponse response, final Object body )
         throws IOException
     {
-        if ( body instanceof ByteSource )
+        if ( body instanceof ServletResponseBody writer )
+        {
+            final var rawRequest = this.webRequest.getRawRequest();
+            if ( rawRequest == null )
+            {
+                throw new IOException( "ServletResponseBody requires a raw servlet request; set WebRequest.rawRequest before serialization" );
+            }
+            writer.write( rawRequest, response );
+        }
+        else if ( body instanceof ByteSource )
         {
             writeToStream( response, (ByteSource) body );
         }

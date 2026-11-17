@@ -1,9 +1,16 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-schema' )
+    implementation project( ':portal:portal-api' )
     implementation libs.mcp.core
     implementation libs.mcp.json.jackson2
     implementation libs.jackson.databind
+
+    testImplementation project( ':web:web-impl' )
+    testImplementation project( ':portal:portal-impl' )
+    testImplementation project( ':admin:admin-api' )
+    testImplementation libs.jetty.server
+    testImplementation libs.jetty.servlet
 }
 
 jar {

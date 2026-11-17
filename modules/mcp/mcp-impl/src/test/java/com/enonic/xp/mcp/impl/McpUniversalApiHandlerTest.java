@@ -1,0 +1,434 @@
+package com.enonic.xp.mcp.impl;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee11.servlet.ServletHolder;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.api.ApiDescriptorService;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.portal.impl.handler.SlashApiHandler;
+import com.enonic.xp.portal.script.PortalScriptService;
+import com.enonic.xp.portal.sse.SseManager;
+
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteService;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
+import com.enonic.xp.webapp.WebappService;
+
+import io.modelcontextprotocol.json.jackson2.JacksonMcpJsonMapper;
+import io.modelcontextprotocol.modern.McpSchema.Tool;
+import io.modelcontextprotocol.modern.client.McpClient;
+import io.modelcontextprotocol.modern.client.McpSyncClient;
+import io.modelcontextprotocol.modern.client.transport.HttpClientMcpTransport;
+import io.modelcontextprotocol.modern.server.McpRequestContext;
+import io.modelcontextprotocol.modern.server.feature.McpSyncTool;
+import io.modelcontextprotocol.modern.server.feature.McpSyncToolRepository;
+import io.modelcontextprotocol.modern.server.feature.ToolsPage;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static io.modelcontextprotocol.modern.McpSchema.LATEST_PROTOCOL_VERSION;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.RETURNS_SELF;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+@NullMarked
+class McpUniversalApiHandlerTest
+{
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private static final Duration TIMEOUT = Duration.ofSeconds( 10 );
+
+    private static final String VERSION_META = "io.modelcontextprotocol/protocolVersion";
+
+    private static final Map<String, Object> ECHO_SCHEMA = Map.of( "type", "object", "properties",
+        Map.of( "message", Map.of( "type", "string" ) ), "required", List.of( "message" ), "additionalProperties", false );
+
+    @Test
+    void discovers_empty_production_repository_with_modern_sdk_client()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        {
+            final var client = endpoint.sdkClient();
+            final var discovery = client.discover();
+            assertThat( discovery.supportedVersions() ).contains( LATEST_PROTOCOL_VERSION );
+            assertThat( discovery.capabilities().tools() ).isNotNull();
+            assertThat( client.listTools().list().tools() ).isEmpty();
+
+            final var raw = json( endpoint.rpc( "server/discover", Map.of() ), 200 ).path( "result" );
+            assertThat( raw.path( "capabilities" ).has( "subscriptions" ) ).isFalse();
+            assertThat( raw.path( "capabilities" ).path( "tools" ).path( "listChanged" ).asBoolean() ).isFalse();
+            assertThat( raw.path( "capabilities" ).has( "resources" ) ).isFalse();
+            assertThat( raw.path( "capabilities" ).has( "prompts" ) ).isFalse();
+            assertThat( json( endpoint.rpc( "subscriptions/listen", Map.of() ), 404 )
+                            .path( "error" ).path( "code" ).asInt() ).isEqualTo( -32601 );
+            assertThat( json( endpoint.rpc( "tools/list", Map.of() ), 200 ).path( "result" ).path( "tools" ).isEmpty() ).isTrue();
+        }
+    }
+
+    @Test
+    void calls_injected_echo_fixture_with_sdk_and_replayed_unicode_body()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( new EchoRepository() ), false ) )
+        {
+            final var client = endpoint.sdkClient();
+            assertThat( client.listTools().list().tools() ).singleElement().satisfies(
+                tool -> assertThat( tool.name() ).isEqualTo( "echo" ) );
+            final var result = client.tool( "echo" ).arguments( Map.of( "message", "Héllo 世界 🌍" ) ).call();
+            assertThat( result.isError() ).isNotEqualTo( true );
+            assertThat( result.structuredContent() ).isEqualTo( Map.of( "message", "Héllo 世界 🌍" ) );
+            assertThat( client.tool( "echo" ).arguments( Map.of( "message", 42 ) ).call().isError() ).isTrue();
+            final var raw = json( endpoint.rpc( "tools/call", Map.of( "name", "echo", "arguments",
+                Map.of( "message", "Héllo 世界 🌍" ) ) ), 200 ).path( "result" );
+            assertThat( raw.path( "structuredContent" ).path( "message" ).asText() ).isEqualTo( "Héllo 世界 🌍" );
+            assertThat( raw.path( "content" ).get( 0 ).path( "text" ).asText() ).isEqualTo( "Héllo 世界 🌍" );
+        }
+    }
+
+    @Test
+    void routes_registered_web_api_through_real_registry_and_slash_handler()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), true ) )
+        {
+            assertThat( endpoint.sdkClient().listTools().list().tools() ).isEmpty();
+            assertThat( json( endpoint.rpc( "server/discover", Map.of() ), 200 ).has( "result" ) ).isTrue();
+        }
+    }
+
+    @Test
+    void rejects_unknown_tools_and_cursors()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        {
+            final var unknown = json( endpoint.rpc( "tools/call", Map.of( "name", "echo", "arguments", Map.of() ) ), 400 );
+            assertThat( unknown.path( "error" ).path( "message" ).asText() ).containsIgnoringCase( "echo" );
+            final var cursor = json( endpoint.rpc( "tools/list", Map.of( "cursor", "unknown" ) ), 400 );
+            assertThat( cursor.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
+            assertThat( cursor.path( "error" ).path( "message" ).asText() ).contains( "cursor" );
+        }
+    }
+
+    @Test
+    void rejects_malformed_json_and_batches()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        {
+            assertThat( json( endpoint.post( "{", "application/json", Map.of() ), 400 )
+                            .path( "error" ).path( "code" ).asInt() ).isEqualTo( -32700 );
+            final var batch = "[" + request( "tools/list", Map.of() ) + "]";
+            assertThat( json( endpoint.post( batch, "application/json", headers( "tools/list" ) ), 400 )
+                            .path( "error" ).path( "code" ).asInt() ).isEqualTo( -32600 );
+        }
+    }
+
+    @Test
+    void rejects_wrong_media_type_legacy_verbs_and_subpaths()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        {
+            assertThat( endpoint.post( "{}", "text/plain", Map.of() ).statusCode() ).isEqualTo( 415 );
+            for ( final var method : List.of( "GET", "DELETE" ) )
+            {
+                assertThat( endpoint.send( HttpRequest.newBuilder( endpoint.uri ).method( method, HttpRequest.BodyPublishers.noBody() ) )
+                                .statusCode() ).isEqualTo( 405 );
+            }
+            assertThat( endpoint.send( HttpRequest.newBuilder( URI.create( endpoint.uri + "/unknown" ) )
+                .POST( HttpRequest.BodyPublishers.ofString( "{}" ) ) ).statusCode() ).isEqualTo( 404 );
+        }
+    }
+
+    @Test
+    void validates_missing_mismatched_and_duplicate_mirror_headers()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        {
+            final var body = request( "tools/call", Map.of( "name", "echo", "arguments", Map.of() ) );
+            final var valid = headers( "tools/call" );
+            valid.put( "Mcp-Name", List.of( "echo" ) );
+            for ( final var name : List.of( "Mcp-Method", "MCP-Protocol-Version", "Mcp-Name" ) )
+            {
+                final var missing = new LinkedHashMap<>( valid );
+                missing.remove( name );
+                assertHeaderError( endpoint.post( body, "application/json", missing ), name );
+                final var mismatch = new LinkedHashMap<>( valid );
+                mismatch.put( name, List.of( "wrong" ) );
+                assertHeaderError( endpoint.post( body, "application/json", mismatch ), name );
+                final var duplicate = new LinkedHashMap<>( valid );
+                duplicate.put( name, List.of( valid.get( name ).getFirst(), valid.get( name ).getFirst() ) );
+                assertHeaderError( endpoint.post( body, "application/json", duplicate ), name );
+            }
+        }
+    }
+
+    @Test
+    void reports_unsupported_protocol_and_legacy_initialize()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        {
+            final var params = Map.of( "_meta", Map.of( VERSION_META, "1900-01-01" ) );
+            final var response = json( endpoint.post( requestWithoutMeta( "tools/list", params ), "application/json",
+                Map.of( "Mcp-Method", List.of( "tools/list" ), "MCP-Protocol-Version", List.of( "1900-01-01" ) ) ), 400 );
+            assertThat( response.path( "error" ).path( "message" ).asText() ).containsIgnoringCase( "version" );
+            final var initialize = endpoint.post( requestWithoutMeta( "initialize", Map.of( "protocolVersion", "2025-11-25",
+                "capabilities", Map.of(), "clientInfo", Map.of( "name", "test", "version", "1" ) ) ),
+                "application/json", Map.of() );
+            final var error = json( initialize, 400 ).path( "error" );
+            assertThat( error.path( "message" ).asText() ).contains( "initialize", LATEST_PROTOCOL_VERSION );
+        }
+    }
+
+    @Test
+    void accepts_notifications_and_rejects_requests_after_deactivation()
+        throws Exception
+    {
+        final var handler = new McpUniversalApiHandler();
+        try ( var endpoint = new Endpoint( handler, false ) )
+        {
+            final var response = endpoint.post( "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}",
+                "application/json", Map.of() );
+            assertThat( response.statusCode() ).isEqualTo( 202 );
+            assertThat( response.body() ).isEmpty();
+            handler.deactivate();
+            assertThat( endpoint.rpc( "tools/list", Map.of() ).statusCode() ).isEqualTo( 503 );
+        }
+    }
+
+    @Test
+    void preserves_sdk_default_origin_rejection()
+        throws Exception
+    {
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        {
+            final var headers = headers( "tools/list" );
+            headers.put( "Origin", List.of( "https://untrusted.example" ) );
+            assertThat( endpoint.post( request( "tools/list", Map.of() ), "application/json", headers ).statusCode() ).isEqualTo( 403 );
+        }
+    }
+
+    private static void assertHeaderError( final HttpResponse<String> response, final String name )
+        throws IOException
+    {
+        final var error = json( response, 400 ).path( "error" );
+        assertThat( error.path( "code" ).asInt() ).isEqualTo( -32020 );
+        assertThat( error.path( "message" ).asText() ).containsIgnoringCase( name );
+    }
+
+    private static JsonNode json( final HttpResponse<String> response, final int status )
+        throws IOException
+    {
+        assertThat( response.statusCode() ).as( response.body() ).isEqualTo( status );
+        assertThat( response.headers().firstValue( "Content-Type" ).orElse( "" ) ).startsWith( "application/json" );
+        assertThat( response.body() ).doesNotContain( "event:", "data:" );
+        return MAPPER.readTree( response.body() );
+    }
+
+    private static Map<String, List<String>> headers( final String method )
+    {
+        final var result = new LinkedHashMap<String, List<String>>();
+        result.put( "Mcp-Method", List.of( method ) );
+        result.put( "MCP-Protocol-Version", List.of( LATEST_PROTOCOL_VERSION ) );
+        return result;
+    }
+
+    private static String request( final String method, final Map<String, ?> params )
+        throws IOException
+    {
+        final var versioned = new LinkedHashMap<String, Object>( params );
+        versioned.put( "_meta", Map.of( VERSION_META, LATEST_PROTOCOL_VERSION,
+            "io.modelcontextprotocol/clientCapabilities", Map.of() ) );
+        return requestWithoutMeta( method, versioned );
+    }
+
+    private static String requestWithoutMeta( final String method, final Map<String, ?> params )
+        throws IOException
+    {
+        return MAPPER.writeValueAsString( Map.of( "jsonrpc", "2.0", "id", 1, "method", method, "params", params ) );
+    }
+
+    private static final class EchoRepository
+        implements McpSyncToolRepository
+    {
+        private final McpSyncTool echo = McpToolAdapter.bind( Tool.builder( "echo", ECHO_SCHEMA ).outputSchema( ECHO_SCHEMA ).build(),
+            ( name, arguments ) -> Map.of( "content", List.of( Map.of( "type", "text", "text", arguments.get( "message" ) ) ),
+                "structuredContent", arguments ) );
+
+        @Override
+        public ToolsPage list( final McpRequestContext context, final @Nullable String cursor )
+        {
+            return ToolsPage.of( List.of( echo.definition() ) );
+        }
+
+        @Override
+        public @Nullable McpSyncTool find( final McpRequestContext context, final String name )
+        {
+            return "echo".equals( name ) ? echo : null;
+        }
+    }
+
+    private static final class Endpoint
+        implements AutoCloseable
+    {
+        private final McpUniversalApiHandler handler;
+
+        private final Server server = new Server();
+
+        private final HttpClient http = HttpClient.newBuilder().version( HttpClient.Version.HTTP_1_1 ).connectTimeout( TIMEOUT ).build();
+
+        private final URI uri;
+
+        private Endpoint( final McpUniversalApiHandler handler, final boolean routed )
+            throws Exception
+        {
+            this.handler = handler;
+            final Function<WebRequest, WebResponse> dispatch = routed ? routing( handler ) : handler::handle;
+            final var connector = new ServerConnector( server );
+            connector.setHost( "localhost" );
+            connector.setPort( 0 );
+            server.addConnector( connector );
+            final var servletContext = new ServletContextHandler();
+            servletContext.setContextPath( "/" );
+            servletContext.addServlet( new ServletHolder( new HttpServlet()
+            {
+                @Override
+                protected void service( final HttpServletRequest request, final HttpServletResponse response )
+                    throws IOException
+                {
+                    request.setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, DispatchConstants.WEB_CONNECTOR );
+                    final var serializer = new WebSerializerServiceImpl();
+                    final var webRequest = serializer.request( request );
+                    webRequest.setBody( new String( request.getInputStream().readAllBytes(), UTF_8 ) );
+                    assertThat( request.getInputStream().read() ).isEqualTo( -1 );
+                    final var context = ContextBuilder.create().authInfo( AuthenticationInfo.unAuthenticated() ).build();
+                    context.callWith( () -> {
+                        serializer.response( webRequest, dispatch.apply( webRequest ), response );
+                        return null;
+                    } );
+                }
+            } ), "/*" );
+            server.setHandler( servletContext );
+            try
+            {
+                server.start();
+                uri = URI.create( "http://localhost:" + connector.getLocalPort() + "/api/system:mcp" );
+            }
+            catch ( Exception e )
+            {
+                close();
+                throw e;
+            }
+        }
+
+        private McpSyncClient sdkClient()
+        {
+            final var mapper = new JacksonMcpJsonMapper( MAPPER );
+            final var builder = mock( HttpClient.Builder.class, RETURNS_SELF );
+            when( builder.build() ).thenReturn( http );
+            final var transport = HttpClientMcpTransport.builder( uri ).clientBuilder( builder ).jsonMapper( mapper ).build();
+            return McpClient.sync( transport ).jsonMapper( mapper ).roundTimeout( TIMEOUT ).callTimeout( TIMEOUT ).build();
+        }
+
+        private HttpResponse<String> rpc( final String method, final Map<String, ?> params )
+            throws IOException, InterruptedException
+        {
+            final var headers = headers( method );
+            if ( params.get( "name" ) instanceof String name )
+            {
+                headers.put( "Mcp-Name", List.of( name ) );
+            }
+            return post( request( method, params ), "application/json", headers );
+        }
+
+        private HttpResponse<String> post( final String body, final String contentType, final Map<String, List<String>> headers )
+            throws IOException, InterruptedException
+        {
+            final var builder = HttpRequest.newBuilder( uri ).header( "Content-Type", contentType )
+                .POST( HttpRequest.BodyPublishers.ofString( body, UTF_8 ) );
+            headers.forEach( ( name, values ) -> values.forEach( value -> builder.header( name, value ) ) );
+            return send( builder );
+        }
+
+        private HttpResponse<String> send( final HttpRequest.Builder builder )
+            throws IOException, InterruptedException
+        {
+            return http.send( builder.timeout( TIMEOUT ).build(), HttpResponse.BodyHandlers.ofString( UTF_8 ) );
+        }
+
+        @Override
+        public void close()
+            throws Exception
+        {
+            try
+            {
+                handler.deactivate();
+            }
+            finally
+            {
+                try
+                {
+                    http.close();
+                }
+                finally
+                {
+                    server.stop();
+                }
+            }
+        }
+
+        private static Function<WebRequest, WebResponse> routing( final McpUniversalApiHandler handler )
+        {
+            final var registry = new DynamicUniversalApiHandlerRegistry();
+            registry.addApiHandler( handler, Map.of( "key", "system:mcp", "title", "MCP API",
+                "allowedPrincipals", "role:system.everyone", "mount", "web" ) );
+            final var descriptor = registry.getApiHandler( DescriptorKey.from( "system:mcp" ) ).getApiDescriptor();
+            assertThat( descriptor.getKey().toString() ).isEqualTo( "system:mcp" );
+            assertThat( descriptor.getMount() ).containsExactly( "web" );
+            final var scripts = mock( ControllerScriptFactory.class );
+            final var descriptors = mock( ApiDescriptorService.class );
+            final var slash = new SlashApiHandler( scripts, descriptors, mock( SiteService.class ), mock( WebappService.class ),
+                mock( AdminToolDescriptorService.class ), registry, mock( SseManager.class ), mock( PortalScriptService.class ) );
+            return request -> {
+                final var response = slash.handle( request );
+                verifyNoInteractions( scripts, descriptors );
+                return response;
+            };
+        }
+    }
+}

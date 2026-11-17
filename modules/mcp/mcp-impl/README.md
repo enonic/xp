@@ -61,7 +61,7 @@ exports.execute = function (name, args) {
 };
 ```
 
-`name` is the local tool name; `args` contains validated arguments. Completed results use standard MCP content, optional `structuredContent`, `isError` and metadata. Controllers omit protocol-owned `resultType`; the SDK supplies the completion discriminator. The protocol adapter owns JSON-RPC and revision-specific fields. Script dispatch, public-name allocation and the `/api/system:mcp` Universal API are subsequent implementation slices.
+`name` is the local tool name; `args` contains validated arguments. Completed results use standard MCP content, optional `structuredContent`, `isError` and metadata. Controllers omit protocol-owned `resultType`; the SDK supplies the completion discriminator. The protocol adapter owns JSON-RPC and revision-specific fields. Script dispatch and public-name allocation are subsequent implementation slices. The `/api/system:mcp` Universal API delegates HTTP/JSON handling to the SDK transport.
 
 ## Descriptor discovery API
 
@@ -80,9 +80,37 @@ Discovery uses XP's `DescriptorKeyLocator` and `ResourceService` resource proces
 
 `McpToolAdapter` uses the SDK's modern `Tool`, `CallToolRequest`, `CallToolResult` and `McpSyncTool` contracts for the `2026-07-28` revision. Invocation binding retains the loaded SDK `Tool` instance. The adapter converts plain JavaScript controller results into SDK results using SDK polymorphic content types and binds callbacks to SDK handlers. SDK schema validation checks arguments and declared structured output. Content-only error results are supported; any structured error data must conform to the declared output schema. Explicit JSON null structured data is supported when the schema allows it. Unexpected callback exceptions propagate for protocol-layer handling.
 
-SDK JSON readers are tolerant and default some missing nested fields. This integration uses SDK validation and disables scalar coercion; it does not claim complete protocol conformance from JSON conversion alone. Full SDK server/transport and supported-client conformance checks remain in the next vertical slice. Version 2.2.0 also provides legacy APIs, which are not yet bound here.
+SDK JSON readers are tolerant and default some missing nested fields. This integration uses SDK validation and disables scalar coercion; it does not claim complete protocol conformance from JSON conversion alone. The Universal API uses the SDK's modern server and HTTP servlet transport. Embedded HTTP tests exercise discovery, calls, request validation and XP API routing with an SDK client. Full conformance remains separate verification work. Version 2.2.0 also provides legacy APIs, which are not bound here; legacy initialize requests receive an explicit unsupported-version error.
 
 The runtime includes the SDK's OSGi bundles and required dependencies. Reactor is pinned to the SDK's `3.9.0-RC1` dependency; the Jackson 2 validator is NetworkNT 2.0.8. XP's existing Jackson versions are retained.
+
+## Universal API endpoint
+
+The built-in API is available at `/api/system:mcp` on XP's web connector. It requires no site, webapp or custom vhost. It supports protocol revision `2026-07-28` through the official SDK server and servlet transport. This iteration is for isolated development use: the API declares `role:system.everyone`, retains the SDK's default Origin checks, and has no OAuth or MCP-specific authorization enforcement.
+
+The production tool repository is currently empty. Tool catalog integration and script dispatch belong to #12634. Tests inject an SDK echo repository into the handler; no echo registration or fixture dependency ships in the production catalog.
+
+Requests use HTTP POST with JSON bodies. The SDK handles JSON-RPC decoding, mirrored protocol/method/name headers, metadata, version errors, notification acknowledgments and response statuses. GET/DELETE receive the modern transport's method rejection. Responses in this slice are JSON; progress delivery is #12655 and long-lived subscriptions are #12656.
+
+Example discovery request against a running development server:
+
+```sh
+curl http://localhost:8080/api/system:mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -H 'MCP-Protocol-Version: 2026-07-28' \
+  -H 'Mcp-Method: server/discover' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"server/discover","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"xp-dev","version":"1.0"},"io.modelcontextprotocol/clientCapabilities":{}}}}'
+```
+
+`ServletResponseBody` lets the SDK servlet write through XP's existing response serializer. XP may consume JSON bodies before invoking a Universal API; `McpServletRequest` replays the cached UTF-8 body for the SDK. Other request attributes and multi-value headers are retained. SDK request limits apply after XP's eager body read; complete ingress budgets and early rejection remain iteration-2 work in #12639.
+
+### Endpoint test evidence
+
+- Embedded Jetty tests use localhost port 0 and exercise the actual XP API registry, SlashApiHandler and WebSerializerServiceImpl, with unrelated services mocked.
+- The modern SDK client discovers the empty production repository and invokes the injected test-only echo repository.
+- Raw HTTP tests cover malformed JSON/batches, media types, unsupported verbs/subpaths, mirrored headers, protocol versions, notification acknowledgment and shutdown.
+- A manual smoke run with local **Claude Code 2.1.318** connected to that same embedded routing harness and invoked `mcp__xp__echo` once with `XP MCP smoke test`. The client trace contained the matching successful tool result. The temporary endpoint was stopped after the run. This is endpoint integration evidence; a full XP distribution boot was not exercised by that smoke run.
 
 ## Test fixture lifecycle
 
@@ -90,7 +118,7 @@ The echo example belongs in a separately packaged development/test app. Producti
 
 ## Delivery boundaries
 
-This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, and invocation binding. It adds no HTTP transport, script-controller execution, authentication or authorization. Existing XP permissions remain intact. All security implementation is iteration 2. The echo handler exists only in unit tests. Real local-AI testing starts when the Universal API/server vertical slice is available.
+This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, invocation binding and the SDK-backed Universal API JSON endpoint. It adds no app script-controller execution, progress helper, subscription streams, authentication or MCP-specific authorization. Existing XP permissions remain intact. All security implementation is iteration 2. Echo exists only in test fixtures. SDK-client tests and the local-AI smoke run cover the endpoint with an injected fixture; production app tools remain pending #12634.
 
 Guillotine contributes through this same contract. Its controller invokes its internal `SchemaProvider` in-process, with no HTTP request and no `lib-guillotine-query` dependency.
 
