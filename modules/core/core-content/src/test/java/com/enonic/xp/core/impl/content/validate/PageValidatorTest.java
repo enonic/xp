@@ -23,6 +23,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -32,6 +33,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -691,6 +693,104 @@ class PageValidatorTest
         validator.validate( params, builder );
 
         assertOptionSetOccurrenceError( builder.build(), "cta", "cta", partComponent.getPath().toString(), 1, 1, 2 );
+    }
+
+    @Test
+    void fragment_part_with_missing_required_config_fails_validation()
+    {
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem(
+                Input.create().name( "heading" ).label( "Heading" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) )
+            .thenReturn( PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build() );
+
+        final PartComponent fragment = PartComponent.create().descriptor( partDescriptorKey ).config( new PropertyTree() ).build();
+
+        final ValidationErrors validationErrors = validateFragment( fragment );
+
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertMinOccurrenceError( validationErrors, "heading", "heading", "/", 1, 0 );
+    }
+
+    @Test
+    void fragment_part_with_valid_config_passes_validation()
+    {
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem(
+                Input.create().name( "heading" ).label( "Heading" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) )
+            .thenReturn( PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build() );
+
+        final PropertyTree partConfig = new PropertyTree();
+        partConfig.addString( "heading", "Hello" );
+        final PartComponent fragment = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+
+        assertFalse( validateFragment( fragment ).hasErrors() );
+    }
+
+    @Test
+    void fragment_layout_with_nested_part_is_validated()
+    {
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) )
+            .thenReturn( LayoutDescriptor.create()
+                             .key( layoutDescriptorKey )
+                             .config( Form.create().build() )
+                             .regions( RegionDescriptors.create().build() )
+                             .build() );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem( Input.create().name( "text" ).label( "Text" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) )
+            .thenReturn( PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build() );
+
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( new PropertyTree() ).build();
+        final Regions layoutRegions = Regions.create().add( Region.create().name( "left" ).add( partComponent ).build() ).build();
+        final LayoutComponent fragment =
+            LayoutComponent.create().descriptor( layoutDescriptorKey ).config( new PropertyTree() ).regions( layoutRegions ).build();
+
+        final ValidationErrors validationErrors = validateFragment( fragment );
+
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertMinOccurrenceError( validationErrors, "text", "text", partComponent.getPath().toString(), 1, 0 );
+    }
+
+    @Test
+    void fragment_part_without_descriptor_passes_validation()
+    {
+        final PartComponent fragment = PartComponent.create().config( new PropertyTree() ).build();
+
+        assertFalse( validateFragment( fragment ).hasErrors() );
+    }
+
+    @Test
+    void fragment_text_component_passes_validation()
+    {
+        final TextComponent fragment = TextComponent.create().text( "<p>Hello</p>" ).build();
+
+        assertFalse( validateFragment( fragment ).hasErrors() );
+    }
+
+    private ValidationErrors validateFragment( final Component fragment )
+    {
+        final Page page = Page.create().config( new PropertyTree() ).fragment( fragment ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.fragment() ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+        return validationErrorsBuilder.build();
     }
 
     private void assertMinOccurrenceError( final ValidationErrors validationErrors, final String expectedPropertyPath,
