@@ -2,11 +2,17 @@ package com.enonic.xp.core.impl.schema;
 
 import java.io.UncheckedIOException;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Preconditions;
 
@@ -79,6 +85,18 @@ public final class YmlParserBase
 
         mapper.addMixIn( FormOptionSetOption.class, FormOptionSetOptionMapper.class );
         mapper.addMixIn( FormOptionSetOption.Builder.class, FormOptionSetOptionMapper.Builder.class );
+    }
+
+    public void enableStrictParsing()
+    {
+        mapper.enable( JsonParser.Feature.STRICT_DUPLICATE_DETECTION );
+        mapper.enable( DeserializationFeature.FAIL_ON_TRAILING_TOKENS );
+        mapper.disable( MapperFeature.ALLOW_COERCION_OF_SCALARS );
+        mapper.disable( DeserializationFeature.ACCEPT_FLOAT_AS_INT );
+        mapper.coercionConfigFor( LogicalType.Textual )
+            .setCoercion( CoercionInputShape.Integer, CoercionAction.Fail )
+            .setCoercion( CoercionInputShape.Float, CoercionAction.Fail )
+            .setCoercion( CoercionInputShape.Boolean, CoercionAction.Fail );
     }
 
     public void addMixIn( final Class<?> target, final Class<?> mixinSource )

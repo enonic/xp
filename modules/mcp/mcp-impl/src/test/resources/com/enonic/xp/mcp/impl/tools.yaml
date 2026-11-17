@@ -1,0 +1,33 @@
+allow:
+  - role:cms.admin
+  - role:system.everyone
+tools:
+  - name: search
+    title: Search content
+    description: Find matching content
+    inputSchema:
+      type: object
+      properties:
+        query:
+          type: [string, 'null']
+          default: null
+      required: [query]
+      additionalProperties: false
+    outputSchema:
+      type: object
+      properties:
+        result:
+          const: null
+    annotations:
+      readOnlyHint: true
+    icons:
+      - src: https://example.com/search.svg
+        mimeType: image/svg+xml
+    _meta:
+      nullable: null
+      values: [text, null, true, 42]
+    extension:
+      nested:
+        value: null
+  - name: details
+    inputSchema: {}
