@@ -57,6 +57,7 @@ import com.enonic.xp.core.impl.content.validate.CmsConfigsValidator;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
+import com.enonic.xp.core.impl.content.validate.PageValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
@@ -172,6 +173,10 @@ public abstract class AbstractContentServiceTest
     protected ContentAuditLogFilterService contentAuditLogFilterService;
 
     protected PageDescriptorService pageDescriptorService;
+
+    protected PartDescriptorService partDescriptorService;
+
+    protected LayoutDescriptorService layoutDescriptorService;
 
     protected PageTemplateService pageTemplateService;
 
@@ -297,8 +302,8 @@ public abstract class AbstractContentServiceTest
 
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.pageTemplateService = mock( PageTemplateService.class );
-        PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
-        LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
+        this.partDescriptorService = mock( PartDescriptorService.class );
+        this.layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );
 
         contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, _ -> true );
@@ -355,6 +360,8 @@ public abstract class AbstractContentServiceTest
         contentService.addContentValidator( new CmsConfigsValidator( cmsService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
         contentService.addContentValidator( new MixinValidator( mixinService ) );
+        contentService.addContentValidator(
+            new PageValidator( pageDescriptorService, contentService, partDescriptorService, layoutDescriptorService ) );
 
         layersContentService =
             new LayersContentService( nodeService, contentTypeService, eventPublisher, mixinService, cmsService, pageDescriptorService,

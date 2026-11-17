@@ -25,12 +25,15 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.util.GenericValue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExtraDataValidatorTest
 {
     private static final String MIN_OCCURRENCES_I18N = "system.cms.validation.minOccurrencesInvalid.mixin";
+
+    private static final String VALUE_INVALID_I18N = "system.cms.validation.valueInvalid.mixin";
 
     private MixinService mixinService;
 
@@ -329,5 +332,87 @@ class ExtraDataValidatorTest
         final MixinConfigValidationError mixinError = (MixinConfigValidationError) errors.stream().findFirst().orElseThrow();
         assertThat( mixinError.getPropertyPath().toString() ).isEqualTo( "outer.inner.deepField" );
         assertThat( mixinError.getMixinName() ).isEqualTo( mixinName );
+    }
+
+    @Test
+    void mixin_with_removed_combobox_option_produces_error()
+    {
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final Form form = Form.create()
+            .addFormItem( Input.create()
+                              .name( "color" )
+                              .label( "Color" )
+                              .inputType( InputTypeName.COMBO_BOX )
+                              .inputTypeProperty( "options", GenericValue.newList()
+                                  .add( GenericValue.newObject()
+                                            .put( "value", "red" )
+                                            .put( "label", GenericValue.newObject().put( "text", "Red" ).build() )
+                                            .build() )
+                                  .build() )
+                              .build() )
+            .build();
+        final MixinDescriptor descriptor = Mockito.mock( MixinDescriptor.class );
+        Mockito.when( descriptor.getForm() ).thenReturn( form );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( descriptor );
+
+        final PropertyTree data = new PropertyTree();
+        data.addString( "color", "blue" );
+        final Mixin mixin = new Mixin( mixinName, data );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .mixins( Mixins.from( List.of( mixin ) ) )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationErrors errors = builder.build();
+        assertThat( errors.stream() ).hasSize( 1 );
+
+        final ValidationError error = errors.stream().findFirst().orElseThrow();
+        assertThat( error ).isInstanceOf( MixinConfigValidationError.class );
+        assertThat( error.getErrorCode().toString() ).isEqualTo( "system:cms.valueInvalid" );
+        assertThat( error.getI18n() ).isEqualTo( VALUE_INVALID_I18N );
+        assertThat( error.getArgs() ).containsExactly( mixinName.toString(), "Invalid value in [color: blue]: Value is not a valid option" );
+
+        final MixinConfigValidationError mixinError = (MixinConfigValidationError) error;
+        assertThat( mixinError.getMixinName() ).isEqualTo( mixinName );
+        assertThat( mixinError.getPropertyPath().toString() ).isEqualTo( "color" );
+    }
+
+    @Test
+    void mixin_with_long_above_max_produces_error()
+    {
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final Form form = Form.create()
+            .addFormItem( Input.create()
+                              .name( "priority" )
+                              .label( "Priority" )
+                              .inputType( InputTypeName.LONG )
+                              .inputTypeProperty( "max", "3" )
+                              .build() )
+            .build();
+        final MixinDescriptor descriptor = Mockito.mock( MixinDescriptor.class );
+        Mockito.when( descriptor.getForm() ).thenReturn( form );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( descriptor );
+
+        final PropertyTree data = new PropertyTree();
+        data.addLong( "priority", 9L );
+        final Mixin mixin = new Mixin( mixinName, data );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .mixins( Mixins.from( List.of( mixin ) ) )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationError error = builder.build().stream().findFirst().orElseThrow();
+        assertThat( error.getI18n() ).isEqualTo( VALUE_INVALID_I18N );
+        assertThat( error.getArgs() ).containsExactly( mixinName.toString(),
+                                                       "Invalid value in [priority: 9]: The value cannot be greater than 3" );
+        assertThat( ( (MixinConfigValidationError) error ).getPropertyPath().toString() ).isEqualTo( "priority" );
     }
 }

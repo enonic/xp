@@ -23,12 +23,15 @@ import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.util.GenericValue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SiteConfigsValidatorTest
 {
     private static final String MIN_OCCURRENCES_I18N = "system.cms.validation.minOccurrencesInvalid.siteConfig";
+
+    private static final String VALUE_INVALID_I18N = "system.cms.validation.valueInvalid.siteConfig";
 
     private CmsService cmsService;
 
@@ -310,5 +313,81 @@ class SiteConfigsValidatorTest
         final SiteConfigValidationError scError = (SiteConfigValidationError) errors.stream().findFirst().orElseThrow();
         assertThat( scError.getPropertyPath().toString() ).isEqualTo( "outer.inner.deepField" );
         assertThat( scError.getApplicationKey() ).isEqualTo( appKey );
+    }
+
+    @Test
+    void site_config_with_removed_option_produces_error()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "myapp" );
+        final Form form = Form.create()
+            .addFormItem( Input.create()
+                              .name( "mode" )
+                              .label( "Mode" )
+                              .inputType( InputTypeName.RADIO_BUTTON )
+                              .inputTypeProperty( "options", GenericValue.newList()
+                                  .add( GenericValue.newObject()
+                                            .put( "value", "live" )
+                                            .put( "label", GenericValue.newObject().put( "text", "Live" ).build() )
+                                            .build() )
+                                  .build() )
+                              .build() )
+            .build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( CmsDescriptor.create().applicationKey( appKey ).form( form ).build() );
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "mode", "preview" );
+        final PropertyTree data = new PropertyTree();
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( SiteConfig.create().application( appKey ).config( config ).build() ),
+                                          data.getRoot() );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().name( ContentTypeName.site() ).superType( ContentTypeName.site() ).build() )
+            .data( data )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationErrors errors = builder.build();
+        assertThat( errors.stream() ).hasSize( 1 );
+
+        final ValidationError error = errors.stream().findFirst().orElseThrow();
+        assertThat( error ).isInstanceOf( SiteConfigValidationError.class );
+        assertThat( error.getErrorCode().toString() ).isEqualTo( "system:cms.valueInvalid" );
+        assertThat( error.getI18n() ).isEqualTo( VALUE_INVALID_I18N );
+        assertThat( error.getArgs() ).containsExactly( appKey.toString(), "Invalid value in [mode: preview]: Value is not a valid option" );
+
+        final SiteConfigValidationError scError = (SiteConfigValidationError) error;
+        assertThat( scError.getApplicationKey() ).isEqualTo( appKey );
+        assertThat( scError.getPropertyPath().toString() ).isEqualTo( "mode" );
+    }
+
+    @Test
+    void site_config_with_wrong_value_type_produces_error()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "myapp" );
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "some" ).label( "Some" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( CmsDescriptor.create().applicationKey( appKey ).form( form ).build() );
+
+        final PropertyTree config = new PropertyTree();
+        config.addBoolean( "some", false );
+        final PropertyTree data = new PropertyTree();
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( SiteConfig.create().application( appKey ).config( config ).build() ),
+                                          data.getRoot() );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().name( ContentTypeName.site() ).superType( ContentTypeName.site() ).build() )
+            .data( data )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationError error = builder.build().stream().findFirst().orElseThrow();
+        assertThat( error.getI18n() ).isEqualTo( VALUE_INVALID_I18N );
+        assertThat( error.getArgs() ).containsExactly( appKey.toString(), "Invalid type in [some: false]: [Boolean] instead of [Boolean,String]" );
+        assertThat( ( (SiteConfigValidationError) error ).getPropertyPath().toString() ).isEqualTo( "some" );
     }
 }
