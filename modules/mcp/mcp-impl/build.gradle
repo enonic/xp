@@ -1,0 +1,13 @@
+dependencies {
+    implementation project( ':core:core-api' )
+    implementation project( ':core:core-schema' )
+    implementation libs.mcp.core
+    implementation libs.mcp.json.jackson2
+    implementation libs.jackson.databind
+}
+
+jar {
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP MCP - Impl' )
+    }
+}

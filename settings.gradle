@@ -87,6 +87,8 @@ include 'jaxrs:jaxrs-impl'
 include 'portal:portal-api'
 include 'portal:portal-impl'
 
+include 'mcp:mcp-impl'
+
 include 'admin:admin-api'
 include 'admin:admin-impl'
 include 'admin:admin-event'
