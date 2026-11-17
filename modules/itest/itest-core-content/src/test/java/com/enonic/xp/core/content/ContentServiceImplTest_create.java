@@ -14,6 +14,7 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
@@ -46,6 +47,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -268,7 +270,8 @@ class ContentServiceImplTest_create
             .requireValid( true )
             .build();
 
-        assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createContentParams ) );
+        assertThatThrownBy( () -> this.contentService.create( createContentParams ) ).isInstanceOf(
+            ContentDataValidationException.class ).hasMessage( "Invalid type in [some: false]: [Boolean] instead of [Boolean,String]" );
     }
 
     @Test
