@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.common.net.MediaType;
 
 import jakarta.servlet.ServletException;
@@ -17,21 +17,17 @@ import jakarta.servlet.ServletException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
-import com.enonic.xp.server.VersionInfo;
+
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.ServletResponseBody;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-import io.modelcontextprotocol.json.jackson2.JacksonMcpJsonMapper;
-import io.modelcontextprotocol.json.schema.jackson2.DefaultJsonSchemaValidator;
-import io.modelcontextprotocol.modern.McpSchema.CacheScope;
-import io.modelcontextprotocol.modern.McpSchema.Implementation;
-import io.modelcontextprotocol.modern.server.McpServer;
+
 import io.modelcontextprotocol.modern.server.feature.McpChangeFeed;
 import io.modelcontextprotocol.modern.server.feature.McpChangePublisher;
 import io.modelcontextprotocol.modern.server.feature.McpSyncToolRepository;
-import io.modelcontextprotocol.modern.server.feature.ToolsFeature;
+
 import io.modelcontextprotocol.modern.server.transport.HttpServletMcpTransport;
 
 @NullMarked
@@ -45,9 +41,9 @@ public final class McpUniversalApiHandler
     private final HttpServletMcpTransport transport;
 
     @Activate
-    public McpUniversalApiHandler( @Reference final McpToolCatalog catalog )
+    public McpUniversalApiHandler( @Reference final McpServerFactory serverFactory )
     {
-        this( catalog, catalog.changes() );
+        this.transport = serverFactory.createTransport( ENDPOINT );
     }
 
     McpUniversalApiHandler( final McpSyncToolRepository repository )
@@ -57,16 +53,7 @@ public final class McpUniversalApiHandler
 
     McpUniversalApiHandler( final McpSyncToolRepository repository, final McpChangePublisher changes )
     {
-        final var objectMapper = new ObjectMapper();
-        final var jsonMapper = new JacksonMcpJsonMapper( objectMapper );
-        final var server = McpServer.builder()
-            .serverInfo( Implementation.builder( "Enonic XP", VersionInfo.get().getVersion() ).build() )
-            .jsonMapper( jsonMapper )
-            .feature( ToolsFeature.ofSync( repository, jsonMapper, new DefaultJsonSchemaValidator( objectMapper ),
-                                          0L, CacheScope.PRIVATE ) )
-            .subscriptions( changes )
-            .build();
-        this.transport = HttpServletMcpTransport.builder( server ).jsonMapper( jsonMapper ).endpoint( ENDPOINT ).build();
+        this( new McpServerFactory( repository, changes ) );
     }
 
     @Override

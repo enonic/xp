@@ -188,7 +188,8 @@ class McpUniversalApiHandlerTest
         when( value.getMap() ).thenReturn( Map.of( "content", List.of( Map.of( "type", "text", "text", arguments.get( "message" ) ) ),
             "structuredContent", arguments, "_meta", Map.of( "source", "script" ) ) );
         final var executor = new McpToolExecutorImpl( descriptors, scripts );
-        final var catalog = new McpToolCatalog( descriptors, applications, executor );
+        final var sharedCatalog = new McpCatalog( descriptors, applications );
+        final var catalog = new McpToolCatalog( sharedCatalog, executor );
 
         try ( var endpoint = new Endpoint( new McpUniversalApiHandler( catalog ), false, authInfo ) )
         {
@@ -359,7 +360,8 @@ class McpUniversalApiHandlerTest
         throws Exception
     {
         final var fixture = new CatalogFixture();
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), true ) )
+        final var factory = new McpServerFactory( fixture.catalog, fixture.sharedCatalog );
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( factory ), true ) )
         {
             final var client = endpoint.sdkClient();
             assertThat( client.listTools().list().tools() ).isEmpty();
@@ -381,7 +383,7 @@ class McpUniversalApiHandlerTest
                 listener.changed();
                 assertThat( client.listTools().list().tools() ).singleElement().satisfies(
                     tool -> assertThat( tool.description() ).isEqualTo( "Updated echo" ) );
-                fixture.catalog.refresh();
+                fixture.sharedCatalog.refresh();
                 listener.quiet();
 
                 fixture.remove();
@@ -412,7 +414,7 @@ class McpUniversalApiHandlerTest
     {
         final var fixture = new CatalogFixture();
         fixture.install( "Stale binding" );
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog, fixture.sharedCatalog.changes() ), false ) )
         {
             final var client = endpoint.sdkClient();
             assertThat( client.listTools().list().tools() ).hasSize( 1 );
@@ -438,8 +440,8 @@ class McpUniversalApiHandlerTest
         throws Exception
     {
         final var fixture = new CatalogFixture();
-        fixture.catalog.refresh();
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), false ) )
+        fixture.sharedCatalog.refresh();
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog, fixture.sharedCatalog.changes() ), false ) )
         {
             final var first = new RecordingListener();
             final var second = new RecordingListener();
@@ -477,8 +479,8 @@ class McpUniversalApiHandlerTest
         throws Exception
     {
         final var fixture = new CatalogFixture();
-        fixture.catalog.refresh();
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), false ) )
+        fixture.sharedCatalog.refresh();
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog, fixture.sharedCatalog.changes() ), false ) )
         {
             final var listener = new RecordingListener();
             try ( var listening = endpoint.sdkClient().listen().toolsChanged().resourcesChanged().promptsChanged()
@@ -504,8 +506,8 @@ class McpUniversalApiHandlerTest
         throws Exception
     {
         final var fixture = new CatalogFixture();
-        fixture.catalog.refresh();
-        final var handler = new McpUniversalApiHandler( fixture.catalog );
+        fixture.sharedCatalog.refresh();
+        final var handler = new McpUniversalApiHandler( fixture.catalog, fixture.sharedCatalog.changes() );
         try ( var endpoint = new Endpoint( handler, false ) )
         {
             final var first = new RecordingListener();
@@ -538,7 +540,8 @@ class McpUniversalApiHandlerTest
     {
         final var applications = mock( ApplicationService.class );
         when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
-        return new McpToolCatalog( mock( McpDescriptorServiceImpl.class ), applications, mock( McpToolExecutor.class ) );
+        final var sharedCatalog = new McpCatalog( mock( McpDescriptorServiceImpl.class ), applications );
+        return new McpToolCatalog( sharedCatalog, mock( McpToolExecutor.class ) );
     }
 
     private static JsonNode json( final HttpResponse<String> response, final int status )
@@ -639,7 +642,9 @@ class McpUniversalApiHandlerTest
 
         private final DescriptorKey key = DescriptorKey.from( "com.example.tools:example" );
 
-        private final McpToolCatalog catalog = new McpToolCatalog( descriptors, applications, executor );
+        private final McpCatalog sharedCatalog = new McpCatalog( descriptors, applications );
+
+        private final McpToolCatalog catalog = new McpToolCatalog( sharedCatalog, executor );
 
         private CatalogFixture()
         {
@@ -658,13 +663,13 @@ class McpUniversalApiHandlerTest
             when( descriptors.getLoadedByApplication( key.getApplicationKey() ) ).thenReturn( List.of(
                 new LoadedMcpGroup( new McpDescriptor( key, PrincipalKeys.empty() ),
                     List.of( Tool.builder( "echo", ECHO_SCHEMA ).description( description ).outputSchema( ECHO_SCHEMA ).build() ) ) ) );
-            catalog.refresh();
+            sharedCatalog.refresh();
         }
 
         private void remove()
         {
             when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
-            catalog.refresh();
+            sharedCatalog.refresh();
         }
     }
 

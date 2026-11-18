@@ -20,7 +20,7 @@ import com.enonic.xp.mcp.McpDescriptor;
 import com.enonic.xp.security.PrincipalKeys;
 
 import io.modelcontextprotocol.modern.McpSchema.Tool;
-import io.modelcontextprotocol.modern.server.McpRequestContext;
+
 import io.modelcontextprotocol.modern.server.feature.ServerChange;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,16 +37,16 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @NullMarked
-class McpToolCatalogMonitorTest
+class McpCatalogMonitorTest
 {
-    private final McpToolCatalog catalog = mock( McpToolCatalog.class );
+    private final McpCatalog catalog = mock( McpCatalog.class );
 
     private final ScheduledExecutorService scheduler = mock( ScheduledExecutorService.class );
 
     @Test
     void establishes_baseline_before_scheduling_single_periodic_scan()
     {
-        final var monitor = new McpToolCatalogMonitor( catalog, scheduler );
+        final var monitor = new McpCatalogMonitor( catalog, scheduler );
         try
         {
             final var scan = ArgumentCaptor.forClass( Runnable.class );
@@ -66,7 +66,7 @@ class McpToolCatalogMonitorTest
     @Test
     void refreshes_for_native_application_lifecycle_events()
     {
-        final var monitor = new McpToolCatalogMonitor( catalog, scheduler );
+        final var monitor = new McpCatalogMonitor( catalog, scheduler );
         try
         {
             clearInvocations( catalog );
@@ -91,7 +91,7 @@ class McpToolCatalogMonitorTest
     void refresh_failures_allow_subsequent_scans_and_events()
     {
         doThrow( new IllegalArgumentException( "broken descriptor" ) ).doNothing().when( catalog ).refresh();
-        final var monitor = new McpToolCatalogMonitor( catalog, scheduler );
+        final var monitor = new McpCatalogMonitor( catalog, scheduler );
         try
         {
             final var scan = ArgumentCaptor.forClass( Runnable.class );
@@ -114,7 +114,7 @@ class McpToolCatalogMonitorTest
     {
         final var descriptors = mock( McpDescriptorServiceImpl.class );
         final var applications = mock( ApplicationService.class );
-        final var executor = mock( McpToolExecutor.class );
+
         final var app = mock( Application.class );
         final var key = ApplicationKey.from( "app" );
         when( app.getKey() ).thenReturn( key );
@@ -123,8 +123,8 @@ class McpToolCatalogMonitorTest
         final var descriptor = new McpDescriptor( DescriptorKey.from( "app:g" ), PrincipalKeys.empty() );
         when( descriptors.getLoadedByApplication( key ) ).thenReturn(
             List.of( new LoadedMcpGroup( descriptor, List.of( Tool.builder( "before", Map.of() ).build() ) ) ) );
-        final var actualCatalog = new McpToolCatalog( descriptors, applications, executor );
-        final var monitor = new McpToolCatalogMonitor( actualCatalog, scheduler );
+        final var actualCatalog = new McpCatalog( descriptors, applications );
+        final var monitor = new McpCatalogMonitor( actualCatalog, scheduler );
         final var changes = new ArrayList<ServerChange>();
         final var subscription = actualCatalog.changes().changes().subscribe( changes::add );
         try
@@ -134,9 +134,8 @@ class McpToolCatalogMonitorTest
             monitor.scan();
             monitor.scan();
             assertThat( changes ).containsExactly( new ServerChange.ToolsListChanged() );
-            assertThat( actualCatalog.list( mock( McpRequestContext.class ), null ).tools() )
-                .extracting( Tool::name ).containsExactly( "app__g__after" );
-            verifyNoInteractions( executor );
+            assertThat( actualCatalog.snapshot().groups() ).singleElement().satisfies(
+                group -> assertThat( group.tools() ).extracting( Tool::name ).containsExactly( "after" ) );
         }
         finally
         {
@@ -148,7 +147,7 @@ class McpToolCatalogMonitorTest
     @Test
     void deactivation_stops_scheduler_and_ignores_late_scans_and_events()
     {
-        final var monitor = new McpToolCatalogMonitor( catalog, scheduler );
+        final var monitor = new McpCatalogMonitor( catalog, scheduler );
         final var scan = ArgumentCaptor.forClass( Runnable.class );
         verify( scheduler ).scheduleWithFixedDelay( scan.capture(), eq( 1L ), eq( 1L ), eq( TimeUnit.SECONDS ) );
         monitor.deactivate();

@@ -18,30 +18,30 @@ import com.enonic.xp.event.EventListener;
 
 @NullMarked
 @Component(immediate = true, service = EventListener.class)
-public final class McpToolCatalogMonitor
+public final class McpCatalogMonitor
     implements EventListener
 {
-    private static final Logger LOG = LoggerFactory.getLogger( McpToolCatalogMonitor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( McpCatalogMonitor.class );
 
     private static final Set<String> APPLICATION_EVENTS = Set.of( "INSTALLED", "STARTED", "STOPPED", "UNINSTALLED" );
 
-    private final McpToolCatalog catalog;
+    private final McpCatalog catalog;
 
     private final ScheduledExecutorService scheduler;
 
     private boolean stopped;
 
     @Activate
-    public McpToolCatalogMonitor( @Reference final McpToolCatalog catalog )
+    public McpCatalogMonitor( @Reference final McpCatalog catalog )
     {
         this( catalog, Executors.newSingleThreadScheduledExecutor( runnable -> {
-            final var thread = new Thread( runnable, "mcp-tool-catalog-monitor" );
+            final var thread = new Thread( runnable, "mcp-catalog-monitor" );
             thread.setDaemon( true );
             return thread;
         } ) );
     }
 
-    McpToolCatalogMonitor( final McpToolCatalog catalog, final ScheduledExecutorService scheduler )
+    McpCatalogMonitor( final McpCatalog catalog, final ScheduledExecutorService scheduler )
     {
         this.catalog = catalog;
         this.scheduler = scheduler;
@@ -70,7 +70,7 @@ public final class McpToolCatalogMonitor
         }
         catch ( RuntimeException e )
         {
-            LOG.warn( "Cannot refresh MCP tool catalog", e );
+            LOG.warn( "Cannot refresh MCP catalog", e );
         }
     }
 
