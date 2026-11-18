@@ -104,7 +104,7 @@ configure( javaProjects ) {
 // Nashorn via `test`, GraalJS via `testGraalJs` (both wired into `check`).
 def jsTestProjects = project( ':lib' ).subprojects +
     [ project( ':script:script-impl' ), project( ':portal:portal-impl' ), project( ':core:core-task' ),
-      project( ':app:app-system' ), project( ':tools:testing' ) ]
+      project( ':app:app-system' ), project( ':tools:testing' ), project( ':mcp:mcp-impl' ) ]
 
 configure( jsTestProjects ) {
     apply from: "$rootDir/gradle/js-tests.gradle"

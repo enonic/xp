@@ -84,31 +84,35 @@ public final class McpToolAdapter
             {
                 return McpSyncResponse.result( error( "Invalid MCP tool arguments: " + validation.errorMessage() ) );
             }
-            final var result = handler.apply( tool.name(), arguments );
-            try
-            {
-                final var converted = toResult( result );
-                if ( tool.outputSchema() != null &&
-                    ( !Boolean.TRUE.equals( converted.isError() ) || result.containsKey( "structuredContent" ) ) )
-                {
-                    if ( !result.containsKey( "structuredContent" ) )
-                    {
-                        return McpSyncResponse.result( error( "MCP tool result requires structuredContent for outputSchema" ) );
-                    }
-                    final var outputValidation = VALIDATOR.validate( tool.outputSchema(),
-                                                                     OBJECT_MAPPER.valueToTree( converted.structuredContent() ) );
-                    if ( !outputValidation.valid() )
-                    {
-                        return McpSyncResponse.result( error( "Invalid MCP tool output: " + outputValidation.errorMessage() ) );
-                    }
-                }
-                return McpSyncResponse.result( converted );
-            }
-            catch ( IllegalArgumentException e )
-            {
-                return McpSyncResponse.result( error( Objects.toString( e.getMessage(), "Invalid MCP tool result" ) ) );
-            }
+            return McpInvocationScope.respond( context, () -> validateResult( tool, handler.apply( tool.name(), arguments ) ) );
         } );
+    }
+
+    private static CallToolResult validateResult( final Tool tool, final Map<String, @Nullable Object> result )
+    {
+        try
+        {
+            final var converted = toResult( result );
+            if ( tool.outputSchema() != null &&
+                ( !Boolean.TRUE.equals( converted.isError() ) || result.containsKey( "structuredContent" ) ) )
+            {
+                if ( !result.containsKey( "structuredContent" ) )
+                {
+                    return error( "MCP tool result requires structuredContent for outputSchema" );
+                }
+                final var outputValidation = VALIDATOR.validate( tool.outputSchema(),
+                                                                 OBJECT_MAPPER.valueToTree( converted.structuredContent() ) );
+                if ( !outputValidation.valid() )
+                {
+                    return error( "Invalid MCP tool output: " + outputValidation.errorMessage() );
+                }
+            }
+            return converted;
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return error( Objects.toString( e.getMessage(), "Invalid MCP tool result" ) );
+        }
     }
 
     private static CallToolResult error( final String message )

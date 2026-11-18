@@ -63,6 +63,42 @@ exports.execute = function (name, args) {
 
 `name` is the local tool name; `args` contains validated arguments. Completed results use standard MCP content, optional `structuredContent`, `isError` and metadata. Controllers omit protocol-owned `resultType`; the SDK supplies the completion discriminator. The protocol adapter owns JSON-RPC and revision-specific fields. Script dispatch invokes the declared controller through `PortalScriptService`, with conversion to a plain result map inside a bound script execution. The `/api/system:mcp` Universal API delegates HTTP/JSON handling to the SDK transport.
 
+## Invocation progress
+
+Controllers may accept an optional third argument: `execute(name, args, context)`. Existing two-argument controllers continue to work. `context` implements the SDK-independent `McpInvocation` API in `core-api`; SDK integration remains in `mcp-impl`.
+
+```javascript
+exports.execute = function (name, args, context) {
+    context.progress(0, args.steps, 'Starting');
+    for (let step = 1; step <= args.steps; step++) {
+        context.progress(step, args.steps, 'Step ' + step);
+    }
+    const result = {completedSteps: args.steps};
+    return {
+        content: [{type: 'text', text: JSON.stringify(result)}],
+        structuredContent: result
+    };
+};
+```
+
+Supported helper methods:
+
+- `context.isProgressSupported()` checks whether the current invocation can report on the calling thread.
+- `context.progress(progress)` omits total and message.
+- `context.progress(progress, message)` omits total.
+- `context.progress(progress, total)` omits message.
+- `context.progress(progress, total, message)` reports all fields.
+
+Progress and total must be finite and nonnegative; progress must be at most the supplied total. The first progress value may be zero; repeated or decreasing values are ignored. Reports use synchronous controller execution on the invocation's thread. Retained helpers, foreign-thread calls and helpers shadowed by a nested invocation cannot emit. Reports made without progress support are no-ops.
+
+A client opts in by supplying a string or integer `_meta.progressToken`. The adapter selects an SDK streaming response for valid calls carrying a token. The SDK sends `notifications/progress` on that call's SSE response, retaining the original token, followed by the final standard result or protocol error. A token-bearing call may finish without reporting progress. No separate progress-capability flag is required by this protocol revision. Calls without a token execute synchronously and return JSON. Invalid input is rejected before controller execution or streaming. Invalid progress-token types produce an invalid-params protocol error.
+
+The deferred streaming body captures XP caller context and a separate portal-request wrapper before moving to the SDK execution thread. It restores the captured context for script execution and result validation, then deactivates the helper in `finally`. Context attributes and referenced web data retain XP's shallow-copy semantics. Progress never uses the catalog change feed or `subscriptions/listen`.
+
+The SDK owns wire-stream cancellation and cleanup. Completion and exceptions deactivate the helper. A disconnected client receives no subsequent frames on the closed stream; disconnect does not guarantee immediate controller cancellation or immediate changes to `isProgressSupported()`. Enforced deadlines, cancellation and rate/budget controls remain iteration 2 in #12639.
+
+Test-only YAML/controller resources live under `src/test/resources/mcp/progress`. They contribute no production tools or app dependency. The fixture exercises the actual JavaScript helper, schemas and final result. Latch-controlled HTTP peers cover an operation that remains running while progress is read, concurrent callers, exact SSE frames, error completion, disconnect and catalog-subscription separation. The module runs its fixture on both configured XP script engines through `test` and `testGraalJs`; the local Graal initialization failure currently blocks the Graal fixture before controller execution.
+
 ## Descriptor discovery API
 
 - `McpDescriptorService.getByKey` returns an optional group.
@@ -94,13 +130,13 @@ The built-in API is available at `/api/system:mcp` on XP's web connector. It req
 
 `McpServerFactory` composes the SDK features, JSON mapper, schema validator, shared change publisher and servlet transport. `McpUniversalApiHandler` owns XP HTTP bridging and transport shutdown. Future prompt and resource repositories can consume the same group discovery and change feed, with explicit SDK feature registration in the factory. Their descriptor sections and execution contracts remain future work.
 
-Public names use `encode(application)__encode(group)__encode(localName)`. ASCII letters, digits, dots and hyphens are preserved; `_` becomes `_u`; other UTF-16 code units become `_xhhhh` with four lowercase hexadecimal digits. This keeps component boundaries unambiguous. Names longer than 128 characters are rejected with an instruction to shorten the contributing names. For example, the Chuck Norris app contributes `com.enonic.app.chucknorris__chucknorris__quote`.
+Public names use `encode(application)__encode(group)__encode(localName)`. ASCII letters, digits, dots and hyphens are preserved; `_` becomes `_u`; other UTF-16 code units become `_xhhhh` with four lowercase hexadecimal digits. This keeps component boundaries unambiguous. Names longer than 128 characters are rejected with an instruction to shorten the contributing names. For example, the Chuck Norris app contributes `com.enonic.app.chucknorris__chucknorris__fact`.
 
-Calls resolve the public name to the original group and local tool name, validate arguments, and invoke `execute(localName, args)` through the app's controller. Controllers must exist, export `execute`, and return an object. The SDK adapter validates MCP results and declared structured output. Script exceptions reach the SDK protocol error handler. The originating portal request is rebound during deferred response serialization; the contributing app is selected for controller execution and the previous app is restored in a `finally` block. XP caller identity is preserved, with no administrator elevation.
+Calls resolve the public name to the original group and local tool name, validate arguments, and invoke `execute(localName, args, context)` through the app's controller. Controllers must exist, export `execute`, and return an object. The SDK adapter validates MCP results and declared structured output. Script exceptions reach the SDK protocol error handler. The originating portal request is rebound during deferred response serialization; the contributing app is selected for controller execution and the previous app is restored in a `finally` block. XP caller identity is preserved, with no administrator elevation.
 
 Tests inject an SDK echo repository into the handler; no echo registration or fixture dependency ships in the production catalog. The separately installed Chuck Norris app is the initial real contribution for manual integration checks.
 
-Requests use HTTP POST with JSON bodies. The SDK handles JSON-RPC decoding, mirrored protocol/method/name headers, metadata, version errors, notification acknowledgments and response statuses. GET/DELETE receive the modern transport's method rejection. Ordinary responses are JSON. Tools-only `subscriptions/listen` requests open SDK-managed asynchronous SSE streams. Progress delivery is #12655; broader subscriptions are #12656.
+Requests use HTTP POST with JSON bodies. The SDK handles JSON-RPC decoding, mirrored protocol/method/name headers, metadata, version errors, notification acknowledgments and response statuses. GET/DELETE receive the modern transport's method rejection. Calls without progress tokens return JSON. Calls with progress tokens and tools-only `subscriptions/listen` requests use separate SDK-managed SSE response streams. Broader subscriptions remain #12656.
 
 Example discovery request against a running development server:
 
@@ -117,6 +153,9 @@ curl http://localhost:8080/api/system:mcp \
 
 ### Endpoint test evidence
 
+- Progress HTTP tests capture exact SSE frames for string/integer tokens and final results, concurrent calls, final errors and no-token JSON responses. The actual controller fixture passes on Nashorn; GraalJS tests currently fail at the known engine-initialization issue before executing the fixture.
+- A local Claude Code **2.1.318** run called a test-only operation once with `progress-12655` through the embedded routing harness. The client supplied a progress token, the server reported steps 0, 1 and 2, and Claude received the correct final result. This verifies streaming-call compatibility; progress rendering in the client UI was not established. The harness used mocked script exports and was stopped after the run.
+
 - Embedded Jetty tests use localhost port 0 and exercise the actual XP API registry, SlashApiHandler and WebSerializerServiceImpl, with unrelated services mocked.
 - The modern SDK client discovers an empty catalog and invokes the injected test-only echo repository.
 - SDK subscription tests verify additions, definition changes, removals, unchanged scans, repeated cycles, concurrent clients, disconnect/reconnect, unsupported filters and graceful shutdown. A routed test exercises the real registry/SlashApiHandler and deferred response/body replay.
@@ -130,7 +169,7 @@ curl http://localhost:8080/api/system:mcp \
 
 The shared catalog compares complete ordered SDK tool definitions qualified by descriptor identity. Additions, removals, schema changes and metadata changes publish `ServerChange.ToolsListChanged` through the SDK's in-memory `McpChangeFeed`. Identical definitions produce no notification. The group snapshot and observed definition list are updated before publishing. Group permission metadata and empty-group changes update the shared snapshot without a tool-list notification; permission enforcement remains iteration 2. A controller-only edit with unchanged tool definitions needs no list-change notification; script loading follows XP's normal resource lifecycle.
 
-Clients opt in with `subscriptions/listen` using `toolsListChanged: true` in the subscription filter. The SDK acknowledges the supported filter and sends `notifications/tools/list_changed` on that stream. Clients fetch `tools/list` again to obtain the updated definitions. Prompt/resource filters are not acknowledged; those features remain unavailable. Ordinary tool calls keep JSON responses. The existing XP Jetty dispatch servlet enables asynchronous requests, and the SDK owns stream framing, keep-alives, disconnect handling and graceful completion on MCP shutdown.
+Clients opt in with `subscriptions/listen` using `toolsListChanged: true` in the subscription filter. The SDK acknowledges the supported filter and sends `notifications/tools/list_changed` on that stream. Clients fetch `tools/list` again to obtain the updated definitions. Prompt/resource filters are not acknowledged; those features remain unavailable. Tool calls without progress tokens keep JSON responses. The existing XP Jetty dispatch servlet enables asynchronous requests, and the SDK owns stream framing, keep-alives, disconnect handling and graceful completion on MCP shutdown.
 
 The feed reaches listeners on the same XP instance and retains no event history. Clients must fetch the current tool list on initial connection and after reconnecting; changes while disconnected are not replayed. A scan observes the latest resource state, so intermediate edits can be coalesced. Polling latency is approximately one second plus scan duration. This slice adds no catalog revision token; lists keep the SDK's zero-TTL private caching hints.
 
@@ -143,7 +182,7 @@ Invalid contributions fail requests with a contextual server-side error. Change 
 Use the separately installed Chuck Norris app (`enonic/app-chucknorris#68`) as the first real contribution. XP runtime and Guillotine have no dependency on it. Test-only echo repositories remain in test sources. #12630 was superseded by the Chuck Norris app task.
 
 1. Connect a local client supporting protocol `2026-07-28` and tool-list subscriptions. Fetch the initial tools list and confirm the subscription acknowledgment.
-2. Install/start the Chuck Norris app. Expect a tool-list change and refresh the list to find `com.enonic.app.chucknorris__chucknorris__quote`.
+2. Install/start the Chuck Norris app. Expect a tool-list change and refresh the list to find `com.enonic.app.chucknorris__chucknorris__fact`.
 3. Invoke the tool, then update its descriptor. Expect another change only when the advertised definition changes.
 4. Stop/uninstall the app. Expect a change, an empty list on an otherwise empty server, and an unknown-tool failure for a stale invocation.
 5. Repeat install/remove, including with two clients. Disconnect/reconnect one client and fetch the current list again. Verify other app contributions remain available. No XP source change, rebuild or restart is needed.
@@ -152,7 +191,7 @@ Record client/version, protocol, subscription acknowledgment, notifications, aut
 
 ## Delivery boundaries
 
-This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, namespaced catalog, app script-controller execution, catalog lifecycle detection and the SDK-backed Universal API with JSON responses and tools-only subscription streams. Progress, broader subscriptions, authentication and MCP-specific authorization have separate implementation tasks. Progress will use invocation-scoped SDK streaming notifications; the shared change feed serves catalog/resource changes. Existing XP permissions remain intact. All security implementation is iteration 2. Echo exists only in test fixtures. HTTP integration tests exercise catalog and dispatch with mocked script exports; the recorded local-AI smoke run used an injected fixture. A real installed-app quote invocation remains a manual integration gate.
+This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, namespaced catalog, app script-controller execution, catalog lifecycle detection and the SDK-backed Universal API with JSON responses and tools-only subscription streams. Progress uses invocation-scoped SDK streaming notifications; the shared change feed serves catalog/resource changes. Broader subscriptions, authentication and MCP-specific authorization have separate implementation tasks. Existing XP permissions remain intact. All security implementation is iteration 2. Echo exists only in test fixtures. HTTP integration tests exercise catalog and dispatch with mocked script exports; the recorded local-AI smoke run used an injected fixture. A real installed-app fact invocation remains a manual integration gate.
 
 Guillotine contributes through this same contract. Its controller invokes its internal `SchemaProvider` in-process, with no HTTP request and no `lib-guillotine-query` dependency.
 

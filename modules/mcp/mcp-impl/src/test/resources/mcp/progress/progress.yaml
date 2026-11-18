@@ -1,0 +1,24 @@
+kind: MCP
+tools:
+  - name: progress
+    description: Complete a bounded number of steps and report progress
+    inputSchema:
+      type: object
+      properties:
+        steps:
+          type: integer
+          minimum: 1
+          maximum: 5
+      required: [steps]
+      additionalProperties: false
+    outputSchema:
+      type: object
+      properties:
+        completedSteps:
+          type: integer
+          minimum: 1
+          maximum: 5
+        progressSupported:
+          type: boolean
+      required: [completedSteps, progressSupported]
+      additionalProperties: false

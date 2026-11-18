@@ -13,12 +13,19 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.mcp.McpInvocation;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+
+import io.modelcontextprotocol.modern.McpSchema.CallToolOutcome;
+import io.modelcontextprotocol.modern.McpSchema.CallToolResult;
+import io.modelcontextprotocol.modern.server.McpRequestContext;
+import io.modelcontextprotocol.modern.server.McpSyncNotifier;
+import io.modelcontextprotocol.modern.server.McpSyncResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -76,11 +83,13 @@ class McpToolExecutorImplTest
         } );
         when( boundExports.getScript() ).thenReturn( CONTROLLER );
         when( boundExports.hasMethod( "execute" ) ).thenReturn( true );
-        when( boundExports.executeMethod( "execute", "local_name", arguments ) ).thenAnswer( invocation -> {
-            assertThat( BOUND.isBound() ).isTrue();
-            assertToolRequest();
-            return value;
-        } );
+        when( boundExports.executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) ) )
+            .thenAnswer( invocation -> {
+                assertThat( BOUND.isBound() ).isTrue();
+                assertToolRequest();
+                assertThat( invocation.<McpInvocation>getArgument( 3 ) ).isSameAs( McpInvocationScope.current() );
+                return value;
+            } );
         when( value.isObject() ).thenReturn( true );
         when( value.getMap() ).thenAnswer( invocation -> {
             assertThat( BOUND.isBound() ).isTrue();
@@ -99,11 +108,39 @@ class McpToolExecutorImplTest
         verify( scripts ).execute( CONTROLLER );
         verify( exports ).executeBound( any() );
         verify( exports, never() ).hasMethod( any() );
-        verify( exports, never() ).executeMethod( any(), any(), any() );
-        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ) );
+        verify( exports, never() ).executeMethod( any(), any(), any(), any() );
+        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), same( McpInvocationScope.current() ) );
         verify( value ).getMap();
         assertThat( BOUND.isBound() ).isFalse();
         assertThat( arguments ).containsEntry( "message", "hello" ).containsEntry( "nullable", null );
+    }
+
+    @Test
+    void passes_active_invocation_as_third_controller_argument()
+    {
+        final var context = mock( McpRequestContext.class );
+        when( context.progressToken() ).thenReturn( "client-token" );
+        final var notifier = mock( McpSyncNotifier.class );
+        final var helper = new AtomicReference<McpInvocation>();
+        doAnswer( invocation -> {
+            final McpInvocation current = invocation.getArgument( 3 );
+            assertThat( current ).isSameAs( McpInvocationScope.current() );
+            assertThat( current.isProgressSupported() ).isTrue();
+            assertThat( BOUND.isBound() ).isTrue();
+            assertToolRequest();
+            helper.set( current );
+            current.progress( 1, "controller" );
+            return value;
+        } ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
+        inRequest( () -> {
+            final var response = McpInvocationScope.respond( context, () -> {
+                assertThat( execute() ).isSameAs( result );
+                return CallToolResult.builder().build();
+            } );
+            assertThat( ( (McpSyncResponse.Streaming<CallToolOutcome>) response ).body().run( notifier ) ).isNotNull();
+        } );
+        verify( notifier ).progress( 1, null, "controller" );
+        assertThat( helper.get().isProgressSupported() ).isFalse();
     }
 
     @Test
@@ -126,14 +163,14 @@ class McpToolExecutorImplTest
         inRequest( () -> assertThatThrownBy( this::execute ).isInstanceOf( IllegalArgumentException.class )
             .hasMessage( "MCP controller " + CONTROLLER + " must export execute(name, args)" ) );
 
-        verify( boundExports, never() ).executeMethod( any(), any(), any() );
+        verify( boundExports, never() ).executeMethod( any(), any(), any(), any() );
         verifyNoInteractions( value );
     }
 
     @Test
     void rejects_null_return_and_restores_request()
     {
-        doReturn( null ).when( boundExports ).executeMethod( "execute", "local_name", arguments );
+        doReturn( null ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
 
         assertInvalidReturn();
         verifyNoInteractions( value );
@@ -175,7 +212,7 @@ class McpToolExecutorImplTest
             assertThat( BOUND.isBound() ).isTrue();
             assertToolRequest();
             throw failure;
-        } ).when( boundExports ).executeMethod( "execute", "local_name", arguments );
+        } ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
 
         inRequest( () -> assertThatThrownBy( this::execute ).isSameAs( failure ) );
 
@@ -223,7 +260,7 @@ class McpToolExecutorImplTest
         assertThat( PortalRequestAccessor.get() ).isNull();
         assertThat( temporary.get() ).isNotNull();
         assertThat( temporary.get().getApplicationKey() ).isNull();
-        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ) );
+        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), same( McpInvocationScope.current() ) );
     }
 
     @Test
@@ -231,7 +268,7 @@ class McpToolExecutorImplTest
     {
         final var temporary = captureTemporaryRequest();
         final var failure = new IllegalStateException( "script failure" );
-        doThrow( failure ).when( boundExports ).executeMethod( "execute", "local_name", arguments );
+        doThrow( failure ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
         assertThat( PortalRequestAccessor.get() ).isNull();
 
         assertThatThrownBy( this::execute ).isSameAs( failure );

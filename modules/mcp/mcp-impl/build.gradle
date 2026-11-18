@@ -9,6 +9,7 @@ dependencies {
     testImplementation project( ':web:web-impl' )
     testImplementation project( ':portal:portal-impl' )
     testImplementation project( ':admin:admin-api' )
+    testImplementation project( ':tools:testing' )
     testImplementation libs.jetty.server
     testImplementation libs.jetty.servlet
 }
