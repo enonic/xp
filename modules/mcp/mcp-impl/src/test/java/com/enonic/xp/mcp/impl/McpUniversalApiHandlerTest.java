@@ -28,14 +28,28 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptorService;
+import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.mcp.McpDescriptor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.impl.handler.SlashApiHandler;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.portal.sse.SseManager;
-
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.web.WebRequest;
@@ -57,8 +71,13 @@ import io.modelcontextprotocol.modern.server.feature.ToolsPage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static io.modelcontextprotocol.modern.McpSchema.LATEST_PROTOCOL_VERSION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_SELF;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -78,7 +97,7 @@ class McpUniversalApiHandlerTest
     void discovers_empty_production_repository_with_modern_sdk_client()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), false ) )
         {
             final var client = endpoint.sdkClient();
             final var discovery = client.discover();
@@ -118,10 +137,94 @@ class McpUniversalApiHandlerTest
     }
 
     @Test
+    void calls_namespaced_catalog_tool_through_script_executor_with_caller_context()
+        throws Exception
+    {
+        final var appKey = ApplicationKey.from( "com.example.tools" );
+        final var key = DescriptorKey.from( appKey, "example" );
+        final var controller = ResourceKey.from( appKey, "/mcp/example/example.js" );
+        final var publicName = "com.example.tools__example__echo";
+        final Map<String, Object> arguments = Map.of( "message", "Héllo 世界 🌍" );
+        final var authInfo = AuthenticationInfo.create()
+            .user( User.create().key( PrincipalKey.from( "user:system:mcp-caller" ) ).login( "mcp-caller" ).build() )
+            .principals( RoleKeys.AUTHENTICATED ).build();
+        final var application = mock( Application.class );
+        when( application.getKey() ).thenReturn( appKey );
+        when( application.isStarted() ).thenReturn( true );
+        final var applications = mock( ApplicationService.class );
+        when( applications.getInstalledApplications() ).thenReturn( Applications.from( application ) );
+        final var descriptors = mock( McpDescriptorServiceImpl.class );
+        final var tool = Tool.builder( "echo", ECHO_SCHEMA ).outputSchema( ECHO_SCHEMA ).build();
+        when( descriptors.getLoadedByApplication( appKey ) ).thenReturn(
+            List.of( new LoadedMcpGroup( new McpDescriptor( key, PrincipalKeys.empty() ), List.of( tool ) ) ) );
+        when( descriptors.getControllerResourceKey( key ) ).thenReturn( controller );
+        final var scripts = mock( PortalScriptService.class );
+        final var exports = mock( ScriptExports.class );
+        final var value = mock( ScriptValue.class );
+        when( scripts.hasScript( controller ) ).thenReturn( true );
+        when( scripts.execute( controller ) ).thenReturn( exports );
+        when( exports.executeBound( any() ) ).thenCallRealMethod();
+        when( exports.hasMethod( "execute" ) ).thenReturn( true );
+        when( exports.executeMethod( eq( "execute" ), eq( "echo" ), anyMap() ) ).thenAnswer( invocation -> {
+            final Map<String, @Nullable Object> actualArguments = invocation.getArgument( 2 );
+            assertThat( actualArguments ).isEqualTo( arguments );
+            final var request = PortalRequestAccessor.get();
+            assertThat( request ).isNotNull();
+            assertThat( request.getApplicationKey() ).isEqualTo( appKey );
+            assertThat( request.getRawPath() ).isEqualTo( McpUniversalApiHandler.ENDPOINT );
+            assertThat( request.getRawRequest() ).isNotNull();
+            assertThat( ContextAccessor.current().getAuthInfo() ).isSameAs( authInfo );
+            return value;
+        } );
+        when( value.isObject() ).thenReturn( true );
+        when( value.getMap() ).thenReturn( Map.of( "content", List.of( Map.of( "type", "text", "text", arguments.get( "message" ) ) ),
+            "structuredContent", arguments, "_meta", Map.of( "source", "script" ) ) );
+        final var executor = new McpToolExecutorImpl( descriptors, scripts );
+        final var catalog = new McpToolCatalog( descriptors, applications, executor );
+
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( catalog ), false, authInfo ) )
+        {
+            final var listed = json( endpoint.rpc( "tools/list", Map.of() ), 200 ).path( "result" ).path( "tools" );
+            assertThat( listed ).hasSize( 1 );
+            assertThat( listed.get( 0 ).path( "name" ).asText() ).isEqualTo( publicName );
+            final var params = Map.of( "name", publicName, "arguments", arguments );
+            final var result = json( endpoint.rpc( "tools/call", params ), 200 ).path( "result" );
+            assertThat( result.path( "isError" ).asBoolean() ).isFalse();
+            assertThat( result.path( "structuredContent" ) ).isEqualTo( MAPPER.valueToTree( arguments ) );
+            assertThat( result.path( "content" ).get( 0 ).path( "text" ).asText() ).isEqualTo( arguments.get( "message" ) );
+            assertThat( result.path( "_meta" ).path( "source" ).asText() ).isEqualTo( "script" );
+            verify( exports ).executeMethod( "execute", "echo", arguments );
+
+            final var invalidArguments = json( endpoint.rpc( "tools/call",
+                Map.of( "name", publicName, "arguments", Map.of( "message", 42 ) ) ), 200 ).path( "result" );
+            assertThat( invalidArguments.path( "isError" ).asBoolean() ).isTrue();
+            assertThat( invalidArguments.path( "content" ).get( 0 ).path( "text" ).asText() ).containsIgnoringCase( "argument" );
+            verify( scripts ).execute( controller );
+            verify( exports ).executeMethod( "execute", "echo", arguments );
+
+            when( value.getMap() ).thenReturn( Map.of( "content", "invalid" ) );
+            final var invalidResult = json( endpoint.rpc( "tools/call", params ), 200 ).path( "result" );
+            assertThat( invalidResult.path( "isError" ).asBoolean() ).isTrue();
+            assertThat( invalidResult.path( "content" ).get( 0 ).path( "text" ).asText() ).contains( "content must be a list" );
+
+            when( value.getMap() ).thenReturn( Map.of( "content", List.of(), "structuredContent", Map.of( "message", 42 ) ) );
+            final var invalidOutput = json( endpoint.rpc( "tools/call", params ), 200 ).path( "result" );
+            assertThat( invalidOutput.path( "isError" ).asBoolean() ).isTrue();
+            assertThat( invalidOutput.path( "content" ).get( 0 ).path( "text" ).asText() ).containsIgnoringCase( "output" );
+
+            final var unknown = json( endpoint.rpc( "tools/call", Map.of( "name", "echo", "arguments", arguments ) ), 400 );
+            assertThat( unknown.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
+            assertThat( unknown.path( "error" ).path( "message" ).asText() ).contains( "echo" );
+            verify( scripts, times( 3 ) ).execute( controller );
+            verify( exports, times( 3 ) ).executeMethod( "execute", "echo", arguments );
+        }
+    }
+
+    @Test
     void routes_registered_web_api_through_real_registry_and_slash_handler()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), true ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), true ) )
         {
             assertThat( endpoint.sdkClient().listTools().list().tools() ).isEmpty();
             assertThat( json( endpoint.rpc( "server/discover", Map.of() ), 200 ).has( "result" ) ).isTrue();
@@ -132,7 +235,7 @@ class McpUniversalApiHandlerTest
     void rejects_unknown_tools_and_cursors()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), false ) )
         {
             final var unknown = json( endpoint.rpc( "tools/call", Map.of( "name", "echo", "arguments", Map.of() ) ), 400 );
             assertThat( unknown.path( "error" ).path( "message" ).asText() ).containsIgnoringCase( "echo" );
@@ -146,7 +249,7 @@ class McpUniversalApiHandlerTest
     void rejects_malformed_json_and_batches()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), false ) )
         {
             assertThat( json( endpoint.post( "{", "application/json", Map.of() ), 400 )
                             .path( "error" ).path( "code" ).asInt() ).isEqualTo( -32700 );
@@ -160,7 +263,7 @@ class McpUniversalApiHandlerTest
     void rejects_wrong_media_type_legacy_verbs_and_subpaths()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), false ) )
         {
             assertThat( endpoint.post( "{}", "text/plain", Map.of() ).statusCode() ).isEqualTo( 415 );
             for ( final var method : List.of( "GET", "DELETE" ) )
@@ -177,7 +280,7 @@ class McpUniversalApiHandlerTest
     void validates_missing_mismatched_and_duplicate_mirror_headers()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), false ) )
         {
             final var body = request( "tools/call", Map.of( "name", "echo", "arguments", Map.of() ) );
             final var valid = headers( "tools/call" );
@@ -201,7 +304,7 @@ class McpUniversalApiHandlerTest
     void reports_unsupported_protocol_and_legacy_initialize()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), false ) )
         {
             final var params = Map.of( "_meta", Map.of( VERSION_META, "1900-01-01" ) );
             final var response = json( endpoint.post( requestWithoutMeta( "tools/list", params ), "application/json",
@@ -219,7 +322,7 @@ class McpUniversalApiHandlerTest
     void accepts_notifications_and_rejects_requests_after_deactivation()
         throws Exception
     {
-        final var handler = new McpUniversalApiHandler();
+        final var handler = new McpUniversalApiHandler( emptyCatalog() );
         try ( var endpoint = new Endpoint( handler, false ) )
         {
             final var response = endpoint.post( "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}",
@@ -235,7 +338,7 @@ class McpUniversalApiHandlerTest
     void preserves_sdk_default_origin_rejection()
         throws Exception
     {
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler(), false ) )
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( emptyCatalog() ), false ) )
         {
             final var headers = headers( "tools/list" );
             headers.put( "Origin", List.of( "https://untrusted.example" ) );
@@ -249,6 +352,13 @@ class McpUniversalApiHandlerTest
         final var error = json( response, 400 ).path( "error" );
         assertThat( error.path( "code" ).asInt() ).isEqualTo( -32020 );
         assertThat( error.path( "message" ).asText() ).containsIgnoringCase( name );
+    }
+
+    private static McpToolCatalog emptyCatalog()
+    {
+        final var applications = mock( ApplicationService.class );
+        when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+        return new McpToolCatalog( mock( McpDescriptorServiceImpl.class ), applications, mock( McpToolExecutor.class ) );
     }
 
     private static JsonNode json( final HttpResponse<String> response, final int status )
@@ -317,6 +427,12 @@ class McpUniversalApiHandlerTest
         private Endpoint( final McpUniversalApiHandler handler, final boolean routed )
             throws Exception
         {
+            this( handler, routed, AuthenticationInfo.unAuthenticated() );
+        }
+
+        private Endpoint( final McpUniversalApiHandler handler, final boolean routed, final AuthenticationInfo authInfo )
+            throws Exception
+        {
             this.handler = handler;
             final Function<WebRequest, WebResponse> dispatch = routed ? routing( handler ) : handler::handle;
             final var connector = new ServerConnector( server );
@@ -333,12 +449,19 @@ class McpUniversalApiHandlerTest
                 {
                     request.setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, DispatchConstants.WEB_CONNECTOR );
                     final var serializer = new WebSerializerServiceImpl();
-                    final var webRequest = serializer.request( request );
+                    final var webRequest = new PortalRequest( serializer.request( request ) );
+                    webRequest.setApplicationKey( ApplicationKey.from( "caller.app" ) );
                     webRequest.setBody( new String( request.getInputStream().readAllBytes(), UTF_8 ) );
                     assertThat( request.getInputStream().read() ).isEqualTo( -1 );
-                    final var context = ContextBuilder.create().authInfo( AuthenticationInfo.unAuthenticated() ).build();
+                    final var context = ContextBuilder.create().authInfo( authInfo ).build();
                     context.callWith( () -> {
-                        serializer.response( webRequest, dispatch.apply( webRequest ), response );
+                        final var webResponse = PortalRequestAccessor.callWith( webRequest, () -> dispatch.apply( webRequest ) );
+                        final var applicationKey = webRequest.getApplicationKey();
+                        assertThat( PortalRequestAccessor.get() ).isNull();
+                        serializer.response( webRequest, webResponse, response );
+                        assertThat( PortalRequestAccessor.get() ).isNull();
+                        assertThat( webRequest.getApplicationKey() ).isEqualTo( applicationKey );
+                        assertThat( ContextAccessor.current().getAuthInfo() ).isSameAs( authInfo );
                         return null;
                     } );
                 }

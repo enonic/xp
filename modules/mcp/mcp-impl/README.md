@@ -46,7 +46,7 @@ tools:
 
 YAML tool definitions bind directly to the official SDK's `Tool` type. Supported MCP fields, JSON Schemas, `_meta` and nested JSON nulls are retained by SDK deserialization. Unknown tool fields follow the SDK's deserialization behavior. Local tool names contain 1–128 ASCII letters, digits, dots, underscores or hyphens and are unique within the group. `inputSchema` is a required object; an optional `outputSchema` is an object. Descriptor loading validates schemas through the SDK; argument and output validation occurs during invocation.
 
-The controller contract is proposed as:
+The controller exports:
 
 ```javascript
 exports.execute = function (name, args) {
@@ -61,7 +61,7 @@ exports.execute = function (name, args) {
 };
 ```
 
-`name` is the local tool name; `args` contains validated arguments. Completed results use standard MCP content, optional `structuredContent`, `isError` and metadata. Controllers omit protocol-owned `resultType`; the SDK supplies the completion discriminator. The protocol adapter owns JSON-RPC and revision-specific fields. Script dispatch and public-name allocation are subsequent implementation slices. The `/api/system:mcp` Universal API delegates HTTP/JSON handling to the SDK transport.
+`name` is the local tool name; `args` contains validated arguments. Completed results use standard MCP content, optional `structuredContent`, `isError` and metadata. Controllers omit protocol-owned `resultType`; the SDK supplies the completion discriminator. The protocol adapter owns JSON-RPC and revision-specific fields. Script dispatch invokes the declared controller through `PortalScriptService`, with conversion to a plain result map inside a bound script execution. The `/api/system:mcp` Universal API delegates HTTP/JSON handling to the SDK transport.
 
 ## Descriptor discovery API
 
@@ -88,7 +88,13 @@ The runtime includes the SDK's OSGi bundles and required dependencies. Reactor i
 
 The built-in API is available at `/api/system:mcp` on XP's web connector. It requires no site, webapp or custom vhost. It supports protocol revision `2026-07-28` through the official SDK server and servlet transport. This iteration is for isolated development use: the API declares `role:system.everyone`, retains the SDK's default Origin checks, and has no OAuth or MCP-specific authorization enforcement.
 
-The production tool repository is currently empty. Tool catalog integration and script dispatch belong to #12634. Tests inject an SDK echo repository into the handler; no echo registration or fixture dependency ships in the production catalog.
+The production repository discovers tools from started installed apps through the descriptor service. Apps and groups are sorted by name; tools retain descriptor order. An installation with no contributions has an empty catalog. Each list or lookup reads the current app/resource state; lifecycle notifications and catalog versioning remain #12635. Invalid contributions fail with contextual errors.
+
+Public names use `encode(application)__encode(group)__encode(localName)`. ASCII letters, digits, dots and hyphens are preserved; `_` becomes `_u`; other UTF-16 code units become `_xhhhh` with four lowercase hexadecimal digits. This keeps component boundaries unambiguous. Names longer than 128 characters are rejected with an instruction to shorten the contributing names. For example, the Chuck Norris app contributes `com.enonic.app.chucknorris__chucknorris__quote`.
+
+Calls resolve the public name to the original group and local tool name, validate arguments, and invoke `execute(localName, args)` through the app's controller. Controllers must exist, export `execute`, and return an object. The SDK adapter validates MCP results and declared structured output. Script exceptions reach the SDK protocol error handler. The originating portal request is rebound during deferred response serialization; the contributing app is selected for controller execution and the previous app is restored in a `finally` block. XP caller identity is preserved, with no administrator elevation.
+
+Tests inject an SDK echo repository into the handler; no echo registration or fixture dependency ships in the production catalog. The separately installed Chuck Norris app is the initial real contribution for manual integration checks.
 
 Requests use HTTP POST with JSON bodies. The SDK handles JSON-RPC decoding, mirrored protocol/method/name headers, metadata, version errors, notification acknowledgments and response statuses. GET/DELETE receive the modern transport's method rejection. Responses in this slice are JSON; progress delivery is #12655 and long-lived subscriptions are #12656.
 
@@ -118,7 +124,7 @@ The echo example belongs in a separately packaged development/test app. Producti
 
 ## Delivery boundaries
 
-This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, invocation binding and the SDK-backed Universal API JSON endpoint. It adds no app script-controller execution, progress helper, subscription streams, authentication or MCP-specific authorization. Existing XP permissions remain intact. All security implementation is iteration 2. Echo exists only in test fixtures. SDK-client tests and the local-AI smoke run cover the endpoint with an injected fixture; production app tools remain pending #12634.
+This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, namespaced catalog, app script-controller execution and the SDK-backed Universal API JSON endpoint. Progress, lifecycle notifications, subscription streams, authentication and MCP-specific authorization have separate implementation tasks. Existing XP permissions remain intact. All security implementation is iteration 2. Echo exists only in test fixtures. HTTP integration tests exercise catalog and dispatch with mocked script exports; the recorded local-AI smoke run used an injected fixture. A real installed-app quote invocation remains a manual integration gate.
 
 Guillotine contributes through this same contract. Its controller invokes its internal `SchemaProvider` in-process, with no HTTP request and no `lib-guillotine-query` dependency.
 
