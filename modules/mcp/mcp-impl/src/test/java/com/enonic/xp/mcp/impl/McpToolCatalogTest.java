@@ -1,8 +1,11 @@
 package com.enonic.xp.mcp.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -26,9 +29,12 @@ import io.modelcontextprotocol.modern.McpSchema.ToolAnnotations;
 import io.modelcontextprotocol.modern.server.McpRequestContext;
 import io.modelcontextprotocol.modern.server.McpSyncResponse;
 import io.modelcontextprotocol.modern.server.feature.McpSyncTool;
+import io.modelcontextprotocol.modern.server.feature.ServerChange;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -222,6 +228,181 @@ class McpToolCatalogTest
         verifyNoInteractions( executor );
     }
 
+    @Test
+    void ignores_new_binding_instances_after_initial_discovery()
+    {
+        started( "app" );
+        groups( "app", group( "app:g", "t" ) );
+        catalog.refresh();
+        final var changes = new ArrayList<ServerChange>();
+        final var subscription = catalog.changes().changes().subscribe( changes::add );
+        try
+        {
+            catalog.refresh();
+            groups( "app", group( "app:g", "t" ) );
+            catalog.refresh();
+            assertThat( catalog.list( context, null ).tools() ).hasSize( 1 );
+            assertThat( catalog.find( context, "app__g__t" ) ).isNotNull();
+            assertThat( changes ).isEmpty();
+        }
+        finally
+        {
+            subscription.dispose();
+        }
+    }
+
+    @Test
+    void first_discovery_notifies_an_already_connected_listener()
+    {
+        started( "app" );
+        groups( "app", group( "app:g", "t" ) );
+        final var changes = new ArrayList<ServerChange>();
+        final var subscription = catalog.changes().changes().subscribe( changes::add );
+        try
+        {
+            catalog.refresh();
+            catalog.refresh();
+            assertThat( changes ).containsExactly( new ServerChange.ToolsListChanged() );
+        }
+        finally
+        {
+            subscription.dispose();
+        }
+    }
+
+    @Test
+    void observes_refresh_list_and_find_changes_and_publishes_state_before_notification()
+    {
+        started( "app" );
+        groups( "app", group( "app:g", "before" ) );
+        catalog.refresh();
+        final var observed = new ArrayList<List<String>>();
+        final var subscription = catalog.changes().changes().subscribe( change -> {
+            assertThat( change ).isEqualTo( new ServerChange.ToolsListChanged() );
+            observed.add( catalog.list( context, null ).tools().stream().map( Tool::name ).toList() );
+        } );
+        try
+        {
+            groups( "app", group( "app:g", "after" ) );
+            catalog.refresh();
+            groups( "app", group( "app:g", "last", "first" ) );
+            catalog.list( context, null );
+            groups( "app", group( "app:g", "first", "last" ) );
+            catalog.find( context, "app__g__first" );
+            when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+            catalog.refresh();
+            catalog.refresh();
+            assertThat( observed ).containsExactly( List.of( "app__g__after" ), List.of( "app__g__last", "app__g__first" ),
+                                                   List.of( "app__g__first", "app__g__last" ), List.of() );
+        }
+        finally
+        {
+            subscription.dispose();
+        }
+    }
+
+    @Test
+    void compares_every_tool_definition_field()
+    {
+        started( "app" );
+        final var base = Tool.builder( "t", Map.of() ).build();
+        final var variants = List.of(
+            Tool.builder( "t", Map.of() ).title( "Title" ).build(),
+            Tool.builder( "t", Map.of() ).description( "Description" ).build(),
+            Tool.builder( "t", Map.of( "type", "object" ) ).build(),
+            Tool.builder( "t", Map.of() ).outputSchema( Map.of( "type", "object" ) ).build(),
+            Tool.builder( "t", Map.of() ).annotations( ToolAnnotations.builder().readOnlyHint( true ).build() ).build(),
+            Tool.builder( "t", Map.of() ).meta( Map.of( "value", 42 ) ).build(),
+            Tool.builder( "t", Map.of() ).icons( List.of( Icon.builder( "https://example.com/icon.svg" ).build() ) ).build() );
+        groups( "app", loaded( "app:g", List.of( base ) ) );
+        catalog.refresh();
+        final var changes = new ArrayList<ServerChange>();
+        final var subscription = catalog.changes().changes().subscribe( changes::add );
+        try
+        {
+            for ( var variant : variants )
+            {
+                groups( "app", loaded( "app:g", List.of( variant ) ) );
+                catalog.refresh();
+                groups( "app", loaded( "app:g", List.of( base ) ) );
+                catalog.refresh();
+            }
+            assertThat( changes ).hasSize( variants.size() * 2 ).containsOnly( new ServerChange.ToolsListChanged() );
+        }
+        finally
+        {
+            subscription.dispose();
+        }
+    }
+
+    @Test
+    void broken_application_does_not_hide_other_removals_and_recovery()
+    {
+        final var broken = app( "broken", true );
+        final var removed = app( "removed", true );
+        when( applications.getInstalledApplications() ).thenReturn( Applications.from( broken, removed ) );
+        groups( "broken", group( "broken:g", "t" ) );
+        groups( "removed", group( "removed:g", "t" ) );
+        final var binding = catalog.find( context, "removed__g__t" );
+        final var changes = new ArrayList<ServerChange>();
+        final var subscription = catalog.changes().changes().subscribe( changes::add );
+        try
+        {
+            when( descriptors.getLoadedByApplication( ApplicationKey.from( "broken" ) ) )
+                .thenThrow( new IllegalArgumentException( "broken descriptor" ) );
+            assertThatThrownBy( catalog::refresh ).hasMessageContaining( "broken descriptor" );
+            when( removed.isStarted() ).thenReturn( false );
+            assertThatThrownBy( catalog::refresh ).hasMessageContaining( "broken descriptor" );
+            assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "removed__g__t" ).build() ) )
+                .hasMessageContaining( "broken descriptor" );
+            assertThat( changes ).hasSize( 2 );
+            when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+            catalog.refresh();
+            assertThat( catalog.list( context, null ).tools() ).isEmpty();
+            groups( "broken", group( "broken:g", "fixed" ) );
+            when( applications.getInstalledApplications() ).thenReturn( Applications.from( broken ) );
+            catalog.refresh();
+            assertThat( changes ).hasSize( 3 );
+            assertThat( catalog.find( context, "broken__g__fixed" ) ).isNotNull();
+            verifyNoInteractions( executor );
+        }
+        finally
+        {
+            subscription.dispose();
+        }
+    }
+
+    @Test
+    void retained_bindings_reject_removed_and_changed_definitions()
+    {
+        started( "app" );
+        groups( "app", group( "app:g", "t" ) );
+        final var binding = catalog.find( context, "app__g__t" );
+        groups( "app", loaded( "app:g", List.of( Tool.builder( "t", Map.of() ).description( "changed" ).build() ) ) );
+        assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "app__g__t" ).build() ) )
+            .isInstanceOf( McpException.class ).hasMessageContaining( "no longer available" );
+        when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+        assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "app__g__t" ).build() ) )
+            .isInstanceOf( McpException.class ).hasMessageContaining( "no longer available" );
+        verifyNoInteractions( executor );
+    }
+
+    @Test
+    void script_execution_does_not_hold_refresh_lock()
+    {
+        started( "app" );
+        groups( "app", group( "app:g", "t" ) );
+        final var binding = catalog.find( context, "app__g__t" );
+        try ( var worker = Executors.newSingleThreadExecutor() )
+        {
+            when( executor.execute( DescriptorKey.from( "app:g" ), "t", Map.of() ) ).thenAnswer( invocation -> {
+                assertDoesNotThrow( () -> worker.submit( catalog::refresh ).get( 5, TimeUnit.SECONDS ) );
+                return Map.of( "content", List.of() );
+            } );
+            assertThat( call( binding, CallToolRequest.builder( "app__g__t" ).build() ).isError() ).isNotEqualTo( true );
+        }
+    }
+
     private void started( final String key )
     {
         final var installed = Applications.from( app( key, true ) );
@@ -230,7 +411,7 @@ class McpToolCatalogTest
 
     private void groups( final String app, final LoadedMcpGroup... groups )
     {
-        when( descriptors.getLoadedByApplication( ApplicationKey.from( app ) ) ).thenReturn( List.of( groups ) );
+        doReturn( List.of( groups ) ).when( descriptors ).getLoadedByApplication( ApplicationKey.from( app ) );
     }
 
     private static Application app( final String key, final boolean started )

@@ -9,6 +9,8 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
@@ -62,6 +64,8 @@ import io.modelcontextprotocol.json.jackson2.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.modern.McpSchema.Tool;
 import io.modelcontextprotocol.modern.client.McpClient;
 import io.modelcontextprotocol.modern.client.McpSyncClient;
+import io.modelcontextprotocol.modern.client.McpSyncSubscriptionListener;
+import io.modelcontextprotocol.modern.client.SubscriptionEvent;
 import io.modelcontextprotocol.modern.client.transport.HttpClientMcpTransport;
 import io.modelcontextprotocol.modern.server.McpRequestContext;
 import io.modelcontextprotocol.modern.server.feature.McpSyncTool;
@@ -69,6 +73,7 @@ import io.modelcontextprotocol.modern.server.feature.McpSyncToolRepository;
 import io.modelcontextprotocol.modern.server.feature.ToolsPage;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static io.modelcontextprotocol.modern.McpSchema.LATEST_PROTOCOL_VERSION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -103,15 +108,18 @@ class McpUniversalApiHandlerTest
             final var discovery = client.discover();
             assertThat( discovery.supportedVersions() ).contains( LATEST_PROTOCOL_VERSION );
             assertThat( discovery.capabilities().tools() ).isNotNull();
+            assertThat( discovery.capabilities().tools().listChanged() ).isTrue();
+            assertThat( discovery.capabilities().resources() ).isNull();
+            assertThat( discovery.capabilities().prompts() ).isNull();
             assertThat( client.listTools().list().tools() ).isEmpty();
 
             final var raw = json( endpoint.rpc( "server/discover", Map.of() ), 200 ).path( "result" );
             assertThat( raw.path( "capabilities" ).has( "subscriptions" ) ).isFalse();
-            assertThat( raw.path( "capabilities" ).path( "tools" ).path( "listChanged" ).asBoolean() ).isFalse();
+            assertThat( raw.path( "capabilities" ).path( "tools" ).path( "listChanged" ).asBoolean() ).isTrue();
             assertThat( raw.path( "capabilities" ).has( "resources" ) ).isFalse();
             assertThat( raw.path( "capabilities" ).has( "prompts" ) ).isFalse();
-            assertThat( json( endpoint.rpc( "subscriptions/listen", Map.of() ), 404 )
-                            .path( "error" ).path( "code" ).asInt() ).isEqualTo( -32601 );
+            assertThat( json( endpoint.rpc( "subscriptions/listen", Map.of() ), 400 )
+                            .path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
             assertThat( json( endpoint.rpc( "tools/list", Map.of() ), 200 ).path( "result" ).path( "tools" ).isEmpty() ).isTrue();
         }
     }
@@ -346,6 +354,178 @@ class McpUniversalApiHandlerTest
         }
     }
 
+    @Test
+    void streams_installed_updated_and_removed_tools_through_routed_deferred_replay()
+        throws Exception
+    {
+        final var fixture = new CatalogFixture();
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), true ) )
+        {
+            final var client = endpoint.sdkClient();
+            assertThat( client.listTools().list().tools() ).isEmpty();
+            final var listener = new RecordingListener();
+            try ( var listening = client.listen().toolsChanged().open( listener ) )
+            {
+                listener.subscribed();
+                fixture.install( "Initial echo" );
+                listener.changed();
+                assertThat( client.listTools().list().tools() ).singleElement().satisfies( tool -> {
+                    assertThat( tool.name() ).isEqualTo( CatalogFixture.PUBLIC_NAME );
+                    assertThat( tool.description() ).isEqualTo( "Initial echo" );
+                } );
+                assertThat( client.tool( CatalogFixture.PUBLIC_NAME ).arguments( Map.of( "message", "Héllo 世界 🌍" ) )
+                                .call().isError() ).isNotEqualTo( true );
+                verify( fixture.executor ).execute( fixture.key, "echo", Map.of( "message", "Héllo 世界 🌍" ) );
+
+                fixture.install( "Updated echo" );
+                listener.changed();
+                assertThat( client.listTools().list().tools() ).singleElement().satisfies(
+                    tool -> assertThat( tool.description() ).isEqualTo( "Updated echo" ) );
+                fixture.catalog.refresh();
+                listener.quiet();
+
+                fixture.remove();
+                listener.changed();
+                assertThat( client.listTools().list().tools() ).isEmpty();
+                final var stale = json( endpoint.rpc( "tools/call", Map.of( "name", CatalogFixture.PUBLIC_NAME,
+                    "arguments", Map.of( "message", "stale" ) ) ), 400 );
+                assertThat( stale.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
+                verify( fixture.executor, times( 1 ) ).execute( any(), any(), anyMap() );
+
+                for ( int i = 0; i < 3; i++ )
+                {
+                    fixture.install( "Echo " + i );
+                    listener.changed();
+                    assertThat( client.listTools().list().tools() ).hasSize( 1 );
+                    fixture.remove();
+                    listener.changed();
+                    assertThat( client.listTools().list().tools() ).isEmpty();
+                }
+                listener.quiet();
+            }
+        }
+    }
+
+    @Test
+    void rejects_tool_removed_between_http_lookup_and_execution()
+        throws Exception
+    {
+        final var fixture = new CatalogFixture();
+        fixture.install( "Stale binding" );
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), false ) )
+        {
+            final var client = endpoint.sdkClient();
+            assertThat( client.listTools().list().tools() ).hasSize( 1 );
+            final var listener = new RecordingListener();
+            try ( var listening = client.listen().toolsChanged().open( listener ) )
+            {
+                listener.subscribed();
+                when( fixture.applications.getInstalledApplications() ).thenReturn(
+                    Applications.from( fixture.application ), Applications.empty() );
+                final var response = json( endpoint.rpc( "tools/call", Map.of( "name", CatalogFixture.PUBLIC_NAME,
+                    "arguments", Map.of( "message", "stale" ) ) ), 400 );
+                assertThat( response.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
+                assertThat( response.path( "error" ).path( "message" ).asText() ).contains( "no longer available" );
+                listener.changed();
+                assertThat( client.listTools().list().tools() ).isEmpty();
+                verifyNoInteractions( fixture.executor );
+            }
+        }
+    }
+
+    @Test
+    void broadcasts_to_multiple_clients_and_allows_disconnect_and_reconnect()
+        throws Exception
+    {
+        final var fixture = new CatalogFixture();
+        fixture.catalog.refresh();
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), false ) )
+        {
+            final var first = new RecordingListener();
+            final var second = new RecordingListener();
+            final var firstClient = endpoint.sdkClient();
+            final var secondClient = endpoint.sdkClient();
+            try ( var firstStream = firstClient.listen().toolsChanged().open( first );
+                  var secondStream = secondClient.listen().toolsChanged().open( second ) )
+            {
+                first.subscribed();
+                second.subscribed();
+                fixture.install( "Both listeners" );
+                first.changed();
+                second.changed();
+                firstStream.close();
+                fixture.remove();
+                second.changed();
+                first.quiet();
+                final var reconnected = new RecordingListener();
+                try ( var reconnectedStream = firstClient.listen().toolsChanged().open( reconnected ) )
+                {
+                    reconnected.subscribed();
+                    fixture.install( "Reconnected" );
+                    second.changed();
+                    reconnected.changed();
+                    assertThat( firstClient.listTools().list().tools() ).hasSize( 1 );
+                    assertThat( secondClient.listTools().list().tools() ).hasSize( 1 );
+                    first.quiet();
+                }
+            }
+        }
+    }
+
+    @Test
+    void acknowledges_only_supported_tool_filters()
+        throws Exception
+    {
+        final var fixture = new CatalogFixture();
+        fixture.catalog.refresh();
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog ), false ) )
+        {
+            final var listener = new RecordingListener();
+            try ( var listening = endpoint.sdkClient().listen().toolsChanged().resourcesChanged().promptsChanged()
+                .resourceUpdates( "test://resource" ).open( listener ) )
+            {
+                final var subscribed = listener.subscribed();
+                assertThat( subscribed.honoured().wantsToolsListChanged() ).isTrue();
+                assertThat( subscribed.honoured().wantsResourcesListChanged() ).isFalse();
+                assertThat( subscribed.honoured().wantsPromptsListChanged() ).isFalse();
+                assertThat( subscribed.honoured().resourceSubscriptionsOrEmpty() ).isEmpty();
+                assertThat( subscribed.missing().wantsResourcesListChanged() ).isTrue();
+                assertThat( subscribed.missing().wantsPromptsListChanged() ).isTrue();
+                assertThat( subscribed.missing().resourceSubscriptionsOrEmpty() ).containsExactly( "test://resource" );
+                fixture.install( "Tools only" );
+                listener.changed();
+                listener.quiet();
+            }
+        }
+    }
+
+    @Test
+    void graceful_shutdown_completes_all_subscription_streams()
+        throws Exception
+    {
+        final var fixture = new CatalogFixture();
+        fixture.catalog.refresh();
+        final var handler = new McpUniversalApiHandler( fixture.catalog );
+        try ( var endpoint = new Endpoint( handler, false ) )
+        {
+            final var first = new RecordingListener();
+            final var second = new RecordingListener();
+            try ( var firstStream = endpoint.sdkClient().listen().toolsChanged().open( first );
+                  var secondStream = endpoint.sdkClient().listen().toolsChanged().open( second ) )
+            {
+                first.subscribed();
+                second.subscribed();
+                handler.deactivate();
+                first.completed();
+                second.completed();
+                fixture.install( "After shutdown" );
+                first.quiet();
+                second.quiet();
+                assertThat( endpoint.rpc( "tools/list", Map.of() ).statusCode() ).isEqualTo( 503 );
+            }
+        }
+    }
+
     private static void assertHeaderError( final HttpResponse<String> response, final String name )
         throws IOException
     {
@@ -391,6 +571,101 @@ class McpUniversalApiHandlerTest
         throws IOException
     {
         return MAPPER.writeValueAsString( Map.of( "jsonrpc", "2.0", "id", 1, "method", method, "params", params ) );
+    }
+
+    private static final class RecordingListener
+        implements McpSyncSubscriptionListener
+    {
+        private final BlockingQueue<Object> signals = new LinkedBlockingQueue<>();
+
+        @Override
+        public void onEvent( final SubscriptionEvent event )
+        {
+            signals.add( event );
+        }
+
+        @Override
+        public void onError( final Throwable error )
+        {
+            signals.add( error );
+        }
+
+        @Override
+        public void onComplete()
+        {
+            signals.add( "complete" );
+        }
+
+        private SubscriptionEvent.Subscribed subscribed()
+            throws InterruptedException
+        {
+            final var signal = signals.poll( TIMEOUT.toMillis(), MILLISECONDS );
+            assertThat( signal ).isInstanceOf( SubscriptionEvent.Subscribed.class );
+            final var subscribed = (SubscriptionEvent.Subscribed) signal;
+            assertThat( subscribed.honoured().wantsToolsListChanged() ).isTrue();
+            return subscribed;
+        }
+
+        private void changed()
+            throws InterruptedException
+        {
+            assertThat( signals.poll( TIMEOUT.toMillis(), MILLISECONDS ) ).isInstanceOf( SubscriptionEvent.ToolsListChanged.class );
+        }
+
+        private void completed()
+            throws InterruptedException
+        {
+            assertThat( signals.poll( TIMEOUT.toMillis(), MILLISECONDS ) ).isEqualTo( "complete" );
+        }
+
+        private void quiet()
+            throws InterruptedException
+        {
+            assertThat( signals.poll( 250, MILLISECONDS ) ).isNull();
+        }
+    }
+
+    private static final class CatalogFixture
+    {
+        private static final String PUBLIC_NAME = "com.example.tools__example__echo";
+
+        private final ApplicationService applications = mock( ApplicationService.class );
+
+        private final McpDescriptorServiceImpl descriptors = mock( McpDescriptorServiceImpl.class );
+
+        private final McpToolExecutor executor = mock( McpToolExecutor.class );
+
+        private final Application application = mock( Application.class );
+
+        private final DescriptorKey key = DescriptorKey.from( "com.example.tools:example" );
+
+        private final McpToolCatalog catalog = new McpToolCatalog( descriptors, applications, executor );
+
+        private CatalogFixture()
+        {
+            when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+            when( application.getKey() ).thenReturn( key.getApplicationKey() );
+            when( application.isStarted() ).thenReturn( true );
+            when( executor.execute( eq( key ), eq( "echo" ), anyMap() ) ).thenAnswer( invocation -> {
+                final Map<String, @Nullable Object> arguments = invocation.getArgument( 2 );
+                return Map.of( "content", List.of(), "structuredContent", arguments );
+            } );
+        }
+
+        private void install( final String description )
+        {
+            when( applications.getInstalledApplications() ).thenReturn( Applications.from( application ) );
+            when( descriptors.getLoadedByApplication( key.getApplicationKey() ) ).thenReturn( List.of(
+                new LoadedMcpGroup( new McpDescriptor( key, PrincipalKeys.empty() ),
+                    List.of( Tool.builder( "echo", ECHO_SCHEMA ).description( description ).outputSchema( ECHO_SCHEMA ).build() ) ) ) );
+            catalog.refresh();
+        }
+
+        private void remove()
+        {
+            when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+            catalog.refresh();
+        }
     }
 
     private static final class EchoRepository
@@ -441,7 +716,7 @@ class McpUniversalApiHandlerTest
             server.addConnector( connector );
             final var servletContext = new ServletContextHandler();
             servletContext.setContextPath( "/" );
-            servletContext.addServlet( new ServletHolder( new HttpServlet()
+            final var holder = new ServletHolder( new HttpServlet()
             {
                 @Override
                 protected void service( final HttpServletRequest request, final HttpServletResponse response )
@@ -465,7 +740,9 @@ class McpUniversalApiHandlerTest
                         return null;
                     } );
                 }
-            } ), "/*" );
+            } );
+            holder.setAsyncSupported( true );
+            servletContext.addServlet( holder, "/*" );
             server.setHandler( servletContext );
             try
             {

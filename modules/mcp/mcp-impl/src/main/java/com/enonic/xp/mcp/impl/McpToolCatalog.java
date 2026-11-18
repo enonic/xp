@@ -19,12 +19,15 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import io.modelcontextprotocol.modern.McpException;
 import io.modelcontextprotocol.modern.McpSchema.Tool;
 import io.modelcontextprotocol.modern.server.McpRequestContext;
+import io.modelcontextprotocol.modern.server.feature.McpChangeFeed;
+import io.modelcontextprotocol.modern.server.feature.McpChangePublisher;
 import io.modelcontextprotocol.modern.server.feature.McpSyncTool;
 import io.modelcontextprotocol.modern.server.feature.McpSyncToolRepository;
+import io.modelcontextprotocol.modern.server.feature.ServerChange;
 import io.modelcontextprotocol.modern.server.feature.ToolsPage;
 
 @NullMarked
-@Component(service = McpSyncToolRepository.class)
+@Component(service = {McpSyncToolRepository.class, McpToolCatalog.class})
 public final class McpToolCatalog
     implements McpSyncToolRepository
 {
@@ -34,6 +37,10 @@ public final class McpToolCatalog
 
     private final McpToolExecutor executor;
 
+    private final McpChangeFeed changeFeed = new McpChangeFeed();
+
+    private List<Tool> definitions = List.of();
+
     @Activate
     public McpToolCatalog( @Reference final McpDescriptorServiceImpl descriptorService,
                            @Reference final ApplicationService applicationService, @Reference final McpToolExecutor executor )
@@ -41,6 +48,16 @@ public final class McpToolCatalog
         this.descriptorService = descriptorService;
         this.applicationService = applicationService;
         this.executor = executor;
+    }
+
+    public McpChangePublisher changes()
+    {
+        return changeFeed;
+    }
+
+    public void refresh()
+    {
+        loadTools();
     }
 
     @Override
@@ -59,9 +76,10 @@ public final class McpToolCatalog
         return loadTools().get( name );
     }
 
-    private Map<String, McpSyncTool> loadTools()
+    private synchronized Map<String, McpSyncTool> loadTools()
     {
         final var tools = new LinkedHashMap<String, McpSyncTool>();
+        RuntimeException failure = null;
         final var applications = applicationService.getInstalledApplications().stream()
             .filter( Application::isStarted )
             .map( Application::getKey )
@@ -69,18 +87,56 @@ public final class McpToolCatalog
             .toList();
         for ( var application : applications )
         {
-            for ( var group : loadGroups( application ) )
+            try
             {
-                final var key = group.descriptor().getKey();
-                for ( var tool : group.tools() )
+                tools.putAll( loadApplicationTools( application ) );
+            }
+            catch ( RuntimeException e )
+            {
+                if ( failure == null )
                 {
-                    final var publicTool = namespace( key, tool );
-                    final var binding = McpToolAdapter.bind( publicTool,
-                        ( name, arguments ) -> executor.execute( key, tool.name(), arguments ) );
-                    if ( tools.putIfAbsent( publicTool.name(), binding ) != null )
+                    failure = e;
+                }
+                else
+                {
+                    failure.addSuppressed( e );
+                }
+            }
+        }
+        final var current = tools.values().stream().map( McpSyncTool::definition ).toList();
+        final var previous = definitions;
+        definitions = current;
+        if ( !previous.equals( current ) )
+        {
+            changeFeed.broadcast( new ServerChange.ToolsListChanged() );
+        }
+        if ( failure != null )
+        {
+            throw failure;
+        }
+        return tools;
+    }
+
+    private Map<String, McpSyncTool> loadApplicationTools( final ApplicationKey application )
+    {
+        final var tools = new LinkedHashMap<String, McpSyncTool>();
+        for ( var group : loadGroups( application ) )
+        {
+            final var key = group.descriptor().getKey();
+            for ( var tool : group.tools() )
+            {
+                final var publicTool = namespace( key, tool );
+                final var binding = McpToolAdapter.bind( publicTool, ( name, arguments ) -> {
+                    final var current = loadTools().get( name );
+                    if ( current == null || !current.definition().equals( publicTool ) )
                     {
-                        throw new IllegalArgumentException( "Duplicate public MCP tool " + publicTool.name() + " in " + key );
+                        throw McpException.invalidParams( "MCP tool is no longer available: " + name );
                     }
+                    return executor.execute( key, tool.name(), arguments );
+                } );
+                if ( tools.putIfAbsent( publicTool.name(), binding ) != null )
+                {
+                    throw new IllegalArgumentException( "Duplicate public MCP tool " + publicTool.name() + " in " + key );
                 }
             }
         }

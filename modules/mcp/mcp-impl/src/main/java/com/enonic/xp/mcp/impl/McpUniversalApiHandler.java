@@ -28,6 +28,8 @@ import io.modelcontextprotocol.json.schema.jackson2.DefaultJsonSchemaValidator;
 import io.modelcontextprotocol.modern.McpSchema.CacheScope;
 import io.modelcontextprotocol.modern.McpSchema.Implementation;
 import io.modelcontextprotocol.modern.server.McpServer;
+import io.modelcontextprotocol.modern.server.feature.McpChangeFeed;
+import io.modelcontextprotocol.modern.server.feature.McpChangePublisher;
 import io.modelcontextprotocol.modern.server.feature.McpSyncToolRepository;
 import io.modelcontextprotocol.modern.server.feature.ToolsFeature;
 import io.modelcontextprotocol.modern.server.transport.HttpServletMcpTransport;
@@ -43,7 +45,17 @@ public final class McpUniversalApiHandler
     private final HttpServletMcpTransport transport;
 
     @Activate
-    public McpUniversalApiHandler( @Reference final McpSyncToolRepository repository )
+    public McpUniversalApiHandler( @Reference final McpToolCatalog catalog )
+    {
+        this( catalog, catalog.changes() );
+    }
+
+    McpUniversalApiHandler( final McpSyncToolRepository repository )
+    {
+        this( repository, new McpChangeFeed() );
+    }
+
+    McpUniversalApiHandler( final McpSyncToolRepository repository, final McpChangePublisher changes )
     {
         final var objectMapper = new ObjectMapper();
         final var jsonMapper = new JacksonMcpJsonMapper( objectMapper );
@@ -52,6 +64,7 @@ public final class McpUniversalApiHandler
             .jsonMapper( jsonMapper )
             .feature( ToolsFeature.ofSync( repository, jsonMapper, new DefaultJsonSchemaValidator( objectMapper ),
                                           0L, CacheScope.PRIVATE ) )
+            .subscriptions( changes )
             .build();
         this.transport = HttpServletMcpTransport.builder( server ).jsonMapper( jsonMapper ).endpoint( ENDPOINT ).build();
     }

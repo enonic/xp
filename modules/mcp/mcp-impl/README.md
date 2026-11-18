@@ -88,7 +88,7 @@ The runtime includes the SDK's OSGi bundles and required dependencies. Reactor i
 
 The built-in API is available at `/api/system:mcp` on XP's web connector. It requires no site, webapp or custom vhost. It supports protocol revision `2026-07-28` through the official SDK server and servlet transport. This iteration is for isolated development use: the API declares `role:system.everyone`, retains the SDK's default Origin checks, and has no OAuth or MCP-specific authorization enforcement.
 
-The production repository discovers tools from started installed apps through the descriptor service. Apps and groups are sorted by name; tools retain descriptor order. An installation with no contributions has an empty catalog. Each list or lookup reads the current app/resource state; lifecycle notifications and catalog versioning remain #12635. Invalid contributions fail with contextual errors.
+The production repository discovers tools from started installed apps through the descriptor service. Apps and groups are sorted by name; tools retain descriptor order. An installation with no contributions has an empty catalog. Each list or lookup reads the current app/resource state. Lifecycle monitoring publishes tool-list changes as described below. Invalid contributions fail with contextual errors.
 
 Public names use `encode(application)__encode(group)__encode(localName)`. ASCII letters, digits, dots and hyphens are preserved; `_` becomes `_u`; other UTF-16 code units become `_xhhhh` with four lowercase hexadecimal digits. This keeps component boundaries unambiguous. Names longer than 128 characters are rejected with an instruction to shorten the contributing names. For example, the Chuck Norris app contributes `com.enonic.app.chucknorris__chucknorris__quote`.
 
@@ -96,7 +96,7 @@ Calls resolve the public name to the original group and local tool name, validat
 
 Tests inject an SDK echo repository into the handler; no echo registration or fixture dependency ships in the production catalog. The separately installed Chuck Norris app is the initial real contribution for manual integration checks.
 
-Requests use HTTP POST with JSON bodies. The SDK handles JSON-RPC decoding, mirrored protocol/method/name headers, metadata, version errors, notification acknowledgments and response statuses. GET/DELETE receive the modern transport's method rejection. Responses in this slice are JSON; progress delivery is #12655 and long-lived subscriptions are #12656.
+Requests use HTTP POST with JSON bodies. The SDK handles JSON-RPC decoding, mirrored protocol/method/name headers, metadata, version errors, notification acknowledgments and response statuses. GET/DELETE receive the modern transport's method rejection. Ordinary responses are JSON. Tools-only `subscriptions/listen` requests open SDK-managed asynchronous SSE streams. Progress delivery is #12655; broader subscriptions are #12656.
 
 Example discovery request against a running development server:
 
@@ -114,17 +114,41 @@ curl http://localhost:8080/api/system:mcp \
 ### Endpoint test evidence
 
 - Embedded Jetty tests use localhost port 0 and exercise the actual XP API registry, SlashApiHandler and WebSerializerServiceImpl, with unrelated services mocked.
-- The modern SDK client discovers the empty production repository and invokes the injected test-only echo repository.
+- The modern SDK client discovers an empty catalog and invokes the injected test-only echo repository.
+- SDK subscription tests verify additions, definition changes, removals, unchanged scans, repeated cycles, concurrent clients, disconnect/reconnect, unsupported filters and graceful shutdown. A routed test exercises the real registry/SlashApiHandler and deferred response/body replay.
+- A local **Claude Code 2.1.318** subscription smoke run opened `subscriptions/listen` against the embedded routing harness. A test-only bootstrap tool added echo and refreshed the catalog. After `ToolsListChanged`, Claude automatically fetched `tools/list` and called the newly added echo with `smoke-12635`. No reconnect or second discovery was observed. The exact SSE frame was not captured in that manual run; deterministic SDK peer tests cover stream notifications. This establishes client-refresh behavior in the harness, with a full XP app lifecycle run still pending.
 - Raw HTTP tests cover malformed JSON/batches, media types, unsupported verbs/subpaths, mirrored headers, protocol versions, notification acknowledgment and shutdown.
 - A manual smoke run with local **Claude Code 2.1.318** connected to that same embedded routing harness and invoked `mcp__xp__echo` once with `XP MCP smoke test`. The client trace contained the matching successful tool result. The temporary endpoint was stopped after the run. This is endpoint integration evidence; a full XP distribution boot was not exercised by that smoke run.
 
-## Test fixture lifecycle
+## Catalog lifecycle and notifications
 
-The echo example belongs in a separately packaged development/test app. Production XP and Guillotine have no dependency on it. Installing the app contributes tools; stopping or uninstalling it removes contributions through standard application/resource lifecycle. Keep automated fixture sources in test scope. A later integration test must verify removal without an XP rebuild or restart and confirm that Guillotine continues working.
+`McpToolCatalogMonitor` refreshes the catalog on XP application install, start, stop and uninstall events. A single daemon also scans every second to observe app upgrades and development resource edits without an application event. XP's native descriptor/resource caching provides resource invalidation. Changes can be detected by a list or lookup before the next scan. No script runs during a scan.
+
+The catalog compares complete ordered SDK tool definitions. Additions, removals, schema changes and metadata changes publish `ServerChange.ToolsListChanged` through the SDK's in-memory `McpChangeFeed`. Identical definitions produce no notification. The observed definition list is updated before publishing. A controller-only edit with unchanged tool definitions needs no list-change notification; script loading follows XP's normal resource lifecycle.
+
+Clients opt in with `subscriptions/listen` using `toolsListChanged: true` in the subscription filter. The SDK acknowledges the supported filter and sends `notifications/tools/list_changed` on that stream. Clients fetch `tools/list` again to obtain the updated definitions. Prompt/resource filters are not acknowledged; those features remain unavailable. Ordinary tool calls keep JSON responses. The existing XP Jetty dispatch servlet enables asynchronous requests, and the SDK owns stream framing, keep-alives, disconnect handling and graceful completion on MCP shutdown.
+
+The feed reaches listeners on the same XP instance and retains no event history. Clients must fetch the current tool list on initial connection and after reconnecting; changes while disconnected are not replayed. A scan observes the latest resource state, so intermediate edits can be coalesced. Polling latency is approximately one second plus scan duration. This slice adds no catalog revision token; lists keep the SDK's zero-TTL private caching hints.
+
+A binding checks current availability and definition equality immediately before calling the app executor. Removed tools and bindings with changed definitions are rejected. Script execution runs outside the catalog refresh lock. A call already executing follows XP's existing script/application lifecycle; stop/uninstall does not add an MCP-specific cancellation guarantee. A lifecycle change can still race with the final availability check. Enforced cancellation belongs to iteration 2.
+
+Invalid contributions fail requests with a contextual server-side error. Change detection continues across applications, excludes the failing application's definitions from the observed comparison, and reports unrelated removals. The monitor logs scan failures and continues scanning so a corrected descriptor can recover. It stops scheduling on component deactivation.
+
+### Manual lifecycle check
+
+Use the separately installed Chuck Norris app (`enonic/app-chucknorris#68`) as the first real contribution. XP runtime and Guillotine have no dependency on it. Test-only echo repositories remain in test sources. #12630 was superseded by the Chuck Norris app task.
+
+1. Connect a local client supporting protocol `2026-07-28` and tool-list subscriptions. Fetch the initial tools list and confirm the subscription acknowledgment.
+2. Install/start the Chuck Norris app. Expect a tool-list change and refresh the list to find `com.enonic.app.chucknorris__chucknorris__quote`.
+3. Invoke the tool, then update its descriptor. Expect another change only when the advertised definition changes.
+4. Stop/uninstall the app. Expect a change, an empty list on an otherwise empty server, and an unknown-tool failure for a stale invocation.
+5. Repeat install/remove, including with two clients. Disconnect/reconnect one client and fetch the current list again. Verify other app contributions remain available. No XP source change, rebuild or restart is needed.
+
+Record client/version, protocol, subscription acknowledgment, notifications, authoritative tool lists and stale-call results in #12635. Client UI refresh behavior is client-dependent; SDK peer tests verify wire behavior independently. A real local-AI install/remove cycle and Guillotine coexistence remain manual acceptance checks.
 
 ## Delivery boundaries
 
-This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, namespaced catalog, app script-controller execution and the SDK-backed Universal API JSON endpoint. Progress, lifecycle notifications, subscription streams, authentication and MCP-specific authorization have separate implementation tasks. Existing XP permissions remain intact. All security implementation is iteration 2. Echo exists only in test fixtures. HTTP integration tests exercise catalog and dispatch with mocked script exports; the recorded local-AI smoke run used an injected fixture. A real installed-app quote invocation remains a manual integration gate.
+This slice implements group metadata, discovery, shared YAML loading directly into SDK tools, namespaced catalog, app script-controller execution, catalog lifecycle detection and the SDK-backed Universal API with JSON responses and tools-only subscription streams. Progress, broader subscriptions, authentication and MCP-specific authorization have separate implementation tasks. Existing XP permissions remain intact. All security implementation is iteration 2. Echo exists only in test fixtures. HTTP integration tests exercise catalog and dispatch with mocked script exports; the recorded local-AI smoke run used an injected fixture. A real installed-app quote invocation remains a manual integration gate.
 
 Guillotine contributes through this same contract. Its controller invokes its internal `SchemaProvider` in-process, with no HTTP request and no `lib-guillotine-query` dependency.
 
