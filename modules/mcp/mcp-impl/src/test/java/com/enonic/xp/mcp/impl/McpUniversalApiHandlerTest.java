@@ -218,9 +218,9 @@ class McpUniversalApiHandlerTest
         when( scripts.execute( controller ) ).thenReturn( exports );
         when( exports.executeBound( any() ) ).thenCallRealMethod();
         when( exports.hasMethod( "execute" ) ).thenReturn( true );
-        when( exports.executeMethod( eq( "execute" ), eq( "echo" ), anyMap(), any( McpInvocation.class ) ) ).thenAnswer( invocation -> {
-            final Map<String, @Nullable Object> actualArguments = invocation.getArgument( 2 );
-            assertThat( actualArguments ).isEqualTo( arguments );
+        when( exports.executeMethod( eq( "execute" ), eq( "echo" ), any( McpArguments.class ), any( McpInvocation.class ) ) ).thenAnswer( invocation -> {
+            final McpArguments actualArguments = invocation.getArgument( 2 );
+            assertThat( actualArguments.map() ).isEqualTo( arguments );
             final var request = PortalRequestAccessor.get();
             assertThat( request ).isNotNull();
             assertThat( request.getApplicationKey() ).isEqualTo( appKey );
@@ -248,14 +248,14 @@ class McpUniversalApiHandlerTest
             assertThat( result.path( "structuredContent" ) ).isEqualTo( MAPPER.valueToTree( arguments ) );
             assertThat( result.path( "content" ).get( 0 ).path( "text" ).asText() ).isEqualTo( arguments.get( "message" ) );
             assertThat( result.path( "_meta" ).path( "source" ).asText() ).isEqualTo( "script" );
-            verify( exports ).executeMethod( eq( "execute" ), eq( "echo" ), eq( arguments ), any( McpInvocation.class ) );
+            verify( exports ).executeMethod( eq( "execute" ), eq( "echo" ), eq( new McpArguments( arguments ) ), any( McpInvocation.class ) );
 
             final var invalidArguments = json( endpoint.rpc( "tools/call",
                 Map.of( "name", publicName, "arguments", Map.of( "message", 42 ) ) ), 200 ).path( "result" );
             assertThat( invalidArguments.path( "isError" ).asBoolean() ).isTrue();
             assertThat( invalidArguments.path( "content" ).get( 0 ).path( "text" ).asText() ).containsIgnoringCase( "argument" );
             verify( scripts ).execute( controller );
-            verify( exports ).executeMethod( eq( "execute" ), eq( "echo" ), eq( arguments ), any( McpInvocation.class ) );
+            verify( exports ).executeMethod( eq( "execute" ), eq( "echo" ), eq( new McpArguments( arguments ) ), any( McpInvocation.class ) );
 
             when( value.getMap() ).thenReturn( Map.of( "content", "invalid" ) );
             final var invalidResult = json( endpoint.rpc( "tools/call", params ), 200 ).path( "result" );
@@ -271,7 +271,7 @@ class McpUniversalApiHandlerTest
             assertThat( unknown.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
             assertThat( unknown.path( "error" ).path( "message" ).asText() ).contains( "echo" );
             verify( scripts, times( 3 ) ).execute( controller );
-            verify( exports, times( 3 ) ).executeMethod( eq( "execute" ), eq( "echo" ), eq( arguments ), any( McpInvocation.class ) );
+            verify( exports, times( 3 ) ).executeMethod( eq( "execute" ), eq( "echo" ), eq( new McpArguments( arguments ) ), any( McpInvocation.class ) );
         }
     }
 
@@ -368,7 +368,7 @@ class McpUniversalApiHandlerTest
                     assertInactive( helpers.remove() );
                     assertThat( stream.frame() ).isEmpty();
                     verify( fixture.exports ).executeMethod( eq( "execute" ), eq( "echo" ),
-                        eq( Map.of( "message", "chunks" ) ), any( McpInvocation.class ) );
+                        eq( new McpArguments( Map.of( "message", "chunks" ) ) ), any( McpInvocation.class ) );
                 }
                 finally
                 {
@@ -439,7 +439,7 @@ class McpUniversalApiHandlerTest
             assertThat( invalid.path( "result" ).path( "isError" ).asBoolean() ).isTrue();
             verify( fixture.scripts ).execute( fixture.controller );
             verify( fixture.exports ).executeMethod( eq( "execute" ), eq( "echo" ),
-                eq( Map.of( "message", "synchronous" ) ), any( McpInvocation.class ) );
+                eq( new McpArguments( Map.of( "message", "synchronous" ) ) ), any( McpInvocation.class ) );
         }
     }
 
@@ -1104,9 +1104,9 @@ class McpUniversalApiHandlerTest
             when( scripts.execute( controller ) ).thenReturn( exports );
             when( exports.executeBound( any() ) ).thenCallRealMethod();
             when( exports.hasMethod( "execute" ) ).thenReturn( true );
-            when( exports.executeMethod( eq( "execute" ), eq( "echo" ), anyMap(), any( McpInvocation.class ) ) )
+            when( exports.executeMethod( eq( "execute" ), eq( "echo" ), any( McpArguments.class ), any( McpInvocation.class ) ) )
                 .thenAnswer( invocation -> {
-                    final Map<String, @Nullable Object> arguments = invocation.getArgument( 2 );
+                    final var arguments = invocation.<McpArguments>getArgument( 2 ).map();
                     final McpInvocation helper = invocation.getArgument( 3 );
                     assertThat( helper ).isSameAs( McpInvocationScope.current() );
                     final var request = PortalRequestAccessor.get();

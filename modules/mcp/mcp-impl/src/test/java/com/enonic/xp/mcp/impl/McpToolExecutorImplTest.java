@@ -36,6 +36,7 @@ import io.modelcontextprotocol.modern.server.McpSyncResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doAnswer;
@@ -91,7 +92,7 @@ class McpToolExecutorImplTest
         } );
         when( boundExports.getScript() ).thenReturn( CONTROLLER );
         when( boundExports.hasMethod( "execute" ) ).thenReturn( true );
-        when( boundExports.executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) ) )
+        when( boundExports.executeMethod( eq( "execute" ), eq( "local_name" ), sameArguments(), any( McpInvocation.class ) ) )
             .thenAnswer( invocation -> {
                 assertThat( BOUND.isBound() ).isTrue();
                 assertToolRequest();
@@ -117,7 +118,7 @@ class McpToolExecutorImplTest
         verify( exports ).executeBound( any() );
         verify( exports, never() ).hasMethod( any() );
         verify( exports, never() ).executeMethod( any(), any(), any(), any() );
-        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), same( McpInvocationScope.current() ) );
+        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), sameArguments(), same( McpInvocationScope.current() ) );
         verify( value ).getMap();
         assertThat( BOUND.isBound() ).isFalse();
         assertThat( arguments ).containsEntry( "message", "hello" ).containsEntry( "nullable", null );
@@ -139,7 +140,7 @@ class McpToolExecutorImplTest
             helper.set( current );
             current.progress( 1, "controller" );
             return value;
-        } ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
+        } ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), sameArguments(), any( McpInvocation.class ) );
         inRequest( () -> {
             final var response = McpInvocationScope.respond( context, () -> {
                 assertThat( execute() ).isSameAs( result );
@@ -178,7 +179,7 @@ class McpToolExecutorImplTest
     @Test
     void rejects_null_return_and_restores_request()
     {
-        doReturn( null ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
+        doReturn( null ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), sameArguments(), any( McpInvocation.class ) );
 
         assertInvalidReturn();
         verifyNoInteractions( value );
@@ -220,7 +221,7 @@ class McpToolExecutorImplTest
             assertThat( BOUND.isBound() ).isTrue();
             assertToolRequest();
             throw failure;
-        } ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
+        } ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), sameArguments(), any( McpInvocation.class ) );
 
         inRequest( () -> assertThatThrownBy( this::execute ).isSameAs( failure ) );
 
@@ -268,7 +269,7 @@ class McpToolExecutorImplTest
         assertThat( PortalRequestAccessor.get() ).isNull();
         assertThat( temporary.get() ).isNotNull();
         assertThat( temporary.get().getApplicationKey() ).isNull();
-        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), same( McpInvocationScope.current() ) );
+        verify( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), sameArguments(), same( McpInvocationScope.current() ) );
     }
 
     @Test
@@ -276,7 +277,7 @@ class McpToolExecutorImplTest
     {
         final var temporary = captureTemporaryRequest();
         final var failure = new IllegalStateException( "script failure" );
-        doThrow( failure ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), same( arguments ), any( McpInvocation.class ) );
+        doThrow( failure ).when( boundExports ).executeMethod( eq( "execute" ), eq( "local_name" ), sameArguments(), any( McpInvocation.class ) );
         assertThat( PortalRequestAccessor.get() ).isNull();
 
         assertThatThrownBy( this::execute ).isSameAs( failure );
@@ -318,6 +319,11 @@ class McpToolExecutorImplTest
         when( value.isObject() ).thenReturn( false );
 
         assertGenericToolError( "MCP controller " + CONTROLLER + " must return an object" );
+    }
+
+    private McpArguments sameArguments()
+    {
+        return argThat( wrapped -> wrapped != null && wrapped.map() == arguments );
     }
 
     private Map<String, @Nullable Object> execute()
