@@ -24,17 +24,20 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.Role;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -177,8 +180,12 @@ class SecurityServiceImplTest_updates
         otherWriter = () -> write( IdProviderNodeTranslator.toIdProviderNodePath( IDP ),
                                    data -> data.setString( IdProviderPropertyNames.DESCRIPTION_KEY, "Staff and partners" ) );
 
-        final IdProvider updated =
-            securityService.updateIdProvider( UpdateIdProviderParams.create().key( IDP ).displayName( "Enonic staff" ).build() );
+        final AuthenticationInfo admin = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build();
+        final IdProvider updated = ContextBuilder.create()
+            .authInfo( admin )
+            .build()
+            .callWith( () -> securityService.updateIdProvider(
+                UpdateIdProviderParams.create().key( IDP ).displayName( "Enonic staff" ).build() ) );
 
         assertThat( updated.getDisplayName() ).isEqualTo( "Enonic staff" );
         assertThat( updated.getDescription() ).as( "the description the other writer set is kept" ).isEqualTo( "Staff and partners" );

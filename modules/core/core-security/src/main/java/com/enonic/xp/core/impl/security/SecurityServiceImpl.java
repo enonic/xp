@@ -2,16 +2,21 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -107,7 +112,25 @@ public final class SecurityServiceImpl
 {
     private static final Set<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = Set.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
-    private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
+    private static final Set<NodePath> NON_REMOVABLE_PRINCIPAL_PATHS =
+        Stream.concat( Stream.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() ), SecurityInitializer.SYSTEM_ROLES.stream() )
+            .map( PrincipalKey::toPath )
+            .collect( Collectors.toUnmodifiableSet() );
+
+    /**
+     * Role namespaces owned by the platform and by Content Studio. Only an administrator creates roles there, so a role cannot be
+     * squatted before the platform creates it (a project's roles are adopted together with their members).
+     */
+    private static final List<String> RESERVED_ROLE_PREFIXES = List.of( "system.", "cms." );
+
+    private static final String PROJECT_ROLE_PREFIX = "cms.project.";
+
+    /**
+     * Principals under an id provider are stored with their lower-cased key as node id, which allows only {@code [a-z0-9_.:-]}.
+     * A dot is refused as well: the key becomes a level of the vhost configuration ({@code mapping.<name>.idProvider.<key>}),
+     * where a dot makes nested settings ambiguous. Existing keys with a dot keep working.
+     */
+    private static final Pattern ID_PROVIDER_KEY_PATTERN = Pattern.compile( "[A-Za-z0-9_-]+" );
 
     private static final Set<NodePath> NON_MODIFIABLE_USER_PATHS =
         Set.of( PrincipalKey.ofSuperUser().toPath(), PrincipalKey.ofAnonymous().toPath() );
@@ -186,6 +209,8 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Invalid 'from' value in relationship: " + from );
         }
+        requireAdministratorToChangeMembers( from );
+
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
@@ -203,6 +228,7 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Super user cannot be removed from the administrator role" );
         }
+        requireAdministratorToChangeMembers( relationship.getFrom() );
 
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
@@ -216,6 +242,12 @@ public final class SecurityServiceImpl
 
     public void removeRelationships( final PrincipalKey from )
     {
+        if ( RoleKeys.ADMIN.toPath().equals( from.toPath() ) )
+        {
+            throw new IllegalArgumentException( "Super user cannot be removed from the administrator role" );
+        }
+        requireAdministratorToChangeMembers( from );
+
         callWithContext( () -> {
             nodeService.update( PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from ) );
 
@@ -443,6 +475,7 @@ public final class SecurityServiceImpl
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
         requireModifiable( key );
+        requireAdministratorToModify( key );
 
         return callWithContext( () -> {
             final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
@@ -541,6 +574,7 @@ public final class SecurityServiceImpl
             {
                 throw new PrincipalNotFoundException( key );
             }
+            requireAdministratorToModify( key );
 
             final Node updatedNode =
                 nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode, current -> {
@@ -658,6 +692,12 @@ public final class SecurityServiceImpl
     @Override
     public Role createRole( final CreateRoleParams createRole )
     {
+        final String roleId = createRole.getKey().getId().toLowerCase( Locale.ROOT );
+        if ( RESERVED_ROLE_PREFIXES.stream().anyMatch( roleId::startsWith ) && !isCallerAdministrator() )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] role is in a reserved namespace", createRole.getKey() ) );
+        }
+
         final Role role = Role.create()
             .key( createRole.getKey() )
             .displayName( createRole.getDisplayName() )
@@ -754,6 +794,12 @@ public final class SecurityServiceImpl
     @Override
     public void deleteIdProvider( final IdProviderKey idProviderKey )
     {
+        if ( IdProviderKey.system().toString().equalsIgnoreCase( idProviderKey.toString() ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] id provider cannot be removed", idProviderKey ) );
+        }
+        requireAdministratorToManageIdProvider( idProviderKey );
+
         final NodeIds deletedNodes;
         try
         {
@@ -777,10 +823,16 @@ public final class SecurityServiceImpl
     @Override
     public void deletePrincipal( final PrincipalKey principalKey )
     {
-        if ( NON_REMOVABLE_PRINCIPLES.contains( principalKey ) )
+        if ( NON_REMOVABLE_PRINCIPAL_PATHS.contains( principalKey.toPath() ) )
         {
             throw new IllegalArgumentException( String.format( "[%s] principal cannot be removed", principalKey ) );
         }
+        if ( principalKey.isRole() && principalKey.getId().toLowerCase( Locale.ROOT ).startsWith( PROJECT_ROLE_PREFIX ) &&
+            !isCallerAdministrator() )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] project role is removed with its project", principalKey ) );
+        }
+        requireAdministratorToModify( principalKey );
 
         final NodeIds deletedNodes;
         try
@@ -845,6 +897,19 @@ public final class SecurityServiceImpl
     @Override
     public IdProvider createIdProvider( final CreateIdProviderParams createIdProviderParams )
     {
+        requireAdministratorToManageIdProvider( createIdProviderParams.getKey() );
+        final ApplicationKey application = applicationOf( createIdProviderParams.getIdProviderConfig() );
+        if ( application != null || IdProviderKey.system().equals( createIdProviderParams.getKey() ) )
+        {
+            requireValidApplication( createIdProviderParams.getKey(), application );
+        }
+        if ( !ID_PROVIDER_KEY_PATTERN.matcher( createIdProviderParams.getKey().toString() ).matches() )
+        {
+            throw new IllegalArgumentException(
+                String.format( "Invalid IdProviderKey [%s]: only letters A-Z and a-z, digits, '_' and '-' are allowed",
+                               createIdProviderParams.getKey() ) );
+        }
+
         final PropertyTree data = new PropertyTree();
         data.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, createIdProviderParams.getDisplayName() );
         data.setString( IdProviderPropertyNames.DESCRIPTION_KEY, createIdProviderParams.getDescription() );
@@ -919,6 +984,8 @@ public final class SecurityServiceImpl
     @Override
     public IdProvider updateIdProvider( final UpdateIdProviderParams updateIdProviderParams )
     {
+        requireAdministratorToManageIdProvider( updateIdProviderParams.getKey() );
+
         return callWithContext( () -> {
 
             final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( updateIdProviderParams.getKey() );
@@ -928,8 +995,11 @@ public final class SecurityServiceImpl
                 return null;
             }
 
-            final Node idProviderNode =
-                nodeService.update( IdProviderNodeTranslator.toUpdateNodeParams( node.id(), updateIdProviderParams::update ) );
+            final Node idProviderNode = nodeService.update( IdProviderNodeTranslator.toUpdateNodeParams( node.id(), current -> {
+                final IdProvider changed = updateIdProviderParams.update( current );
+                requireValidBinding( current, changed );
+                return changed;
+            } ) );
             final IdProvider updatedIdProvider = IdProviderNodeTranslator.fromNode( idProviderNode );
 
             if ( updateIdProviderParams.getIdProviderPermissions() != null )
@@ -959,7 +1029,9 @@ public final class SecurityServiceImpl
                 clients.setPermissions( updateIdProviderParams.getKey(), idProviderNodePermissions );
             }
 
-            securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( updatedIdProvider ).build() );
+            securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( updatedIdProvider )
+                                                          .permissions( updateIdProviderParams.getIdProviderPermissions() )
+                                                          .build() );
 
             return updatedIdProvider;
         } );
@@ -1047,6 +1119,106 @@ public final class SecurityServiceImpl
             securityAuditLogSupport.removeClient( idProvider, id );
         }
         return deleted;
+    }
+
+    /**
+     * The system id provider is bound to the standard id provider application, and only it is: su and every system account log in
+     * through that binding, and the standard id provider keeps its credentials in the system id provider's users. A binding that is
+     * already stored is kept as it is.
+     */
+    private static void requireValidBinding( final IdProvider current, final IdProvider changed )
+    {
+        final ApplicationKey currentApplication = applicationOf( current.getIdProviderConfig() );
+        final ApplicationKey changedApplication = applicationOf( changed.getIdProviderConfig() );
+        if ( IdProviderKey.system().equals( current.getKey() ) && changedApplication == null )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider cannot be unbound from its application", current.getKey() ) );
+        }
+        if ( !Objects.equals( currentApplication, changedApplication ) )
+        {
+            requireValidApplication( current.getKey(), changedApplication );
+        }
+    }
+
+    private static void requireValidApplication( final IdProviderKey idProviderKey, final ApplicationKey application )
+    {
+        final boolean system = IdProviderKey.system().equals( idProviderKey );
+        final boolean standard = IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY.equals( application );
+        if ( system && !standard )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider can only be bound to [%s]", idProviderKey,
+                               IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY ) );
+        }
+        if ( !system && standard )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] can only be bound to the [%s] id provider", application, IdProviderKey.system() ) );
+        }
+    }
+
+    private static ApplicationKey applicationOf( final IdProviderConfig idProviderConfig )
+    {
+        return idProviderConfig == null ? null : idProviderConfig.getApplicationKey();
+    }
+
+    /**
+     * Creating, configuring and removing an id provider is an administrator's task. Its users and groups are managed by whoever the
+     * id provider's permissions name; the id provider itself is not.
+     */
+    private static void requireAdministratorToManageIdProvider( final IdProviderKey idProviderKey )
+    {
+        if ( !isCallerAdministrator() )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider can only be managed by an administrator", idProviderKey ) );
+        }
+    }
+
+    private static boolean isCallerAdministrator()
+    {
+        return ContextAccessor.current().getAuthInfo().hasRole( RoleKeys.ADMIN );
+    }
+
+    /**
+     * Only an administrator may change who holds the administrator role, directly or through a group or role that holds it.
+     */
+    private void requireAdministratorToChangeMembers( final PrincipalKey from )
+    {
+        if ( !isCallerAdministrator() && holdsAdministratorRole( from ) )
+        {
+            throw new IllegalArgumentException( String.format( "Members of [%s] can only be changed by an administrator", from ) );
+        }
+    }
+
+    /**
+     * Only an administrator may modify or remove a principal that holds the administrator role, directly or through a group or role.
+     * Otherwise anyone able to write principals could take over an administrator account: by its password, its login or email,
+     * or by a credential an id provider keeps in its profile.
+     */
+    private void requireAdministratorToModify( final PrincipalKey key )
+    {
+        if ( !isCallerAdministrator() && holdsAdministratorRole( key ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] can only be modified by an administrator", key ) );
+        }
+    }
+
+    private boolean holdsAdministratorRole( final PrincipalKey key )
+    {
+        return RoleKeys.ADMIN.toPath().equals( key.toPath() ) ||
+            callAsAdministrator( () -> resolveMemberships( key ) ).contains( RoleKeys.ADMIN );
+    }
+
+    /**
+     * The guards above must see every membership, whatever the caller may read; they only read.
+     */
+    private <T> T callAsAdministrator( final Callable<T> callable )
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
+        return ContextBuilder.from( ContextAccessor.current() ).authInfo( authInfo ).build().callWith( callable );
     }
 
     private <T> T callWithContext( Callable<T> runnable )

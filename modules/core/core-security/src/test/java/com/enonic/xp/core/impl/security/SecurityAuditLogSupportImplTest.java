@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.List;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.token.CreateClientParams;
 import com.enonic.xp.security.token.CreateScopeParams;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -22,6 +24,7 @@ import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
@@ -30,9 +33,13 @@ import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.IdProviderAccess;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -234,6 +241,33 @@ class SecurityAuditLogSupportImplTest
 
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.security.idProvider.update", value.getType() );
+    }
+
+    @Test
+    void testUpdateIdProviderRecordsBindingAndPermissions()
+    {
+        final PropertyTree config = new PropertyTree();
+        config.setString( "clientSecret", "secret" );
+        instance.updateIdProvider( UpdateIdProviderParams.create()
+                                       .key( IdProviderKey.from( "corp" ) )
+                                       .displayName( "displayName" )
+                                       .idProviderConfig( IdProviderConfig.create()
+                                                              .applicationKey( ApplicationKey.from( "com.example.idp" ) )
+                                                              .config( config )
+                                                              .build() )
+                                       .permissions( IdProviderAccessControlList.of( IdProviderAccessControlEntry.create()
+                                                                                         .principal( PrincipalKey.ofRole( "corp.admins" ) )
+                                                                                         .access( IdProviderAccess.ADMINISTRATOR )
+                                                                                         .build() ) )
+                                       .build() );
+
+        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 1 ) ).log( argumentCaptor.capture() );
+
+        final PropertySet params = argumentCaptor.getValue().getData().getSet( "params" );
+        assertEquals( "com.example.idp", params.getString( "applicationKey" ) );
+        assertEquals( "role:corp.admins", params.getSet( "permissions" ).getString( "ADMINISTRATOR" ) );
+        assertFalse( argumentCaptor.getValue().getData().toString().contains( "secret" ) );
     }
 
     @Test

@@ -91,7 +91,11 @@ class SecurityServiceImplTest_idProviderLock
             .build();
 
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenAnswer( invocation -> {
-            calls.add( "email check " + ( locked.get() ? "locked" : "unlocked" ) );
+            // the email check is a query expression; a membership lookup is a filter and is not recorded
+            if ( invocation.<NodeQuery>getArgument( 0 ).getQuery() != null )
+            {
+                calls.add( "email check " + ( locked.get() ? "locked" : "unlocked" ) );
+            }
             return FindNodesByQueryResult.create().build();
         } );
         when( nodeService.getByIds( any( NodeIds.class ) ) ).thenReturn( Nodes.empty() );
