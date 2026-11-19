@@ -63,7 +63,7 @@ public final class McpToolExecutorImpl
         {
             throw new IllegalArgumentException( "MCP controller " + exports.getScript() + " must export execute(name, args)" );
         }
-        final var result = exports.executeMethod( "execute", localName, arguments, McpInvocationScope.current() );
+        final var result = exports.executeMethod( "execute", localName, new McpArguments( arguments ), McpInvocationScope.current() );
         if ( result == null || !result.isObject() || result.isArray() || result.isFunction() )
         {
             throw new IllegalArgumentException( "MCP controller " + exports.getScript() + " must return an object" );
