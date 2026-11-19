@@ -527,7 +527,7 @@ class McpUniversalApiHandlerTest
     }
 
     @Test
-    void progress_stream_finishes_with_protocol_error_for_controller_exception()
+    void progress_stream_finishes_with_tool_error_for_controller_exception()
         throws Exception
     {
         final var helpers = new LinkedBlockingQueue<McpInvocation>();
@@ -541,10 +541,28 @@ class McpUniversalApiHandlerTest
         {
             assertProgressFrame( stream.frame(), "controller-error", 0, null, "Started" );
             final var response = frameJson( stream.frame() );
-            assertThat( response.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32603 );
+            assertThat( response.has( "error" ) ).isFalse();
+            assertGenericToolError( response.path( "result" ) );
             assertThat( response.toString() ).doesNotContain( "Private controller details" );
             assertInactive( helpers.remove() );
             assertThat( stream.frame() ).isEmpty();
+        }
+    }
+
+    @Test
+    void no_token_call_returns_json_tool_error_for_controller_exception()
+        throws Exception
+    {
+        final var fixture = new ScriptFixture( ( arguments, helper ) -> {
+            throw new IllegalStateException( "Private controller details" );
+        } );
+        try ( var endpoint = new Endpoint( fixture.handler(), false ) )
+        {
+            final var response = json( endpoint.rpc( "tools/call", Map.of( "name", CatalogFixture.PUBLIC_NAME,
+                "arguments", Map.of( "message", "failing" ) ) ), 200 );
+            assertThat( response.has( "error" ) ).isFalse();
+            assertGenericToolError( response.path( "result" ) );
+            assertThat( response.toString() ).doesNotContain( "Private controller details" );
         }
     }
 
@@ -871,6 +889,14 @@ class McpUniversalApiHandlerTest
             helper.progress( 102, 103 );
             helper.progress( 103, 103, "late" );
         } );
+    }
+
+    private static void assertGenericToolError( final JsonNode result )
+    {
+        assertThat( result.path( "isError" ).asBoolean() ).isTrue();
+        assertThat( result.path( "content" ) ).hasSize( 1 );
+        assertThat( result.path( "content" ).get( 0 ).path( "text" ).asText() )
+            .matches( "MCP tool execution failed \\(error id [0-9a-f]{8}\\)" );
     }
 
     private static JsonNode frameJson( final String frame )
