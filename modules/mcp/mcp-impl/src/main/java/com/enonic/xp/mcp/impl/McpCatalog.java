@@ -2,13 +2,17 @@ package com.enonic.xp.mcp.impl;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -24,9 +28,13 @@ import io.modelcontextprotocol.modern.server.feature.ServerChange;
 @Component(service = McpCatalog.class)
 public final class McpCatalog
 {
+    private static final Logger LOG = LoggerFactory.getLogger( McpCatalog.class );
+
     private final McpDescriptorServiceImpl descriptors;
 
     private final ApplicationService applications;
+
+    private final Logger log;
 
     private final McpChangeFeed changeFeed = new McpChangeFeed();
 
@@ -34,17 +42,25 @@ public final class McpCatalog
 
     private List<ToolDefinition> definitions = List.of();
 
+    private Map<ApplicationKey, String> failures = Map.of();
+
     @Activate
     public McpCatalog( @Reference final McpDescriptorServiceImpl descriptors, @Reference final ApplicationService applications )
     {
+        this( descriptors, applications, LOG );
+    }
+
+    McpCatalog( final McpDescriptorServiceImpl descriptors, final ApplicationService applications, final Logger log )
+    {
         this.descriptors = descriptors;
         this.applications = applications;
+        this.log = log;
     }
 
     public synchronized Snapshot snapshot()
     {
         final var groups = new ArrayList<LoadedMcpGroup>();
-        RuntimeException failure = null;
+        final var failed = new HashMap<ApplicationKey, String>();
         final var started = applications.getInstalledApplications().stream()
             .filter( Application::isStarted )
             .map( Application::getKey )
@@ -62,18 +78,30 @@ public final class McpCatalog
             }
             catch ( RuntimeException e )
             {
-                final var contextual = new IllegalArgumentException(
-                    "Cannot load MCP groups for application " + application + ": " + e.getMessage(), e );
-                if ( failure == null )
+                final var message = String.valueOf( e.getMessage() );
+                failed.put( application, message );
+                if ( !message.equals( failures.get( application ) ) )
                 {
-                    failure = contextual;
-                }
-                else
-                {
-                    failure.addSuppressed( contextual );
+                    log.warn( "Cannot load MCP groups for application {}; its tools are excluded from the catalog", application, e );
                 }
             }
         }
+        for ( var application : failures.keySet() )
+        {
+            if ( failed.containsKey( application ) )
+            {
+                continue;
+            }
+            if ( started.contains( application ) )
+            {
+                log.info( "MCP groups for application {} loaded again; its tools are back in the catalog", application );
+            }
+            else
+            {
+                log.info( "Cleared MCP load failure for application {}; the application is no longer started", application );
+            }
+        }
+        failures = Map.copyOf( failed );
         if ( !sameGroups( snapshot.groups(), groups ) )
         {
             snapshot = new Snapshot( groups );
@@ -86,10 +114,6 @@ public final class McpCatalog
         if ( !previous.equals( current ) )
         {
             changeFeed.broadcast( new ServerChange.ToolsListChanged() );
-        }
-        if ( failure != null )
-        {
-            throw failure;
         }
         return snapshot;
     }

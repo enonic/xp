@@ -134,6 +134,37 @@ class McpUniversalApiHandlerTest
     }
 
     @Test
+    void broken_application_is_excluded_while_others_keep_serving()
+        throws Exception
+    {
+        final var broken = mock( Application.class );
+        when( broken.getKey() ).thenReturn( ApplicationKey.from( "broken" ) );
+        when( broken.isStarted() ).thenReturn( true );
+        final var healthy = mock( Application.class );
+        when( healthy.getKey() ).thenReturn( ApplicationKey.from( "healthy" ) );
+        when( healthy.isStarted() ).thenReturn( true );
+        final var applications = mock( ApplicationService.class );
+        when( applications.getInstalledApplications() ).thenReturn( Applications.from( broken, healthy ) );
+        final var descriptors = mock( McpDescriptorServiceImpl.class );
+        when( descriptors.getLoadedByApplication( ApplicationKey.from( "broken" ) ) )
+            .thenThrow( new IllegalArgumentException( "broken descriptor" ) );
+        when( descriptors.getLoadedByApplication( ApplicationKey.from( "healthy" ) ) ).thenReturn( List.of(
+            new LoadedMcpGroup( new McpDescriptor( DescriptorKey.from( "healthy:g" ), PrincipalKeys.empty() ),
+                                List.of( Tool.builder( "echo", ECHO_SCHEMA ).build() ) ) ) );
+        final var catalog = new McpToolCatalog( new McpCatalog( descriptors, applications ), mock( McpToolExecutor.class ) );
+
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( catalog ), false ) )
+        {
+            final var listed = json( endpoint.rpc( "tools/list", Map.of() ), 200 ).path( "result" ).path( "tools" );
+            assertThat( listed ).hasSize( 1 );
+            assertThat( listed.get( 0 ).path( "name" ).asText() ).isEqualTo( "healthy__g__echo" );
+            final var unknown = json( endpoint.rpc( "tools/call", Map.of( "name", "broken__g__echo", "arguments", Map.of() ) ), 400 );
+            assertThat( unknown.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
+            assertThat( unknown.path( "error" ).path( "message" ).asText() ).contains( "broken__g__echo" );
+        }
+    }
+
+    @Test
     void calls_injected_echo_fixture_with_sdk_and_replayed_unicode_body()
         throws Exception
     {
