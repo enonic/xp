@@ -38,7 +38,7 @@ public final class McpCatalog
 
     private final McpChangeFeed changeFeed = new McpChangeFeed();
 
-    private Snapshot snapshot = new Snapshot( List.of() );
+    private volatile Snapshot snapshot = new Snapshot( List.of() );
 
     private List<ToolDefinition> definitions = List.of();
 
@@ -57,7 +57,25 @@ public final class McpCatalog
         this.log = log;
     }
 
-    public synchronized Snapshot snapshot()
+    @Activate
+    public void activate()
+    {
+        try
+        {
+            refresh();
+        }
+        catch ( RuntimeException e )
+        {
+            log.warn( "Cannot load MCP catalog", e );
+        }
+    }
+
+    public Snapshot snapshot()
+    {
+        return snapshot;
+    }
+
+    public synchronized void refresh()
     {
         final var groups = new ArrayList<LoadedMcpGroup>();
         final var failed = new HashMap<ApplicationKey, String>();
@@ -115,12 +133,6 @@ public final class McpCatalog
         {
             changeFeed.broadcast( new ServerChange.ToolsListChanged() );
         }
-        return snapshot;
-    }
-
-    public void refresh()
-    {
-        snapshot();
     }
 
     public McpChangePublisher changes()

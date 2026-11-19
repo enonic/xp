@@ -16,6 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
@@ -89,7 +90,9 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.RETURNS_SELF;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -151,7 +154,9 @@ class McpUniversalApiHandlerTest
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "healthy" ) ) ).thenReturn( List.of(
             new LoadedMcpGroup( new McpDescriptor( DescriptorKey.from( "healthy:g" ), PrincipalKeys.empty() ),
                                 List.of( Tool.builder( "echo", ECHO_SCHEMA ).build() ) ) ) );
-        final var catalog = new McpToolCatalog( new McpCatalog( descriptors, applications ), mock( McpToolExecutor.class ) );
+        final var sharedCatalog = new McpCatalog( descriptors, applications );
+        sharedCatalog.refresh();
+        final var catalog = new McpToolCatalog( sharedCatalog, mock( McpToolExecutor.class ) );
 
         try ( var endpoint = new Endpoint( new McpUniversalApiHandler( catalog ), false ) )
         {
@@ -229,6 +234,7 @@ class McpUniversalApiHandlerTest
             "structuredContent", arguments, "_meta", Map.of( "source", "script" ) ) );
         final var executor = new McpToolExecutorImpl( descriptors, scripts );
         final var sharedCatalog = new McpCatalog( descriptors, applications );
+        sharedCatalog.refresh();
         final var catalog = new McpToolCatalog( sharedCatalog, executor );
 
         try ( var endpoint = new Endpoint( new McpUniversalApiHandler( catalog ), false, authInfo ) )
@@ -727,7 +733,9 @@ class McpUniversalApiHandlerTest
     {
         final var fixture = new CatalogFixture();
         fixture.install( "Stale binding" );
-        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( fixture.catalog, fixture.sharedCatalog.changes() ), false ) )
+        final var sharedCatalog = spy( fixture.sharedCatalog );
+        final var catalog = new McpToolCatalog( sharedCatalog, fixture.executor );
+        try ( var endpoint = new Endpoint( new McpUniversalApiHandler( catalog, sharedCatalog.changes() ), false ) )
         {
             final var client = endpoint.sdkClient();
             assertThat( client.listTools().list().tools() ).hasSize( 1 );
@@ -735,8 +743,15 @@ class McpUniversalApiHandlerTest
             try ( var listening = client.listen().toolsChanged().open( listener ) )
             {
                 listener.subscribed();
-                when( fixture.applications.getInstalledApplications() ).thenReturn(
-                    Applications.from( fixture.application ), Applications.empty() );
+                when( fixture.applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+                final var lookups = new AtomicInteger();
+                doAnswer( invocation -> {
+                    if ( lookups.incrementAndGet() == 2 )
+                    {
+                        sharedCatalog.refresh();
+                    }
+                    return invocation.callRealMethod();
+                } ).when( sharedCatalog ).snapshot();
                 final var response = json( endpoint.rpc( "tools/call", Map.of( "name", CatalogFixture.PUBLIC_NAME,
                     "arguments", Map.of( "message", "stale" ) ) ), 400 );
                 assertThat( response.path( "error" ).path( "code" ).asInt() ).isEqualTo( -32602 );
@@ -1080,6 +1095,7 @@ class McpUniversalApiHandlerTest
                     return result;
                 } );
             sharedCatalog = new McpCatalog( descriptors, applications );
+            sharedCatalog.refresh();
             catalog = new McpToolCatalog( sharedCatalog, new McpToolExecutorImpl( descriptors, scripts ) );
         }
 
