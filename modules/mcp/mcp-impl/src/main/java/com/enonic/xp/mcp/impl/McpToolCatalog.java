@@ -29,9 +29,7 @@ public final class McpToolCatalog
 
     private final McpToolExecutor executor;
 
-    private McpCatalog.Snapshot boundSnapshot = new McpCatalog.Snapshot( List.of() );
-
-    private Map<String, McpSyncTool> bindings = Map.of();
+    private volatile Bindings bindings = new Bindings( new McpCatalog.Snapshot( List.of() ), Map.of() );
 
     @Activate
     public McpToolCatalog( @Reference final McpCatalog catalog, @Reference final McpToolExecutor executor )
@@ -58,15 +56,19 @@ public final class McpToolCatalog
 
     private Map<String, McpSyncTool> loadTools()
     {
-        return bind( catalog.snapshot() );
+        final var snapshot = catalog.snapshot();
+        final var current = bindings;
+        if ( current.snapshot() == snapshot )
+        {
+            return current.tools();
+        }
+        final var rebuilt = new Bindings( snapshot, bind( snapshot ) );
+        bindings = rebuilt;
+        return rebuilt.tools();
     }
 
-    private synchronized Map<String, McpSyncTool> bind( final McpCatalog.Snapshot snapshot )
+    private Map<String, McpSyncTool> bind( final McpCatalog.Snapshot snapshot )
     {
-        if ( snapshot == boundSnapshot )
-        {
-            return bindings;
-        }
         final var tools = new LinkedHashMap<String, McpSyncTool>();
         for ( var group : snapshot.groups() )
         {
@@ -88,9 +90,7 @@ public final class McpToolCatalog
                 }
             }
         }
-        bindings = Collections.unmodifiableMap( tools );
-        boundSnapshot = snapshot;
-        return bindings;
+        return Collections.unmodifiableMap( tools );
     }
 
     private static Tool namespace( final DescriptorKey key, final Tool tool )
@@ -100,4 +100,7 @@ public final class McpToolCatalog
                          tool.meta(), tool.icons() );
     }
 
+    private record Bindings(McpCatalog.Snapshot snapshot, Map<String, McpSyncTool> tools)
+    {
+    }
 }

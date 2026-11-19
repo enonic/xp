@@ -38,10 +38,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @NullMarked
@@ -68,6 +70,7 @@ class McpToolCatalogTest
         when( applications.getInstalledApplications() ).thenReturn( installed );
         groups( "z", group( "z:b", "last" ) );
         groups( "a", group( "a:z", "second" ), group( "a:a", "z", "a" ), group( "a:empty" ) );
+        sharedCatalog.refresh();
 
         final var page = catalog.list( context, null );
 
@@ -93,6 +96,7 @@ class McpToolCatalogTest
             .meta( metadata ).build();
         started( "com.enonic.app.guillotine" );
         groups( "com.enonic.app.guillotine", loaded( "com.enonic.app.guillotine:content", List.of( local ) ) );
+        sharedCatalog.refresh();
 
         final var publicTool = catalog.list( context, null ).tools().getFirst();
 
@@ -112,6 +116,7 @@ class McpToolCatalogTest
         groups( "app", group( "app:a", "b__c", "b_u_uc", "Echo", "echo" ), group( "app:a__b", "c" ),
                 group( "app:a_u_ub", "c" ), group( "app:é", "c" ), group( "app:_x00e9", "c" ),
                 group( "app:a_", "_b" ) );
+        sharedCatalog.refresh();
 
         assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name )
             .containsExactlyInAnyOrder( "app__a__b_u_uc", "app__a__b_uu_uuc", "app__a__Echo", "app__a__echo",
@@ -125,6 +130,7 @@ class McpToolCatalogTest
     {
         started( "my_app" );
         groups( "my_app", group( "my_app:g", "t" ) );
+        sharedCatalog.refresh();
         assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "my_uapp__g__t" );
     }
 
@@ -136,10 +142,12 @@ class McpToolCatalogTest
         groups( "b", group( "b:g", "t" ) );
         final var accepted = "t".repeat( 122 );
         groups( "a", group( "a:g", accepted ) );
+        sharedCatalog.refresh();
         assertThat( catalog.list( context, null ).tools().getFirst().name() ).hasSize( 128 );
 
         final var oversized = "t".repeat( 123 );
         groups( "a", group( "a:g", oversized ) );
+        sharedCatalog.refresh();
         assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "b__g__t" );
         assertThat( catalog.find( context, "a__g__" + oversized ) ).isNull();
         assertThat( catalog.find( context, "b__g__t" ) ).isNotNull();
@@ -152,6 +160,7 @@ class McpToolCatalogTest
     {
         started( "a" );
         groups( "a", group( "a:g", "_".repeat( 62 ) ) );
+        sharedCatalog.refresh();
         assertThat( catalog.list( context, null ).tools() ).isEmpty();
         assertThat( warned( "a" ) ).hasMessageContainingAll( "a:g", "130", "maximum is 128" );
     }
@@ -161,6 +170,7 @@ class McpToolCatalogTest
     {
         started( "app" );
         groups( "app", group( "app:group", "local_name" ) );
+        sharedCatalog.refresh();
         final var arguments = new LinkedHashMap<String, @Nullable Object>();
         arguments.put( "value", null );
         final var key = DescriptorKey.from( "app:group" );
@@ -178,6 +188,7 @@ class McpToolCatalogTest
     {
         started( "app" );
         groups( "app", group( "app:g", "t" ) );
+        sharedCatalog.refresh();
         when( executor.execute( DescriptorKey.from( "app:g" ), "t", Map.of() ) ).thenReturn( Map.of( "content", List.of() ) );
         final var binding = catalog.find( context, "app__g__t" );
         assertThat( call( binding, CallToolRequest.builder( "app__g__t" ).build() ).isError() ).isNotEqualTo( true );
@@ -190,25 +201,30 @@ class McpToolCatalogTest
         started( "app" );
         groups( "app", loaded( "app:g", List.of( Tool.builder( "t", Map.of( "type", "object", "required", List.of( "value" ) ) )
                                                    .build() ) ) );
+        sharedCatalog.refresh();
         final var binding = catalog.find( context, "app__g__t" );
         assertThat( call( binding, CallToolRequest.builder( "app__g__t" ).build() ).isError() ).isTrue();
         verifyNoInteractions( executor );
     }
 
     @Test
-    void observes_app_lifecycle_and_reloaded_descriptors_on_each_lookup()
+    void observes_app_lifecycle_and_reloaded_descriptors_after_refresh()
     {
         final var app = app( "app", true );
         when( applications.getInstalledApplications() ).thenReturn( Applications.from( app ) );
         groups( "app", group( "app:g", "before" ) );
+        sharedCatalog.refresh();
         assertThat( catalog.find( context, "app__g__before" ) ).isNotNull();
         groups( "app", group( "app:g", "after" ) );
+        sharedCatalog.refresh();
         assertThat( catalog.find( context, "app__g__before" ) ).isNull();
         assertThat( catalog.find( context, "app__g__after" ) ).isNotNull();
         when( app.isStarted() ).thenReturn( false );
+        sharedCatalog.refresh();
         assertThat( catalog.find( context, "app__g__after" ) ).isNull();
         assertThat( catalog.list( context, null ).tools() ).isEmpty();
         when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+        sharedCatalog.refresh();
         assertThat( catalog.list( context, null ).tools() ).isEmpty();
     }
 
@@ -220,6 +236,7 @@ class McpToolCatalogTest
         verifyNoInteractions( applications, descriptors, executor );
         started( "app" );
         groups( "app", group( "app:g", "t" ) );
+        sharedCatalog.refresh();
         assertThat( catalog.find( context, "t" ) ).isNull();
         assertThat( catalog.find( context, "app__g__T" ) ).isNull();
         assertThat( catalog.find( context, "app__g__missing" ) ).isNull();
@@ -235,6 +252,7 @@ class McpToolCatalogTest
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "app" ) ) ).thenThrow( failure );
         groups( "other", group( "other:g", "t" ) );
         when( executor.execute( DescriptorKey.from( "other:g" ), "t", Map.of() ) ).thenReturn( Map.of( "content", List.of() ) );
+        sharedCatalog.refresh();
 
         assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "other__g__t" );
         assertThat( catalog.find( context, "app__g__t" ) ).isNull();
@@ -249,6 +267,7 @@ class McpToolCatalogTest
     {
         started( "app" );
         groups( "app", group( "app:g", "t" ) );
+        sharedCatalog.refresh();
         final var snapshot = sharedCatalog.snapshot();
         final var binding = catalog.find( context, "app__g__t" );
         final var changes = new ArrayList<ServerChange>();
@@ -270,10 +289,43 @@ class McpToolCatalogTest
     }
 
     @Test
+    void list_find_and_call_read_the_last_refresh_without_scanning()
+    {
+        started( "app" );
+        groups( "app", group( "app:g", "t" ) );
+        when( executor.execute( DescriptorKey.from( "app:g" ), "t", Map.of() ) ).thenReturn( Map.of( "content", List.of() ) );
+        sharedCatalog.refresh();
+        clearInvocations( applications, descriptors );
+
+        final var binding = catalog.find( context, "app__g__t" );
+        assertThat( catalog.list( context, null ).tools() ).containsExactly( binding.definition() );
+        assertThat( catalog.find( context, "app__g__t" ) ).isSameAs( binding );
+        assertThat( call( binding, CallToolRequest.builder( "app__g__t" ).build() ).isError() ).isNotEqualTo( true );
+        verify( executor ).execute( DescriptorKey.from( "app:g" ), "t", Map.of() );
+        verifyNoInteractions( applications, descriptors );
+
+        groups( "app", group( "app:g", "t", "added" ) );
+        assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "app__g__t" );
+        assertThat( catalog.find( context, "app__g__added" ) ).isNull();
+        assertThat( catalog.find( context, "app__g__t" ) ).isSameAs( binding );
+        assertThat( call( binding, CallToolRequest.builder( "app__g__t" ).build() ).isError() ).isNotEqualTo( true );
+        verifyNoInteractions( applications, descriptors );
+
+        sharedCatalog.refresh();
+        assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "app__g__t", "app__g__added" );
+        assertThat( catalog.find( context, "app__g__added" ) ).isNotNull();
+        assertThat( catalog.find( context, "app__g__t" ) ).isNotSameAs( binding );
+        verify( applications ).getInstalledApplications();
+        verify( descriptors ).getLoadedByApplication( ApplicationKey.from( "app" ) );
+        verifyNoMoreInteractions( applications, descriptors );
+    }
+
+    @Test
     void descriptor_update_rebuilds_binding_instances()
     {
         started( "app" );
         groups( "app", group( "app:g", "t" ) );
+        sharedCatalog.refresh();
         final var snapshot = sharedCatalog.snapshot();
         final var binding = catalog.find( context, "app__g__t" );
 
@@ -293,9 +345,11 @@ class McpToolCatalogTest
     {
         started( "app" );
         groups( "app", group( "app:g", "t" ) );
+        sharedCatalog.refresh();
         final var binding = catalog.find( context, "app__g__t" );
         final var failure = new IllegalArgumentException( "broken descriptor" );
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "app" ) ) ).thenThrow( failure );
+        sharedCatalog.refresh();
 
         assertThat( catalog.list( context, null ).tools() ).isEmpty();
         assertThat( catalog.find( context, "app__g__t" ) ).isNull();
@@ -324,7 +378,7 @@ class McpToolCatalogTest
     }
 
     @Test
-    void observes_refresh_list_and_find_changes_and_publishes_state_before_notification()
+    void observes_refresh_changes_and_publishes_state_before_notification()
     {
         started( "app" );
         groups( "app", group( "app:g", "before" ) );
@@ -339,9 +393,9 @@ class McpToolCatalogTest
             groups( "app", group( "app:g", "after" ) );
             sharedCatalog.refresh();
             groups( "app", group( "app:g", "last", "first" ) );
-            catalog.list( context, null );
+            sharedCatalog.refresh();
             groups( "app", group( "app:g", "first", "last" ) );
-            catalog.find( context, "app__g__first" );
+            sharedCatalog.refresh();
             when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
             sharedCatalog.refresh();
             sharedCatalog.refresh();
@@ -396,6 +450,7 @@ class McpToolCatalogTest
         when( applications.getInstalledApplications() ).thenReturn( Applications.from( broken, removed ) );
         groups( "broken", group( "broken:g", "t" ) );
         groups( "removed", group( "removed:g", "t" ) );
+        sharedCatalog.refresh();
         final var binding = catalog.find( context, "removed__g__t" );
         final var changes = new ArrayList<ServerChange>();
         final var subscription = sharedCatalog.changes().changes().subscribe( changes::add );
@@ -433,11 +488,14 @@ class McpToolCatalogTest
     {
         started( "app" );
         groups( "app", group( "app:g", "t" ) );
+        sharedCatalog.refresh();
         final var binding = catalog.find( context, "app__g__t" );
         groups( "app", loaded( "app:g", List.of( Tool.builder( "t", Map.of() ).description( "changed" ).build() ) ) );
+        sharedCatalog.refresh();
         assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "app__g__t" ).build() ) )
             .isInstanceOf( McpException.class ).hasMessageContaining( "no longer available" );
         when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+        sharedCatalog.refresh();
         assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "app__g__t" ).build() ) )
             .isInstanceOf( McpException.class ).hasMessageContaining( "no longer available" );
         verifyNoInteractions( executor );
@@ -448,6 +506,7 @@ class McpToolCatalogTest
     {
         started( "app" );
         groups( "app", group( "app:g", "t" ) );
+        sharedCatalog.refresh();
         final var binding = catalog.find( context, "app__g__t" );
         try ( var worker = Executors.newSingleThreadExecutor() )
         {

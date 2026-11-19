@@ -36,6 +36,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -58,6 +59,7 @@ class McpCatalogTest
         groups( "a", group( "a:z", "last", "first" ), group( "a:a", "t" ) );
         groups( "z", group( "z:g", "t" ) );
 
+        catalog.refresh();
         final var snapshot = catalog.snapshot();
 
         assertThat( snapshot.groups() ).extracting( group -> group.descriptor().getKey().toString() )
@@ -67,6 +69,43 @@ class McpCatalogTest
         order.verify( descriptors ).getLoadedByApplication( ApplicationKey.from( "a" ) );
         order.verify( descriptors ).getLoadedByApplication( ApplicationKey.from( "z" ) );
         verify( descriptors, never() ).getLoadedByApplication( ApplicationKey.from( "stopped" ) );
+    }
+
+    @Test
+    void snapshot_reads_the_last_refresh_without_scanning()
+    {
+        started();
+        groups( "app", group( "app:g", "t" ) );
+        assertThat( catalog.snapshot().groups() ).isEmpty();
+        verifyNoInteractions( applications, descriptors );
+
+        catalog.refresh();
+        final var first = catalog.snapshot();
+        groups( "app", group( "app:g", "changed" ) );
+        assertThat( catalog.snapshot() ).isSameAs( first );
+        assertThat( first.groups().getFirst().tools() ).extracting( Tool::name ).containsExactly( "t" );
+        verify( applications ).getInstalledApplications();
+        verify( descriptors ).getLoadedByApplication( ApplicationKey.from( "app" ) );
+        verifyNoMoreInteractions( applications, descriptors );
+
+        catalog.refresh();
+        assertThat( catalog.snapshot().groups().getFirst().tools() ).extracting( Tool::name ).containsExactly( "changed" );
+    }
+
+    @Test
+    void activation_publishes_a_baseline_and_survives_a_failing_scan()
+    {
+        started();
+        groups( "app", group( "app:g", "t" ) );
+        catalog.activate();
+        assertThat( keys( catalog.snapshot() ) ).containsExactly( "app:g" );
+
+        final var failure = new IllegalStateException( "applications unavailable" );
+        when( applications.getInstalledApplications() ).thenThrow( failure );
+        final var failing = new McpCatalog( descriptors, applications, log );
+        assertDoesNotThrow( failing::activate );
+        assertThat( failing.snapshot().groups() ).isEmpty();
+        verify( log ).warn( anyString(), eq( failure ) );
     }
 
     @Test
@@ -85,12 +124,14 @@ class McpCatalogTest
     {
         started();
         groups( "app", group( "app:z", "t" ), group( "app:a", "t" ) );
+        catalog.refresh();
         final var first = catalog.snapshot();
         groups( "app", group( "app:a", "t" ), group( "app:z", "t" ) );
+        catalog.refresh();
         assertThat( catalog.snapshot() ).isSameAs( first );
         catalog.refresh();
         assertThat( catalog.snapshot() ).isSameAs( first );
-        verify( descriptors, times( 4 ) ).getLoadedByApplication( ApplicationKey.from( "app" ) );
+        verify( descriptors, times( 3 ) ).getLoadedByApplication( ApplicationKey.from( "app" ) );
     }
 
     @Test
@@ -98,6 +139,7 @@ class McpCatalogTest
     {
         started();
         groups( "app", group( "app:g", "t" ) );
+        catalog.refresh();
         final var first = catalog.snapshot();
         final var changes = new ArrayList<ServerChange>();
         final var subscription = catalog.changes().changes().subscribe( changes::add );
@@ -106,15 +148,19 @@ class McpCatalogTest
             final var restricted = new LoadedMcpGroup(
                 new McpDescriptor( DescriptorKey.from( "app:g" ), PrincipalKeys.from( "role:system.admin" ) ), first.groups().getFirst().tools() );
             groups( "app", restricted );
+            catalog.refresh();
             final var metadata = catalog.snapshot();
             assertThat( metadata ).isNotSameAs( first );
             assertThat( metadata.groups() ).containsExactly( restricted );
             groups( "app", restricted, group( "app:empty" ) );
+            catalog.refresh();
             final var added = catalog.snapshot();
             assertThat( added ).isNotSameAs( metadata );
             groups( "app", restricted, group( "app:renamed" ) );
+            catalog.refresh();
             assertThat( catalog.snapshot() ).isNotSameAs( added );
             groups( "app", restricted );
+            catalog.refresh();
             assertThat( catalog.snapshot().groups() ).containsExactly( restricted );
             assertThat( changes ).isEmpty();
         }
@@ -138,14 +184,17 @@ class McpCatalogTest
         } );
         try
         {
+            catalog.refresh();
             final var first = catalog.snapshot();
             assertThat( observed ).containsExactly( first );
             assertThat( observed.getFirst() ).isSameAs( first );
             catalog.refresh();
             groups( "app", group( "app:g", "after" ) );
+            catalog.refresh();
             final var second = catalog.snapshot();
             assertThat( observed.getLast() ).isSameAs( second );
             when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
+            catalog.refresh();
             assertThat( catalog.snapshot().groups() ).isEmpty();
             catalog.refresh();
             assertThat( changes ).hasSize( 3 ).containsOnly( new ServerChange.ToolsListChanged() );
@@ -206,6 +255,7 @@ class McpCatalogTest
         groups( "broken", group( "broken:g", "t" ) );
         groups( "removed", group( "removed:g", "t" ) );
         groups( "healthy", group( "healthy:g", "t" ) );
+        catalog.refresh();
         final var original = catalog.snapshot();
         final var changes = new ArrayList<ServerChange>();
         final var subscription = catalog.changes().changes().subscribe( changes::add );
@@ -218,12 +268,14 @@ class McpCatalogTest
             assertThat( changes ).hasSize( 1 );
             assertThat( warned( "broken" ) ).isSameAs( cause );
             when( removed.isStarted() ).thenReturn( false );
+            catalog.refresh();
             assertThat( keys( catalog.snapshot() ) ).containsExactly( "healthy:g" );
             assertThat( changes ).hasSize( 2 );
             catalog.refresh();
             assertThat( changes ).hasSize( 2 );
             verify( log, never() ).info( anyString(), any( Object.class ) );
             groups( "broken", group( "broken:g", "fixed" ) );
+            catalog.refresh();
             final var recovered = catalog.snapshot();
             assertThat( recovered ).isNotSameAs( original );
             assertThat( keys( recovered ) ).containsExactly( "broken:g", "healthy:g" );
@@ -247,6 +299,7 @@ class McpCatalogTest
         when( applications.getInstalledApplications() ).thenReturn( Applications.from( stopped, uninstalled ) );
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "stopped" ) ) ).thenThrow( new IllegalArgumentException( "a" ) );
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "uninstalled" ) ) ).thenThrow( new IllegalArgumentException( "b" ) );
+        catalog.refresh();
         assertThat( catalog.snapshot().groups() ).isEmpty();
         warned( "stopped" );
         warned( "uninstalled" );
@@ -272,6 +325,7 @@ class McpCatalogTest
         final var subscription = catalog.changes().changes().subscribe( changes::add );
         try
         {
+            catalog.refresh();
             assertThat( keys( catalog.snapshot() ) ).containsExactly( "c:g" );
             catalog.refresh();
             catalog.refresh();
@@ -303,6 +357,7 @@ class McpCatalogTest
         when( applications.getInstalledApplications() ).thenReturn( Applications.from( invalid, healthy ) );
         groups( "a", group( "a:g", "t".repeat( 123 ) ) );
         groups( "healthy", group( "healthy:g", "t" ) );
+        catalog.refresh();
         assertThat( keys( catalog.snapshot() ) ).containsExactly( "healthy:g" );
         assertThat( warned( "a" ) ).hasMessageContainingAll( "a:g", "maximum is 128" );
         final var changes = new ArrayList<ServerChange>();
@@ -313,9 +368,11 @@ class McpCatalogTest
             catalog.refresh();
             assertThat( changes ).isEmpty();
             when( healthy.isStarted() ).thenReturn( false );
+            catalog.refresh();
             assertThat( catalog.snapshot().groups() ).isEmpty();
             assertThat( changes ).containsExactly( new ServerChange.ToolsListChanged() );
             groups( "a", group( "a:g", "fixed" ) );
+            catalog.refresh();
             assertThat( catalog.snapshot().groups() ).singleElement().satisfies(
                 group -> assertThat( group.tools() ).extracting( Tool::name ).containsExactly( "fixed" ) );
             assertThat( changes ).hasSize( 2 );
@@ -335,6 +392,7 @@ class McpCatalogTest
         when( applications.getInstalledApplications() ).thenReturn( installed );
         groups( "app", group( "app:g", "t" ), group( "app:g", "t" ) );
         groups( "other", group( "other:g", "t" ) );
+        catalog.refresh();
         assertThat( keys( catalog.snapshot() ) ).containsExactly( "other:g" );
         assertThat( warned( "app" ) ).hasMessage( "Duplicate public MCP tool app__g__t" );
     }
