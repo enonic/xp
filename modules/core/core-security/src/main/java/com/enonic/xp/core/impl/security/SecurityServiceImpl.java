@@ -242,7 +242,7 @@ public final class SecurityServiceImpl
 
     public void removeRelationships( final PrincipalKey from )
     {
-        if ( RoleKeys.ADMIN.equals( from ) )
+        if ( RoleKeys.ADMIN.toPath().equals( from.toPath() ) )
         {
             throw new IllegalArgumentException( "Super user cannot be removed from the administrator role" );
         }
