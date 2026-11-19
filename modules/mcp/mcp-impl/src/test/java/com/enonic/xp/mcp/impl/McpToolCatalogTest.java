@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.slf4j.Logger;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -34,6 +36,8 @@ import io.modelcontextprotocol.modern.server.feature.ServerChange;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -51,7 +55,9 @@ class McpToolCatalogTest
 
     private final McpRequestContext context = mock( McpRequestContext.class );
 
-    private final McpCatalog sharedCatalog = new McpCatalog( descriptors, applications );
+    private final Logger log = mock( Logger.class );
+
+    private final McpCatalog sharedCatalog = new McpCatalog( descriptors, applications, log );
 
     private final McpToolCatalog catalog = new McpToolCatalog( sharedCatalog, executor );
 
@@ -123,18 +129,22 @@ class McpToolCatalogTest
     }
 
     @Test
-    void accepts_128_characters_and_rejects_oversized_names_with_context()
+    void accepts_128_characters_and_excludes_application_with_oversized_names()
     {
-        started( "a" );
+        final var installed = Applications.from( app( "a", true ), app( "b", true ) );
+        when( applications.getInstalledApplications() ).thenReturn( installed );
+        groups( "b", group( "b:g", "t" ) );
         final var accepted = "t".repeat( 122 );
         groups( "a", group( "a:g", accepted ) );
         assertThat( catalog.list( context, null ).tools().getFirst().name() ).hasSize( 128 );
 
         final var oversized = "t".repeat( 123 );
         groups( "a", group( "a:g", oversized ) );
-        assertThatThrownBy( () -> catalog.list( context, null ) ).isInstanceOf( IllegalArgumentException.class )
+        assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "b__g__t" );
+        assertThat( catalog.find( context, "a__g__" + oversized ) ).isNull();
+        assertThat( catalog.find( context, "b__g__t" ) ).isNotNull();
+        assertThat( warned( "a" ) ).isInstanceOf( IllegalArgumentException.class )
             .hasMessageContainingAll( "a:g", oversized, "129", "maximum is 128", "Shorten" );
-        assertThatThrownBy( () -> catalog.find( context, "missing" ) ).isInstanceOf( IllegalArgumentException.class );
     }
 
     @Test
@@ -142,8 +152,8 @@ class McpToolCatalogTest
     {
         started( "a" );
         groups( "a", group( "a:g", "_".repeat( 62 ) ) );
-        assertThatThrownBy( () -> catalog.list( context, null ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContainingAll( "a:g", "130", "maximum is 128" );
+        assertThat( catalog.list( context, null ).tools() ).isEmpty();
+        assertThat( warned( "a" ) ).hasMessageContainingAll( "a:g", "130", "maximum is 128" );
     }
 
     @Test
@@ -217,15 +227,21 @@ class McpToolCatalogTest
     }
 
     @Test
-    void broken_groups_fail_listing_and_lookup_with_actionable_cause()
+    void broken_groups_are_excluded_and_logged_with_actionable_cause_while_others_list_and_call()
     {
-        started( "app" );
+        final var installed = Applications.from( app( "app", true ), app( "other", true ) );
+        when( applications.getInstalledApplications() ).thenReturn( installed );
         final var failure = new IllegalArgumentException( "Invalid MCP descriptor app:/mcp/broken/broken.yaml: invalid inputSchema" );
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "app" ) ) ).thenThrow( failure );
-        assertThatThrownBy( () -> catalog.list( context, null ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContainingAll( "application app", "/mcp/broken/broken.yaml", "invalid inputSchema" ).hasCause( failure );
-        assertThatThrownBy( () -> catalog.find( context, "app__g__t" ) ).isInstanceOf( IllegalArgumentException.class ).hasCause( failure );
-        verifyNoInteractions( executor );
+        groups( "other", group( "other:g", "t" ) );
+        when( executor.execute( DescriptorKey.from( "other:g" ), "t", Map.of() ) ).thenReturn( Map.of( "content", List.of() ) );
+
+        assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "other__g__t" );
+        assertThat( catalog.find( context, "app__g__t" ) ).isNull();
+        final var other = catalog.find( context, "other__g__t" );
+        assertThat( call( other, CallToolRequest.builder( "other__g__t" ).build() ).isError() ).isNotEqualTo( true );
+        assertThat( warned( "app" ) ).isSameAs( failure ).hasMessageContainingAll( "/mcp/broken/broken.yaml", "invalid inputSchema" );
+        verify( executor ).execute( DescriptorKey.from( "other:g" ), "t", Map.of() );
     }
 
     @Test
@@ -281,9 +297,10 @@ class McpToolCatalogTest
         final var failure = new IllegalArgumentException( "broken descriptor" );
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "app" ) ) ).thenThrow( failure );
 
-        assertThatThrownBy( () -> catalog.list( context, null ) ).hasCause( failure );
-        assertThatThrownBy( () -> catalog.find( context, "app__g__t" ) ).hasCause( failure );
-        assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "app__g__t" ).build() ) ).hasCause( failure );
+        assertThat( catalog.list( context, null ).tools() ).isEmpty();
+        assertThat( catalog.find( context, "app__g__t" ) ).isNull();
+        assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "app__g__t" ).build() ) )
+            .isInstanceOf( McpException.class ).hasMessageContaining( "no longer available" );
         verifyNoInteractions( executor );
     }
 
@@ -386,12 +403,15 @@ class McpToolCatalogTest
         {
             when( descriptors.getLoadedByApplication( ApplicationKey.from( "broken" ) ) )
                 .thenThrow( new IllegalArgumentException( "broken descriptor" ) );
-            assertThatThrownBy( sharedCatalog::refresh ).hasMessageContaining( "broken descriptor" );
+            assertDoesNotThrow( sharedCatalog::refresh );
+            assertThat( changes ).hasSize( 1 );
+            assertThat( catalog.list( context, null ).tools() ).extracting( Tool::name ).containsExactly( "removed__g__t" );
             when( removed.isStarted() ).thenReturn( false );
-            assertThatThrownBy( sharedCatalog::refresh ).hasMessageContaining( "broken descriptor" );
+            assertDoesNotThrow( sharedCatalog::refresh );
             assertThatThrownBy( () -> call( binding, CallToolRequest.builder( "removed__g__t" ).build() ) )
-                .hasMessageContaining( "broken descriptor" );
+                .isInstanceOf( McpException.class ).hasMessageContaining( "no longer available" );
             assertThat( changes ).hasSize( 2 );
+            assertThat( warned( "broken" ) ).hasMessage( "broken descriptor" );
             when( applications.getInstalledApplications() ).thenReturn( Applications.empty() );
             sharedCatalog.refresh();
             assertThat( catalog.list( context, null ).tools() ).isEmpty();
@@ -441,6 +461,13 @@ class McpToolCatalogTest
             } );
             assertThat( call( binding, CallToolRequest.builder( "app__g__t" ).build() ).isError() ).isNotEqualTo( true );
         }
+    }
+
+    private Throwable warned( final String application )
+    {
+        final var failure = ArgumentCaptor.forClass( Object.class );
+        verify( log ).warn( anyString(), eq( ApplicationKey.from( application ) ), failure.capture() );
+        return (Throwable) failure.getValue();
     }
 
     private void started( final String key )

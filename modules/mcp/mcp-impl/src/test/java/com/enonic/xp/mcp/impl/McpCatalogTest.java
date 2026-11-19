@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.slf4j.Logger;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -22,12 +24,19 @@ import io.modelcontextprotocol.modern.server.feature.ServerChange;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @NullMarked
@@ -37,7 +46,9 @@ class McpCatalogTest
 
     private final ApplicationService applications = mock( ApplicationService.class );
 
-    private final McpCatalog catalog = new McpCatalog( descriptors, applications );
+    private final Logger log = mock( Logger.class );
+
+    private final McpCatalog catalog = new McpCatalog( descriptors, applications, log );
 
     @Test
     void discovers_started_applications_and_groups_in_order_and_preserves_tool_order()
@@ -202,24 +213,25 @@ class McpCatalogTest
         {
             final var cause = new IllegalArgumentException( "broken descriptor" );
             when( descriptors.getLoadedByApplication( ApplicationKey.from( "broken" ) ) ).thenThrow( cause );
-            assertThatThrownBy( catalog::refresh ).hasMessageContaining( "application broken" ).hasCause( cause );
+            assertDoesNotThrow( catalog::refresh );
+            assertThat( keys( catalog.snapshot() ) ).containsExactly( "healthy:g", "removed:g" );
             assertThat( changes ).hasSize( 1 );
+            assertThat( warned( "broken" ) ).isSameAs( cause );
             when( removed.isStarted() ).thenReturn( false );
-            assertThatThrownBy( catalog::snapshot ).hasMessageContaining( "application broken" );
+            assertThat( keys( catalog.snapshot() ) ).containsExactly( "healthy:g" );
             assertThat( changes ).hasSize( 2 );
-            assertThatThrownBy( catalog::snapshot ).hasMessageContaining( "broken descriptor" );
+            catalog.refresh();
             assertThat( changes ).hasSize( 2 );
-            when( applications.getInstalledApplications() ).thenReturn( Applications.from( healthy ) );
-            final var surviving = catalog.snapshot();
-            assertThat( surviving ).isNotSameAs( original );
-            assertThat( surviving.groups() ).extracting( group -> group.descriptor().getKey().toString() )
-                .containsExactly( "healthy:g" );
-            assertThat( changes ).hasSize( 2 );
+            verify( log, never() ).info( anyString(), any( Object.class ) );
             groups( "broken", group( "broken:g", "fixed" ) );
-            when( applications.getInstalledApplications() ).thenReturn( Applications.from( healthy, broken ) );
-            assertThat( catalog.snapshot().groups() ).extracting( group -> group.descriptor().getKey().toString() )
-                .containsExactly( "broken:g", "healthy:g" );
+            final var recovered = catalog.snapshot();
+            assertThat( recovered ).isNotSameAs( original );
+            assertThat( keys( recovered ) ).containsExactly( "broken:g", "healthy:g" );
+            assertThat( recovered.groups().getFirst().tools() ).extracting( Tool::name ).containsExactly( "fixed" );
             assertThat( changes ).hasSize( 3 );
+            catalog.refresh();
+            verify( log ).info( contains( "loaded again" ), eq( ApplicationKey.from( "broken" ) ) );
+            verifyNoMoreInteractions( log );
         }
         finally
         {
@@ -228,23 +240,54 @@ class McpCatalogTest
     }
 
     @Test
-    void aggregates_contextual_failures_and_continues_loading_applications()
+    void failures_of_stopped_or_uninstalled_applications_are_cleared_once()
+    {
+        final var stopped = app( "stopped", true );
+        final var uninstalled = app( "uninstalled", true );
+        when( applications.getInstalledApplications() ).thenReturn( Applications.from( stopped, uninstalled ) );
+        when( descriptors.getLoadedByApplication( ApplicationKey.from( "stopped" ) ) ).thenThrow( new IllegalArgumentException( "a" ) );
+        when( descriptors.getLoadedByApplication( ApplicationKey.from( "uninstalled" ) ) ).thenThrow( new IllegalArgumentException( "b" ) );
+        assertThat( catalog.snapshot().groups() ).isEmpty();
+        warned( "stopped" );
+        warned( "uninstalled" );
+        when( stopped.isStarted() ).thenReturn( false );
+        when( applications.getInstalledApplications() ).thenReturn( Applications.from( stopped ) );
+        catalog.refresh();
+        catalog.refresh();
+        verify( log ).info( contains( "no longer started" ), eq( ApplicationKey.from( "stopped" ) ) );
+        verify( log ).info( contains( "no longer started" ), eq( ApplicationKey.from( "uninstalled" ) ) );
+        verifyNoMoreInteractions( log );
+    }
+
+    @Test
+    void failures_are_isolated_per_application_and_logged_once_per_message()
     {
         final var installed = Applications.from( app( "a", true ), app( "b", true ), app( "c", true ) );
         when( applications.getInstalledApplications() ).thenReturn( installed );
-        when( descriptors.getLoadedByApplication( ApplicationKey.from( "a" ) ) ).thenThrow( new IllegalArgumentException( "first" ) );
+        final var first = new IllegalArgumentException( "first" );
+        when( descriptors.getLoadedByApplication( ApplicationKey.from( "a" ) ) ).thenThrow( first );
         when( descriptors.getLoadedByApplication( ApplicationKey.from( "b" ) ) ).thenThrow( new IllegalArgumentException( "second" ) );
         groups( "c", group( "c:g", "t" ) );
         final var changes = new ArrayList<ServerChange>();
         final var subscription = catalog.changes().changes().subscribe( changes::add );
         try
         {
-            assertThatThrownBy( catalog::snapshot ).hasMessageContaining( "application a: first" ).satisfies( failure -> {
-                assertThat( failure.getSuppressed() ).singleElement().satisfies(
-                                    suppressed -> assertThat( suppressed ).hasMessageContaining( "application b: second" ) );
-            } );
-            verify( descriptors ).getLoadedByApplication( ApplicationKey.from( "c" ) );
+            assertThat( keys( catalog.snapshot() ) ).containsExactly( "c:g" );
+            catalog.refresh();
+            catalog.refresh();
+            verify( descriptors, times( 3 ) ).getLoadedByApplication( ApplicationKey.from( "c" ) );
             assertThat( changes ).containsExactly( new ServerChange.ToolsListChanged() );
+            assertThat( warned( "a" ) ).isSameAs( first );
+            assertThat( warned( "b" ) ).hasMessage( "second" );
+            final var changed = new IllegalArgumentException( "changed" );
+            doThrow( changed ).when( descriptors ).getLoadedByApplication( ApplicationKey.from( "a" ) );
+            catalog.refresh();
+            catalog.refresh();
+            final var failures = ArgumentCaptor.forClass( Object.class );
+            verify( log, times( 2 ) ).warn( anyString(), eq( ApplicationKey.from( "a" ) ), failures.capture() );
+            assertThat( failures.getAllValues() ).containsExactly( first, changed );
+            assertThat( changes ).hasSize( 1 );
+            verifyNoMoreInteractions( log );
         }
         finally
         {
@@ -253,28 +296,31 @@ class McpCatalogTest
     }
 
     @Test
-    void invalid_public_names_fail_refresh_without_hiding_other_removals()
+    void invalid_public_names_exclude_only_their_application()
     {
         final var invalid = app( "a", true );
         final var healthy = app( "healthy", true );
         when( applications.getInstalledApplications() ).thenReturn( Applications.from( invalid, healthy ) );
         groups( "a", group( "a:g", "t".repeat( 123 ) ) );
         groups( "healthy", group( "healthy:g", "t" ) );
-        assertThatThrownBy( catalog::refresh ).hasMessageContainingAll( "application a", "maximum is 128" );
+        assertThat( keys( catalog.snapshot() ) ).containsExactly( "healthy:g" );
+        assertThat( warned( "a" ) ).hasMessageContainingAll( "a:g", "maximum is 128" );
         final var changes = new ArrayList<ServerChange>();
         final var subscription = catalog.changes().changes().subscribe( changes::add );
         try
         {
             groups( "a", group( "a:g", "t".repeat( 123 ), "sibling" ) );
-            assertThatThrownBy( catalog::refresh ).hasMessageContaining( "maximum is 128" );
+            catalog.refresh();
             assertThat( changes ).isEmpty();
             when( healthy.isStarted() ).thenReturn( false );
-            assertThatThrownBy( catalog::refresh ).hasMessageContaining( "maximum is 128" );
+            assertThat( catalog.snapshot().groups() ).isEmpty();
             assertThat( changes ).containsExactly( new ServerChange.ToolsListChanged() );
             groups( "a", group( "a:g", "fixed" ) );
             assertThat( catalog.snapshot().groups() ).singleElement().satisfies(
                 group -> assertThat( group.tools() ).extracting( Tool::name ).containsExactly( "fixed" ) );
             assertThat( changes ).hasSize( 2 );
+            verify( log ).info( contains( "loaded again" ), eq( ApplicationKey.from( "a" ) ) );
+            verifyNoMoreInteractions( log );
         }
         finally
         {
@@ -283,11 +329,26 @@ class McpCatalogTest
     }
 
     @Test
-    void duplicate_public_names_fail_during_refresh()
+    void duplicate_public_names_exclude_only_their_application()
     {
-        started();
+        final var installed = Applications.from( app( "app", true ), app( "other", true ) );
+        when( applications.getInstalledApplications() ).thenReturn( installed );
         groups( "app", group( "app:g", "t" ), group( "app:g", "t" ) );
-        assertThatThrownBy( catalog::refresh ).hasMessageContainingAll( "application app", "Duplicate public MCP tool app__g__t" );
+        groups( "other", group( "other:g", "t" ) );
+        assertThat( keys( catalog.snapshot() ) ).containsExactly( "other:g" );
+        assertThat( warned( "app" ) ).hasMessage( "Duplicate public MCP tool app__g__t" );
+    }
+
+    private Throwable warned( final String application )
+    {
+        final var failure = ArgumentCaptor.forClass( Object.class );
+        verify( log ).warn( contains( "excluded from the catalog" ), eq( ApplicationKey.from( application ) ), failure.capture() );
+        return (Throwable) failure.getValue();
+    }
+
+    private static List<String> keys( final McpCatalog.Snapshot snapshot )
+    {
+        return snapshot.groups().stream().map( group -> group.descriptor().getKey().toString() ).toList();
     }
 
     private void started()
