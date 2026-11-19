@@ -1,13 +1,17 @@
 package com.enonic.xp.mcp.impl;
 
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -18,9 +22,11 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.type.LogicalType;
 
+import com.enonic.xp.resource.ResourceError;
 
 import io.modelcontextprotocol.json.jackson2.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.json.schema.jackson2.DefaultJsonSchemaValidator;
+import io.modelcontextprotocol.modern.McpException;
 import io.modelcontextprotocol.modern.McpSchema.CallToolResult;
 import io.modelcontextprotocol.modern.McpSchema.TextContent;
 import io.modelcontextprotocol.modern.McpSchema.Tool;
@@ -30,6 +36,8 @@ import io.modelcontextprotocol.modern.server.feature.McpSyncTool;
 @NullMarked
 public final class McpToolAdapter
 {
+    private static final Logger LOG = LoggerFactory.getLogger( McpToolAdapter.class );
+
     private static final Pattern TOOL_NAME = Pattern.compile( "[A-Za-z0-9_.-]{1,128}" );
 
     private static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
@@ -75,6 +83,13 @@ public final class McpToolAdapter
     public static McpSyncTool bind( final Tool tool,
                                      final BiFunction<String, Map<String, @Nullable Object>, Map<String, @Nullable Object>> handler )
     {
+        return bind( tool, handler, LOG );
+    }
+
+    static McpSyncTool bind( final Tool tool,
+                             final BiFunction<String, Map<String, @Nullable Object>, Map<String, @Nullable Object>> handler,
+                             final Logger log )
+    {
         Objects.requireNonNull( handler, "handler" );
         validateTool( tool );
         return McpSyncTool.of( tool, ( context, request ) -> {
@@ -84,8 +99,30 @@ public final class McpToolAdapter
             {
                 return McpSyncResponse.result( error( "Invalid MCP tool arguments: " + validation.errorMessage() ) );
             }
-            return McpInvocationScope.respond( context, () -> validateResult( tool, handler.apply( tool.name(), arguments ) ) );
+            return McpInvocationScope.respond( context, () -> execute( tool, handler, arguments, log ) );
         } );
+    }
+
+    private static CallToolResult execute( final Tool tool,
+                                           final BiFunction<String, Map<String, @Nullable Object>, Map<String, @Nullable Object>> handler,
+                                           final Map<String, @Nullable Object> arguments, final Logger log )
+    {
+        final Map<String, @Nullable Object> result;
+        try
+        {
+            result = handler.apply( tool.name(), arguments );
+        }
+        catch ( McpException e )
+        {
+            throw e;
+        }
+        catch ( RuntimeException | ResourceError e )
+        {
+            final var errorId = HexFormat.of().toHexDigits( ThreadLocalRandom.current().nextInt() );
+            log.warn( "MCP tool {} execution failed (error id {})", tool.name(), errorId, e );
+            return error( "MCP tool execution failed (error id " + errorId + ")" );
+        }
+        return validateResult( tool, result );
     }
 
     private static CallToolResult validateResult( final Tool tool, final Map<String, @Nullable Object> result )

@@ -6,17 +6,23 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.resource.ResourceError;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProblemException;
 
 import io.modelcontextprotocol.json.jackson2.JacksonMcpJsonMapper;
+import io.modelcontextprotocol.modern.McpException;
 import io.modelcontextprotocol.modern.McpSchema.CallToolOutcome;
 import io.modelcontextprotocol.modern.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.modern.McpSchema.CallToolResult;
@@ -45,6 +51,8 @@ import static org.mockito.Mockito.when;
 @NullMarked
 class McpToolAdapterTest
 {
+    private static final Pattern ERROR_ID = Pattern.compile( "MCP tool execution failed \\(error id ([0-9a-f]{8})\\)" );
+
     private static final Map<String, Object> ECHO_SCHEMA = Map.of( "type", "object", "properties",
                                                                 Map.of( "message", Map.of( "type", "string" ) ),
                                                                 "required", List.of( "message" ), "additionalProperties", false );
@@ -480,9 +488,37 @@ class McpToolAdapterTest
     }
 
     @Test
-    void propagates_unexpected_handler_exceptions()
+    void reports_thrown_failures_as_generic_tool_errors_with_logged_error_id()
     {
-        final var failure = new IllegalArgumentException( "handler failure" );
+        for ( var failure : List.<Throwable>of( new IllegalStateException( "private detail" ),
+                                                new IllegalArgumentException( "private detail" ),
+                                                ResourceProblemException.create().message( "Error: private detail" ).build(),
+                                                new ResourceError( ResourceKey.from( "myapp:/mcp/echo/echo.js" ), "private detail" ) ) )
+        {
+            final var log = mock( Logger.class );
+            final var binding = McpToolAdapter.bind( echoTool(), ( name, arguments ) -> {
+                if ( failure instanceof Error error )
+                {
+                    throw error;
+                }
+                throw (RuntimeException) failure;
+            }, log );
+
+            final var result = call( binding, echoRequest() );
+
+            assertError( result, "MCP tool execution failed" );
+            final var text = ( (TextContent) result.content().getFirst() ).text();
+            assertThat( text ).doesNotContain( "private detail" );
+            final var matcher = ERROR_ID.matcher( text );
+            assertThat( matcher.matches() ).as( text ).isTrue();
+            verify( log ).warn( "MCP tool {} execution failed (error id {})", "echo", matcher.group( 1 ), failure );
+        }
+    }
+
+    @Test
+    void propagates_protocol_exceptions()
+    {
+        final var failure = McpException.invalidParams( "MCP tool is no longer available: echo" );
         final var binding = McpToolAdapter.bind( echoTool(), ( name, arguments ) -> {
             throw failure;
         } );

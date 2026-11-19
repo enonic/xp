@@ -51,7 +51,10 @@ The controller exports:
 ```javascript
 exports.execute = function (name, args) {
     if (name !== 'echo') {
-        throw new Error('Unsupported declared tool: ' + name);
+        return {
+            content: [{type: 'text', text: 'Unsupported declared tool: ' + name}],
+            isError: true
+        };
     }
     const result = {message: args.message};
     return {
@@ -62,6 +65,18 @@ exports.execute = function (name, args) {
 ```
 
 `name` is the local tool name; `args` contains validated arguments. Completed results use standard MCP content, optional `structuredContent`, `isError` and metadata. Controllers omit protocol-owned `resultType`; the SDK supplies the completion discriminator. The protocol adapter owns JSON-RPC and revision-specific fields. Script dispatch invokes the declared controller through `PortalScriptService`, with conversion to a plain result map inside a bound script execution. The `/api/system:mcp` Universal API delegates HTTP/JSON handling to the SDK transport.
+
+## Tool errors
+
+A failing tool call completes with a standard result carrying `isError: true`, so the model can read the failure and recover. Both the JSON response and the progress stream deliver the same result.
+
+- A controller reports a failure the model should see by returning it: `{isError: true, content: [{type: 'text', text: 'Unsupported declared tool: ' + name}]}`. The text reaches the client unchanged.
+- A thrown failure returns `MCP tool execution failed (error id 1a2b3c4d)` with no exception details. This covers JavaScript errors, exceptions thrown by Java beans and libraries the script calls, a missing controller, a missing `execute` export and a non-object return. The server log records the tool name, the same error id and the exception with its stack trace at WARN level.
+- Invalid arguments and invalid controller results return `isError` results describing the problem.
+
+The adapter converts runtime exceptions and XP's `ResourceError`, which script engines raise for failures such as a stack overflow in the controller. JVM errors raised outside a script call reach the SDK unconverted.
+
+JSON-RPC protocol errors remain for invalid requests, invalid parameters, unknown tools, tools that are no longer available and invalid progress tokens.
 
 ## Invocation progress
 
@@ -91,13 +106,13 @@ Supported helper methods:
 
 Progress and total must be finite and nonnegative; progress must be at most the supplied total. The first progress value may be zero; repeated or decreasing values are ignored. Reports use synchronous controller execution on the invocation's thread. Retained helpers, foreign-thread calls and helpers shadowed by a nested invocation cannot emit. Reports made without progress support are no-ops.
 
-A client opts in by supplying a string or integer `_meta.progressToken`. The adapter selects an SDK streaming response for valid calls carrying a token. The SDK sends `notifications/progress` on that call's SSE response, retaining the original token, followed by the final standard result or protocol error. A token-bearing call may finish without reporting progress. No separate progress-capability flag is required by this protocol revision. Calls without a token execute synchronously and return JSON. Invalid input is rejected before controller execution or streaming. Invalid progress-token types produce an invalid-params protocol error.
+A client opts in by supplying a string or integer `_meta.progressToken`. The adapter selects an SDK streaming response for valid calls carrying a token. The SDK sends `notifications/progress` on that call's SSE response, retaining the original token, followed by the final standard result, which carries `isError: true` when the tool fails. A token-bearing call may finish without reporting progress. No separate progress-capability flag is required by this protocol revision. Calls without a token execute synchronously and return JSON. Invalid input is rejected before controller execution or streaming. Invalid progress-token types produce an invalid-params protocol error.
 
 The deferred streaming body captures XP caller context and a separate portal-request wrapper before moving to the SDK execution thread. It restores the captured context for script execution and result validation, then deactivates the helper in `finally`. Context attributes and referenced web data retain XP's shallow-copy semantics. Progress never uses the catalog change feed or `subscriptions/listen`.
 
 The SDK owns wire-stream cancellation and cleanup. Completion and exceptions deactivate the helper. A disconnected client receives no subsequent frames on the closed stream; disconnect does not guarantee immediate controller cancellation or immediate changes to `isProgressSupported()`. Enforced deadlines, cancellation and rate/budget controls remain iteration 2 in #12639.
 
-Test-only YAML/controller resources live under `src/test/resources/mcp/progress`. They contribute no production tools or app dependency. The fixture exercises the actual JavaScript helper, schemas and final result. Latch-controlled HTTP peers cover an operation that remains running while progress is read, concurrent callers, exact SSE frames, error completion, disconnect and catalog-subscription separation. The module runs its fixture on both configured XP script engines through `test` and `testGraalJs`; the local Graal initialization failure currently blocks the Graal fixture before controller execution.
+Test-only YAML/controller resources live under `src/test/resources/mcp/progress`, and `src/test/resources/mcp/failing` holds a controller that returns an error result, throws a JavaScript error, or calls Java code that throws. They contribute no production tools or app dependency. The fixture exercises the actual JavaScript helper, schemas and final result. Latch-controlled HTTP peers cover an operation that remains running while progress is read, concurrent callers, exact SSE frames, error completion, disconnect and catalog-subscription separation. The module runs its fixture on both configured XP script engines through `test` and `testGraalJs`; the local Graal initialization failure currently blocks the Graal fixture before controller execution.
 
 ## Descriptor discovery API
 
@@ -114,7 +129,7 @@ Discovery uses XP's `DescriptorKeyLocator` and `ResourceService` resource proces
 
 `mcp-impl` uses official Java SDK **2.2.0** through `mcp-core` and `mcp-json-jackson2`, matching XP's Jackson 2 stack. SDK classes remain internal to this module; `core-api` exposes XP group metadata with no SDK dependency. There is no parallel XP tool-definition model or map-to-tool conversion. YAML deserialization creates SDK tools once through XP's resource-processing path. Local name checks and SDK schema validation happen while loading the group.
 
-`McpToolAdapter` uses the SDK's modern `Tool`, `CallToolRequest`, `CallToolResult` and `McpSyncTool` contracts for the `2026-07-28` revision. Invocation binding retains the loaded SDK `Tool` instance. The adapter converts plain JavaScript controller results into SDK results using SDK polymorphic content types and binds callbacks to SDK handlers. SDK schema validation checks arguments and declared structured output. Content-only error results are supported; any structured error data must conform to the declared output schema. Explicit JSON null structured data is supported when the schema allows it. Unexpected callback exceptions propagate for protocol-layer handling.
+`McpToolAdapter` uses the SDK's modern `Tool`, `CallToolRequest`, `CallToolResult` and `McpSyncTool` contracts for the `2026-07-28` revision. Invocation binding retains the loaded SDK `Tool` instance. The adapter converts plain JavaScript controller results into SDK results using SDK polymorphic content types and binds callbacks to SDK handlers. SDK schema validation checks arguments and declared structured output. Content-only error results are supported; any structured error data must conform to the declared output schema. Explicit JSON null structured data is supported when the schema allows it. Runtime exceptions and `ResourceError`s thrown by the callback become generic `isError` results with a logged error id, as described in [Tool errors](#tool-errors); SDK protocol exceptions thrown by the callback propagate to the SDK.
 
 SDK JSON readers are tolerant and default some missing nested fields. This integration uses SDK validation and disables scalar coercion; it does not claim complete protocol conformance from JSON conversion alone. The Universal API uses the SDK's modern server and HTTP servlet transport. Embedded HTTP tests exercise discovery, calls, request validation and XP API routing with an SDK client. Full conformance remains separate verification work. Version 2.2.0 also provides legacy APIs, which are not bound here; legacy initialize requests receive an explicit unsupported-version error.
 
@@ -132,7 +147,7 @@ The built-in API is available at `/api/system:mcp` on XP's web connector. It req
 
 Public names use `encode(application)__encode(group)__encode(localName)`. ASCII letters, digits, dots and hyphens are preserved; `_` becomes `_u`; other UTF-16 code units become `_xhhhh` with four lowercase hexadecimal digits. This keeps component boundaries unambiguous. A name longer than 128 characters excludes its application; the logged warning instructs to shorten the contributing names. For example, the Chuck Norris app contributes `com.enonic.app.chucknorris__chucknorris__fact`.
 
-Calls resolve the public name to the original group and local tool name, validate arguments, and invoke `execute(localName, args, context)` through the app's controller. Controllers must exist, export `execute`, and return an object. The SDK adapter validates MCP results and declared structured output. Script exceptions reach the SDK protocol error handler. The originating portal request is rebound during deferred response serialization; the contributing app is selected for controller execution and the previous app is restored in a `finally` block. XP caller identity is preserved, with no administrator elevation.
+Calls resolve the public name to the original group and local tool name, validate arguments, and invoke `execute(localName, args, context)` through the app's controller. Controllers must exist, export `execute`, and return an object. The SDK adapter validates MCP results and declared structured output. Script errors and execution exceptions return generic `isError` results with a logged error id, as described in [Tool errors](#tool-errors). The originating portal request is rebound during deferred response serialization; the contributing app is selected for controller execution and the previous app is restored in a `finally` block. XP caller identity is preserved, with no administrator elevation.
 
 Tests inject an SDK echo repository into the handler; no echo registration or fixture dependency ships in the production catalog. The separately installed Chuck Norris app is the initial real contribution for manual integration checks.
 

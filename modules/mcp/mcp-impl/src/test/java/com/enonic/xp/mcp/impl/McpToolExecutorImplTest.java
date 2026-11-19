@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.slf4j.Logger;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -22,7 +25,10 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 
 import io.modelcontextprotocol.modern.McpSchema.CallToolOutcome;
+import io.modelcontextprotocol.modern.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.modern.McpSchema.CallToolResult;
+import io.modelcontextprotocol.modern.McpSchema.TextContent;
+import io.modelcontextprotocol.modern.McpSchema.Tool;
 import io.modelcontextprotocol.modern.server.McpRequestContext;
 import io.modelcontextprotocol.modern.server.McpSyncNotifier;
 import io.modelcontextprotocol.modern.server.McpSyncResponse;
@@ -44,6 +50,8 @@ import static org.mockito.Mockito.when;
 @NullMarked
 class McpToolExecutorImplTest
 {
+    private static final Pattern ERROR_ID = Pattern.compile( "MCP tool execution failed \\(error id ([0-9a-f]{8})\\)" );
+
     private static final DescriptorKey KEY = DescriptorKey.from( "contributing.app:group" );
 
     private static final ResourceKey CONTROLLER = ResourceKey.from( "contributing.app:/mcp/group/group.js" );
@@ -296,6 +304,22 @@ class McpToolExecutorImplTest
         assertThat( PortalRequestAccessor.get() ).isNull();
     }
 
+    @Test
+    void missing_execute_export_becomes_generic_tool_error_logging_the_controller()
+    {
+        when( boundExports.hasMethod( "execute" ) ).thenReturn( false );
+
+        assertGenericToolError( "MCP controller " + CONTROLLER + " must export execute(name, args)" );
+    }
+
+    @Test
+    void non_object_return_becomes_generic_tool_error_logging_the_controller()
+    {
+        when( value.isObject() ).thenReturn( false );
+
+        assertGenericToolError( "MCP controller " + CONTROLLER + " must return an object" );
+    }
+
     private Map<String, @Nullable Object> execute()
     {
         return executor.execute( KEY, "local_name", arguments );
@@ -305,6 +329,26 @@ class McpToolExecutorImplTest
     {
         inRequest( () -> assertThatThrownBy( this::execute ).isInstanceOf( IllegalArgumentException.class )
             .hasMessage( "MCP controller " + CONTROLLER + " must return an object" ) );
+    }
+
+    private void assertGenericToolError( final String loggedMessage )
+    {
+        final var log = mock( Logger.class );
+        final var binding = McpToolAdapter.bind( Tool.builder( "local_name", Map.of( "type", "object" ) ).build(),
+                                                 ( name, ignored ) -> executor.execute( KEY, name, arguments ), log );
+
+        final var response = binding.handler().call( mock( McpRequestContext.class ), CallToolRequest.builder( "local_name" ).build() );
+
+        final var result = (CallToolResult) ( (McpSyncResponse.Result<CallToolOutcome>) response ).result();
+        assertThat( result.isError() ).isTrue();
+        final var text = ( (TextContent) result.content().getFirst() ).text();
+        assertThat( text ).doesNotContain( CONTROLLER.toString() );
+        final var matcher = ERROR_ID.matcher( text );
+        assertThat( matcher.matches() ).as( text ).isTrue();
+        final var failure = ArgumentCaptor.forClass( Throwable.class );
+        verify( log ).warn( eq( "MCP tool {} execution failed (error id {})" ), eq( "local_name" ), eq( matcher.group( 1 ) ),
+                            failure.capture() );
+        assertThat( failure.getValue() ).isInstanceOf( IllegalArgumentException.class ).hasMessage( loggedMessage );
     }
 
     private AtomicReference<PortalRequest> captureTemporaryRequest()
