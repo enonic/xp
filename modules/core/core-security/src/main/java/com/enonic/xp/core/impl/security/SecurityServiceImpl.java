@@ -16,6 +16,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -897,6 +898,11 @@ public final class SecurityServiceImpl
     public IdProvider createIdProvider( final CreateIdProviderParams createIdProviderParams )
     {
         requireAdministratorToManageIdProvider( createIdProviderParams.getKey() );
+        final ApplicationKey application = applicationOf( createIdProviderParams.getIdProviderConfig() );
+        if ( application != null || IdProviderKey.system().equals( createIdProviderParams.getKey() ) )
+        {
+            requireValidApplication( createIdProviderParams.getKey(), application );
+        }
         if ( !ID_PROVIDER_KEY_PATTERN.matcher( createIdProviderParams.getKey().toString() ).matches() )
         {
             throw new IllegalArgumentException(
@@ -991,7 +997,7 @@ public final class SecurityServiceImpl
 
             final Node idProviderNode = nodeService.update( IdProviderNodeTranslator.toUpdateNodeParams( node.id(), current -> {
                 final IdProvider changed = updateIdProviderParams.update( current );
-                requireSystemIdProviderBound( current, changed );
+                requireValidBinding( current, changed );
                 return changed;
             } ) );
             final IdProvider updatedIdProvider = IdProviderNodeTranslator.fromNode( idProviderNode );
@@ -1119,13 +1125,46 @@ public final class SecurityServiceImpl
         return deleted;
     }
 
-    private static void requireSystemIdProviderBound( final IdProvider current, final IdProvider changed )
+    /**
+     * The system id provider is bound to the standard id provider application, and only it is: su and every system account log in
+     * through that binding, and the standard id provider keeps its credentials in the system id provider's users. A binding that is
+     * already stored is kept as it is.
+     */
+    private static void requireValidBinding( final IdProvider current, final IdProvider changed )
     {
-        if ( IdProviderKey.system().equals( current.getKey() ) && changed.getIdProviderConfig() == null )
+        final ApplicationKey currentApplication = applicationOf( current.getIdProviderConfig() );
+        final ApplicationKey changedApplication = applicationOf( changed.getIdProviderConfig() );
+        if ( IdProviderKey.system().equals( current.getKey() ) && changedApplication == null )
         {
             throw new IllegalArgumentException(
                 String.format( "[%s] id provider cannot be unbound from its application", current.getKey() ) );
         }
+        if ( !Objects.equals( currentApplication, changedApplication ) )
+        {
+            requireValidApplication( current.getKey(), changedApplication );
+        }
+    }
+
+    private static void requireValidApplication( final IdProviderKey idProviderKey, final ApplicationKey application )
+    {
+        final boolean system = IdProviderKey.system().equals( idProviderKey );
+        final boolean standard = IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY.equals( application );
+        if ( system && !standard )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider can only be bound to [%s]", idProviderKey,
+                               IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY ) );
+        }
+        if ( !system && standard )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] can only be bound to the [%s] id provider", application, IdProviderKey.system() ) );
+        }
+    }
+
+    private static ApplicationKey applicationOf( final IdProviderConfig idProviderConfig )
+    {
+        return idProviderConfig == null ? null : idProviderConfig.getApplicationKey();
     }
 
     /**
@@ -1136,7 +1175,8 @@ public final class SecurityServiceImpl
     {
         if ( !isCallerAdministrator() )
         {
-            throw new IllegalArgumentException( String.format( "[%s] id provider can only be managed by an administrator", idProviderKey ) );
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider can only be managed by an administrator", idProviderKey ) );
         }
     }
 

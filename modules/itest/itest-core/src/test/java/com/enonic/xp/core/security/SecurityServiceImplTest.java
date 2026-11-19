@@ -8,10 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
@@ -46,6 +48,7 @@ import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderAlreadyExistsException;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -1425,19 +1428,75 @@ class SecurityServiceImplTest
     }
 
     @Test
-    void testSystemIdProviderStaysBound()
+    void testSystemIdProviderStaysBoundToStandardIdProvider()
     {
+        final ApplicationKey standard = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
+        final IdProviderConfig other =
+            IdProviderConfig.create().applicationKey( ApplicationKey.from( "com.example.idp" ) ).config( new PropertyTree() ).build();
         runAsAdmin( () -> {
             assertThatThrownBy( () -> securityService.updateIdProvider(
                 UpdateIdProviderParams.create().key( IdProviderKey.system() ).editor( edit -> edit.idProviderConfig = null ).build() ) )
                 .isInstanceOf( IllegalArgumentException.class )
                 .hasMessageContaining( "cannot be unbound" );
-            assertNotNull( securityService.getIdProvider( IdProviderKey.system() ).getIdProviderConfig() );
+            final UpdateIdProviderParams rebind =
+                UpdateIdProviderParams.create().key( IdProviderKey.system() ).idProviderConfig( other ).build();
+            assertThatThrownBy( () -> securityService.updateIdProvider( rebind ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "can only be bound to [com.enonic.xp.app.standardidprovider]" );
+            assertEquals( standard, securityService.getIdProvider( IdProviderKey.system() ).getIdProviderConfig().getApplicationKey() );
 
-            final IdProvider renamed = securityService.updateIdProvider(
-                UpdateIdProviderParams.create().key( IdProviderKey.system() ).displayName( "Staff" ).build() );
-            assertEquals( "Staff", renamed.getDisplayName() );
-            assertNotNull( renamed.getIdProviderConfig() );
+            // its name and config stay editable
+            final PropertyTree config = new PropertyTree();
+            config.setString( "title", "Staff" );
+            final IdProvider updated = securityService.updateIdProvider( UpdateIdProviderParams.create()
+                                                                             .key( IdProviderKey.system() )
+                                                                             .displayName( "Staff" )
+                                                                             .idProviderConfig( IdProviderConfig.create()
+                                                                                                    .applicationKey( standard )
+                                                                                                    .config( config )
+                                                                                                    .build() )
+                                                                             .build() );
+            assertEquals( "Staff", updated.getDisplayName() );
+            assertEquals( standard, updated.getIdProviderConfig().getApplicationKey() );
+            assertEquals( "Staff", updated.getIdProviderConfig().getConfig().getString( "title" ) );
+        } );
+    }
+
+    @Test
+    void testOnlySystemIdProviderIsBoundToStandardIdProvider()
+    {
+        final IdProviderConfig standard = IdProviderConfig.create()
+            .applicationKey( ApplicationKey.from( "com.enonic.xp.app.standardidprovider" ) )
+            .config( new PropertyTree() )
+            .build();
+        final IdProviderConfig other =
+            IdProviderConfig.create().applicationKey( ApplicationKey.from( "com.example.idp" ) ).config( new PropertyTree() ).build();
+        final IdProviderKey corp = IdProviderKey.from( "corp" );
+        runAsAdmin( () -> {
+            final CreateIdProviderParams createStandard = CreateIdProviderParams.create()
+                .key( corp )
+                .displayName( "Corp" )
+                .idProviderConfig( standard )
+                .permissions( USER_ADMIN_ACL )
+                .build();
+            assertThatThrownBy( () -> securityService.createIdProvider( createStandard ) ).isInstanceOf(
+                IllegalArgumentException.class ).hasMessageContaining( "can only be bound to the [system] id provider" );
+            assertNull( securityService.getIdProvider( corp ) );
+
+            securityService.createIdProvider( CreateIdProviderParams.create()
+                                                  .key( corp )
+                                                  .displayName( "Corp" )
+                                                  .idProviderConfig( other )
+                                                  .permissions( USER_ADMIN_ACL )
+                                                  .build() );
+            final UpdateIdProviderParams rebind = UpdateIdProviderParams.create().key( corp ).idProviderConfig( standard ).build();
+            assertThatThrownBy( () -> securityService.updateIdProvider( rebind ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "can only be bound to the [system] id provider" );
+            assertEquals( other.getApplicationKey(), securityService.getIdProvider( corp ).getIdProviderConfig().getApplicationKey() );
+
+            // other providers may still be unbound
+            securityService.updateIdProvider(
+                UpdateIdProviderParams.create().key( corp ).editor( edit -> edit.idProviderConfig = null ).build() );
+            assertNull( securityService.getIdProvider( corp ).getIdProviderConfig() );
         } );
     }
 
