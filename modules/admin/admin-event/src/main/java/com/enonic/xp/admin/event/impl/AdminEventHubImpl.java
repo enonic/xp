@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.LongSupplier;
 
 import org.osgi.service.component.annotations.Activate;
@@ -128,7 +129,7 @@ public final class AdminEventHubImpl
     @Deactivate
     public void deactivate()
     {
-        this.sessions.values().forEach( clientSession -> quietClose( clientSession.session ) );
+        this.sessions.values().forEach( AdminEventHubImpl::quietClose );
         this.sessions.clear();
         // the sockets go with this instance; the registrations and their numbering do not
         this.topics.forgetAllSubscribers();
@@ -169,7 +170,7 @@ public final class AdminEventHubImpl
             case MESSAGE -> onMessage( event );
             case CLOSE -> onClose( event );
             // ERROR is not terminal in the websocket layer; close so teardown runs on CLOSE
-            case ERROR -> quietClose( event.getSession() );
+            case ERROR -> onError( event );
             default ->
             {
             }
@@ -183,6 +184,15 @@ public final class AdminEventHubImpl
         if ( clientSession != null )
         {
             clientSession.topics.forEach( topic -> forget( topic, id ) );
+        }
+    }
+
+    private void onError( final WebSocketEvent event )
+    {
+        final ClientSession clientSession = sessions.get( event.getSession().getId() );
+        if ( clientSession != null )
+        {
+            quietClose( clientSession );
         }
     }
 
@@ -506,14 +516,7 @@ public final class AdminEventHubImpl
         {
             if ( ++clientSession.violations >= MAX_VIOLATIONS )
             {
-                try
-                {
-                    clientSession.session.close( new CloseReason( CloseReason.CloseCodes.VIOLATED_POLICY, "Too many messages" ) );
-                }
-                catch ( IOException | RuntimeException e )
-                {
-                    LOG.debug( "Failed to close misbehaving websocket session", e );
-                }
+                close( clientSession, new CloseReason( CloseReason.CloseCodes.VIOLATED_POLICY, "Too many messages" ) );
             }
         }
     }
@@ -528,11 +531,20 @@ public final class AdminEventHubImpl
         webSocketManager.send( id, message );
     }
 
-    private static void quietClose( final Session session )
+    private static void quietClose( final ClientSession clientSession )
     {
+        close( clientSession, new CloseReason( CloseReason.CloseCodes.GOING_AWAY, "Hub closing" ) );
+    }
+
+    private static void close( final ClientSession clientSession, final CloseReason reason )
+    {
+        if ( !clientSession.closing.compareAndSet( false, true ) )
+        {
+            return;
+        }
         try
         {
-            session.close( new CloseReason( CloseReason.CloseCodes.GOING_AWAY, "Hub closing" ) );
+            clientSession.session.close( reason );
         }
         catch ( IOException | RuntimeException e )
         {
@@ -605,6 +617,8 @@ public final class AdminEventHubImpl
         final PrincipalKeys principals;
 
         final Set<String> topics = ConcurrentHashMap.newKeySet();
+
+        final AtomicBoolean closing = new AtomicBoolean();
 
         long inboundWindowStart;
 

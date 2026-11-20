@@ -50,6 +50,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -373,6 +374,61 @@ class AdminEventHubImplTest
         socketEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).session( session ), ALLOWED_ROLE );
 
         verify( session ).close( any( CloseReason.class ) );
+    }
+
+    @Test
+    void errorReportedForTheCloseDoesNotCloseAgain()
+        throws Exception
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        reportCloseAsError( session );
+
+        socketEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).session( session ), ALLOWED_ROLE );
+
+        verify( session ).close( any( CloseReason.class ) );
+    }
+
+    @Test
+    void errorReportedForTheDeactivateCloseDoesNotCloseAgain()
+        throws Exception
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        reportCloseAsError( session );
+
+        hub.deactivate();
+
+        verify( session ).close( any( CloseReason.class ) );
+    }
+
+    @Test
+    void errorReportedForTheViolationCloseKeepsItsCloseCode()
+        throws Exception
+    {
+        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+        reportCloseAsError( session );
+
+        for ( int window = 0; window < 5; window++ )
+        {
+            exceedTheCap( session );
+        }
+
+        final ArgumentCaptor<CloseReason> reason = ArgumentCaptor.forClass( CloseReason.class );
+        verify( session ).close( reason.capture() );
+        assertEquals( CloseReason.CloseCodes.VIOLATED_POLICY, reason.getValue().getCloseCode() );
+    }
+
+    @Test
+    void errorAfterCloseIsIgnored()
+        throws Exception
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        socketEvent( WebSocketEvent.create().type( WebSocketEventType.CLOSE ).session( session ), ALLOWED_ROLE );
+
+        socketEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).session( session ), ALLOWED_ROLE );
+
+        verify( session, never() ).close( any( CloseReason.class ) );
     }
 
     @Test
@@ -772,6 +828,15 @@ class AdminEventHubImplTest
         final Session session = mock( Session.class );
         when( session.getId() ).thenReturn( id );
         return session;
+    }
+
+    private void reportCloseAsError( final Session session )
+        throws IOException
+    {
+        doAnswer( invocation -> {
+            socketEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).session( session ), ALLOWED_ROLE );
+            return null;
+        } ).when( session ).close( any( CloseReason.class ) );
     }
 
     private void exceedTheCap( final Session session )
