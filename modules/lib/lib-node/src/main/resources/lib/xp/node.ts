@@ -308,6 +308,10 @@ export interface PushNodeParams {
     keys?: string[] | null;
     target: string;
     includeChildren?: boolean;
+    /**
+     * @deprecated Resolving dependencies before pushing is scheduled for removal. The default changes to `false` in a future version.
+     * Pass `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving.
+     */
     resolve?: boolean;
     exclude?: string[] | null;
 }
@@ -904,7 +908,9 @@ class RepoConnectionImpl
      * @param {string[]} [params.keys] Array of ids or paths to the nodes. Either `key` or `keys` must be specified.
      * @param {string} params.target Branch to push nodes to
      * @param {boolean} [params.includeChildren=false] Also push children of given nodes
-     * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed
+     * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed.
+     * Deprecated: resolving dependencies is scheduled for removal, and the default changes to `false` in a future version. Pass
+     * `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving.
      * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway)
      *
      * @returns {object} PushNodesResult
