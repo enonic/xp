@@ -366,26 +366,14 @@ class AdminEventHubImplTest
     }
 
     @Test
-    void errorClosesTheSession()
+    void errorLeavesTheSocketOpen()
         throws Exception
     {
         final Session session = open( "s1", ALLOWED_ROLE );
 
         socketEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).session( session ), ALLOWED_ROLE );
 
-        verify( session ).close( any( CloseReason.class ) );
-    }
-
-    @Test
-    void errorReportedForTheCloseDoesNotCloseAgain()
-        throws Exception
-    {
-        final Session session = open( "s1", ALLOWED_ROLE );
-        reportCloseAsError( session );
-
-        socketEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).session( session ), ALLOWED_ROLE );
-
-        verify( session ).close( any( CloseReason.class ) );
+        verify( session, never() ).close( any( CloseReason.class ) );
     }
 
     @Test
@@ -417,18 +405,6 @@ class AdminEventHubImplTest
         final ArgumentCaptor<CloseReason> reason = ArgumentCaptor.forClass( CloseReason.class );
         verify( session ).close( reason.capture() );
         assertEquals( CloseReason.CloseCodes.VIOLATED_POLICY, reason.getValue().getCloseCode() );
-    }
-
-    @Test
-    void errorAfterCloseIsIgnored()
-        throws Exception
-    {
-        final Session session = open( "s1", ALLOWED_ROLE );
-        socketEvent( WebSocketEvent.create().type( WebSocketEventType.CLOSE ).session( session ), ALLOWED_ROLE );
-
-        socketEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).session( session ), ALLOWED_ROLE );
-
-        verify( session, never() ).close( any( CloseReason.class ) );
     }
 
     @Test
