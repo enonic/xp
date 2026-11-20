@@ -168,8 +168,6 @@ public final class AdminEventHubImpl
             case OPEN -> onOpen( event );
             case MESSAGE -> onMessage( event );
             case CLOSE -> onClose( event );
-            // ERROR is not terminal in the websocket layer; close so teardown runs on CLOSE
-            case ERROR -> quietClose( event.getSession() );
             default ->
             {
             }
