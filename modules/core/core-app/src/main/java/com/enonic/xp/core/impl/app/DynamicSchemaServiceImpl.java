@@ -480,6 +480,13 @@ public class DynamicSchemaServiceImpl
         requireApplicationNode( params.getKey() );
 
         final CmsDescriptor cmsDescriptor = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
+        // the flag is declared by the descriptor the application ships and changes with a new installation of it only
+        if ( cmsDescriptor.isProtected() )
+        {
+            throw new IllegalArgumentException(
+                String.format( "Application [%s] cannot be protected through the schema service: [protected] is declared by the CMS " +
+                                   "descriptor the application ships", params.getKey() ) );
+        }
 
         final boolean update = dynamicResourceManager.nodeExists( ApplicationRepoServiceImpl.cmsDescriptorNodePath( params.getKey() ) );
         final Node node = update
@@ -896,13 +903,42 @@ public class DynamicSchemaServiceImpl
     }
 
     /**
-     * The schema of a system application is never written, see {@link ApplicationHelper#requireNonSystemApplication}.
+     * The schema of a system application is never written, see {@link ApplicationHelper#requireNonSystemApplication}, nor is the
+     * schema of a local application or of an application whose cms descriptor protects it.
      */
     private void requireWritableApplication( final ApplicationKey key )
     {
         final Application application = applicationRegistry.get( key );
         ApplicationHelper.requireNonSystemApplication( key, application != null && application.isSystem() );
         ApplicationHelper.requireNonLocalApplication( key, application != null && application.isLocal() );
+        requireUnprotectedSchema( key );
+    }
+
+    /**
+     * The schema of an application whose persisted cms descriptor ({@code cms/cms.yaml}) declares {@code protected: true} is
+     * never written, the cms descriptor included: the flag changes with a new installation of the application only.
+     */
+    private void requireUnprotectedSchema( final ApplicationKey key )
+    {
+        final Node node = dynamicResourceManager.get( key, Kind.CMS, null );
+        if ( node == null )
+        {
+            return;
+        }
+        final CmsDescriptor cmsDescriptor;
+        try
+        {
+            cmsDescriptor = dynamicResourceParser.parseCms( key, DynamicResourceManager.toResource( key, node ).readString() );
+        }
+        catch ( final Exception e )
+        {
+            // a descriptor that cannot be parsed declares nothing: it is there to be written over
+            return;
+        }
+        if ( cmsDescriptor.isProtected() )
+        {
+            throw new IllegalArgumentException( "Cannot modify schema of protected application: " + key );
+        }
     }
 
     /**

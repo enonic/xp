@@ -26,6 +26,7 @@ public class CmsDescriptorMapper
         gen.value( "application", descriptor.getApplicationKey() );
         gen.value( "resource", resource.readString() );
         gen.value( "modifiedTime", descriptor.getModifiedTime() );
+        gen.value( "protected", descriptor.isProtected() );
 
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
         serializeMixinMappings( gen, descriptor.getMixinMappings() );

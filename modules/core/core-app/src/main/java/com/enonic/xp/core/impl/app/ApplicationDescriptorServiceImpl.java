@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,6 +47,8 @@ public class ApplicationDescriptorServiceImpl
 
     private static final String SEGMENT = ApplicationDescriptor.class.getName();
 
+    private final BundleContext context;
+
     private final ResourceService resourceService;
 
     private final ApplicationFactoryService applicationFactoryService;
@@ -57,12 +60,13 @@ public class ApplicationDescriptorServiceImpl
     private final EventPublisher eventPublisher;
 
     @Activate
-    public ApplicationDescriptorServiceImpl( @Reference final ResourceService resourceService,
+    public ApplicationDescriptorServiceImpl( final BundleContext context, @Reference final ResourceService resourceService,
                                              @Reference final ApplicationFactoryService applicationFactoryService,
                                              @Reference final ApplicationRepoService repoService,
                                              @Reference final DynamicSchemaAuditLogSupport auditLogSupport,
                                              @Reference final EventPublisher eventPublisher )
     {
+        this.context = context;
         this.resourceService = resourceService;
         this.applicationFactoryService = applicationFactoryService;
         this.repoService = repoService;
@@ -129,26 +133,54 @@ public class ApplicationDescriptorServiceImpl
         final Optional<Bundle> bundle = this.applicationFactoryService.findBundle( key );
         ApplicationHelper.requireNonSystemApplication( key, bundle.filter( ApplicationBundleUtils::isSystemApplication ).isPresent() );
         ApplicationHelper.requireNonLocalApplication( key, bundle.filter( ApplicationHelper::isLocalApplication ).isPresent() );
+        // the descriptor of an application built with gradle is owned by the build: nothing but the flag kept on its node is set
+        final boolean builtWithGradle = bundle.filter( ApplicationHelper::isBuiltWithBnd ).isPresent();
+        ApplicationHelper.requireNonGradleApplication( key, builtWithGradle && params.getEditor() != null );
 
         // the application nodes live in the application repository, whatever the context of the caller
         final boolean created = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) ) == null;
-        if ( created )
-        {
-            this.repoService.createApplicationNode( key );
-        }
 
         // the descriptor is edited and read back from the persisted source the write goes to, whatever resource source the
         // context of the caller selects
         final ApplicationDescriptor current = ApplicationHelper.callWithContext( () -> get( key ) );
         final ApplicationDescriptor source = current != null ? current : ApplicationDescriptor.create().key( key ).build();
 
+        // the descriptor is left as is by a call setting nothing but the flag, unless the application is new: it gets its
+        // first descriptor all the same
+        final boolean writeDescriptor = params.getEditor() != null || current == null && !builtWithGradle;
+
         final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( source );
-        params.getEditor().edit( edit );
+        if ( params.getEditor() != null )
+        {
+            params.getEditor().edit( edit );
+        }
+
+        // an editor may write the versions as semantic versions: the descriptor holds them the way the platform reports them
+        edit.minSystemVersion = ApplicationHelper.normalizeVersion( "minSystemVersion", edit.minSystemVersion );
+        edit.maxSystemVersion = ApplicationHelper.normalizeVersion( "maxSystemVersion", edit.maxSystemVersion );
+        ApplicationHelper.checkSystemVersion( edit.minSystemVersion, edit.maxSystemVersion, this.context.getBundle().getVersion() );
 
         final IconUpdate iconUpdate = iconUpdate( source.getIcon(), edit.icon );
         final String yaml = YmlApplicationDescriptorSerializer.serialize( edit.build() );
 
-        this.repoService.upsertApplicationDescriptor( key, yaml, iconUpdate );
+        // the node of a new application is created once the edit is known to be valid: a rejected one leaves nothing behind
+        if ( created && writeDescriptor )
+        {
+            this.repoService.createApplicationNode( key );
+        }
+
+        if ( writeDescriptor )
+        {
+            this.repoService.upsertApplicationDescriptor( key, yaml, iconUpdate );
+        }
+
+        // the flag is kept on the application node alone, never in the descriptor
+        final Boolean locked = params.getLocked();
+        if ( locked != null )
+        {
+            this.repoService.updateLocked( key, locked );
+            this.auditLogSupport.updateLocked( key, locked );
+        }
 
         // the write moved the version of the application node: the descriptor is read back the way every reader sees it from now on
         final ApplicationDescriptor result = Objects.requireNonNull( ApplicationHelper.callWithContext( () -> get( key ) ),
@@ -156,15 +188,18 @@ public class ApplicationDescriptorServiceImpl
 
         final String iconMimeType = iconUpdate instanceof IconUpdate.Replace replace ? replace.mimeType() : null;
         final long iconSize = iconMimeType != null ? edit.icon.getSize() : 0;
-        if ( created || current == null )
+        if ( writeDescriptor && ( created || current == null ) )
         {
             this.eventPublisher.publish( ApplicationEvents.installed( key ) );
             this.auditLogSupport.createApplicationDescriptor( key, yaml, iconMimeType, iconSize );
         }
         else
         {
-            this.auditLogSupport.updateApplicationDescriptor( key, yaml, iconMimeType, iconSize,
-                                                              iconUpdate instanceof IconUpdate.Remove );
+            if ( writeDescriptor )
+            {
+                this.auditLogSupport.updateApplicationDescriptor( key, yaml, iconMimeType, iconSize,
+                                                                  iconUpdate instanceof IconUpdate.Remove );
+            }
             this.eventPublisher.publish(
                 ApplicationEvents.updated( key, ApplicationEvents.KIND_APPLICATION, null, ApplicationEvents.ACTION_UPDATED ) );
         }

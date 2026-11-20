@@ -23,6 +23,8 @@ assert.assertJsonEquals({
     modifiedTime: '2020-09-25T10:00:00Z',
     started: true,
     system: true,
-    schema: false
+    codeless: false,
+    locked: false,
+    schemaModified: false
 }, result);
 

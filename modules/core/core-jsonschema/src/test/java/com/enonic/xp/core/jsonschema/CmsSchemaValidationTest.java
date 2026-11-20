@@ -25,6 +25,18 @@ class CmsSchemaValidationTest
     }
 
     @Test
+    void protectedIsValid()
+    {
+        assertThat( validateYaml( schema, "fixtures/cms/valid-protected.yml" ) ).isEmpty();
+    }
+
+    @Test
+    void protectedMustBeBoolean()
+    {
+        assertThat( validateYaml( schema, "fixtures/cms/invalid-protected-not-boolean.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void mixinWithNameIsValid()
     {
         assertThat( validateYaml( schema, "fixtures/cms/valid-with-mixin.yml" ) ).isEmpty();

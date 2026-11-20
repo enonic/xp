@@ -61,6 +61,14 @@ public interface ApplicationRepoService
 
     Node getApplicationNode( ApplicationKey applicationKey );
 
+    /**
+     * Sets or resets the flag preventing the application from being installed over and uninstalled, on the application node,
+     * which must exist.
+     *
+     * @return the application node as written
+     */
+    Node updateLocked( ApplicationKey applicationKey, boolean locked );
+
     ByteSource getApplicationSource( NodeId nodeId );
 
     Nodes getApplications();

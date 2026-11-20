@@ -113,7 +113,7 @@ class ApplicationServiceTest
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
         this.applicationDescriptorService =
-            new ApplicationDescriptorServiceImpl( resourceService, applicationFactoryService, repoService,
+            new ApplicationDescriptorServiceImpl( felix.getBundleContext(), resourceService, applicationFactoryService, repoService,
                                                   mock( DynamicSchemaAuditLogSupport.class ), mock( EventPublisher.class ) );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -182,7 +182,9 @@ class ApplicationServiceTest
             // the application descriptor is persisted on the application node (.yml normalized to .yaml), the icon is attached
             // to it under its file name; neither is a node of its own
             final Node applicationNode = appNode( "staticapp" );
-            assertEquals( APP_DESCRIPTOR, applicationNode.data().getString( "descriptor" ) );
+            // completed with the version of the manifest
+            assertEquals( "kind: \"Application\"\nname: \"staticapp\"\nversion: \"1.0.0\"\n",
+                          applicationNode.data().getString( "descriptor" ) );
             assertEquals( BinaryReference.from( "enonic.svg" ), applicationNode.data().getBinaryReference( "icon" ) );
             // the schema is the shipped one: nothing changed through the schema API since the install
             assertEquals( 0, applicationNode.data().getLong( "schemaRevision" ) );
@@ -193,7 +195,7 @@ class ApplicationServiceTest
             // and served from there, the bundle's copies are hidden
             final Resource appDescriptor = resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) );
             assertEquals( "node", appDescriptor.getResolverName() );
-            assertEquals( APP_DESCRIPTOR, appDescriptor.readString() );
+            assertEquals( "kind: \"Application\"\nname: \"staticapp\"\nversion: \"1.0.0\"\n", appDescriptor.readString() );
             final Resource appIcon = resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) );
             assertEquals( "node", appIcon.getResolverName() );
             assertEquals( "<svg>app</svg>", appIcon.readString() );
@@ -267,7 +269,8 @@ class ApplicationServiceTest
             // the legacy application descriptor and icon of an older bundle are persisted under the new names only:
             // the icon binary is attached as enonic.svg, never as application.svg
             final Node legacyApplicationNode = appNode( "legacydescriptorapp" );
-            assertEquals( "kind: \"Application\"\ndescription: \"Legacy\"\n", legacyApplicationNode.data().getString( "descriptor" ) );
+            assertEquals( "kind: \"Application\"\nname: \"legacydescriptorapp\"\nversion: \"1.0.0\"\ndescription: \"Legacy\"\n",
+                          legacyApplicationNode.data().getString( "descriptor" ) );
             assertEquals( BinaryReference.from( "enonic.svg" ), legacyApplicationNode.data().getBinaryReference( "icon" ) );
             assertNotNull( legacyApplicationNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
             assertNull( legacyApplicationNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "application.svg" ) ) );
@@ -444,6 +447,7 @@ class ApplicationServiceTest
                 "lib/util.js", "exports.util = function() {}" ) ) );
 
             assertEquals( 0, schemaRevision( "staticapp" ) );
+            assertFalse( applicationService.getInstalledApplication( appKey ).isSchemaModified() );
 
             // the title alone is changed, the description and icon stay
             final ApplicationDescriptor edited = applicationDescriptorService.createOrUpdate(
@@ -453,6 +457,8 @@ class ApplicationServiceTest
             assertEquals( "<svg>app</svg>", new String( edited.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
             // a change of the application since its install
             assertEquals( 1, schemaRevision( "staticapp" ) );
+            // what the clients are told: changed since it was installed
+            assertTrue( applicationService.getInstalledApplication( appKey ).isSchemaModified() );
 
             // visible at once through the service and the resources
             assertEquals( "Edited", applicationDescriptorService.get( appKey ).getTitle() );
@@ -488,6 +494,7 @@ class ApplicationServiceTest
                           new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
             // as shipped again: nothing changed since
             assertEquals( 0, schemaRevision( "staticapp" ) );
+            assertFalse( applicationService.getInstalledApplication( appKey ).isSchemaModified() );
         } );
     }
 
@@ -511,7 +518,7 @@ class ApplicationServiceTest
 
             final ResourceService otherNode = new ResourceServiceImpl( applicationFactoryService );
             final ApplicationDescriptorServiceImpl otherNodeDescriptors =
-                new ApplicationDescriptorServiceImpl( otherNode, applicationFactoryService, new ApplicationRepoServiceImpl( nodeService ),
+                new ApplicationDescriptorServiceImpl( felix.getBundleContext(), otherNode, applicationFactoryService, new ApplicationRepoServiceImpl( nodeService ),
                                                       mock( DynamicSchemaAuditLogSupport.class ), mock( EventPublisher.class ) );
             assertTrue( processed( otherNode, appKey, "/enonic.yaml" ).contains( "Shipped" ) );
             assertEquals( "<svg>app</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
@@ -552,7 +559,7 @@ class ApplicationServiceTest
                 "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n" ) ) );
 
             final ApplicationDescriptorServiceImpl otherNodeDescriptors =
-                new ApplicationDescriptorServiceImpl( new ResourceServiceImpl( applicationFactoryService ), applicationFactoryService,
+                new ApplicationDescriptorServiceImpl( felix.getBundleContext(), new ResourceServiceImpl( applicationFactoryService ), applicationFactoryService,
                                                       new ApplicationRepoServiceImpl( nodeService ), mock( DynamicSchemaAuditLogSupport.class ),
                                                       mock( EventPublisher.class ) );
             // both instances hold the shipped descriptor in their cache
@@ -619,10 +626,10 @@ class ApplicationServiceTest
         assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
 
         // without a bundle the application is still an application: listed, always started, nothing to start or stop; it is no
-        // schema application until it owns a schema, which takes the cms descriptor
+        // codeless application until it owns a schema, which takes the cms descriptor
         final Application nodeOnly = applicationService.get( appKey );
         assertNotNull( nodeOnly );
-        assertFalse( nodeOnly.isSchema() );
+        assertFalse( nodeOnly.isCodeless() );
         assertTrue( nodeOnly.isStarted() );
         assertNull( nodeOnly.getClassLoader() );
         assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );
@@ -780,9 +787,11 @@ class ApplicationServiceTest
             assertNotNull( appNode( "bundleapp" ) );
             assertNull( appChildNode( "bundleapp", "cms" ) );
             // the descriptor is persisted for every application
-            assertEquals( APP_DESCRIPTOR, appNode( "bundleapp" ).data().getString( "descriptor" ) );
+            assertEquals( "kind: \"Application\"\nname: \"bundleapp\"\nversion: \"1.0.0\"\n",
+                          appNode( "bundleapp" ).data().getString( "descriptor" ) );
             assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
-            assertEquals( APP_DESCRIPTOR, resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).readString() );
+            assertEquals( "kind: \"Application\"\nname: \"bundleapp\"\nversion: \"1.0.0\"\n",
+                          resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).readString() );
 
             // without cms/cms.yaml the application owns no schema: what the bundle ships below cms/ is not served either
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );

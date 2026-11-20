@@ -23,6 +23,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Version;
 
 import com.google.common.io.ByteSource;
 
@@ -115,8 +117,14 @@ class ApplicationDescriptorServiceImplTest
         eventPublisher = Mockito.mock( EventPublisher.class );
         installed = new InstalledBundles( nodeService );
         resourceService = new ResourceServiceImpl( installed );
+        // the running system, whose version the system version range of a descriptor is checked against
+        final Bundle systemBundle = Mockito.mock( Bundle.class );
+        when( systemBundle.getVersion() ).thenReturn( Version.valueOf( "8.1.0" ) );
+        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+        when( bundleContext.getBundle() ).thenReturn( systemBundle );
         appDescriptorService =
-            new ApplicationDescriptorServiceImpl( resourceService, installed, repoService, auditLogSupport, eventPublisher );
+            new ApplicationDescriptorServiceImpl( bundleContext, resourceService, installed, repoService, auditLogSupport,
+                                                  eventPublisher );
     }
 
     @AfterEach
@@ -434,6 +442,173 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
+    void createOrUpdate_rejects_applications_built_with_gradle()
+    {
+        // the XP gradle plugin builds the manifest with Bnd, which stamps it
+        for ( final Map.Entry<String, String> header : Map.of( "Bnd-LastModified", "1783360499694", "Tool", "Bnd-7.3.0.202606021345" )
+            .entrySet() )
+        {
+            final ApplicationKey key = ApplicationKey.from( "com.enonic.gradleapp" );
+            final Bundle gradleBundle = mockAppBundle( key.getName() );
+            final Hashtable<String, String> headers = new Hashtable<>();
+            headers.put( header.getKey(), header.getValue() );
+            Mockito.when( gradleBundle.getHeaders() ).thenReturn( headers );
+            installed.install( gradleBundle );
+
+            final CreateOrUpdateApplicationDescriptorParams params =
+                CreateOrUpdateApplicationDescriptorParams.create().key( key ).editor( edit -> edit.title = "Hijacked" ).build();
+            assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params ) ) )
+                .isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "Cannot modify application built with Gradle: " + key );
+
+            assertThatThrownBy( () -> appDescriptorService.createOrUpdate( params ) ).isInstanceOf( ForbiddenAccessException.class );
+        }
+
+        verify( repoService, never() ).createApplicationNode( any() );
+        verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
+        verify( eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
+    void createOrUpdate_sets_locked_alone_for_an_application_built_with_gradle()
+    {
+        final Bundle gradleBundle = mockAppBundle( MYAPP.getName() );
+        final Hashtable<String, String> headers = new Hashtable<>();
+        headers.put( "Bnd-LastModified", "1783360499694" );
+        Mockito.when( gradleBundle.getHeaders() ).thenReturn( headers );
+        installed.install( gradleBundle );
+
+        final AtomicReference<String> persisted = stubUpsert();
+        persisted.set( "kind: \"Application\"\ntitle: \"Built\"\n" );
+        stubDescriptorNodeFrom( persisted, null );
+        stubApplicationNode();
+
+        // an edit is refused, with or without the flag: nothing is written, the flag included
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( MYAPP ).editor( edit -> edit.title = "Hijacked" ).locked( true ).build() ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Cannot modify application built with Gradle: myapp" );
+        verify( repoService, never() ).updateLocked( any(), Mockito.anyBoolean() );
+
+        // the flag alone is set on the node, the descriptor is left as built
+        final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( MYAPP ).locked( true ).build() ) );
+
+        verify( repoService ).updateLocked( MYAPP, true );
+        verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
+        verify( repoService, never() ).createApplicationNode( any() );
+        assertEquals( "Built", result.getTitle() );
+    }
+
+    @Test
+    void createOrUpdate_keeps_the_version()
+    {
+        final AtomicReference<String> persisted = stubUpsert();
+        persisted.set( "kind: \"Application\"\nversion: \"1.0.0-SNAPSHOT\"\n" );
+        stubDescriptorNodeFrom( persisted, null );
+        stubApplicationNode();
+
+        // the version is declared by the descriptor the application ships: it is not editable, an edit leaves it as it is
+        final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> {
+            assertEquals( "1.0.0.SNAPSHOT", edit.source.getVersion() );
+            edit.title = "New";
+        } ) ) );
+        assertEquals( "kind: \"Application\"\nname: \"myapp\"\nversion: \"1.0.0-SNAPSHOT\"\ntitle: \"New\"\n", persisted.get() );
+        assertEquals( "1.0.0.SNAPSHOT", result.getVersion() );
+    }
+
+    @Test
+    void createOrUpdate_checks_the_system_version_range()
+    {
+        final AtomicReference<String> persisted = stubUpsert();
+        stubDescriptorNodeFrom( persisted, null );
+
+        // not a version
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.minSystemVersion = "abc" ) ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessageStartingWith( "Invalid minSystemVersion in application descriptor" );
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.maxSystemVersion = "9.x" ) ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessageStartingWith( "Invalid maxSystemVersion in application descriptor" );
+
+        // the running system is 8.1.0: the minimum is inclusive, the maximum exclusive
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.minSystemVersion = "8.2.0" ) ) ) )
+            .isInstanceOf( ApplicationInvalidVersionException.class );
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.maxSystemVersion = "8.1.0" ) ) ) )
+            .isInstanceOf( ApplicationInvalidVersionException.class );
+
+        verify( repoService, never() ).createApplicationNode( any() );
+        verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
+
+        // written as a semantic version or as a bundle version: the file declares semantic versions, the descriptor reports
+        // bundle versions
+        final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> {
+            edit.minSystemVersion = "8.0.0-RC1";
+            edit.maxSystemVersion = "9.0.0.RC1";
+        } ) ) );
+
+        assertEquals( "kind: \"Application\"\nname: \"myapp\"\nminSystemVersion: \"8.0.0-RC1\"\nmaxSystemVersion: \"9.0.0-RC1\"\n",
+                      persisted.get() );
+        assertEquals( "8.0.0.RC1", result.getMinSystemVersion() );
+        assertEquals( "9.0.0.RC1", result.getMaxSystemVersion() );
+    }
+
+    @Test
+    void createOrUpdate_sets_locked_on_the_node_leaving_the_descriptor()
+    {
+        final AtomicReference<String> persisted = stubUpsert();
+        persisted.set( "kind: \"Application\"\ntitle: \"Old\"\n" );
+        stubDescriptorNodeFrom( persisted, null );
+        stubApplicationNode();
+
+        final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( MYAPP ).locked( true ).build() ) );
+
+        // the flag goes to the application node, the descriptor is neither written nor told to have changed
+        verify( repoService ).updateLocked( MYAPP, true );
+        verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
+        verify( auditLogSupport ).updateLocked( MYAPP, true );
+        verify( auditLogSupport, never() ).updateApplicationDescriptor( any(), any(), any(), Mockito.anyLong(), Mockito.anyBoolean() );
+        assertEquals( "Old", result.getTitle() );
+        assertEquals( "kind: \"Application\"\ntitle: \"Old\"\n", persisted.get() );
+    }
+
+    @Test
+    void createOrUpdate_resets_locked_along_with_an_edit()
+    {
+        final AtomicReference<String> persisted = stubUpsert();
+        persisted.set( "kind: \"Application\"\ntitle: \"Old\"\n" );
+        stubDescriptorNodeFrom( persisted, null );
+        stubApplicationNode();
+
+        asAdmin( () -> appDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( MYAPP ).editor( edit -> edit.title = "New" ).locked( false ).build() ) );
+
+        verify( repoService ).updateLocked( MYAPP, false );
+        // never in the descriptor
+        assertEquals( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"New\"\n", persisted.get() );
+    }
+
+    @Test
+    void createOrUpdate_leaves_locked_as_is_when_not_given()
+    {
+        final AtomicReference<String> persisted = stubUpsert();
+        stubDescriptorNodeFrom( persisted, null );
+
+        asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.title = "New" ) ) );
+
+        verify( repoService, never() ).updateLocked( any(), Mockito.anyBoolean() );
+    }
+
+    @Test
+    void params_require_an_editor_or_the_flag()
+    {
+        assertThatThrownBy( () -> CreateOrUpdateApplicationDescriptorParams.create().key( MYAPP ).build() )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "editor or locked is required" );
+    }
+
+    @Test
     void createOrUpdate_keeps_untouched_fields_and_clears_nulls()
     {
         final AtomicReference<String> persisted = stubUpsert();
@@ -627,6 +802,7 @@ class ApplicationDescriptorServiceImplTest
                                                    Instant.now() ) ) ) ) )
             .isInstanceOf( IllegalArgumentException.class );
 
+        verify( repoService, never() ).createApplicationNode( any() );
         verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
     }
 

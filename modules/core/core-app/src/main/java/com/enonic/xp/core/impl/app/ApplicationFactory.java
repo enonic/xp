@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -16,6 +18,7 @@ import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -30,7 +33,19 @@ public final class ApplicationFactory
 
     public ApplicationImpl create( final Bundle bundle )
     {
-        return new ApplicationImpl( bundle, createUrlResolver( bundle, null ), null );
+        final boolean persisted = isPersisted( bundle );
+        final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
+        // both are kept on the application node, read anew on every call: they change while the bundle stays installed
+        return new ApplicationImpl( bundle, createUrlResolver( bundle, null ), null, persisted,
+                                    () -> persisted && readNode( appKey, ApplicationHelper::isLocked ),
+                                    () -> persisted && readNode( appKey, ApplicationHelper::isSchemaModified ) );
+    }
+
+    private boolean readNode( final ApplicationKey appKey, final Predicate<Node> flag )
+    {
+        final Callable<Boolean> read =
+            () -> flag.test( nodeService.getByPath( ApplicationRepoServiceImpl.applicationNodePath( appKey ) ) );
+        return ApplicationHelper.runAsAdmin( read );
     }
 
     ApplicationUrlResolver createUrlResolver( final Bundle bundle, final String source )

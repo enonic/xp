@@ -142,6 +142,13 @@ public final class ApplicationServiceImpl
         return node != null && !hasBundle( node ) && hasPersistedDescriptor( node ) ? persistedApplication( node ) : null;
     }
 
+    // the application nodes live in the application repository, whatever the context of the caller
+    private void requireNotLocked( final ApplicationKey key, final String action )
+    {
+        final Node applicationNode = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) );
+        ApplicationHelper.requireNotLocked( key, applicationNode, action );
+    }
+
     private static boolean hasPersistedDescriptor( final Node applicationNode )
     {
         return applicationNode.data().getString( SchemaNodePropertyNames.DESCRIPTOR ) != null;
@@ -233,6 +240,8 @@ public final class ApplicationServiceImpl
                 String.format( "Cannot uninstall application %s since it is installed as local application on this instance", key ) );
         }
         ApplicationHelper.runWithContext( () -> {
+            requireNotLocked( key, "uninstall" );
+
             // an application existing as nodes only has no bundle to uninstall, its nodes are removed like any other's
             final boolean installed = this.registry.get( key ) != null;
             if ( !installed && findPersistedApplication( key ) == null )
@@ -283,6 +292,9 @@ public final class ApplicationServiceImpl
         {
             throw new ApplicationBundleException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
         }
+
+        // an upload and a pull both end here: neither replaces a locked application
+        requireNotLocked( applicationKey, "install" );
 
         repoService.upsertApplicationNode( prepared.appInfo(), byteSource );
 
@@ -404,7 +416,7 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    // a schema application is always started, whatever state was stored for it, and an application without a bundle has
+    // a codeless application is always started, whatever state was stored for it, and an application without a bundle has
     // nothing to start or stop
     private void requireStartableApplication( final ApplicationKey key, final String action )
     {
@@ -413,9 +425,9 @@ public final class ApplicationServiceImpl
         {
             return;
         }
-        if ( app.isSchema() )
+        if ( app.isCodeless() )
         {
-            throw new IllegalArgumentException( "Cannot " + action + " schema application: " + key );
+            throw new IllegalArgumentException( "Cannot " + action + " codeless application: " + key );
         }
         if ( app instanceof PersistedApplication )
         {
@@ -443,7 +455,7 @@ public final class ApplicationServiceImpl
         doInstallStoredApplication( applicationKey );
         final Application application = registry.get( applicationKey );
         final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) ||
-            application != null && application.isSchema();
+            application != null && application.isCodeless();
         if ( started )
         {
             tryStartApplication( applicationKey );

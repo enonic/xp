@@ -37,6 +37,9 @@ class YmlApplicationDescriptorSerializerTest
             .vendorName( "Enonic" )
             .vendorUrl( "https://enonic.com" )
             .url( "https://github.com/enonic/myapp" )
+            .version( "1.2.3.SNAPSHOT" )
+            .minSystemVersion( "8.0.0" )
+            .maxSystemVersion( "9.0.0" )
             .schemaConfig( GenericValue.newObject()
                                .put( "property_1", "value_1" )
                                .put( "number", 42 )
@@ -56,6 +59,11 @@ class YmlApplicationDescriptorSerializerTest
         assertEquals( "Enonic", parsed.getVendorName() );
         assertEquals( "https://enonic.com", parsed.getVendorUrl() );
         assertEquals( "https://github.com/enonic/myapp", parsed.getUrl() );
+        // held as a bundle version, written to the file as a semantic version
+        assertEquals( "1.2.3.SNAPSHOT", parsed.getVersion() );
+        assertTrue( yaml.contains( "version: \"1.2.3-SNAPSHOT\"\n" ), yaml );
+        assertEquals( "8.0.0", parsed.getMinSystemVersion() );
+        assertEquals( "9.0.0", parsed.getMaxSystemVersion() );
         assertEquals( descriptor.getSchemaConfig(), parsed.getSchemaConfig() );
         assertNull( parsed.getIcon() );
         assertFalse( yaml.contains( "icon" ), yaml );
@@ -84,10 +92,20 @@ class YmlApplicationDescriptorSerializerTest
     void empty_fields_are_omitted()
     {
         final String yaml = YmlApplicationDescriptorSerializer.serialize(
-            ApplicationDescriptor.create().key( MYAPP ).description( "" ).vendorName( "" ).build() );
+            ApplicationDescriptor.create()
+                .key( MYAPP )
+                .description( "" )
+                .vendorName( "" )
+                .version( "" )
+                .minSystemVersion( "" )
+                .maxSystemVersion( "" )
+                .build() );
 
         assertFalse( yaml.contains( "description" ), yaml );
         assertFalse( yaml.contains( "vendorName" ), yaml );
+        assertFalse( yaml.contains( "version" ), yaml );
+        assertFalse( yaml.contains( "minSystemVersion" ), yaml );
+        assertFalse( yaml.contains( "maxSystemVersion" ), yaml );
         assertFalse( yaml.contains( "config" ), yaml );
     }
 }

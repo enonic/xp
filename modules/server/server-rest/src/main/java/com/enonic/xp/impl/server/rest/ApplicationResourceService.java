@@ -32,7 +32,7 @@ public class ApplicationResourceService
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationResourceService.class );
 
-    static final String SCHEMA_APPLICATION_MESSAGE = "Schema application is always started and cannot be started or stopped";
+    static final String CODELESS_APPLICATION_MESSAGE = "Codeless application is always started and cannot be started or stopped";
 
     private final ApplicationService applicationService;
 
@@ -122,9 +122,9 @@ public class ApplicationResourceService
         final List<ApplicationActionResultJson.ActionResult> results = new ArrayList<>();
         for ( final String key : params.getKey() )
         {
-            if ( isSchemaApplication( key ) )
+            if ( isCodelessApplication( key ) )
             {
-                results.add( new ApplicationActionResultJson.ActionResult( key, false, SCHEMA_APPLICATION_MESSAGE ) );
+                results.add( new ApplicationActionResultJson.ActionResult( key, false, CODELESS_APPLICATION_MESSAGE ) );
                 continue;
             }
             try
@@ -146,9 +146,9 @@ public class ApplicationResourceService
         final List<ApplicationActionResultJson.ActionResult> results = new ArrayList<>();
         for ( final String key : params.getKey() )
         {
-            if ( isSchemaApplication( key ) )
+            if ( isCodelessApplication( key ) )
             {
-                results.add( new ApplicationActionResultJson.ActionResult( key, false, SCHEMA_APPLICATION_MESSAGE ) );
+                results.add( new ApplicationActionResultJson.ActionResult( key, false, CODELESS_APPLICATION_MESSAGE ) );
                 continue;
             }
             try
@@ -165,10 +165,10 @@ public class ApplicationResourceService
         return new ApplicationActionResultJson( results );
     }
 
-    private boolean isSchemaApplication( final String key )
+    private boolean isCodelessApplication( final String key )
     {
         final Application application = applicationService.getInstalledApplication( ApplicationKey.from( key ) );
-        return application != null && application.isSchema();
+        return application != null && application.isCodeless();
     }
 
     public List<ApplicationInfoJson> getInstalledApplications()

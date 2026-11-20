@@ -31,6 +31,12 @@ public final class ApplicationDescriptor
 
     private final String url;
 
+    private final String version;
+
+    private final String minSystemVersion;
+
+    private final String maxSystemVersion;
+
     private ApplicationDescriptor( final Builder builder )
     {
         this.key = requireNonNull( builder.key, "key cannot be null" );
@@ -42,6 +48,9 @@ public final class ApplicationDescriptor
         this.vendorName = builder.vendorName;
         this.vendorUrl = builder.vendorUrl;
         this.url = builder.url;
+        this.version = builder.version;
+        this.minSystemVersion = builder.minSystemVersion;
+        this.maxSystemVersion = builder.maxSystemVersion;
         this.schemaConfig = builder.schemaConfig.build();
     }
 
@@ -90,6 +99,38 @@ public final class ApplicationDescriptor
         return url;
     }
 
+    /**
+     * The version declared by the {@code version} field of the application descriptor. The descriptor file declares versions
+     * as semantic versions ({@code 1.2.3-SNAPSHOT}); they are held and reported the way {@link Application#getVersion()}
+     * reports them, as the version of a bundle ({@code 1.2.3.SNAPSHOT}). The same goes for the system versions.
+     *
+     * @return the declared version, or {@code null} when the descriptor declares none
+     */
+    public String getVersion()
+    {
+        return version;
+    }
+
+    /**
+     * The minimum system version declared by the {@code minSystemVersion} field of the application descriptor.
+     *
+     * @return the declared minimum system version, or {@code null} when the descriptor declares none
+     */
+    public String getMinSystemVersion()
+    {
+        return minSystemVersion;
+    }
+
+    /**
+     * The maximum system version declared by the {@code maxSystemVersion} field of the application descriptor.
+     *
+     * @return the declared maximum system version, or {@code null} when the descriptor declares none
+     */
+    public String getMaxSystemVersion()
+    {
+        return maxSystemVersion;
+    }
+
     public GenericValue getSchemaConfig()
     {
         return schemaConfig;
@@ -112,18 +153,29 @@ public final class ApplicationDescriptor
         return key.equals( that.key ) && Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
             Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) && Objects.equals( title, that.title ) &&
             Objects.equals( titleI18nKey, that.titleI18nKey ) && Objects.equals( vendorName, that.vendorName ) &&
-            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && schemaConfig.equals( that.schemaConfig );
+            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && Objects.equals( version, that.version ) &&
+            Objects.equals( minSystemVersion, that.minSystemVersion ) && Objects.equals( maxSystemVersion, that.maxSystemVersion ) &&
+            schemaConfig.equals( that.schemaConfig );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( key, description, icon, title, titleI18nKey, vendorName, vendorUrl, url, schemaConfig );
+        return Objects.hash( key, description, icon, title, titleI18nKey, vendorName, vendorUrl, url, version, minSystemVersion,
+                             maxSystemVersion, schemaConfig );
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    /**
+     * A builder holding everything the given descriptor holds, the icon included.
+     */
+    public static Builder copyOf( final ApplicationDescriptor source )
+    {
+        return new Builder( source );
     }
 
     public static final class Builder
@@ -146,10 +198,33 @@ public final class ApplicationDescriptor
 
         private String url;
 
+        private String version;
+
+        private String minSystemVersion;
+
+        private String maxSystemVersion;
+
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
+        }
+
+        private Builder( final ApplicationDescriptor source )
+        {
+            this.key = source.key;
+            this.description = source.description;
+            this.descriptionI18nKey = source.descriptionI18nKey;
+            this.icon = source.icon;
+            this.title = source.title;
+            this.titleI18nKey = source.titleI18nKey;
+            this.vendorName = source.vendorName;
+            this.vendorUrl = source.vendorUrl;
+            this.url = source.url;
+            this.version = source.version;
+            this.minSystemVersion = source.minSystemVersion;
+            this.maxSystemVersion = source.maxSystemVersion;
+            schemaConfig( source.schemaConfig );
         }
 
         public Builder key( final ApplicationKey key )
@@ -217,6 +292,24 @@ public final class ApplicationDescriptor
         public Builder url( final String url )
         {
             this.url = url;
+            return this;
+        }
+
+        public Builder version( final String version )
+        {
+            this.version = version;
+            return this;
+        }
+
+        public Builder minSystemVersion( final String minSystemVersion )
+        {
+            this.minSystemVersion = minSystemVersion;
+            return this;
+        }
+
+        public Builder maxSystemVersion( final String maxSystemVersion )
+        {
+            this.maxSystemVersion = maxSystemVersion;
             return this;
         }
 

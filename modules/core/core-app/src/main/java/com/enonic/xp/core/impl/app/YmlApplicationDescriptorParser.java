@@ -50,6 +50,18 @@ final class YmlApplicationDescriptorParser
         @JsonProperty("url")
         abstract ApplicationDescriptor.Builder url( String value );
 
+        @JsonProperty("version")
+        @JsonDeserialize(using = VersionDeserializer.class)
+        abstract ApplicationDescriptor.Builder version( String value );
+
+        @JsonProperty("minSystemVersion")
+        @JsonDeserialize(using = VersionDeserializer.class)
+        abstract ApplicationDescriptor.Builder minSystemVersion( String value );
+
+        @JsonProperty("maxSystemVersion")
+        @JsonDeserialize(using = VersionDeserializer.class)
+        abstract ApplicationDescriptor.Builder maxSystemVersion( String value );
+
         @JsonProperty("name")
         @JacksonInject(CURRENT_APPLICATION)
         @JsonDeserialize(using = ApplicationNameDeserializer.class)
@@ -57,6 +69,22 @@ final class YmlApplicationDescriptorParser
 
         @JsonProperty("config")
         abstract ApplicationDescriptor.Builder schemaConfig( GenericValue schemaConfig );
+    }
+
+    /**
+     * The descriptor file declares a semantic version ({@code 1.2.3-SNAPSHOT}), the descriptor holds it the way the platform
+     * reports versions, as the version of a bundle ({@code 1.2.3.SNAPSHOT}).
+     */
+    private static class VersionDeserializer
+        extends JsonDeserializer<String>
+    {
+        @Override
+        public String deserialize( final JsonParser parser, final DeserializationContext context )
+            throws IOException
+        {
+            final String value = parser.getValueAsString();
+            return value == null || value.isEmpty() ? value : ApplicationHelper.parseVersion( parser.currentName(), value ).toString();
+        }
     }
 
     private static class ApplicationNameDeserializer
