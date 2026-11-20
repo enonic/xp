@@ -9,15 +9,14 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
@@ -31,19 +30,13 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testContentType()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
-            final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
-
-            if ( DynamicContentSchemaType.CONTENT_TYPE != schemaParams.getType() )
-            {
-                throw new IllegalArgumentException( "invalid content schema type: " + schemaParams.getType() );
-            }
-
+        when( dynamicSchemaService.getContentType( isA( ContentTypeName.class ) ) ).thenAnswer( params -> {
+            final ContentTypeName schemaName = params.getArgument( 0, ContentTypeName.class );
             final ContentType contentType = ContentType.create()
                 .superType( ContentTypeName.structured() )
                 .description( "My type description" )
                 .title( "My type display name" )
-                .name( (ContentTypeName) schemaParams.getName() )
+                .name( schemaName )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .allowChildContentType( List.of( "myapp:other-type", "myapp:another-type" ) )
                 .displayNamePlaceholder( "Enter a display name" )
@@ -74,16 +67,10 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testFormFragment()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
-            final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
-
-            if ( DynamicContentSchemaType.FORM_FRAGMENT != schemaParams.getType() )
-            {
-                throw new IllegalArgumentException( "invalid content schema type: " + schemaParams.getType() );
-            }
-
+        when( dynamicSchemaService.getFormFragment( isA( FormFragmentName.class ) ) ).thenAnswer( params -> {
+            final FormFragmentName schemaName = params.getArgument( 0, FormFragmentName.class );
             final FormFragmentDescriptor fragmentDescriptor = FormFragmentDescriptor.create()
-                .name( (FormFragmentName) schemaParams.getName() )
+                .name( schemaName )
                 .description( "My FormFragment description" )
                 .title( "My FormFragment display name" )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
@@ -94,7 +81,7 @@ class GetDynamicContentSchemaHandlerTest
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( """
-                                                          displayName: "Virtual FormFragment"
+                                                          displayName: "Dynamic FormFragment"
                                                           description: "FormFragment description"
                                                           form:
                                                           - type: "TextLine"
@@ -111,14 +98,8 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testMixinDescriptor()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
-            final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
-
-            if ( DynamicContentSchemaType.MIXIN != schemaParams.getType() )
-            {
-                throw new IllegalArgumentException( "invalid content schema type: " + schemaParams.getType() );
-            }
-
+        when( dynamicSchemaService.getMixin( isA( MixinName.class ) ) ).thenAnswer( params -> {
+            final MixinName schemaName = params.getArgument( 0, MixinName.class );
             final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
                 .name( CAMERA_INFO_METADATA_NAME )
                 .title( "Photo Info" )
@@ -135,7 +116,6 @@ class GetDynamicContentSchemaHandlerTest
         runScript( "/lib/xp/examples/schema/getMixin.js" );
     }
 
-
     @Test
     void testInvalidSchemaType()
     {
@@ -145,7 +125,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testNull()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenReturn( null );
+        when( dynamicSchemaService.getFormFragment( isA( FormFragmentName.class ) ) ).thenReturn( null );
         runFunction( "/test/GetDynamicContentSchemaHandlerTest.js", "getNullSchema" );
     }
 

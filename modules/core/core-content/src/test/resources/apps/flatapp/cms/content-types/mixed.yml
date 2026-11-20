@@ -1,0 +1,4 @@
+kind: "ContentType"
+superType: "base:structured"
+title: "Flat"
+form: [ ]

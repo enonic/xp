@@ -141,6 +141,12 @@ public class MockApplication
     }
 
     @Override
+    public boolean isSchema()
+    {
+        return false;
+    }
+
+    @Override
     public Set<String> getCapabilities()
     {
         return Set.of();

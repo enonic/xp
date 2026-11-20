@@ -1,8 +1,9 @@
 package com.enonic.xp.core.impl.app;
 
-import java.util.Optional;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -13,22 +14,19 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,21 +37,12 @@ class ApplicationFactoryServiceImplTest
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private AppConfig appConfig;
-
-    @BeforeEach
-    void init()
-    {
-        appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-    }
-
     @Test
     void lifecycle()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -77,11 +66,8 @@ class ApplicationFactoryServiceImplTest
     void findActiveApplication()
         throws Exception
     {
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -98,13 +84,14 @@ class ApplicationFactoryServiceImplTest
         assertThat( service.findActiveApplication( applicationKey ) ).isEmpty();
     }
 
+    // the bundle and the resolver come of one lookup: the active bundle with the resolver of the running application, none with
+    // the resolver of a stopped one
     @Test
-    void findActiveResolver()
+    void findResourceSource()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -112,52 +99,120 @@ class ApplicationFactoryServiceImplTest
 
         final Bundle bundle = deploy( appName, newBundle( appName, true ) );
 
-        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+        // installed but not started: a global application serves its persisted descriptor (and schema, if any)
+        ResourceSource source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isNull();
+        assertThat( source.resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
 
         bundle.start();
-        Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
-        assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( MultiApplicationUrlResolver.class );
+        source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isEqualTo( bundle );
+        assertThat( source.resolver() ).isInstanceOf( MultiApplicationUrlResolver.class );
 
-        activeResolver = service.findResolver( applicationKey, "virtual" );
-        assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        source = service.findResourceSource( applicationKey, "bundle" );
+        assertThat( source.bundle() ).isEqualTo( bundle );
+        assertThat( source.resolver() ).isInstanceOf( BundleApplicationUrlResolver.class );
 
         bundle.stop();
-        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+        source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isNull();
+        assertThat( source.resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
     }
 
     @Test
-    void findDisabledVirtualApplication()
+    void findResourceSource_local()
+        throws Exception
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        when( appConfig.virtual_enabled() ).thenReturn( false );
-
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
 
-        assertTrue( service.findActiveApplication( applicationKey ).isEmpty() );
+        // a local application is never persisted: nothing is served until it is started, then the bundle only
+        final Bundle bundle = deploy( "local:" + appName, newBundle( appName, true ) );
+
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
+
+        bundle.start();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( BundleApplicationUrlResolver.class );
+
+        bundle.stop();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
     }
 
     @Test
-    void findVirtualApplication()
+    void findResourceSource_inactiveWithPersistedSchema()
+        throws Exception
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
-
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
-        assertEquals( applicationKey, service.findActiveApplication( applicationKey ).get().getKey() );
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        final Bundle bundle = deploy( appName, newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
+
+        // installed but not started: the persisted schema is served
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, "bundle" ).resolver() ).isNull();
+
+        bundle.start();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNotNull().isNotInstanceOf( NodeResourceApplicationUrlResolver.class );
+
+        // stopped: the persisted schema is still served, bundle resources are not
+        bundle.stop();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, "bundle" ).resolver() ).isNull();
+    }
+
+    @Test
+    void findResourceSource_inactiveLocalWithCmsDescriptor()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        final Bundle bundle = deploy( ApplicationHelper.toBundleLocation( applicationKey, true ),
+                                      newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
+
+        bundle.start();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNotNull();
+
+        // a local application is never persisted: nothing is served once stopped
+        bundle.stop();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
+    }
+
+    @Test
+    void findResourceSource_persistedOnlyApplication()
+    {
+        final BundleContext bundleContext = getBundleContext();
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        // no bundle at all: an application created through the descriptor service serves its persisted descriptor and schema
+        final ApplicationKey applicationKey = ApplicationKey.from( "nodeonly" );
+        final PropertyTree data = new PropertyTree();
+        data.setString( SchemaNodePropertyNames.DESCRIPTOR, "kind: \"Application\"\n" );
+        when( nodeService.getByPath( new NodePath( "/nodeonly" ) ) ).thenReturn(
+            Node.create().id( new NodeId() ).name( "nodeonly" ).parentPath( NodePath.ROOT ).data( data ).build() );
+
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, "bundle" ).resolver() ).isNull();
+
+        // nothing persisted, nothing installed: nothing is served
+        assertThat( service.findResourceSource( ApplicationKey.from( "unknown" ), null ).resolver() ).isNull();
+    }
+
+    private static InputStream stream( final String content )
+    {
+        return new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) );
     }
 }

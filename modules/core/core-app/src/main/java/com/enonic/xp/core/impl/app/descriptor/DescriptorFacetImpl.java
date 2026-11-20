@@ -42,13 +42,7 @@ final class DescriptorFacetImpl<T extends Descriptor>
     {
         final ResourceProcessor<DescriptorKey, T> processor = newProcessor( key );
         final T descriptor = this.resourceService.processResource( processor );
-
-        if ( descriptor == null )
-        {
-            return this.loader.createDefault( key );
-        }
-
-        return this.loader.postProcess( descriptor );
+        return descriptor == null ? this.loader.createDefault( key ) : descriptor;
     }
 
     @Override
@@ -93,7 +87,11 @@ final class DescriptorFacetImpl<T extends Descriptor>
         return new ResourceProcessor.Builder<DescriptorKey, T>().key( key )
             .segment( this.type.getName() )
             .keyTranslator( this.loader::toResource )
-            .processor( resource -> doLoad( key, resource ) )
+            .processor( resource -> {
+                final T descriptor = doLoad( key, resource );
+                // post-processed into the value cached; unlike a descriptor that fails to parse, a failure here is the caller's to see
+                return descriptor == null ? null : this.loader.postProcess( descriptor );
+            } )
             .build();
     }
 

@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlCmsDescriptorParser;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -89,10 +90,7 @@ public class CmsServiceImpl
             return null;
         }
 
-        return CmsDescriptor.copyOf( descriptor )
-            .applicationKey( applicationKey )
-            .form( formFragmentService.inlineFormItems( descriptor.getForm() ) )
-            .build();
+        return CmsDescriptor.copyOf( descriptor ).applicationKey( applicationKey ).build();
     }
 
     private ResourceProcessor<ApplicationKey, CmsDescriptor> newDescriptorProcessor( final ApplicationKey applicationKey )
@@ -106,8 +104,13 @@ public class CmsServiceImpl
 
     private CmsDescriptor loadDescriptor( final Resource resource )
     {
-        return YmlCmsDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() )
+        final CmsDescriptor descriptor = YmlCmsDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
+            .build();
+        // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node
+        return CmsDescriptor.copyOf( descriptor )
+            .form( FormFragmentInlining.inline( formFragmentService, descriptor.getForm(),
+                                                "cms descriptor of application [" + resource.getKey().getApplicationKey() + "]" ) )
             .build();
     }
 

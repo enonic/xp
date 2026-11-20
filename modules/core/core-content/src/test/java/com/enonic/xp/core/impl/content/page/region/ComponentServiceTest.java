@@ -61,6 +61,16 @@ class ComponentServiceTest
     }
 
     @Test
+    void testGetFlatComponentsByKey()
+    {
+        // flat .yaml descriptors: cms/parts/flatpart.yaml, cms/layouts/flatlayout.yaml
+        addApplication( "flatapp", "/apps/flatapp" );
+
+        assertTrue( this.service.getByKey( DescriptorKey.from( "flatapp:flatpart" ) ) instanceof PartComponent );
+        assertTrue( this.service.getByKey( DescriptorKey.from( "flatapp:flatlayout" ) ) instanceof LayoutComponent );
+    }
+
+    @Test
     void testGetByKeyMissingComponent()
     {
         final Component missingComponent = this.service.getByKey( DescriptorKey.from( "myapp1:missingComponent" ) );

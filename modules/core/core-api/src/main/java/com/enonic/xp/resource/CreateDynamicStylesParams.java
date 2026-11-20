@@ -5,6 +5,10 @@ import com.enonic.xp.app.ApplicationKey;
 import static java.util.Objects.requireNonNull;
 
 
+/**
+ * @deprecated the parameters of the deprecated {@link DynamicSchemaService#createStyles}; use {@link CreateOrUpdateStylesParams}
+ */
+@Deprecated
 public final class CreateDynamicStylesParams
 {
     private final ApplicationKey key;

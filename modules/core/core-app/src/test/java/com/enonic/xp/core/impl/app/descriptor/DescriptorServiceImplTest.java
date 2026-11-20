@@ -11,6 +11,7 @@ import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.Descriptors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,6 +92,7 @@ class DescriptorServiceImplTest
         assertEquals( 2, descriptors.getSize() );
     }
 
+    // a descriptor that fails to load is logged and replaced by the default
     @Test
     void testGetAll_loadFailure()
     {
@@ -98,5 +100,16 @@ class DescriptorServiceImplTest
 
         final Descriptors<MyDescriptor> descriptors = this.service.getAll( MyDescriptor.class );
         assertEquals( 2, descriptors.getSize() );
+    }
+
+    // a descriptor that loaded but fails to post-process is reported, not replaced by the default
+    @Test
+    void testGet_postProcessFailure()
+    {
+        this.loader.postProcessException = true;
+
+        assertThatThrownBy( () -> this.service.get( MyDescriptor.class, DescriptorKey.from( "myapp:type1" ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Failed to post-process" );
     }
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app.resolver;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -65,5 +66,17 @@ class MultiApplicationUrlResolverTest
 
         final Resource resource3 = this.resolver.findResource( "other.txt" );
         assertNull( resource3 );
+    }
+
+    // the revisions of the parts in their order, those without one as null: a part moving moves the whole
+    @Test
+    void revision_combines_the_revisions_of_the_parts()
+    {
+        when( this.delegate1.revision() ).thenReturn( "v1" );
+
+        assertEquals( Arrays.asList( "v1", null ), this.resolver.revision() );
+
+        when( this.delegate2.revision() ).thenReturn( "w1" );
+        assertEquals( Arrays.asList( "v1", "w1" ), this.resolver.revision() );
     }
 }
