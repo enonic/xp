@@ -388,6 +388,25 @@ class SlashApiHandlerTest
     }
 
     @Test
+    void testNonstandardMethodOnApiNotAllowedOnVirtualHostMatchesUnknownApi()
+    {
+        request.setMethod( HttpMethod.PROPFIND );
+        mountedOnWeb();
+        onVirtualHostAllowing( "com.enonic.app.myapp:other" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.METHOD_NOT_ALLOWED );
+
+        request.setRawPath( "/api/com.enonic.app.myapp:unknown" );
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.METHOD_NOT_ALLOWED );
+    }
+
+    @Test
     void testHttpOptionsOfApiNotAllowedOnVirtualHostIsNotFound()
     {
         request.setMethod( HttpMethod.OPTIONS );

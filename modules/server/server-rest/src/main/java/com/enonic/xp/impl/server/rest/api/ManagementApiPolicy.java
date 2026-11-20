@@ -17,7 +17,7 @@ import com.enonic.xp.context.ContextAccessor;
  * {@code verbs}: the comma separated list of operations the vhost exposes. An absent setting means no restriction.
  * <p>
  * Verbs only apply to an API the vhost exposes: when the mapping also sets {@code context.api.allow} and leaves the API
- * off that list, the API answers 404 and its verbs have no effect.
+ * off that list, the API is treated as not existing and its verbs have no effect.
  */
 public final class ManagementApiPolicy
 {

@@ -127,8 +127,8 @@ public interface VirtualHost
 
     /**
      * Returns the APIs this vhost exposes ({@code mapping.<name>.context.api.allow}), or empty when the mapping does
-     * not restrict them. When present, a request for an API that is not on the list gets a 404, even when the API is
-     * mounted.
+     * not restrict them. When present, an API that is not on the list is treated as not existing on this vhost, even
+     * when it is mounted: requests for it get the same response as requests for an unknown API.
      */
     Optional<VirtualHostApiAllowList> getApiAllowList();
 }

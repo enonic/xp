@@ -13,7 +13,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
  * The APIs a virtual host mapping exposes ({@code mapping.<name>.context.api.allow}): a comma separated list of
  * {@code <application>:<api>} entries, where {@code <application>:*} names every API of that application.
  * <p>
- * An API that is not on the list is not reachable through the mapping, even when it is mounted. Read through
+ * An API that is not on the list is treated as not existing on the mapping, even when it is mounted. Read through
  * {@link VirtualHost#getApiAllowList()}.
  */
 @NullMarked
