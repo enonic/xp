@@ -902,6 +902,7 @@ public class DynamicSchemaServiceImpl
     {
         final Application application = applicationRegistry.get( key );
         ApplicationHelper.requireNonSystemApplication( key, application != null && application.isSystem() );
+        ApplicationHelper.requireNonLocalApplication( key, application != null && application.isLocal() );
     }
 
     /**
