@@ -313,7 +313,8 @@ export interface PushNodeParams {
     includeChildren?: boolean;
     /**
      * @deprecated Resolving dependencies before pushing is scheduled for removal. The default changes to `false` in a future version.
-     * Pass `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving.
+     * Pass `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving. Every push that
+     * resolves logs a deprecation warning.
      */
     resolve?: boolean;
     /**
@@ -915,7 +916,8 @@ class RepoConnectionImpl
      * Deprecated: applies only when `resolve` is `true`, and is scheduled for removal together with it.
      * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed.
      * Deprecated: resolving dependencies is scheduled for removal, and the default changes to `false` in a future version. Pass
-     * `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving.
+     * `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving. Every push that
+     * resolves logs a deprecation warning.
      * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway).
      * Deprecated: applies only when `resolve` is `true`, and is scheduled for removal together with it.
      *
