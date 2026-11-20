@@ -126,9 +126,9 @@ public interface VirtualHost
     Map<String, String> getContext();
 
     /**
-     * Returns the APIs this vhost exposes ({@code mapping.<name>.context.api.allow}), or empty when the mapping does
-     * not restrict them. When present, an API that is not on the list is treated as not existing on this vhost, even
-     * when it is mounted: requests for it get the same response as requests for an unknown API.
+     * Returns the APIs this vhost exposes ({@code mapping.<name>.context.api.filter}), or empty when the mapping does
+     * not restrict them. When present, an API the filter rejects is treated as not existing on this vhost, even when
+     * it is mounted: requests for it get the same response as requests for an unknown API.
      */
-    Optional<VirtualHostApiAllowList> getApiAllowList();
+    Optional<VirtualHostApiFilter> getApiFilter();
 }

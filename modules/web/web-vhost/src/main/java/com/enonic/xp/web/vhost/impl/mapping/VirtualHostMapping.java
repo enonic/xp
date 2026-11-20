@@ -13,7 +13,7 @@ import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static java.util.Objects.requireNonNull;
@@ -42,7 +42,7 @@ public final class VirtualHostMapping
 
     private final Set<String> audience;
 
-    private final @Nullable VirtualHostApiAllowList apiAllowList;
+    private final @Nullable VirtualHostApiFilter apiFilter;
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
@@ -92,8 +92,8 @@ public final class VirtualHostMapping
         this.connector = requireNonNullElse( connector, DispatchConstants.WEB_CONNECTOR );
         this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
         this.audience = Set.copyOf( requireNonNullElse( audience, Set.of() ) );
-        final String apiAllow = this.context.get( VirtualHostApiAllowList.CONTEXT_KEY );
-        this.apiAllowList = apiAllow != null ? VirtualHostApiAllowList.parse( apiAllow ) : null;
+        final String apiAllow = this.context.get( VirtualHostApiFilter.CONTEXT_KEY );
+        this.apiFilter = apiAllow != null ? VirtualHostApiFilter.parse( apiAllow ) : null;
     }
 
     @Override
@@ -214,8 +214,8 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public Optional<VirtualHostApiAllowList> getApiAllowList()
+    public Optional<VirtualHostApiFilter> getApiFilter()
     {
-        return Optional.ofNullable( apiAllowList );
+        return Optional.ofNullable( apiFilter );
     }
 }

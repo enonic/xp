@@ -16,8 +16,8 @@ import com.enonic.xp.context.ContextAccessor;
  * no central gateway - so an API decides what a setting means. The one setting every management API understands is
  * {@code verbs}: the comma separated list of operations the vhost exposes. An absent setting means no restriction.
  * <p>
- * Verbs only apply to an API the vhost exposes: when the mapping also sets {@code context.api.allow} and leaves the API
- * off that list, the API is treated as not existing and its verbs have no effect.
+ * Verbs only apply to an API the vhost exposes: when the mapping also sets {@code context.api.filter} and the filter
+ * rejects the API, the API is treated as not existing and its verbs have no effect.
  */
 public final class ManagementApiPolicy
 {

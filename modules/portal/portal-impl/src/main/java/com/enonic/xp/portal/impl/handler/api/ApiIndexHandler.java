@@ -33,7 +33,7 @@ import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static java.util.Objects.requireNonNullElse;
@@ -93,14 +93,14 @@ public class ApiIndexHandler
 
         final VirtualHost virtualHost =
             webRequest.getRawRequest() != null ? VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() ) : null;
-        final Optional<VirtualHostApiAllowList> allowList =
-            virtualHost != null ? virtualHost.getApiAllowList() : Optional.empty();
+        final Optional<VirtualHostApiFilter> apiFilter =
+            virtualHost != null ? virtualHost.getApiFilter() : Optional.empty();
 
         return Stream.concat( universalApiHandlerRegistry.getAllApiDescriptors().stream(), applicationService.getInstalledApplications()
                 .stream()
                 .flatMap( application -> apiDescriptorService.getByApplication( application.getKey() ).stream() ) )
             .filter( apiDescriptor -> apiDescriptor.getMount().contains( mountFilter ) )
-            .filter( apiDescriptor -> allowList.map( list -> list.allows( apiDescriptor.getKey() ) ).orElse( true ) )
+            .filter( apiDescriptor -> apiFilter.map( filter -> filter.accept( apiDescriptor.getKey() ) ).orElse( true ) )
             .map( this::map )
             .toList();
     }

@@ -30,7 +30,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -247,7 +247,7 @@ class ApiIndexHandlerTest
     }
 
     @Test
-    void testDoHandle_virtualHostAllowList()
+    void testDoHandle_virtualHostApiFilter()
         throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
@@ -273,7 +273,7 @@ class ApiIndexHandlerTest
                                                            RoleKeys.EVERYONE.toString() ) );
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getApiAllowList() ).thenReturn( Optional.of( VirtualHostApiAllowList.parse( "myapplication:allowed" ) ) );
+        when( virtualHost.getApiFilter() ).thenReturn( Optional.of( VirtualHostApiFilter.parse( "myapplication:allowed" ) ) );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );

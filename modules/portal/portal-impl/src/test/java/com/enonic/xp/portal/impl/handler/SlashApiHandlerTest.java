@@ -62,7 +62,7 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.sse.SseEndpoint;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostApiAllowList;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -357,28 +357,28 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHandleApiAllowedOnVirtualHost()
+    void testHandleApiAcceptedByVirtualHostFilter()
     {
         mountedOnWeb();
-        onVirtualHostAllowing( "com.enonic.app.myapp:api-key" );
+        onVirtualHostWithFilter( "com.enonic.app.myapp:api-key" );
 
         assertEquals( HttpStatus.OK, this.handler.handle( request ).getStatus() );
     }
 
     @Test
-    void testHandleApiAllowedOnVirtualHostByApplication()
+    void testHandleApiAcceptedByVirtualHostFilterByApplication()
     {
         mountedOnWeb();
-        onVirtualHostAllowing( "com.enonic.app.myapp:*" );
+        onVirtualHostWithFilter( "com.enonic.app.myapp:*" );
 
         assertEquals( HttpStatus.OK, this.handler.handle( request ).getStatus() );
     }
 
     @Test
-    void testHandleApiNotAllowedOnVirtualHost()
+    void testHandleApiRejectedByVirtualHostFilter()
     {
         mountedOnWeb();
-        onVirtualHostAllowing( "com.enonic.app.myapp:other, com.enonic.app.other:*" );
+        onVirtualHostWithFilter( "com.enonic.app.myapp:other, com.enonic.app.other:*" );
 
         assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
             .satisfies( e -> assertEquals( HttpStatus.NOT_FOUND, e.getStatus() ) )
@@ -388,11 +388,22 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testNonstandardMethodOnApiNotAllowedOnVirtualHostMatchesUnknownApi()
+    void testHandleApiExcludedByVirtualHostFilter()
+    {
+        mountedOnWeb();
+        onVirtualHostWithFilter( "!com.enonic.app.myapp:api-key, *" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    @Test
+    void testNonstandardMethodOnApiRejectedByVirtualHostFilterMatchesUnknownApi()
     {
         request.setMethod( HttpMethod.PROPFIND );
         mountedOnWeb();
-        onVirtualHostAllowing( "com.enonic.app.myapp:other" );
+        onVirtualHostWithFilter( "com.enonic.app.myapp:other" );
 
         assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
             .extracting( WebException::getStatus )
@@ -407,11 +418,11 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHttpOptionsOfApiNotAllowedOnVirtualHostIsNotFound()
+    void testHttpOptionsOfApiRejectedByVirtualHostFilterIsNotFound()
     {
         request.setMethod( HttpMethod.OPTIONS );
         mountedOnWeb();
-        onVirtualHostAllowing( "com.enonic.app.myapp:other" );
+        onVirtualHostWithFilter( "com.enonic.app.myapp:other" );
 
         assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
             .extracting( WebException::getStatus )
@@ -419,7 +430,7 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHandleApiAllowedOnVirtualHostButNotMounted()
+    void testHandleApiAcceptedByVirtualHostFilterButNotMounted()
     {
         final ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
@@ -427,7 +438,7 @@ class SlashApiHandlerTest
             .mount( "management" )
             .build();
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
-        onVirtualHostAllowing( "com.enonic.app.myapp:api-key" );
+        onVirtualHostWithFilter( "com.enonic.app.myapp:api-key" );
 
         assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
             .extracting( WebException::getStatus )
@@ -435,18 +446,18 @@ class SlashApiHandlerTest
     }
 
     @Test
-    void testHandleApiOnVirtualHostWithoutAllowList()
+    void testHandleApiOnVirtualHostWithoutFilter()
     {
         mountedOnWeb();
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getApiAllowList() ).thenReturn( Optional.empty() );
+        when( virtualHost.getApiFilter() ).thenReturn( Optional.empty() );
         when( servletRequestMock.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         assertEquals( HttpStatus.OK, this.handler.handle( request ).getStatus() );
     }
 
     @Test
-    void testAdminMountNotAllowedOnVirtualHost()
+    void testAdminMountRejectedByVirtualHostFilter()
     {
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
@@ -464,17 +475,17 @@ class SlashApiHandlerTest
 
         request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
         when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
-        onVirtualHostAllowing( "media:*" );
+        onVirtualHostWithFilter( "media:*" );
 
         assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
             .extracting( WebException::getStatus )
             .isEqualTo( HttpStatus.NOT_FOUND );
     }
 
-    private void onVirtualHostAllowing( final String allowList )
+    private void onVirtualHostWithFilter( final String filter )
     {
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getApiAllowList() ).thenReturn( Optional.of( VirtualHostApiAllowList.parse( allowList ) ) );
+        when( virtualHost.getApiFilter() ).thenReturn( Optional.of( VirtualHostApiFilter.parse( filter ) ) );
         when( servletRequestMock.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
     }
 

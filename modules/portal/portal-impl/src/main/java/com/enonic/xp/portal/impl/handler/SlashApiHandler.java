@@ -136,7 +136,7 @@ public class SlashApiHandler
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
 
-        verifyAllowedOnVirtualHost( descriptorKey, webRequest );
+        verifyAcceptedByVirtualHost( descriptorKey, webRequest );
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
@@ -219,11 +219,11 @@ public class SlashApiHandler
         return MountContext.none();
     }
 
-    private static void verifyAllowedOnVirtualHost( final DescriptorKey descriptorKey, final WebRequest webRequest )
+    private static void verifyAcceptedByVirtualHost( final DescriptorKey descriptorKey, final WebRequest webRequest )
     {
         final HttpServletRequest rawRequest = webRequest.getRawRequest();
         final VirtualHost virtualHost = rawRequest != null ? VirtualHostHelper.getVirtualHost( rawRequest ) : null;
-        if ( virtualHost != null && !virtualHost.getApiAllowList().map( list -> list.allows( descriptorKey ) ).orElse( true ) )
+        if ( virtualHost != null && !virtualHost.getApiFilter().map( filter -> filter.accept( descriptorKey ) ).orElse( true ) )
         {
             throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
         }
