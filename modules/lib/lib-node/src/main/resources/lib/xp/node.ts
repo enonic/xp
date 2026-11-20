@@ -722,6 +722,9 @@ export interface RepoConnection {
 
     push(params: PushNodeParams): PushNodesResult;
 
+    /**
+     * @deprecated Use {@link RepoConnection.getActiveVersion} on a connection to each branch and compare the versions.
+     */
     diff(params: DiffBranchesParams): DiffBranchesResult;
 
     getBinary(params: GetBinaryParams): ByteSource;
@@ -944,6 +947,8 @@ class RepoConnectionImpl
      * @param {boolean} [params.includeChildren=false] also resolve dependencies for children
      *
      * @returns {object} DiffNodesResult
+     *
+     * @deprecated Use {@link RepoConnection.getActiveVersion} on a connection to each branch and compare the versions.
      */
     diff(params: DiffBranchesParams): DiffBranchesResult {
         const {

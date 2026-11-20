@@ -10,19 +10,21 @@ import com.enonic.xp.core.internal.Millis;
 /**
  * Publishing information of a content.
  * <p>
- * Read in the draft branch, it tells the publish status of the content:
+ * Read in the draft branch, it tells how the content compares to the master branch:
  * <ul>
- * <li>No {@code from}: the content is not published, either never or since it was unpublished.</li>
- * <li>Both {@code from} and {@code time}: the content in the draft branch is the content published to the master branch. It is online
- * between {@code from} and {@code to}, scheduled before {@code from} and expired after {@code to}.</li>
- * <li>{@code from} without {@code time}: the content is published and changed since. Updating, moving, renaming and sorting a content
- * removes {@code time} in the draft branch. {@link ContentService#patch(PatchContentParams)} and node level changes keep it.</li>
+ * <li>{@code time} is set: the current version of the content is the version published to the master branch.</li>
+ * <li>{@code time} is not set: the current version has not been published. This covers content that has never been published, and
+ * content that has been edited, moved or unpublished since it was last published.</li>
+ * <li>{@code first} is not set: the content has never been published.</li>
+ * <li>{@code from} is not set: the content is not on the master branch.</li>
  * </ul>
+ * A published content is scheduled before {@code from}, online between {@code from} and {@code to}, and expired after {@code to}.
  *
- * @param from  when the content goes online, or {@code null} if the content is not published
- * @param to    when the content goes offline, or {@code null} if it stays online
+ * @param from  start of the publish window, when the content becomes visible on the master branch, or {@code null} if the content is
+ *              not published
+ * @param to    end of the publish window, or {@code null} if the content stays online
  * @param first when the content was first published, or {@code null} if it has never been published
- * @param time  when the content was last published, or {@code null} if it is not published or changed since publishing
+ * @param time  when the current version of the content was published, or {@code null} if this version has not been published
  */
 @NullMarked
 public record ContentPublishInfo(@Nullable Instant from, @Nullable Instant to, @Nullable Instant first, @Nullable Instant time)
@@ -78,7 +80,7 @@ public record ContentPublishInfo(@Nullable Instant from, @Nullable Instant to, @
         }
 
         /**
-         * Sets when the content goes online.
+         * Sets the start of the publish window.
          *
          * @param val the time, or {@code null} for a content that is not published
          * @return this builder
@@ -90,7 +92,7 @@ public record ContentPublishInfo(@Nullable Instant from, @Nullable Instant to, @
         }
 
         /**
-         * Sets when the content goes offline.
+         * Sets the end of the publish window.
          *
          * @param val the time, or {@code null} for a content that stays online
          * @return this builder
@@ -114,9 +116,9 @@ public record ContentPublishInfo(@Nullable Instant from, @Nullable Instant to, @
         }
 
         /**
-         * Sets when the content was last published.
+         * Sets when the current version of the content was published.
          *
-         * @param val the time, or {@code null} for a content that is not published or changed since publishing
+         * @param val the time, or {@code null} for a version that has not been published
          * @return this builder
          */
         public Builder time( final @Nullable Instant val )
