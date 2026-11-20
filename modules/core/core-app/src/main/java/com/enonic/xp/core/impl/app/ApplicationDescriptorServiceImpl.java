@@ -1,19 +1,12 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.SynchronousBundleListener;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -25,92 +18,106 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.app.CreateOrUpdateApplicationDescriptorParams;
 import com.enonic.xp.app.EditableApplicationDescriptor;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
-import com.enonic.xp.event.Event;
-import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.icon.IconUpdate;
-import com.enonic.xp.node.NodeService;
+import com.enonic.xp.resource.MultiResourceProcessor;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 
+/**
+ * Serves the descriptor of an application as a value derived from its descriptor and icon resources, cached by the
+ * {@link ResourceService} like any other: stamped with the version of the application node, which every write of the persisted
+ * descriptor or icon moves, so a change written on any node of the cluster is seen by the next read, and never cached for an
+ * application in development, whose files change under it.
+ */
 @Component(immediate = true)
 public class ApplicationDescriptorServiceImpl
-    implements ApplicationDescriptorService, SynchronousBundleListener, EventListener
+    implements ApplicationDescriptorService
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationDescriptorServiceImpl.class );
 
     static final int MAX_ICON_SIZE = 100 * 1024;
 
-    private static final String NODES_FIELD = "nodes";
+    private static final String SEGMENT = ApplicationDescriptor.class.getName();
 
-    // the application node holds the descriptor: a change to the node changes the descriptor read for the application
-    private static final Pattern DESCRIPTOR_NODE_PATH =
-        Pattern.compile( "^" + ApplicationRepoServiceImpl.APPLICATIONS_ROOT + "(?<name>[^/]+)$" );
+    private final ResourceService resourceService;
 
-    private final ConcurrentMap<ApplicationKey, ApplicationDescriptor> appDescriptorMap;
-
-    // the bundles of the installed applications: a descriptor is built from the bundle's resolver, which serves the persisted
-    // descriptor first, or from the persisted nodes alone when the application has no bundle
-    private final ConcurrentMap<ApplicationKey, Bundle> bundles;
-
-    private final NodeService nodeService;
+    private final ApplicationFactoryService applicationFactoryService;
 
     private final ApplicationRepoService repoService;
 
     private final DynamicSchemaAuditLogSupport auditLogSupport;
 
-    private final ApplicationFactory factory;
-
     private final EventPublisher eventPublisher;
 
     @Activate
-    public ApplicationDescriptorServiceImpl( @Reference final NodeService nodeService, @Reference final ApplicationRepoService repoService,
+    public ApplicationDescriptorServiceImpl( @Reference final ResourceService resourceService,
+                                             @Reference final ApplicationFactoryService applicationFactoryService,
+                                             @Reference final ApplicationRepoService repoService,
                                              @Reference final DynamicSchemaAuditLogSupport auditLogSupport,
                                              @Reference final EventPublisher eventPublisher )
     {
-        this.appDescriptorMap = new ConcurrentHashMap<>();
-        this.bundles = new ConcurrentHashMap<>();
-        this.nodeService = nodeService;
+        this.resourceService = resourceService;
+        this.applicationFactoryService = applicationFactoryService;
         this.repoService = repoService;
         this.auditLogSupport = auditLogSupport;
         this.eventPublisher = eventPublisher;
-        this.factory = new ApplicationFactory( nodeService );
     }
 
     @Override
     public ApplicationDescriptor get( final @NonNull ApplicationKey key )
     {
-        final ApplicationDescriptor cached = this.appDescriptorMap.get( key );
-        if ( cached != null )
+        if ( ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key ) )
         {
-            return cached;
+            return null;
         }
-
-        final ApplicationDescriptor loaded = loadDescriptor( key );
+        final LoadedDescriptor loaded = this.resourceService.processResources( processor( key ) );
         if ( loaded == null )
         {
             return null;
         }
-        final ApplicationDescriptor raced = this.appDescriptorMap.putIfAbsent( key, loaded );
-        return raced != null ? raced : loaded;
-    }
-
-    private ApplicationDescriptor loadDescriptor( final ApplicationKey key )
-    {
-        final Bundle bundle = this.bundles.get( key );
-        if ( bundle != null )
+        if ( loaded.fromResource() || this.applicationFactoryService.findResourceSource( key, null ).resolver() != null )
         {
-            return ApplicationDescriptorBuilder.build( key, factory.createUrlResolver( bundle, null ) );
-        }
-        if ( this.repoService.hasApplicationDescriptor( key ) )
-        {
-            return ApplicationDescriptorBuilder.build( key, ApplicationFactory.createPersistedSchemaResolver( key, nodeService ) );
+            return loaded.descriptor();
         }
         return null;
+    }
+
+    // the descriptor paths are fixed, in order of preference: which of them the application serves is decided under the stamp
+    private MultiResourceProcessor<ApplicationKey, LoadedDescriptor> processor( final ApplicationKey key )
+    {
+        return new MultiResourceProcessor.Builder<ApplicationKey, LoadedDescriptor>().key( key )
+            .segment( SEGMENT )
+            .keysTranslator( k -> ApplicationBundleUtils.DESCRIPTOR_PATHS.stream()
+                .map( path -> ResourceKey.from( k, "/" + path ) )
+                .toList() )
+            .processor( resources -> load( key, resources ) )
+            .build();
+    }
+
+    // a descriptor that cannot be built (a malformed yaml, an unreadable icon) is logged and the application has none, as before.
+    // The failure is not cached: a read failing for a while (the binary of the icon out of reach) is retried on the next call,
+    // and nothing tells a failure of that kind from a malformed descriptor, which is logged on every read until it is fixed
+    private @Nullable LoadedDescriptor load( final ApplicationKey key, final List<Resource> candidates )
+    {
+        final Resource descriptor = candidates.stream().filter( Resource::exists ).findFirst().orElse( null );
+        try
+        {
+            return descriptor != null
+                ? new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, descriptor, this.resourceService ), true )
+                : new LoadedDescriptor( ApplicationDescriptorBuilder.build( key, this.resourceService ), false );
+        }
+        catch ( final Exception e )
+        {
+            LOG.warn( "Unable to load application descriptor for {}", key, e );
+            return null;
+        }
     }
 
     @Override
@@ -119,9 +126,9 @@ public class ApplicationDescriptorServiceImpl
         ApplicationHelper.requireSchemaAdminRole();
 
         final ApplicationKey key = params.getKey();
-        final Bundle bundle = this.bundles.get( key );
-        ApplicationHelper.requireNonSystemApplication( key, bundle != null && ApplicationBundleUtils.isSystemApplication( bundle ) );
-        ApplicationHelper.requireNonLocalApplication( key, bundle != null && ApplicationHelper.isLocalApplication( bundle ) );
+        final Optional<Bundle> bundle = this.applicationFactoryService.findBundle( key );
+        ApplicationHelper.requireNonSystemApplication( key, bundle.filter( ApplicationBundleUtils::isSystemApplication ).isPresent() );
+        ApplicationHelper.requireNonLocalApplication( key, bundle.filter( ApplicationHelper::isLocalApplication ).isPresent() );
 
         // the application nodes live in the application repository, whatever the context of the caller
         final boolean created = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) ) == null;
@@ -130,7 +137,9 @@ public class ApplicationDescriptorServiceImpl
             this.repoService.createApplicationNode( key );
         }
 
-        final ApplicationDescriptor current = get( key );
+        // the descriptor is edited and read back from the persisted source the write goes to, whatever resource source the
+        // context of the caller selects
+        final ApplicationDescriptor current = ApplicationHelper.callWithContext( () -> get( key ) );
         final ApplicationDescriptor source = current != null ? current : ApplicationDescriptor.create().key( key ).build();
 
         final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( source );
@@ -141,10 +150,9 @@ public class ApplicationDescriptorServiceImpl
 
         this.repoService.upsertApplicationDescriptor( key, yaml, iconUpdate );
 
-        // the descriptor is read back the way every reader sees it, from this point on: nothing cached before the write is served
-        // (the write moved the version of the application node, what the resource service checks its cache against)
-        this.appDescriptorMap.remove( key );
-        final ApplicationDescriptor result = Objects.requireNonNull( get( key ), "application descriptor not found after write" );
+        // the write moved the version of the application node: the descriptor is read back the way every reader sees it from now on
+        final ApplicationDescriptor result = Objects.requireNonNull( ApplicationHelper.callWithContext( () -> get( key ) ),
+                                                                     "application descriptor not found after write" );
 
         final String iconMimeType = iconUpdate instanceof IconUpdate.Replace replace ? replace.mimeType() : null;
         final long iconSize = iconMimeType != null ? edit.icon.getSize() : 0;
@@ -194,134 +202,11 @@ public class ApplicationDescriptorServiceImpl
         return IconUpdate.replace( ByteSource.wrap( editedIcon.toByteArray() ), mimeType );
     }
 
-    @Activate
-    public void start( final ComponentContext context )
-    {
-        context.getBundleContext().addBundleListener( this );
-
-        for ( final Bundle bundle : context.getBundleContext().getBundles() )
-        {
-            if ( !isApplication( bundle ) )
-            {
-                continue;
-            }
-
-            addBundle( bundle );
-        }
-    }
-
-    @Override
-    public void bundleChanged( final BundleEvent event )
-    {
-        final Bundle bundle = event.getBundle();
-
-        // we cannot check if the bundle is an app when it is uninstalled
-        if ( event.getType() == BundleEvent.UNINSTALLED )
-        {
-            removeBundle( bundle );
-            return;
-        }
-
-        if ( !isApplication( bundle ) )
-        {
-            return;
-        }
-
-        switch ( event.getType() )
-        {
-            case BundleEvent.INSTALLED:
-            case BundleEvent.UPDATED:
-                addBundle( bundle );
-                break;
-            default:
-                break;
-        }
-    }
-
     /**
-     * The persisted descriptor is written below the application node in the application repository: a change to it, here or on another node
-     * of the cluster, invalidates the descriptor read for the application.
+     * The descriptor as cached, and whether it was read from a descriptor resource: an application serving none still has a
+     * descriptor, holding its key and icon, an unknown application has none.
      */
-    @Override
-    public void onEvent( final Event event )
+    private record LoadedDescriptor(ApplicationDescriptor descriptor, boolean fromResource)
     {
-        if ( !event.isType( "node.created" ) && !event.isType( "node.updated" ) && !event.isType( "node.deleted" ) )
-        {
-            return;
-        }
-
-        try
-        {
-            final Object nodes = event.getData().get( NODES_FIELD );
-            if ( !( nodes instanceof List<?> entries ) )
-            {
-                return;
-            }
-            for ( final Object entry : entries )
-            {
-                if ( entry instanceof Map<?, ?> node )
-                {
-                    descriptorNodeApplicationKey( node ).ifPresent( this::unregisterApplicationDescriptor );
-                }
-            }
-        }
-        catch ( final Exception e )
-        {
-            LOG.warn( "Unable to handle event {}", event.getType(), e );
-        }
-    }
-
-    private static Optional<ApplicationKey> descriptorNodeApplicationKey( final Map<?, ?> node )
-    {
-        if ( !ApplicationRepoConstants.APP_REPO_ID.toString().equals( node.get( "repo" ) ) ||
-            !ApplicationRepoConstants.APP_REPO_BRANCH.getValue().equals( node.get( "branch" ) ) )
-        {
-            return Optional.empty();
-        }
-        final Object path = node.get( "path" );
-        if ( !( path instanceof String pathString ) )
-        {
-            return Optional.empty();
-        }
-        final Matcher matcher = DESCRIPTOR_NODE_PATH.matcher( pathString );
-        return matcher.matches() ? Optional.of( ApplicationKey.from( matcher.group( "name" ) ) ) : Optional.empty();
-    }
-
-    private boolean isApplication( final Bundle bundle )
-    {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationBundleUtils.isApplication( bundle );
-    }
-
-    private void addBundle( final Bundle bundle )
-    {
-        try
-        {
-            registerApplicationDescriptor( bundle );
-        }
-        catch ( final Exception t )
-        {
-            LOG.warn( "Unable to load application descriptor for {}", ApplicationBundleUtils.getApplicationName( bundle ), t );
-        }
-    }
-
-    private void registerApplicationDescriptor( final Bundle bundle )
-    {
-        final ApplicationKey applicationKey = ApplicationHelper.getApplicationKey( bundle );
-        this.bundles.put( applicationKey, bundle );
-        final ApplicationDescriptor applicationDescriptor =
-            ApplicationDescriptorBuilder.build( applicationKey, factory.createUrlResolver( bundle, null ) );
-        this.appDescriptorMap.put( applicationKey, applicationDescriptor );
-    }
-
-    private void removeBundle( final Bundle bundle )
-    {
-        final ApplicationKey applicationKey = ApplicationHelper.getApplicationKey( bundle );
-        this.bundles.remove( applicationKey, bundle );
-        unregisterApplicationDescriptor( applicationKey );
-    }
-
-    private void unregisterApplicationDescriptor( final ApplicationKey applicationKey )
-    {
-        this.appDescriptorMap.remove( applicationKey );
     }
 }
