@@ -129,6 +129,15 @@ public interface NodeService
 
     SortNodeResult sort( SortNodeParams params );
 
+    /**
+     * Resolves the nodes to push to the target branch together with a node: its descendants and the nodes it references that differ from
+     * the target branch, and its ancestors that are new or moved.
+     *
+     * @deprecated Find the descendants with {@link #findByQuery(NodeQuery)}, read the references from the data of each node and fetch the
+     * ancestors with {@link #getByPaths(NodePaths)}. Use {@link #getActiveVersions(GetActiveNodeVersionsParams)} with both branches to
+     * tell which of them differ. Scheduled for removal.
+     */
+    @Deprecated
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
     void refresh( RefreshMode refreshMode );
