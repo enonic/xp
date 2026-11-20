@@ -1,11 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
-import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.enonic.xp.node.NodeCommitQuery;
@@ -74,8 +72,8 @@ public class ESQueryTranslator
 
         final ElasticHighlightQuery highlight = new ElasticHighlightQueryBuilderFactory().create( query.getHighlight() );
 
-        final List<SortBuilder> sortBuilders =
-            new SortQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getOrderBys() );
+        final SortQueryBuilderFactory.Sorts sorts =
+            new SortQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).createSorts( query.getOrderBys() );
 
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getPostFilters() );
@@ -91,7 +89,8 @@ public class ESQueryTranslator
             .setAggregations( aggregations )
             .setSuggestions( suggestions )
             .setHighlight( highlight )
-            .sortBuilders( sortBuilders )
+            .sortBuilders( sorts.sortBuilders() )
+            .hiddenSortPositions( sorts.hiddenPositions() )
             .filter( filterBuilder )
             .batchSize( queryTypeTranslator.getBatchSize() )
             .searchOptimizer( queryTypeTranslator.getSearchOptimizer() )

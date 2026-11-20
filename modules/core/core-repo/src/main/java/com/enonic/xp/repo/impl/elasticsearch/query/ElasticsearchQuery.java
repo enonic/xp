@@ -37,6 +37,8 @@ public class ElasticsearchQuery
 
     private final ImmutableList<SortBuilder> sortBuilders;
 
+    private final Set<Integer> hiddenSortPositions;
+
     private final int from;
 
     private final int size;
@@ -62,6 +64,7 @@ public class ElasticsearchQuery
         this.indexTypes = builder.indexTypes;
         this.indexNames = builder.indexNames;
         this.sortBuilders = ImmutableList.copyOf( builder.sortBuilders );
+        this.hiddenSortPositions = Set.copyOf( builder.hiddenSortPositions );
         this.size = builder.size;
         this.batchSize = builder.batchSize;
         this.from = builder.from;
@@ -134,6 +137,11 @@ public class ElasticsearchQuery
         return sortBuilders;
     }
 
+    public Set<Integer> getHiddenSortPositions()
+    {
+        return hiddenSortPositions;
+    }
+
     public SearchOptimizer getSearchOptimizer()
     {
         return searchOptimizer;
@@ -180,6 +188,8 @@ public class ElasticsearchQuery
         private final Set<String> indexNames = new HashSet<>();
 
         private List<SortBuilder> sortBuilders = new ArrayList<>();
+
+        private Set<Integer> hiddenSortPositions = Set.of();
 
         private int from = 0;
 
@@ -248,6 +258,12 @@ public class ElasticsearchQuery
         public Builder sortBuilders( final List<SortBuilder> sortBuilders )
         {
             this.sortBuilders = sortBuilders;
+            return this;
+        }
+
+        public Builder hiddenSortPositions( final Set<Integer> hiddenSortPositions )
+        {
+            this.hiddenSortPositions = hiddenSortPositions;
             return this;
         }
 

@@ -37,6 +37,16 @@ public class DslSortBuilderFactory
         }
     }
 
+    public @Nullable SortBuilder createNumberSort( final DslOrderExpr orderExpr )
+    {
+        if ( orderExpr.getType() != null || orderExpr.getLat() != null )
+        {
+            return null;
+        }
+        return SortQueryBuilderFactory.createNumberSortBuilder( fieldNameResolver, IndexPath.from( orderExpr.getField() ),
+                                                                orderExpr.getDirection() );
+    }
+
     public @Nullable SortBuilder createFallback( final DslOrderExpr orderExpr )
     {
         if ( "geoDistance".equals( orderExpr.getType() ) || orderExpr.getLat() != null )
