@@ -101,8 +101,22 @@ public interface NodeService
 
     FindNodesByMultiRepoQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
 
+    /**
+     * Compares a node in the branch of the calling context with the same node in the target branch.
+     *
+     * @deprecated Use {@link #getActiveVersions(GetActiveNodeVersionsParams)} with both branches and compare the version ids. Scheduled for
+     * removal.
+     */
+    @Deprecated
     NodeComparison compare( NodeId id, Branch target );
 
+    /**
+     * Compares nodes in the branch of the calling context with the same nodes in the target branch.
+     *
+     * @deprecated Use {@link #getActiveVersions(GetActiveNodeVersionsParams)} with both branches and compare the version ids. Scheduled for
+     * removal.
+     */
+    @Deprecated
     NodeComparisons compare( NodeIds ids, Branch target );
 
     GetNodeVersionsResult getVersions( GetNodeVersionsParams params );
@@ -137,6 +151,13 @@ public interface NodeService
 
     boolean nodeExists( NodePath nodePath );
 
+    /**
+     * Tells whether any child of a node differs from the same child in the target branch.
+     *
+     * @deprecated Find the children with {@link #findByQuery(NodeQuery)} and use {@link #getActiveVersions(GetActiveNodeVersionsParams)}
+     * with both branches to compare their version ids. Scheduled for removal.
+     */
+    @Deprecated
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
 
     /**

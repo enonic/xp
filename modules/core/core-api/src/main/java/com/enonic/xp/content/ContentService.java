@@ -50,12 +50,35 @@ public interface ContentService
 
     ApplyContentPermissionsResult applyPermissions( ApplyContentPermissionsParams params );
 
+    /**
+     * Resolves the contents to publish together with the given contents, along with how each of them compares to the master branch.
+     *
+     * @deprecated Resolve the dependencies with {@link #getOutboundDependencies(ContentId)}, repeating it for every dependency found, and
+     * tell which of them need publishing from the {@link Content#getPublishInfo()} of each in the draft branch, as described on
+     * {@link ContentPublishInfo}. Scheduled for removal.
+     */
+    @Deprecated
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
+    /**
+     * Resolves the ancestors of the given contents that have to be published for the given contents to be published.
+     *
+     * @deprecated Fetch the ancestors with {@link #getByPaths(ContentPaths)} and tell which of them are not published from the
+     * {@link Content#getPublishInfo()} of each in the draft branch, as described on {@link ContentPublishInfo}. Scheduled for removal.
+     */
+    @Deprecated
     ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
 
     ContentValidityResult getContentValidity( ContentValidityParams params );
 
+    /**
+     * Tells whether any child of a content differs from the master branch.
+     *
+     * @deprecated Find the children with {@link #find(ContentQuery)} and tell which of them are not published or are changed since
+     * publishing from the {@link Content#getPublishInfo()} of each in the draft branch, as described on {@link ContentPublishInfo}.
+     * Scheduled for removal.
+     */
+    @Deprecated
     boolean hasUnpublishedChildren( HasUnpublishedChildrenParams params );
 
     Content getById( ContentId contentId );
@@ -106,8 +129,23 @@ public interface ContentService
     @Deprecated
     FindContentPathsByQueryResult findPaths( ContentQuery query );
 
+    /**
+     * Compares contents in the branch of the calling context with the master branch.
+     *
+     * @deprecated Tell whether a content is published and whether it is changed since publishing from the
+     * {@link Content#getPublishInfo()} of the content in the draft branch, as described on {@link ContentPublishInfo}. Scheduled for
+     * removal.
+     */
+    @Deprecated
     CompareContentResults compare( CompareContentsParams params );
 
+    /**
+     * Resolves the publish status of contents by comparing them with the master branch.
+     *
+     * @deprecated Tell the publish status from the {@link Content#getPublishInfo()} of the content in the draft branch, as described on
+     * {@link ContentPublishInfo}. Scheduled for removal.
+     */
+    @Deprecated
     GetPublishStatusesResult getPublishStatuses( GetPublishStatusesParams params );
 
     GetContentVersionsResult getVersions( GetContentVersionsParams params );
