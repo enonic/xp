@@ -6,31 +6,21 @@ var repo = nodeLib.connect({
     branch: 'master'
 });
 
-// BEGIN
-// Rename content by id. Keeps same parent.
 var result = repo.push({
-    key: 'a',
+    keys: ['/a'],
     target: 'other-branch',
     resolve: true,
-    includeChildren: true
+    includeChildren: true,
+    exclude: ['/a/b', '/a/c']
 });
-// END
 
-// BEGIN
-// Node created.
 var expected = {
     'success': [
         'a',
-        'b'
+        'd'
     ],
-    'failed': [
-        {
-            'id': 'c',
-            'reason': 'ACCESS_DENIED'
-        }
-    ],
+    'failed': [],
 };
-// END
 
 assert.assertJsonEquals(expected, result);
 

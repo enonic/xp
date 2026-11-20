@@ -1,5 +1,8 @@
 package com.enonic.xp.lib.node;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.lib.node.mapper.PushNodesResultMapper;
 import com.enonic.xp.node.NodeId;
@@ -14,6 +17,8 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 public final class PushNodeHandler
     extends AbstractNodeHandler
 {
+    private static final Logger LOG = LoggerFactory.getLogger( PushNodeHandler.class );
+
     private final NodeKey nodeKey;
 
     private final NodeKeys nodeKeys;
@@ -45,6 +50,8 @@ public final class PushNodeHandler
 
         if ( resolve )
         {
+            LOG.warn( "push with resolve is deprecated and scheduled for removal. The default of resolve changes to false in a future " +
+                          "version. Pass resolve: false to push exactly the given nodes." );
             doResolve( nodeIds, toBePushed );
         }
         else
