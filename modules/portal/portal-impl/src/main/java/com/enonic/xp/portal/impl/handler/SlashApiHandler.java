@@ -11,6 +11,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
@@ -48,6 +50,8 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.sse.SseConfig;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -132,6 +136,8 @@ public class SlashApiHandler
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
 
+        verifyAcceptedByVirtualHost( descriptorKey, webRequest );
+
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
         final DynamicUniversalApiHandler dynamicApiHandler = universalApiHandlerRegistry.getApiHandler( descriptorKey );
@@ -211,6 +217,16 @@ public class SlashApiHandler
             return MountContext.adminTool( resolveAdminTool( portalRequest ) );
         }
         return MountContext.none();
+    }
+
+    private static void verifyAcceptedByVirtualHost( final DescriptorKey descriptorKey, final WebRequest webRequest )
+    {
+        final HttpServletRequest rawRequest = webRequest.getRawRequest();
+        final VirtualHost virtualHost = rawRequest != null ? VirtualHostHelper.getVirtualHost( rawRequest ) : null;
+        if ( virtualHost != null && !virtualHost.getApiFilter().map( filter -> filter.accept( descriptorKey ) ).orElse( true ) )
+        {
+            throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
+        }
     }
 
     private void verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest, final MountContext mountContext )
