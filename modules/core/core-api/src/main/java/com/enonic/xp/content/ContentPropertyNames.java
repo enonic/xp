@@ -54,7 +54,7 @@ public final class ContentPropertyNames
 
     public static final String MEDIA_TEXT = "text";
 
-    public static final String MEDIA_TEXT_COMPONENT = "media.text";
+    public static final String MEDIA_TEXT_COMPONENT = "data.media.text";
 
     public static final String ATTACHMENT = "attachment";
 
