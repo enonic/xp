@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.server.rest.api;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,8 +46,8 @@ import com.enonic.xp.web.sse.SseMessage;
  * {@code /events} are aliases of {@code /pull} and {@code /watch}.
  * <p>
  * An application that has an icon reports its {@code iconHash}; {@code /icon?key=<key>&v=<iconHash>} serves the icon under the
- * {@code list} verb. With the current hash in {@code v} the response never needs revalidation; any other request is revalidated
- * against the {@code ETag}.
+ * {@code list} verb. With the current hash in {@code v} the response can be cached without revalidation; any other request gets
+ * the current icon, which must not be reused without asking again.
  * <p>
  * {@code list} reports every application on this node. {@code watch} covers only the applications installed cluster-wide: its
  * initial {@code list} event and the changes that follow leave out local and system applications, and report a change
@@ -145,22 +144,14 @@ public class ApplicationApiHandler
 
         final Icon icon = found.get();
         final String hash = IconHash.of( icon );
-        final String etag = "\"" + hash + "\"";
+        final MediaType contentType = MediaType.parse( icon.getMimeType() );
 
         final WebResponse.Builder<?> response = WebResponse.create()
-            .header( HttpHeaders.ETAG, etag )
-            .header( HttpHeaders.CACHE_CONTROL,
-                     hash.equals( param( request, ICON_VERSION_PARAM ) ) ? ICON_CACHE_IMMUTABLE : ICON_CACHE_REVALIDATE );
-
-        if ( matches( request.getHeaders().get( HttpHeaders.IF_NONE_MATCH ), etag ) )
-        {
-            return response.status( HttpStatus.NOT_MODIFIED ).build();
-        }
-
-        final MediaType contentType = MediaType.parse( icon.getMimeType() );
-        response.status( HttpStatus.OK )
+            .status( HttpStatus.OK )
             .contentType( contentType )
             .body( icon.toByteArray() )
+            .header( HttpHeaders.CACHE_CONTROL,
+                     hash.equals( param( request, ICON_VERSION_PARAM ) ) ? ICON_CACHE_IMMUTABLE : ICON_CACHE_REVALIDATE )
             .header( HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff" );
 
         if ( contentType.is( SVG ) )
@@ -169,18 +160,6 @@ public class ApplicationApiHandler
         }
 
         return response.build();
-    }
-
-    private static boolean matches( final String ifNoneMatch, final String etag )
-    {
-        if ( ifNoneMatch == null )
-        {
-            return false;
-        }
-        return ifNoneMatch.strip().equals( "*" ) || Arrays.stream( ifNoneMatch.split( "," ) )
-            .map( String::strip )
-            .map( candidate -> candidate.startsWith( "W/" ) ? candidate.substring( 2 ) : candidate )
-            .anyMatch( etag::equals );
     }
 
     @Override

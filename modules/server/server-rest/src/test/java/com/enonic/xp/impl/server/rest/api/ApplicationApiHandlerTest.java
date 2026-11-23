@@ -498,7 +498,6 @@ class ApplicationApiHandlerTest
         assertThat( (byte[]) response.getBody() ).isEqualTo( icon.toByteArray() );
         assertEquals( MediaType.PNG, response.getContentType() );
         assertThat( response.getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL, "private, max-age=31536000, immutable" )
-            .containsEntry( HttpHeaders.ETAG, "\"" + IconHash.of( icon ) + "\"" )
             .containsEntry( HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff" )
             .doesNotContainKey( HttpHeaders.CONTENT_SECURITY_POLICY );
     }
@@ -516,39 +515,19 @@ class ApplicationApiHandlerTest
     }
 
     @Test
-    void iconNotModified()
-    {
-        final Icon icon = pngIcon();
-        final String etag = "\"" + IconHash.of( icon ) + "\"";
-        when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
-
-        for ( final String ifNoneMatch : List.of( etag, "W/" + etag, "\"other\", " + etag, "*" ) )
-        {
-            final WebRequest request = iconRequest( "testapplication", null );
-            request.getHeaders().put( HttpHeaders.IF_NONE_MATCH, ifNoneMatch );
-
-            final WebResponse response = handler.handle( request );
-
-            assertEquals( HttpStatus.NOT_MODIFIED, response.getStatus(), ifNoneMatch );
-            assertThat( response.getBody() ).isNull();
-            assertThat( response.getHeaders() ).containsEntry( HttpHeaders.ETAG, etag );
-        }
-
-        final WebRequest stale = iconRequest( "testapplication", null );
-        stale.getHeaders().put( HttpHeaders.IF_NONE_MATCH, "\"other\"" );
-        assertEquals( HttpStatus.OK, handler.handle( stale ).getStatus() );
-    }
-
-    @Test
-    void iconIsSentForAnEntityTagThatContainsAWildcard()
+    void iconWithStaleHashReturnsTheCurrentIcon()
     {
         final Icon icon = pngIcon();
         when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
 
-        final WebRequest request = iconRequest( "testapplication", null );
-        request.getHeaders().put( HttpHeaders.IF_NONE_MATCH, "\"a,*,b\"" );
+        final WebRequest request = iconRequest( "testapplication", "stale" );
+        request.getHeaders().put( HttpHeaders.IF_NONE_MATCH, "\"" + IconHash.of( icon ) + "\"" );
 
-        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+        final WebResponse response = handler.handle( request );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertThat( (byte[]) response.getBody() ).isEqualTo( icon.toByteArray() );
+        assertThat( response.getHeaders() ).doesNotContainKey( HttpHeaders.ETAG );
     }
 
     @Test
