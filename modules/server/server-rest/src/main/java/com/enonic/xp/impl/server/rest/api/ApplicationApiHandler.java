@@ -86,9 +86,9 @@ public class ApplicationApiHandler
     private static final String SVG_CONTENT_SECURITY_POLICY =
         "sandbox; default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'unsafe-inline'";
 
-    private static final String ICON_CACHE_IMMUTABLE = "private, max-age=31536000, immutable";
+    private static final String ICON_CACHE_IMMUTABLE = "max-age=31536000, immutable";
 
-    private static final String ICON_CACHE_REVALIDATE = "private, no-cache";
+    private static final String ICON_CACHE_REVALIDATE = "no-cache";
 
     private final ApplicationResourceService applicationResourceService;
 

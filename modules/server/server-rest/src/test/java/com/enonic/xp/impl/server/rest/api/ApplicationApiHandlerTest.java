@@ -497,7 +497,7 @@ class ApplicationApiHandlerTest
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertThat( (byte[]) response.getBody() ).isEqualTo( icon.toByteArray() );
         assertEquals( MediaType.PNG, response.getContentType() );
-        assertThat( response.getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL, "private, max-age=31536000, immutable" )
+        assertThat( response.getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL, "max-age=31536000, immutable" )
             .containsEntry( HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff" )
             .doesNotContainKey( HttpHeaders.CONTENT_SECURITY_POLICY );
     }
@@ -509,9 +509,9 @@ class ApplicationApiHandlerTest
         when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
 
         assertThat( handler.handle( iconRequest( "testapplication", null ) ).getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL,
-                                                                                                       "private, no-cache" );
+                                                                                                       "no-cache" );
         assertThat( handler.handle( iconRequest( "testapplication", "stale" ) ).getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL,
-                                                                                                          "private, no-cache" );
+                                                                                                          "no-cache" );
     }
 
     @Test

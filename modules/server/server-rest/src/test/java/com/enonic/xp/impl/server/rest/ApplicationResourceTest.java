@@ -21,6 +21,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationJson;
 import com.enonic.xp.impl.server.rest.model.ListApplicationJson;
@@ -89,6 +90,31 @@ class ApplicationResourceTest
             .post()
             .getAsString();
 
+        assertJson( "install_url_result.json", jsonString );
+    }
+
+    @Test
+    void install_url_answer_has_no_icon_hash()
+        throws Exception
+    {
+        final Application application = createApplication();
+        final ApplicationDescriptor descriptor = ApplicationDescriptor.create()
+            .key( ApplicationKey.from( "testapplication" ) )
+            .title( "application name" )
+            .url( "https://enonic.net" )
+            .vendorName( "Enonic" )
+            .vendorUrl( "https://www.enonic.com" )
+            .icon( Icon.from( new byte[]{1, 2, 3}, "image/png", Instant.EPOCH ) )
+            .build();
+        final ApplicationInfoJson infoJson = ApplicationInfoJson.create( application, descriptor, false );
+        when( this.applicationResourceService.installUrl( any() ) ).thenReturn( infoJson );
+
+        String jsonString = request().path( "app/installUrl" )
+            .entity( "{\"URL\":\"https://enonic.net\"}", MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
+
+        assertNotNull( infoJson.getIconHash() );
         assertJson( "install_url_result.json", jsonString );
     }
 
