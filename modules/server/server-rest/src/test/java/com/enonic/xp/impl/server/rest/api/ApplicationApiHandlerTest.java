@@ -503,15 +503,15 @@ class ApplicationApiHandlerTest
     }
 
     @Test
-    void iconWithoutCurrentHashIsRevalidated()
+    void iconWithoutCurrentHashIsNotStored()
     {
         final Icon icon = pngIcon();
         when( applicationResourceService.getApplicationIcon( ApplicationKey.from( "testapplication" ) ) ).thenReturn( Optional.of( icon ) );
 
         assertThat( handler.handle( iconRequest( "testapplication", null ) ).getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL,
-                                                                                                       "no-cache" );
+                                                                                                       "private, no-store" );
         assertThat( handler.handle( iconRequest( "testapplication", "stale" ) ).getHeaders() ).containsEntry( HttpHeaders.CACHE_CONTROL,
-                                                                                                          "no-cache" );
+                                                                                                          "private, no-store" );
     }
 
     @Test

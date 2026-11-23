@@ -47,7 +47,7 @@ import com.enonic.xp.web.sse.SseMessage;
  * <p>
  * An application that has an icon reports its {@code iconHash}; {@code /icon?key=<key>&v=<iconHash>} serves the icon under the
  * {@code list} verb. With the current hash in {@code v} the response can be cached without revalidation; any other request gets
- * the current icon, which must not be reused without asking again.
+ * the current icon, which must not be stored.
  * <p>
  * {@code list} reports every application on this node. {@code watch} covers only the applications installed cluster-wide: its
  * initial {@code list} event and the changes that follow leave out local and system applications, and report a change
@@ -88,7 +88,7 @@ public class ApplicationApiHandler
 
     private static final String ICON_CACHE_IMMUTABLE = "max-age=31536000, immutable";
 
-    private static final String ICON_CACHE_REVALIDATE = "no-cache";
+    private static final String ICON_CACHE_NO_STORE = "private, no-store";
 
     private final ApplicationResourceService applicationResourceService;
 
@@ -151,7 +151,7 @@ public class ApplicationApiHandler
             .contentType( contentType )
             .body( icon.toByteArray() )
             .header( HttpHeaders.CACHE_CONTROL,
-                     hash.equals( param( request, ICON_VERSION_PARAM ) ) ? ICON_CACHE_IMMUTABLE : ICON_CACHE_REVALIDATE )
+                     hash.equals( param( request, ICON_VERSION_PARAM ) ) ? ICON_CACHE_IMMUTABLE : ICON_CACHE_NO_STORE )
             .header( HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff" );
 
         if ( contentType.is( SVG ) )
