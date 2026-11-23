@@ -7,7 +7,6 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static com.enonic.xp.content.ContentPropertyNames.MEDIA_TEXT_COMPONENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AttachmentConfigProcessorTest
@@ -26,7 +25,7 @@ class AttachmentConfigProcessorTest
             fulltext( true ).
             includeInAllText( true ).
             nGram( true ).
-            decideByType( false ).build(), config.getConfigForPath( IndexPath.from( MEDIA_TEXT_COMPONENT ) ) );
+            decideByType( false ).build(), config.getConfigForPath( IndexPath.from( "data.media.text" ) ) );
 
     }
 
