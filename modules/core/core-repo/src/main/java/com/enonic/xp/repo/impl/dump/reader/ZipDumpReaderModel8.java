@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.dump.reader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Optional;
