@@ -1,6 +1,7 @@
 package com.enonic.xp.web.vhost;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
@@ -123,4 +124,11 @@ public interface VirtualHost
      * request's execution context.
      */
     Map<String, String> getContext();
+
+    /**
+     * Returns the APIs this vhost exposes ({@code mapping.<name>.context.api.filter}), or empty when the mapping does
+     * not restrict them. When present, an API the filter rejects is treated as not existing on this vhost, even when
+     * it is mounted: requests for it get the same response as requests for an unknown API.
+     */
+    Optional<VirtualHostApiFilter> getApiFilter();
 }

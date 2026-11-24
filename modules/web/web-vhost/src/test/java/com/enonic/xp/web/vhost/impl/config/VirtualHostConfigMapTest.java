@@ -9,11 +9,14 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -535,5 +538,50 @@ class VirtualHostConfigMapTest
         map.put( "mapping.mgmt.context.api.not an app:snapshot.verbs", "list" );
 
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
+
+    @Test
+    void testApiFilter()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.filter", "!com.example.app:internal, media:image, com.example.* ,admin:event" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+        final VirtualHostApiFilter filter = virtualHost.getApiFilter().orElseThrow();
+
+        assertTrue( filter.accept( DescriptorKey.from( "media:image" ) ) );
+        assertTrue( filter.accept( DescriptorKey.from( "admin:event" ) ) );
+        assertTrue( filter.accept( DescriptorKey.from( "com.example.app:public" ) ) );
+        assertFalse( filter.accept( DescriptorKey.from( "com.example.app:internal" ) ) );
+        assertFalse( filter.accept( DescriptorKey.from( "media:attachment" ) ) );
+        assertEquals( "!com.example.app:internal, media:image, com.example.* ,admin:event", virtualHost.getContext().get( "api.filter" ) );
+    }
+
+    @Test
+    void testNoApiFilter()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+
+        assertTrue( new VirtualHostConfigMap( map ).buildMappings().get( 0 ).getApiFilter().isEmpty() );
+    }
+
+    @Test
+    void testApiFilterWithInvalidPattern()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.filter", "media:image, !notAnApi" );
+
+        assertThatThrownBy( () -> new VirtualHostConfigMap( map ).buildMappings() ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "mapping.site.context.api.filter" );
+    }
+
+    @Test
+    void testApiFilterEmpty()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.filter", " , " );
+
+        assertThatThrownBy( () -> new VirtualHostConfigMap( map ).buildMappings() ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "mapping.site.context.api.filter" );
     }
 }

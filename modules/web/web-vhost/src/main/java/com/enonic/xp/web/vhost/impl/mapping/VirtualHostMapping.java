@@ -2,6 +2,7 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -12,6 +13,7 @@ import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static java.util.Objects.requireNonNull;
@@ -39,6 +41,8 @@ public final class VirtualHostMapping
     private final PrincipalKeys allowedPrincipals;
 
     private final Set<String> audience;
+
+    private final @Nullable VirtualHostApiFilter apiFilter;
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
@@ -88,6 +92,8 @@ public final class VirtualHostMapping
         this.connector = requireNonNullElse( connector, DispatchConstants.WEB_CONNECTOR );
         this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
         this.audience = Set.copyOf( requireNonNullElse( audience, Set.of() ) );
+        final String apiAllow = this.context.get( VirtualHostApiFilter.CONTEXT_KEY );
+        this.apiFilter = apiAllow != null ? VirtualHostApiFilter.parse( apiAllow ) : null;
     }
 
     @Override
@@ -205,5 +211,11 @@ public final class VirtualHostMapping
     public Map<String, String> getContext()
     {
         return context;
+    }
+
+    @Override
+    public Optional<VirtualHostApiFilter> getApiFilter()
+    {
+        return Optional.ofNullable( apiFilter );
     }
 }
