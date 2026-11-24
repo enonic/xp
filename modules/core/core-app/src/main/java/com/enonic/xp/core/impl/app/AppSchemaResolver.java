@@ -2,8 +2,11 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -22,6 +25,10 @@ import com.google.common.io.ByteSource;
  * Descriptors are normalized to {@code .yaml}.
  * When a jar holds several variants of a resource, the flat structure (and {@code enonic.*}) wins over the legacy one, then {@code .yaml}
  * over {@code .yml}, regardless of the zip entry order.
+ * <p>
+ * A part, page or macro shipping a controller ({@code cms/<kind>/<name>/<name>.js}, see
+ * {@link SchemaResourcePaths#CONTROLLER_PATTERN}) but no descriptor gets a minimal one, declaring its kind and, for a page, no
+ * regions: what the bundle declares by the controller alone, the persisted schema declares by a descriptor.
  */
 final class AppSchemaResolver
 {
@@ -32,6 +39,7 @@ final class AppSchemaResolver
     static Map<String, ByteSource> resolve( final ByteSource byteSource )
     {
         final Map<String, Candidate> resources = new LinkedHashMap<>();
+        final Set<String> controllerDescriptors = new LinkedHashSet<>();
         try (ZipInputStream zip = new ZipInputStream( byteSource.openBufferedStream() ))
         {
             ZipEntry entry;
@@ -39,6 +47,14 @@ final class AppSchemaResolver
             {
                 if ( entry.isDirectory() )
                 {
+                    continue;
+                }
+
+                final Matcher controller = SchemaResourcePaths.CONTROLLER_PATTERN.matcher( entry.getName() );
+                if ( controller.matches() )
+                {
+                    controllerDescriptors.add( cmsPath( controller.group( SchemaResourcePaths.CONTROLLER_KIND_GROUP ) + "/" +
+                                                            controller.group( SchemaResourcePaths.CONTROLLER_NAME_GROUP ) + ".yaml" ) );
                     continue;
                 }
 
@@ -107,7 +123,15 @@ final class AppSchemaResolver
 
         final Map<String, ByteSource> result = new LinkedHashMap<>();
         resources.forEach( ( path, candidate ) -> result.put( path, candidate.content() ) );
+        controllerDescriptors.forEach( path -> result.computeIfAbsent( path, AppSchemaResolver::minimalDescriptor ) );
         return result;
+    }
+
+    private static ByteSource minimalDescriptor( final String path )
+    {
+        final String kind = SchemaResourcePaths.expectedKind( path );
+        final String descriptor = "kind: \"" + kind + "\"\n" + ( "Page".equals( kind ) ? "regions: []\n" : "" );
+        return ByteSource.wrap( descriptor.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     private static boolean isLegacyAppResource( final String name )

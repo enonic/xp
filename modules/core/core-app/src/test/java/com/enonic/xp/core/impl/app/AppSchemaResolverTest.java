@@ -173,6 +173,52 @@ class AppSchemaResolverTest
         assertEquals( "yaml", read( AppSchemaResolver.resolve( yamlFirst ), "enonic.yaml" ) );
     }
 
+    @Test
+    void resolve_controller_without_descriptor_gets_a_minimal_one()
+        throws Exception
+    {
+        final ByteSource byteSource = zip( new String[][]{{"cms/cms.yaml", "cms-descriptor"}, {"cms/parts/mypart/mypart.js", "part-controller"},
+            {"cms/pages/mypage/mypage.js", "page-controller"}, {"cms/macros/mymacro/mymacro.js", "macro-controller"}} );
+
+        final Map<String, ByteSource> resources = AppSchemaResolver.resolve( byteSource );
+
+        assertEquals( 4, resources.size() );
+        assertEquals( "kind: \"Part\"\n", read( resources, "cms/parts/mypart.yaml" ) );
+        assertEquals( "kind: \"Page\"\nregions: []\n", read( resources, "cms/pages/mypage.yaml" ) );
+        assertEquals( "kind: \"Macro\"\n", read( resources, "cms/macros/mymacro.yaml" ) );
+    }
+
+    @Test
+    void resolve_controller_with_descriptor_keeps_the_descriptor_regardless_of_order()
+        throws Exception
+    {
+        final String[][] controllerFirst = {{"cms/parts/mypart/mypart.js", "controller"}, {"cms/parts/mypart/mypart.yml", "legacy-part"},
+            {"cms/pages/mypage/mypage.js", "controller"}, {"cms/pages/mypage.yaml", "flat-page"}};
+        final String[][] descriptorFirst = {controllerFirst[1], controllerFirst[0], controllerFirst[3], controllerFirst[2]};
+
+        for ( final String[][] entries : new String[][][]{controllerFirst, descriptorFirst} )
+        {
+            final Map<String, ByteSource> resources = AppSchemaResolver.resolve( zip( entries ) );
+
+            assertEquals( 2, resources.size() );
+            assertEquals( "legacy-part", read( resources, "cms/parts/mypart.yaml" ) );
+            assertEquals( "flat-page", read( resources, "cms/pages/mypage.yaml" ) );
+        }
+    }
+
+    @Test
+    void resolve_only_controllers_of_the_kinds_read_from_a_controller()
+        throws Exception
+    {
+        // a layout, content type or style is never declared by a controller; a controller not named like its folder is not one
+        final ByteSource byteSource = zip( new String[][]{{"cms/layouts/mylayout/mylayout.js", "ignored"},
+            {"cms/content-types/mytype/mytype.js", "ignored"}, {"cms/style/style.js", "ignored"}, {"cms/parts/mypart/other.js", "ignored"},
+            {"cms/parts/mypart.js", "ignored"}, {"cms/parts/mypart/mypart.ts", "ignored"}, {"cms/parts/mypart/mypart.js/index.js", "ignored"},
+            {"parts/mypart/mypart.js", "ignored"}} );
+
+        assertTrue( AppSchemaResolver.resolve( byteSource ).isEmpty() );
+    }
+
     private static ByteSource zip( final String[][] entries )
         throws Exception
     {

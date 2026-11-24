@@ -740,6 +740,35 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void install_global_persists_a_minimal_descriptor_for_a_part_declared_by_its_controller()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
+                                                         .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
+                                                         .addResource( "cms/parts/mypart/mypart.js", stream( "controller" ) )
+                                                         .addResource( "cms/pages/mypage/mypage.js", stream( "controller" ) )
+                                                         .addResource( "cms/macros/mymacro/mymacro.js", stream( "controller" ) )
+                                                         .addResource( "cms/macros/mymacro/mymacro.yaml", stream( MACRO ) )
+                                                         .addResource( "cms/layouts/mylayout/mylayout.js", stream( "controller" ) )
+                                                         .build() ) );
+
+        // the generated descriptors parse as the schema services read them; a shipped descriptor is never replaced; a layout is
+        // never declared by its controller
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 5 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) &&
+                CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                "kind: \"Part\"\n".equals( readResource( resources, "cms/parts/mypart.yaml" ) ) &&
+                "kind: \"Page\"\nregions: []\n".equals( readResource( resources, "cms/pages/mypage.yaml" ) ) &&
+                MACRO.equals( readResource( resources, "cms/macros/mymacro.yaml" ) ) ) );
+    }
+
+    @Test
     void install_global_without_cms_descriptor_persists_descriptor_and_icon_only()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
