@@ -3,11 +3,7 @@ package com.enonic.xp.repo.impl.dump.reader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -36,6 +32,7 @@ import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
+import com.enonic.xp.repo.impl.dump.DumpZipFiles;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
@@ -73,9 +70,7 @@ public class ZipDumpReaderModel8
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
         {
-            final SeekableByteChannel seekableByteChannel =
-                Files.newByteChannel( basePath.resolve( dumpName + ".zip" ), EnumSet.of( StandardOpenOption.READ ) );
-            final ZipFile zipFile = ZipFile.builder().setSeekableByteChannel( seekableByteChannel ).get();
+            final ZipFile zipFile = DumpZipFiles.open( basePath.resolve( dumpName + ".zip" ) );
 
             return create( dumpName, zipFile );
         }
