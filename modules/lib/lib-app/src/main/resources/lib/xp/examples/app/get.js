@@ -24,7 +24,6 @@ assert.assertJsonEquals({
     started: true,
     system: true,
     codeless: false,
-    locked: false,
-    schemaModified: false
+    locked: false
 }, result);
 

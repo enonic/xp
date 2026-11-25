@@ -39,12 +39,6 @@ public class MockApplication
     }
 
     @Override
-    public boolean isSchemaModified()
-    {
-        return false;
-    }
-
-    @Override
     public ApplicationKey getKey()
     {
         return this.key;

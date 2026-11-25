@@ -282,27 +282,6 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void persisted_only_application_tells_whether_it_was_modified()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        // as created: nothing counted, or no counter at all
-        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
-        assertFalse( this.service.get( applicationKey ).isSchemaModified() );
-
-        final PropertyTree created = persistedNodeData();
-        created.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 0L );
-        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", created ) );
-        assertFalse( this.service.get( applicationKey ).isSchemaModified() );
-
-        // changed since
-        final PropertyTree changed = persistedNodeData();
-        changed.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 2L );
-        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", changed ) );
-        assertTrue( this.service.get( applicationKey ).isSchemaModified() );
-    }
-
-    @Test
     void uninstall_is_refused_for_a_protected_application()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );

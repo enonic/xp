@@ -1,12 +1,13 @@
 package com.enonic.xp.core.impl.app;
 
-import java.util.concurrent.Callable;
-import java.util.function.Predicate;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import org.osgi.framework.Bundle;
 
@@ -38,14 +39,13 @@ public final class ApplicationFactory
         // both are kept on the application node, read anew on every call: they change while the bundle stays installed
         return new ApplicationImpl( bundle, createUrlResolver( bundle, null ), null, persisted,
                                     () -> persisted && readNode( appKey, ApplicationHelper::isLocked ),
-                                    () -> persisted && readNode( appKey, ApplicationHelper::isSchemaModified ) );
+                                    () -> persisted ? readNode( appKey, ApplicationHelper::modifiedTime ) : Optional.empty() );
     }
 
-    private boolean readNode( final ApplicationKey appKey, final Predicate<Node> flag )
+    private <T> T readNode( final ApplicationKey appKey, final Function<Node, T> read )
     {
-        final Callable<Boolean> read =
-            () -> flag.test( nodeService.getByPath( ApplicationRepoServiceImpl.applicationNodePath( appKey ) ) );
-        return ApplicationHelper.runAsAdmin( read );
+        final Callable<T> call = () -> read.apply( nodeService.getByPath( ApplicationRepoServiceImpl.applicationNodePath( appKey ) ) );
+        return ApplicationHelper.runAsAdmin( call );
     }
 
     ApplicationUrlResolver createUrlResolver( final Bundle bundle, final String source )

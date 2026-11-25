@@ -33,6 +33,10 @@ export interface Application {
     systemVersion: string | null;
     minSystemVersion: string | null;
     maxSystemVersion: string | null;
+    /**
+     * When the application was last installed or created, or its schema, descriptor or icon last changed through the
+     * Schema and App libraries, whichever is later.
+     */
     modifiedTime: string | null;
     started: boolean;
     system: boolean;
@@ -46,11 +50,6 @@ export interface Application {
      * uninstalled. Set and reset with {@link createOrUpdate}.
      */
     locked: boolean;
-    /**
-     * Whether the application was changed since it was installed or created: its schema, or its descriptor and icon, through
-     * the Schema and App libraries. Installing the application anew makes it unmodified again.
-     */
-    schemaModified: boolean;
 }
 
 export interface GetApplicationParams {

@@ -54,7 +54,8 @@ public interface Application
     ClassLoader getClassLoader();
 
     /**
-     * Returns the time the application was last installed or updated.
+     * Returns the time the application was last installed or created, or its schema, descriptor or icon was last changed
+     * through the schema and application descriptor services, whichever is later.
      *
      * @return the modification time
      */
@@ -115,13 +116,4 @@ public interface Application
      * @return {@code true} when installing over and uninstalling the application are prevented, {@code false} by default
      */
     boolean isLocked();
-
-    /**
-     * Returns whether the definition of the application, its schema or its descriptor and icon, was changed through the schema
-     * and application descriptor services since the application was installed or created. Installing the application anew
-     * makes it unmodified again.
-     *
-     * @return {@code true} when the application is no longer as it was installed or created
-     */
-    boolean isSchemaModified();
 }

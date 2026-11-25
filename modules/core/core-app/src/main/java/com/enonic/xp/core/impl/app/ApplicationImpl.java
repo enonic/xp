@@ -2,8 +2,10 @@ package com.enonic.xp.core.impl.app;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
@@ -34,7 +36,7 @@ public final class ApplicationImpl
 
     private final BooleanSupplier locked;
 
-    private final BooleanSupplier schemaModified;
+    private final Supplier<Optional<Instant>> persistedModifiedTime;
 
     private volatile DescriptorVersions descriptorVersions;
 
@@ -65,18 +67,20 @@ public final class ApplicationImpl
     public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader,
                             final boolean persisted )
     {
-        this( bundle, urlResolver, classLoader, persisted, () -> false, () -> false );
+        this( bundle, urlResolver, classLoader, persisted, () -> false, Optional::empty );
     }
 
     /**
      * @param persisted        whether the application has a node in the application repository, holding its descriptor: its
      *                         versions are then the ones the persisted descriptor declares
-     * @param locked reads the flag kept on the node of the application, see {@link Application#isLocked()}
-     * @param schemaModified   reads from the node of the application whether its definition was changed since its install, see
-     *                         {@link Application#isSchemaModified()}
+     * @param locked           reads the flag kept on the node of the application, see {@link Application#isLocked()}
+     * @param persistedModifiedTime reads the modification time kept on the node of the application, see
+     *                         {@link Application#getModifiedTime()}; empty when the application has no node, the bundle's own
+     *                         time is reported then
      */
     public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader,
-                            final boolean persisted, final BooleanSupplier locked, final BooleanSupplier schemaModified )
+                            final boolean persisted, final BooleanSupplier locked,
+                            final Supplier<Optional<Instant>> persistedModifiedTime )
     {
         this.bundle = bundle;
         this.key = ApplicationHelper.getApplicationKey( bundle );
@@ -84,7 +88,7 @@ public final class ApplicationImpl
         this.urlResolver = urlResolver;
         this.persisted = persisted;
         this.locked = locked;
-        this.schemaModified = schemaModified;
+        this.persistedModifiedTime = persistedModifiedTime;
         this.classLoader = classLoader != null ? classLoader : new BundleClassLoader( this.bundle );
         this.capabilities = ApplicationHelper.getCapabilities( bundle );
     }
@@ -193,7 +197,7 @@ public final class ApplicationImpl
     @Override
     public Instant getModifiedTime()
     {
-        return Instant.ofEpochMilli( this.bundle.getLastModified() );
+        return this.persistedModifiedTime.get().orElseGet( () -> Instant.ofEpochMilli( this.bundle.getLastModified() ) );
     }
 
     @Override
@@ -253,12 +257,6 @@ public final class ApplicationImpl
     public boolean isLocked()
     {
         return this.locked.getAsBoolean();
-    }
-
-    @Override
-    public boolean isSchemaModified()
-    {
-        return this.schemaModified.getAsBoolean();
     }
 
     @Override

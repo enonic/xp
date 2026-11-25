@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -17,6 +18,7 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.node.CreateNodeParams;
@@ -32,6 +34,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -311,6 +314,8 @@ class ApplicationRepoServiceImplTest
         Mockito.when( this.nodeService.nodeExists( CMS_PATH ) ).thenReturn( true );
         final PropertyTree data = descriptorData( "old", null );
         data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 3L );
+        final Instant installed = Instant.parse( "2026-10-12T10:00:00Z" );
+        data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, installed );
         final List<Long> revisions = new ArrayList<>();
         final PropertyTree edited = stubApplicationNode( data, after -> revisions.add( after.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
         stubCreate();
@@ -318,9 +323,11 @@ class ApplicationRepoServiceImplTest
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ),
                                                Map.of( "cms/cms.yaml", ByteSource.wrap( "cms".getBytes( StandardCharsets.UTF_8 ) ) ) );
 
-        // removed with the old schema, written as zero after the new one
+        // removed with the old schema, written as zero after the new one; the time of the install is the one written with the
+        // bundle, not moved here
         assertEquals( Arrays.asList( null, 0L ), revisions );
         assertEquals( 0, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        assertEquals( installed, edited.getInstant( ApplicationPropertyNames.MODIFIED_TIME ) );
         final InOrder inOrder = Mockito.inOrder( this.nodeService );
         inOrder.verify( this.nodeService, Mockito.times( 2 ) ).create( Mockito.any( CreateNodeParams.class ) );
         inOrder.verify( this.nodeService ).update( Mockito.any( UpdateNodeParams.class ) );
@@ -414,22 +421,51 @@ class ApplicationRepoServiceImplTest
         assertNull( captor.getValue().getBinaryAttachments().get( SVG_ICON ) );
         // the first descriptor of the node is part of its creation, not a change
         assertNull( edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        assertNull( edited.getInstant( ApplicationPropertyNames.MODIFIED_TIME ) );
         Mockito.verify( this.nodeService ).refresh( RefreshMode.ALL );
     }
 
-    // written over the descriptor the node holds, the descriptor is a change of the application: counted in the same write
+    // written over the descriptor the node holds, the descriptor is a change of the application: counted and timed in the same
+    // write
     @Test
     void upsert_descriptor_over_an_existing_one_counts_a_revision()
     {
         final PropertyTree data = descriptorData( "old", null );
         data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 2L );
+        data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Instant.parse( "2026-10-12T10:00:00Z" ) );
         final PropertyTree edited = stubUpdate( data );
+        final Instant before = Millis.now();
 
         this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", IconUpdate.KEEP );
 
         Mockito.verify( this.nodeService ).update( Mockito.any( UpdateNodeParams.class ) );
         assertEquals( "new", edited.getString( SchemaNodePropertyNames.DESCRIPTOR ) );
         assertEquals( 3, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        assertThat( edited.getInstant( ApplicationPropertyNames.MODIFIED_TIME ) ).isAfterOrEqualTo( before );
+    }
+
+    @Test
+    void mark_schema_changed_counts_a_revision_and_moves_the_modification_time()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 2L );
+        data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Instant.parse( "2026-10-12T10:00:00Z" ) );
+        final PropertyTree edited = stubApplicationNode( data );
+        final Instant before = Millis.now();
+
+        ApplicationRepoServiceImpl.markSchemaChanged( this.nodeService, ApplicationKey.from( "myBundle" ) );
+
+        Mockito.verify( this.nodeService ).update( Mockito.any( UpdateNodeParams.class ) );
+        assertEquals( 3, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        assertThat( edited.getInstant( ApplicationPropertyNames.MODIFIED_TIME ) ).isAfterOrEqualTo( before );
+    }
+
+    @Test
+    void mark_schema_changed_without_an_application_node_writes_nothing()
+    {
+        ApplicationRepoServiceImpl.markSchemaChanged( this.nodeService, ApplicationKey.from( "myBundle" ) );
+
+        Mockito.verify( this.nodeService, Mockito.never() ).update( Mockito.any( UpdateNodeParams.class ) );
     }
 
     @Test
@@ -447,6 +483,7 @@ class ApplicationRepoServiceImplTest
         assertEquals( 0, captor.getValue().getBinaryAttachments().getSize() );
         // a node installed without a revision counts its first change from zero
         assertEquals( 1, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
+        assertNotNull( edited.getInstant( ApplicationPropertyNames.MODIFIED_TIME ) );
     }
 
     @Test

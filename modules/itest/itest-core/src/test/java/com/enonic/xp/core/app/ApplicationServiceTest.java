@@ -64,6 +64,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -441,13 +442,15 @@ class ApplicationServiceTest
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
+            final Instant before = Instant.now();
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
                 "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\ndescription: \"Persisted\"\n", //
                 "enonic.svg", "<svg>app</svg>", //
                 "lib/util.js", "exports.util = function() {}" ) ) );
 
             assertEquals( 0, schemaRevision( "staticapp" ) );
-            assertFalse( applicationService.getInstalledApplication( appKey ).isSchemaModified() );
+            final Instant installed = applicationService.getInstalledApplication( appKey ).getModifiedTime();
+            assertThat( installed ).isAfterOrEqualTo( before );
 
             // the title alone is changed, the description and icon stay
             final ApplicationDescriptor edited = applicationDescriptorService.createOrUpdate(
@@ -455,10 +458,10 @@ class ApplicationServiceTest
             assertEquals( "Edited", edited.getTitle() );
             assertEquals( "Persisted", edited.getDescription() );
             assertEquals( "<svg>app</svg>", new String( edited.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
-            // a change of the application since its install
+            // a change of the application since its install: what the clients are told through the modification time
             assertEquals( 1, schemaRevision( "staticapp" ) );
-            // what the clients are told: changed since it was installed
-            assertTrue( applicationService.getInstalledApplication( appKey ).isSchemaModified() );
+            final Instant titleEdited = applicationService.getInstalledApplication( appKey ).getModifiedTime();
+            assertThat( titleEdited ).isAfterOrEqualTo( installed );
 
             // visible at once through the service and the resources
             assertEquals( "Edited", applicationDescriptorService.get( appKey ).getTitle() );
@@ -476,6 +479,8 @@ class ApplicationServiceTest
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) ).exists() );
             assertEquals( BinaryReference.from( "enonic.png" ), appNode( "staticapp" ).data().getBinaryReference( "icon" ) );
             assertEquals( 2, schemaRevision( "staticapp" ) );
+            final Instant iconReplaced = applicationService.getInstalledApplication( appKey ).getModifiedTime();
+            assertThat( iconReplaced ).isAfterOrEqualTo( titleEdited );
 
             // the icon is removed
             applicationDescriptorService.createOrUpdate(
@@ -484,17 +489,20 @@ class ApplicationServiceTest
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.png" ) ).exists() );
             assertNull( appNode( "staticapp" ).data().getBinaryReference( "icon" ) );
             assertEquals( 3, schemaRevision( "staticapp" ) );
+            final Instant iconRemoved = applicationService.getInstalledApplication( appKey ).getModifiedTime();
+            assertThat( iconRemoved ).isAfterOrEqualTo( iconReplaced );
 
             // a new version of the bundle persists its own descriptor over the edited one
+            final Instant beforeReinstall = Instant.now();
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
                 "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped again\"\n", //
                 "enonic.svg", "<svg>again</svg>" ) ) );
             assertEquals( "Shipped again", applicationDescriptorService.get( appKey ).getTitle() );
             assertEquals( "<svg>again</svg>",
                           new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
-            // as shipped again: nothing changed since
+            // as shipped again: nothing changed since, the modification time is the one of the install
             assertEquals( 0, schemaRevision( "staticapp" ) );
-            assertFalse( applicationService.getInstalledApplication( appKey ).isSchemaModified() );
+            assertThat( applicationService.getInstalledApplication( appKey ).getModifiedTime() ).isAfterOrEqualTo( beforeReinstall );
         } );
     }
 

@@ -1,7 +1,9 @@
 package com.enonic.xp.core.impl.app;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.jar.Manifest;
@@ -504,16 +506,17 @@ public final class ApplicationHelper
     }
 
     /**
-     * {@code true} when the definition of the application was changed since its install or creation: its node counts the changes.
+     * The time the application was last installed or created, or its schema, descriptor or icon last changed, whichever is
+     * later: kept on the application node, the node's own timestamp standing in for a node written without it. Empty for no node.
      */
-    static boolean isSchemaModified( final Node applicationNode )
+    static Optional<Instant> modifiedTime( final Node applicationNode )
     {
-        if ( applicationNode == null || applicationNode.data() == null )
+        if ( applicationNode == null )
         {
-            return false;
+            return Optional.empty();
         }
-        final Long revision = applicationNode.data().getLong( ApplicationPropertyNames.SCHEMA_REVISION );
-        return revision != null && revision > 0;
+        final Instant modified = applicationNode.data().getInstant( ApplicationPropertyNames.MODIFIED_TIME );
+        return Optional.of( modified != null ? modified : applicationNode.getTimestamp() );
     }
 
     /**

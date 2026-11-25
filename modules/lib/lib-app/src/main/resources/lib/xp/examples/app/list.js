@@ -23,8 +23,7 @@ assert.assertJsonEquals([
         started: true,
         system: false,
         codeless: false,
-        locked: false,
-        schemaModified: false
+        locked: false
     },
     {
         key: 'app2',
@@ -36,8 +35,7 @@ assert.assertJsonEquals([
         started: false,
         system: true,
         codeless: false,
-        locked: false,
-        schemaModified: false
+        locked: false
     }
 ], result);
 

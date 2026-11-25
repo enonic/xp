@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.InputStream;
+import java.time.Instant;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -54,6 +56,24 @@ class ApplicationImplTest
 
         bundle.start();
         assertTrue( application.isStarted() );
+    }
+
+    // the time kept on the node of a persisted application moves with its schema and descriptor; the bundle's own time is the
+    // install alone, reported for an application without a node
+    @Test
+    void modified_time_is_the_one_of_the_node_when_the_application_has_one()
+        throws Exception
+    {
+        final Bundle bundle = deployBundle();
+        final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
+        final Instant edited = Instant.parse( "2026-10-12T10:00:00Z" );
+
+        final ApplicationImpl persisted =
+            new ApplicationImpl( bundle, urlResolver, null, true, () -> false, () -> Optional.of( edited ) );
+        assertEquals( edited, persisted.getModifiedTime() );
+
+        final ApplicationImpl withoutNode = new ApplicationImpl( bundle, urlResolver, null, false, () -> false, Optional::empty );
+        assertEquals( Instant.ofEpochMilli( bundle.getLastModified() ), withoutNode.getModifiedTime() );
     }
 
     @Test

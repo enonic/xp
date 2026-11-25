@@ -39,15 +39,12 @@ public class ApplicationInfoJson
 
     private final boolean locked;
 
-    private final boolean schemaModified;
-
     private final @Nullable String iconHash;
 
     private ApplicationInfoJson( final String key, final String version, final String title, final String maxSystemVersion,
                                  final String minSystemVersion, final String url, final String vendorName, final String vendorUrl,
                                  final Instant modifiedTime, final String state, final boolean local, final boolean system,
-                                 final boolean codeless, final boolean locked, final boolean schemaModified,
-                                 final @Nullable String iconHash )
+                                 final boolean codeless, final boolean locked, final @Nullable String iconHash )
     {
         this.key = key;
         this.version = version;
@@ -63,7 +60,6 @@ public class ApplicationInfoJson
         this.system = system;
         this.codeless = codeless;
         this.locked = locked;
-        this.schemaModified = schemaModified;
         this.iconHash = iconHash;
     }
 
@@ -77,7 +73,7 @@ public class ApplicationInfoJson
                                         descriptor != null ? descriptor.getVendorUrl() : null, application.getModifiedTime(),
                                         application.isStarted() ? "started" : "stopped", local,
                                         application.isSystem(), application.isCodeless(), application.isLocked(),
-                                        application.isSchemaModified(), icon != null ? IconHash.of( icon ) : null );
+                                        icon != null ? IconHash.of( icon ) : null );
     }
 
     public String getKey()
@@ -148,11 +144,6 @@ public class ApplicationInfoJson
     public boolean getLocked()
     {
         return locked;
-    }
-
-    public boolean getSchemaModified()
-    {
-        return schemaModified;
     }
 
     public @Nullable String getIconHash()

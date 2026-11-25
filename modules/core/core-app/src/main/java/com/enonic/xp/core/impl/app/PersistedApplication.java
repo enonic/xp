@@ -41,19 +41,15 @@ final class PersistedApplication
 
     private final boolean locked;
 
-    private final boolean schemaModified;
-
     /**
      * @param codeless whether the cms descriptor ({@code cms/cms.yaml}) is persisted for the application
      */
     PersistedApplication( final Node applicationNode, final boolean codeless )
     {
         this.key = ApplicationKey.from( applicationNode.name().toString() );
-        final Instant modified = applicationNode.data().getInstant( ApplicationPropertyNames.MODIFIED_TIME );
-        this.modifiedTime = modified != null ? modified : applicationNode.getTimestamp();
+        this.modifiedTime = ApplicationHelper.modifiedTime( applicationNode ).orElseThrow();
         this.codeless = codeless;
         this.locked = ApplicationHelper.isLocked( applicationNode );
-        this.schemaModified = ApplicationHelper.isSchemaModified( applicationNode );
 
         final ApplicationDescriptor descriptor = readDescriptor( applicationNode, this.key );
         this.version = descriptor != null ? Version.parseVersion( descriptor.getVersion() ) : Version.emptyVersion;
@@ -166,11 +162,5 @@ final class PersistedApplication
     public boolean isLocked()
     {
         return this.locked;
-    }
-
-    @Override
-    public boolean isSchemaModified()
-    {
-        return this.schemaModified;
     }
 }

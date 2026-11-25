@@ -27,6 +27,5 @@ public class ApplicationMapper
         gen.value( "system", application.isSystem() );
         gen.value( "codeless", application.isCodeless() );
         gen.value( "locked", application.isLocked() );
-        gen.value( "schemaModified", application.isSchemaModified() );
     }
 }
