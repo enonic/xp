@@ -7,6 +7,7 @@ import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -14,6 +15,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ApiDescriptorServiceImplTest
     extends AbstractDescriptorServiceTest
@@ -54,6 +56,17 @@ class ApiDescriptorServiceImplTest
                 assertEquals( 2, allowedPrincipals.getSize() );
             }
         } );
+    }
+
+    @Test
+    void testGetByApplicationSkipsControllerWithoutDescriptor()
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapp1" );
+        final DescriptorKeys keys = this.service.getByApplication( key ).stream().map( ApiDescriptor::getKey ).collect( DescriptorKeys.collector() );
+
+        assertEquals( 2, keys.getSize() );
+        assertTrue( keys.contains( DescriptorKey.from( key, "api" ) ) );
+        assertTrue( keys.contains( DescriptorKey.from( key, "myapi" ) ) );
     }
 
     @Test
