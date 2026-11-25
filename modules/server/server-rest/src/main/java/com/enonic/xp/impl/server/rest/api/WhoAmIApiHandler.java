@@ -15,7 +15,6 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.ServerInfo;
-import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
@@ -65,23 +64,8 @@ public class WhoAmIApiHandler
         {
             json.put( "accessToken", map( accessToken ) );
         }
-        json.put( "server", Map.of( "version", version() ) );
+        json.put( "server", Map.of( "version", ServerInfo.get().getVersion() ) );
         return json( json );
-    }
-
-    /**
-     * The server's version. A snapshot version says little of what is running, so it is followed by the short hash of
-     * the commit it was built from, when the build recorded one: {@code 8.2.0-SNAPSHOT+b741000}.
-     */
-    private static String version()
-    {
-        final String version = VersionInfo.get().getVersion();
-        if ( !version.endsWith( "-SNAPSHOT" ) )
-        {
-            return version;
-        }
-        final String shortHash = ServerInfo.get().getBuildInfo().getShortHash();
-        return shortHash.isBlank() || "N/A".equals( shortHash ) ? version : version + "+" + shortHash;
     }
 
     private static Map<String, Object> map( final User user )
