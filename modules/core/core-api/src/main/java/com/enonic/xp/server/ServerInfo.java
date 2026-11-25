@@ -33,6 +33,23 @@ public final class ServerInfo
         return new File( this.props.getProperty( "xp.install" ) );
     }
 
+    /**
+     * The server's version as it is shown to people and to clients. A snapshot version says little of what is
+     * running, so it is followed by the short hash of the commit it was built from, when the build recorded one:
+     * {@code 8.2.0-SNAPSHOT+b741000}. A released version stands alone. {@link VersionInfo#getVersion()} is the version
+     * without the hash.
+     */
+    public String getVersion()
+    {
+        final String version = VersionInfo.get().getVersion();
+        if ( !version.endsWith( "-SNAPSHOT" ) )
+        {
+            return version;
+        }
+        final String shortHash = getBuildInfo().getShortHash();
+        return shortHash.isBlank() || "N/A".equals( shortHash ) ? version : version + "+" + shortHash;
+    }
+
     public BuildInfo getBuildInfo()
     {
         return new BuildInfo( this.props );

@@ -35,6 +35,40 @@ class ServerInfoTest
         assertNotNull( info.getBuildInfo() );
     }
 
+    private static String version( final String version, final String shortHash )
+    {
+        final Properties props = new Properties();
+        if ( shortHash != null )
+        {
+            props.put( "xp.build.shortHash", shortHash );
+        }
+        VersionInfo.set( version );
+        try
+        {
+            return new ServerInfo( props ).getVersion();
+        }
+        finally
+        {
+            VersionInfo.setDefault();
+        }
+    }
+
+    @Test
+    void aSnapshotVersionCarriesTheCommitItWasBuiltFrom()
+    {
+        assertEquals( "8.2.0-SNAPSHOT+b741000", version( "8.2.0-SNAPSHOT", "b741000" ) );
+        assertEquals( "8.2.0-SNAPSHOT", version( "8.2.0-SNAPSHOT", "N/A" ) );
+        assertEquals( "8.2.0-SNAPSHOT", version( "8.2.0-SNAPSHOT", " " ) );
+        assertEquals( "8.2.0-SNAPSHOT", version( "8.2.0-SNAPSHOT", null ) );
+    }
+
+    @Test
+    void aReleasedVersionStandsAlone()
+    {
+        assertEquals( "8.2.0", version( "8.2.0", "b741000" ) );
+        assertEquals( "8.2.0-B1", version( "8.2.0-B1", "b741000" ) );
+    }
+
     @Test
     void nameDefaults()
     {
