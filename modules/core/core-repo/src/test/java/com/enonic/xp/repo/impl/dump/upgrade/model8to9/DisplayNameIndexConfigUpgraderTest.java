@@ -93,6 +93,21 @@ class DisplayNameIndexConfigUpgraderTest
     }
 
     @Test
+    void skips_null_language_value()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( ContentPropertyNames.LANGUAGE, null );
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .id( NodeId.from( "test-node" ) )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.empty() )
+            .build();
+
+        assertThat( upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion ) ).isNull();
+    }
+
+    @Test
     void skips_non_content_node()
     {
         assertThat( upgrader.upgradeNodeVersion( DEFAULT_REPO, createNodeVersion( NodeType.DEFAULT_NODE_COLLECTION, "en",

@@ -61,6 +61,28 @@ class LanguageTagUpgraderTest
     }
 
     @Test
+    void undetermined_language_becomes_null()
+    {
+        final NodeStoreVersion nodeVersion = createNodeVersion( "und" );
+
+        final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
+
+        assertThat( result ).isNotNull();
+        assertThat( result.data().getString( ContentPropertyNames.LANGUAGE ) ).isNull();
+    }
+
+    @Test
+    void ill_formed_language_becomes_null()
+    {
+        final NodeStoreVersion nodeVersion = createNodeVersion( "123" );
+
+        final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
+
+        assertThat( result ).isNotNull();
+        assertThat( result.data().getString( ContentPropertyNames.LANGUAGE ) ).isNull();
+    }
+
+    @Test
     void skips_null_language()
     {
         final PropertyTree data = new PropertyTree();
