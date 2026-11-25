@@ -41,7 +41,7 @@ public class LanguageTagUpgrader
         final Locale locale = Locale.forLanguageTag( language.replace( '_', '-' ) );
         if ( locale.getLanguage().isEmpty() )
         {
-            data.setString( ContentPropertyNames.LANGUAGE, null );
+            data.removeProperties( ContentPropertyNames.LANGUAGE );
 
             LOG.info( "Removed undetermined language [{}] for node [{}] in repository [{}]", language, nodeVersion.id(), repositoryId );
 
