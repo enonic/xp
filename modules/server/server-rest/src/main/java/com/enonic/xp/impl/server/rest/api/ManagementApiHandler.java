@@ -57,6 +57,15 @@ public abstract class ManagementApiHandler
         routes.add( new Route( method, pattern, verb, handler ) );
     }
 
+    /**
+     * Registers a route no vhost can switch off: it has no verb, so the {@link ManagementApiPolicy} of a mapping does
+     * not apply to it.
+     */
+    protected final void route( final HttpMethod method, final String pattern, final RouteHandler handler )
+    {
+        routes.add( new Route( method, pattern, null, handler ) );
+    }
+
     @Override
     public WebResponse handle( final WebRequest request )
     {
@@ -76,8 +85,7 @@ public abstract class ManagementApiHandler
                 continue;
             }
 
-            final ManagementApiPolicy policy = ManagementApiPolicy.of( descriptorKey );
-            if ( !policy.allows( route.verb ) )
+            if ( route.verb != null && !ManagementApiPolicy.of( descriptorKey ).allows( route.verb ) )
             {
                 return error( HttpStatus.FORBIDDEN,
                               String.format( "Verb [%s] of API [%s] is not exposed on this virtual host", route.verb, descriptorKey ) );
