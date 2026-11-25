@@ -65,7 +65,7 @@ public class WhoAmIApiHandler
             json.put( "accessToken", map( accessToken ) );
         }
         json.put( "server", Map.of( "version", ServerInfo.get().getVersion() ) );
-        return json( json );
+        return WebResponse.create( json( json ) ).header( "Cache-Control", "private, no-store" ).build();
     }
 
     private static Map<String, Object> map( final User user )
