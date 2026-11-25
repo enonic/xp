@@ -40,7 +40,7 @@ public class PartDescriptorLoader
     {
         this.resourceService = resourceService;
         this.formFragmentService = formFragmentService;
-        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, PATH, true );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, PATH, false );
     }
 
     @Override

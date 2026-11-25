@@ -71,4 +71,16 @@ class PartDescriptorServiceTest
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
     }
+
+    // myapp2 ships cms/parts/other/other.js and no descriptor: the controller alone declares no part, while a part referencing it
+    // still gets the default descriptor
+    @Test
+    void controller_without_descriptor_is_not_listed()
+    {
+        assertEquals( 1, this.service.getByApplication( ApplicationKey.from( "myapp2" ) ).getSize() );
+
+        final PartDescriptor descriptor = this.service.getByKey( DescriptorKey.from( "myapp2:other" ) );
+        assertNotNull( descriptor );
+        assertEquals( "other", descriptor.getTitle() );
+    }
 }

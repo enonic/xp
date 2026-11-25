@@ -41,7 +41,7 @@ public class PageDescriptorLoader
     {
         this.resourceService = resourceService;
         this.formFragmentService = formFragmentService;
-        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, true );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
     }
 
     @Override

@@ -740,7 +740,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void install_global_persists_a_minimal_descriptor_for_a_part_declared_by_its_controller()
+    void install_global_ignores_controllers_without_descriptor()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
         final String bundleName = "my.bundle";
@@ -758,13 +758,10 @@ class ApplicationServiceImplTest
                                                          .addResource( "cms/layouts/mylayout/mylayout.js", stream( "controller" ) )
                                                          .build() ) );
 
-        // the generated descriptors parse as the schema services read them; a shipped descriptor is never replaced; a layout is
-        // never declared by its controller
+        // a controller declares nothing: only the components with a descriptor are persisted
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
-            resources -> resources.size() == 5 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) &&
+            resources -> resources.size() == 3 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) &&
                 CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
-                "kind: \"Part\"\n".equals( readResource( resources, "cms/parts/mypart.yaml" ) ) &&
-                "kind: \"Page\"\nregions: []\n".equals( readResource( resources, "cms/pages/mypage.yaml" ) ) &&
                 MACRO.equals( readResource( resources, "cms/macros/mymacro.yaml" ) ) ) );
     }
 

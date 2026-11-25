@@ -99,12 +99,6 @@ public final class SchemaResourcePaths
     // application icon in the application root, without extension: enonic or the legacy application
     public static final String APP_ICON_GROUP = "appIcon";
 
-    // folder of a controller below the cms root: parts, pages or macros
-    public static final String CONTROLLER_KIND_GROUP = "controllerKind";
-
-    // schema name of a controller: <kind>/<name>/<name>.js
-    public static final String CONTROLLER_NAME_GROUP = "controllerName";
-
     /**
      * Name of the legacy application descriptor ({@code application.yaml|yml}) and icon ({@code application.svg}) still shipped by
      * older application bundles, persisted as {@code enonic.yaml} and {@code enonic.svg}.
@@ -153,18 +147,6 @@ public final class SchemaResourcePaths
             APP_ICON_GROUP + ">" + APP_RESOURCE_NAMES + ")\\." + SVG_EXTENSION;
 
     public static final Pattern SCHEMA_RESOURCE_PATTERN = Pattern.compile( "^(?:" + CMS_RESOURCES + "|" + ROOT_RESOURCES + ")$" );
-
-    private static final String CONTROLLER_ROOTS =
-        String.join( "|", SchemaResourceNames.PART_ROOT_NAME, SchemaResourceNames.PAGE_ROOT_NAME, SchemaResourceNames.MACROS_ROOT_NAME );
-
-    /**
-     * Path of a controller standing for a descriptor: {@code cms/<kind>/<name>/<name>.js} of the kinds read from their controller
-     * when they ship no descriptor, parts, pages and macros. Not a schema resource: the controller stays in the bundle, a descriptor
-     * is persisted in its place.
-     */
-    public static final Pattern CONTROLLER_PATTERN = Pattern.compile(
-        "^" + SchemaResourceNames.CMS_ROOT_NAME + "/(?<" + CONTROLLER_KIND_GROUP + ">" + CONTROLLER_ROOTS + ")/(?<" + CONTROLLER_NAME_GROUP +
-            ">[^/]+)/\\k<" + CONTROLLER_NAME_GROUP + ">\\.js$" );
 
     private static final Pattern APP_ROOT_RESOURCE_PATTERN = Pattern.compile( "^(?:" + ROOT_RESOURCES + ")$" );
 
