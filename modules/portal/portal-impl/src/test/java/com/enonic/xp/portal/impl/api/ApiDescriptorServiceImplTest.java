@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class ApiDescriptorServiceImplTest
     extends AbstractDescriptorServiceTest
@@ -62,11 +65,14 @@ class ApiDescriptorServiceImplTest
     void testGetByApplicationSkipsControllerWithoutDescriptor()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp1" );
-        final DescriptorKeys keys = this.service.getByApplication( key ).stream().map( ApiDescriptor::getKey ).collect( DescriptorKeys.collector() );
+        final ApiDescriptorServiceImpl spy = spy( this.service );
+
+        final DescriptorKeys keys = spy.getByApplication( key ).stream().map( ApiDescriptor::getKey ).collect( DescriptorKeys.collector() );
 
         assertEquals( 2, keys.getSize() );
         assertTrue( keys.contains( DescriptorKey.from( key, "api" ) ) );
         assertTrue( keys.contains( DescriptorKey.from( key, "myapi" ) ) );
+        verify( spy, never() ).getByKey( DescriptorKey.from( key, "jsonly" ) );
     }
 
     @Test
