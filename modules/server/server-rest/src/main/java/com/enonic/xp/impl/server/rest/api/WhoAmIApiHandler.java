@@ -14,6 +14,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -22,7 +23,7 @@ import com.enonic.xp.web.WebResponse;
 
 /**
  * {@code server:whoami} - who the request is authenticated as and which XP answers: the user, the roles the request
- * holds, the access token it came with, if any, and the server's version. A client calls it to check a login and to
+ * holds, the access token it came with, if any, and the server's version, with the build's commit for a snapshot. A client calls it to check a login and to
  * learn what its credentials are good for.
  * <p>
  * Every authenticated user may call it, and no vhost can switch it off: it has no verb for a mapping to leave out.
@@ -64,8 +65,23 @@ public class WhoAmIApiHandler
         {
             json.put( "accessToken", map( accessToken ) );
         }
-        json.put( "server", Map.of( "version", VersionInfo.get().getVersion() ) );
+        json.put( "server", Map.of( "version", version() ) );
         return json( json );
+    }
+
+    /**
+     * The server's version. A snapshot version says little of what is running, so it is followed by the short hash of
+     * the commit it was built from, when the build recorded one: {@code 8.2.0-SNAPSHOT+b741000}.
+     */
+    private static String version()
+    {
+        final String version = VersionInfo.get().getVersion();
+        if ( !version.endsWith( "-SNAPSHOT" ) )
+        {
+            return version;
+        }
+        final String shortHash = ServerInfo.get().getBuildInfo().getShortHash();
+        return shortHash.isBlank() || "N/A".equals( shortHash ) ? version : version + "+" + shortHash;
     }
 
     private static Map<String, Object> map( final User user )

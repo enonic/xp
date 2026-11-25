@@ -6,6 +6,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -31,6 +33,8 @@ class WhoAmIApiHandlerTest
         .email( "alice@example.com" )
         .build();
 
+    private static final String SHORT_HASH_PROPERTY = "xp.build.shortHash";
+
     private final WhoAmIApiHandler handler = new WhoAmIApiHandler();
 
     @BeforeEach
@@ -43,6 +47,37 @@ class WhoAmIApiHandlerTest
     void tearDown()
     {
         VersionInfo.setDefault();
+        System.clearProperty( SHORT_HASH_PROPERTY );
+    }
+
+    private String version()
+        throws Exception
+    {
+        final String body = as( AuthenticationInfo.create().user( ALICE ).build() ).getBody().toString();
+        return new ObjectMapper().readTree( body ).at( "/server/version" ).asText();
+    }
+
+    @Test
+    void a_snapshot_version_carries_the_commit_it_was_built_from()
+        throws Exception
+    {
+        VersionInfo.set( "8.2.0-SNAPSHOT" );
+        System.setProperty( SHORT_HASH_PROPERTY, "b741000" );
+        assertThat( version() ).isEqualTo( "8.2.0-SNAPSHOT+b741000" );
+
+        System.setProperty( SHORT_HASH_PROPERTY, "N/A" );
+        assertThat( version() ).isEqualTo( "8.2.0-SNAPSHOT" );
+
+        System.clearProperty( SHORT_HASH_PROPERTY );
+        assertThat( version() ).isEqualTo( "8.2.0-SNAPSHOT" );
+    }
+
+    @Test
+    void a_released_version_stands_alone()
+        throws Exception
+    {
+        System.setProperty( SHORT_HASH_PROPERTY, "b741000" );
+        assertThat( version() ).isEqualTo( "8.2.0" );
     }
 
     private WebResponse as( final AuthenticationInfo authInfo )
