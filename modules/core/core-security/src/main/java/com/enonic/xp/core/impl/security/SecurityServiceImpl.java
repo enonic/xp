@@ -209,6 +209,11 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Invalid 'from' value in relationship: " + from );
         }
+        final PrincipalKey to = relationship.getTo();
+        if ( NON_MODIFIABLE_USER_PATHS.contains( to.toPath() ) && !isSuInAdministratorRole( from, to ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] cannot be added as a member", to ) );
+        }
         requireAdministratorToChangeMembers( from );
 
         callWithContext( () -> {
@@ -219,6 +224,11 @@ public final class SecurityServiceImpl
 
             return null;
         } );
+    }
+
+    private static boolean isSuInAdministratorRole( final PrincipalKey from, final PrincipalKey to )
+    {
+        return RoleKeys.ADMIN.toPath().equals( from.toPath() ) && PrincipalKey.ofSuperUser().toPath().equals( to.toPath() );
     }
 
     @Override
@@ -355,12 +365,7 @@ public final class SecurityServiceImpl
                 .login( PrincipalKey.ofSuperUser().getId() )
                 .displayName( "Super User" )
                 .build();
-            return AuthenticationInfo.create()
-                .principals( authToken.getRestriction().apply( PrincipalKeys.from( RoleKeys.ADMIN ) ) )
-                .principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
-                .restriction( authToken.getRestriction() )
-                .user( admin )
-                .build();
+            return createAuthInfo( admin, PrincipalKeys.from( RoleKeys.ADMIN ), authToken.getRestriction() );
         }
         else
         {
@@ -441,7 +446,20 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo createAuthInfo( final User user, final RoleRestriction restriction )
     {
-        final PrincipalKeys memberships = resolveMemberships( user.getKey() );
+        final NodePath userPath = user.getKey().toPath();
+        if ( PrincipalKey.ofAnonymous().toPath().equals( userPath ) )
+        {
+            return AuthenticationInfo.unAuthenticated();
+        }
+        if ( PrincipalKey.ofSuperUser().toPath().equals( userPath ) )
+        {
+            return createAuthInfo( user, PrincipalKeys.from( RoleKeys.ADMIN ), restriction );
+        }
+        return createAuthInfo( user, resolveMemberships( user.getKey() ), restriction );
+    }
+
+    private static AuthenticationInfo createAuthInfo( final User user, final PrincipalKeys memberships, final RoleRestriction restriction )
+    {
         return AuthenticationInfo.create()
             .principals( restriction.apply( memberships ) )
             .principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )

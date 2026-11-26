@@ -23,6 +23,8 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
+import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
@@ -80,6 +82,7 @@ import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -653,6 +656,99 @@ class SecurityServiceImplTest
         runAsAdmin( () -> {
             assertThrows( IllegalArgumentException.class, () -> securityService.removeRelationship(
                 PrincipalRelationship.from( RoleKeys.ADMIN ).to( PrincipalKey.ofSuperUser() ) ) );
+        } );
+    }
+
+    @Test
+    void testAddSystemUserAsMember()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey groupKey = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+            securityService.createGroup( CreateGroupParams.create().groupKey( groupKey ).displayName( "Group A" ).build() );
+
+            final List<PrincipalKey> userKeys =
+                List.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous(), PrincipalKey.from( "user:system:SU" ),
+                         PrincipalKey.from( "user:System:Anonymous" ) );
+            for ( PrincipalKey userKey : userKeys )
+            {
+                for ( PrincipalKey from : List.of( groupKey, RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ) )
+                {
+                    if ( from.equals( RoleKeys.ADMIN ) && userKey.equals( PrincipalKey.ofSuperUser() ) )
+                    {
+                        continue;
+                    }
+                    assertThatThrownBy( () -> securityService.addRelationship( PrincipalRelationship.from( from ).to( userKey ) ) )
+                        .isInstanceOf( IllegalArgumentException.class )
+                        .hasMessageContaining( "cannot be added as a member" );
+                }
+            }
+
+            assertEquals( 0, securityService.getRelationships( groupKey ).getSize() );
+            assertEquals( PrincipalKeys.from( RoleKeys.ADMIN ), securityService.getMemberships( PrincipalKey.ofSuperUser() ) );
+            assertEquals( PrincipalKeys.empty(), securityService.getMemberships( PrincipalKey.ofAnonymous() ) );
+        } );
+    }
+
+    @Test
+    void testAddSuToAdminRole()
+    {
+        runAsAdmin( () -> {
+            assertDoesNotThrow( () -> securityService.addRelationship(
+                PrincipalRelationship.from( RoleKeys.ADMIN ).to( PrincipalKey.ofSuperUser() ) ) );
+            assertEquals( PrincipalKeys.from( RoleKeys.ADMIN ), securityService.getMemberships( PrincipalKey.ofSuperUser() ) );
+        } );
+    }
+
+    @Test
+    void testRemoveStoredAnonymousMembership()
+    {
+        runAsAdmin( () -> {
+            storeMember( RoleKeys.CONTENT_MANAGER_ADMIN, PrincipalKey.ofAnonymous() );
+
+            securityService.removeRelationship( PrincipalRelationship.from( RoleKeys.CONTENT_MANAGER_ADMIN ).to( PrincipalKey.ofAnonymous() ) );
+
+            assertEquals( PrincipalKeys.empty(), securityService.getMemberships( PrincipalKey.ofAnonymous() ) );
+        } );
+    }
+
+    @Test
+    void testAuthenticateAnonymousIgnoresStoredMemberships()
+    {
+        runAsAdmin( () -> {
+            storeMember( RoleKeys.ADMIN, PrincipalKey.ofAnonymous() );
+            assertTrue( securityService.getMemberships( PrincipalKey.ofAnonymous() ).contains( RoleKeys.ADMIN ) );
+
+            final List<AuthenticationInfo> authInfos =
+                List.of( securityService.authenticate( new VerifiedUsernameAuthToken( SYSTEM, "anonymous" ) ),
+                         securityService.authenticate( new VerifiedUserKeyAuthToken( PrincipalKey.ofAnonymous() ) ) );
+            for ( AuthenticationInfo authInfo : authInfos )
+            {
+                assertFalse( authInfo.isAuthenticated() );
+                assertEquals( AuthenticationInfo.unAuthenticated().getPrincipals(), authInfo.getPrincipals() );
+            }
+        } );
+    }
+
+    @Test
+    void testAuthenticateSuIgnoresStoredMemberships()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey groupKey = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+            securityService.createGroup( CreateGroupParams.create().groupKey( groupKey ).displayName( "Group A" ).build() );
+            storeMember( groupKey, PrincipalKey.ofSuperUser() );
+            assertTrue( securityService.getMemberships( PrincipalKey.ofSuperUser() ).contains( groupKey ) );
+
+            final List<AuthenticationInfo> authInfos =
+                List.of( securityService.authenticate( new VerifiedUsernameAuthToken( SYSTEM, "su" ) ),
+                         securityService.authenticate( new VerifiedUserKeyAuthToken( PrincipalKey.ofSuperUser() ) ) );
+            for ( AuthenticationInfo authInfo : authInfos )
+            {
+                assertTrue( authInfo.isAuthenticated() );
+                assertEquals( PrincipalKey.ofSuperUser(), authInfo.getUser().getKey() );
+                assertEquals(
+                    PrincipalKeys.from( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).getSet(),
+                    authInfo.getPrincipals().getSet() );
+            }
         } );
     }
 
@@ -1552,6 +1648,15 @@ class SecurityServiceImplTest
     private <T> T runAsAdmin( Callable<T> runnable )
     {
         return adminCtx().callWith( runnable );
+    }
+
+    private void storeMember( final PrincipalKey from, final PrincipalKey member )
+    {
+        nodeService.update( UpdateNodeParams.create()
+                                 .path( from.toPath() )
+                                 .editor( editableNode -> editableNode.data.addString( "member", member.toString() ) )
+                                 .refresh( RefreshMode.ALL )
+                                 .build() );
     }
 
     private void runAsAdmin( Runnable runnable )
