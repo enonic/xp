@@ -31,7 +31,7 @@ public final class ApiDescriptorServiceImpl
     public ApiDescriptorServiceImpl( @Reference final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, ROOT_PATH, true );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, ROOT_PATH, false );
     }
 
     @Override
