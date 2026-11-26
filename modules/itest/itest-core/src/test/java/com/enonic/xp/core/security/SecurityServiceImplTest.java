@@ -673,7 +673,7 @@ class SecurityServiceImplTest
             {
                 for ( PrincipalKey from : List.of( groupKey, RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ) )
                 {
-                    if ( from.equals( RoleKeys.ADMIN ) && userKey.equals( PrincipalKey.ofSuperUser() ) )
+                    if ( from.equals( RoleKeys.ADMIN ) && userKey.toPath().equals( PrincipalKey.ofSuperUser().toPath() ) )
                     {
                         continue;
                     }
