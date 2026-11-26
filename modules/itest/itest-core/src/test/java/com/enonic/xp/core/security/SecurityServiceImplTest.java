@@ -979,6 +979,22 @@ class SecurityServiceImplTest
     }
 
     @Test
+    void testAnonymousProfileCannotBeModified()
+    {
+        runAsAdmin( () -> {
+            for ( PrincipalKey userKey : List.of( PrincipalKey.ofAnonymous(), PrincipalKey.from( "user:System:Anonymous" ) ) )
+            {
+                final UpdateUserParams profile =
+                    UpdateUserParams.create().userKey( userKey ).editor( edit -> edit.profile.setString( "dismissed", "banner" ) ).build();
+                assertThatThrownBy( () -> securityService.updateUser( profile ) ).isInstanceOf( IllegalArgumentException.class )
+                    .hasMessageContaining( "cannot be modified" );
+            }
+
+            assertFalse( securityService.getUser( PrincipalKey.ofAnonymous() ).orElseThrow().getProfile().hasProperty( "dismissed" ) );
+        } );
+    }
+
+    @Test
     void testAuthenticateDisabledUser()
     {
         runAsAdmin( () -> {

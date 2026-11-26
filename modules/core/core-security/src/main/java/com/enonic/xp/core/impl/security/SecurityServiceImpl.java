@@ -597,7 +597,7 @@ public final class SecurityServiceImpl
             final Node updatedNode =
                 nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode, current -> {
                     final User changed = updateUserParams.update( current );
-                    if ( !sameExceptProfile( current, changed ) )
+                    if ( !sameExceptProfile( current, changed ) || PrincipalKey.ofAnonymous().toPath().equals( key.toPath() ) )
                     {
                         requireModifiable( key );
                     }
