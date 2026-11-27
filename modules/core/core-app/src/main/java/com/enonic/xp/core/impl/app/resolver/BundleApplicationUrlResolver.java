@@ -68,7 +68,7 @@ public final class BundleApplicationUrlResolver
     @Override
     public Object revision()
     {
-        // the incarnation of the bundle is the revision, the stamp of the application carries it
-        return null;
+        // the bundle is immutable: an update or reinstall of the application is a new bundle, modified later
+        return bundle.getLastModified();
     }
 }

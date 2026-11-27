@@ -71,6 +71,12 @@ public class ApplicationFactoryServiceImpl
     }
 
     @Override
+    public Optional<Bundle> findBundle( final ApplicationKey applicationKey )
+    {
+        return entries( applicationKey ).findAny().map( Map.Entry::getKey );
+    }
+
+    @Override
     public ResourceSource findResourceSource( final ApplicationKey applicationKey, final String source )
     {
         // the bundle and the resolver of one entry: a bundle stopping after the lookup leaves what is derived stamped with it
@@ -90,10 +96,11 @@ public class ApplicationFactoryServiceImpl
         return new ResourceSource( bundle, resolver );
     }
 
-    // a stopped application still serves its persisted schema, the schema belongs to the installation, not to the running bundle
+    // a stopped application still serves its persisted schema, the schema belongs to the installation, not to the running bundle;
+    // a stopped local application, never persisted, serves its descriptor and icon from the bundle
     private Optional<ApplicationUrlResolver> findInactiveResolver( final ApplicationKey applicationKey )
     {
-        return entries( applicationKey ).findAny().map( Map.Entry::getKey ).map( factory::createInactiveUrlResolver );
+        return findBundle( applicationKey ).map( factory::createInactiveUrlResolver );
     }
 
     // an application created through the descriptor service has no bundle at all: its persisted descriptor and schema are served
