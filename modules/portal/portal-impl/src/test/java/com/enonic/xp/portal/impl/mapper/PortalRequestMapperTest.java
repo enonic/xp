@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.mapper;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,17 +13,26 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
+import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AccessTokenInfo;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -73,41 +83,86 @@ class PortalRequestMapperTest
     }
 
     @Test
-    void testIdProviderFlows()
+    void testIdProviderSettings()
     {
-        setIdProviderWithFlows( IdProvider.create().key( IdProviderKey.system() ).build(), Set.of( "basic", "autologin" ) );
+        final VirtualHostIdProvider settings = VirtualHostIdProvider.create().flows( Set.of( "basic", "autologin" ) ).build();
+        setIdProviderSettings( IdProvider.create().key( IdProviderKey.system() ).build(), settings, Set.of( "api" ) );
 
-        // the flow list is serialized sorted
-        assertHelper.assertJson( "request-idprovider-flows.json", new PortalRequestMapper( this.portalRequest ) );
+        // every list is serialized sorted
+        assertHelper.assertJson( "request-idprovider-settings.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
-    void testIdProviderFlows_noRestriction()
+    void testIdProviderSettings_noRestriction()
     {
-        setIdProviderWithFlows( IdProvider.create().key( IdProviderKey.system() ).build(), Set.of() );
+        setIdProviderSettings( IdProvider.create().key( IdProviderKey.system() ).build(), VirtualHostIdProvider.create().build(), Set.of() );
 
-        // no flow restriction: the property is absent and the id provider app applies its own defaults
-        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
+        // mapped with nothing set: empty flows mean no restriction, and the id provider app applies its own defaults
+        assertHelper.assertJson( "request-idprovider-settings-empty.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
-    void testIdProviderFlows_idProviderWithoutKey()
+    void testIdProviderSettings_notMapped()
     {
-        setIdProviderWithFlows( IdProvider.create().build(), Set.of( "basic" ) );
+        setIdProviderSettings( IdProvider.create().key( IdProviderKey.from( "other" ) ).build(), VirtualHostIdProvider.create().build(),
+                               Set.of() );
+        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
 
+        setIdProviderSettings( IdProvider.create().build(), VirtualHostIdProvider.create().build(), Set.of() );
+        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
+
+        this.portalRequest.setIdProvider( IdProvider.create().key( IdProviderKey.system() ).build() );
+        this.portalRequest.setVirtualHost( null );
         assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
-    private void setIdProviderWithFlows( final IdProvider idProvider, final Set<String> flows )
+    private void setIdProviderSettings( final IdProvider idProvider, final VirtualHostIdProvider settings, final Set<String> audience )
     {
         this.portalRequest.setIdProvider( idProvider );
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviders() )
-            .thenReturn( Map.of( IdProviderKey.system(), VirtualHostIdProvider.create().flows( flows ).build() ) );
+        final VirtualHostIdProvidersMapping idProviders =
+            VirtualHostIdProvidersMapping.create().addIdProviderWithSettings( IdProviderKey.system(), settings ).build();
+        this.portalRequest.setVirtualHost(
+            new VirtualHostMapping( "m", "localhost", "/", "/", idProviders, 0, Map.of(), DispatchConstants.WEB_CONNECTOR, PrincipalKeys.empty(),
+                                    audience ) );
+    }
+
+    @Test
+    void testAccessToken()
+    {
+        final User alice = User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "alice" ) ).login( "alice" ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create()
+            .user( alice )
+            .accessToken( AccessTokenInfo.create()
+                              .issuer( "xp" )
+                              .clientId( "my-cli" )
+                              .grantId( "grant-1" )
+                              .scope( Set.of( "content:write", "content:read" ) )
+                              .audience( Set.of( "api" ) )
+                              .build() )
+            .build();
+
+        ContextBuilder.create().authInfo( authInfo ).build().runWith(
+            () -> assertHelper.assertJson( "request-access-token.json", new PortalRequestMapper( this.portalRequest ) ) );
+    }
+
+    @Test
+    void testOauthConsent()
+    {
+        final Map<String, Object> context = new java.util.LinkedHashMap<>();
+        context.put( "idProvider", "system" );
+        context.put( "action", "confirm" );
+        context.put( "userCode", "BCDF-GHJK" );
+        final Map<String, Object> scope = new java.util.LinkedHashMap<>();
+        scope.put( "id", "content:read" );
+        scope.put( "roles", List.of( "role:cms.cm.app" ) );
+        scope.put( "required", true );
+        context.put( "scope", List.of( scope ) );
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        Mockito.when( rawRequest.getAttribute( OAuthHandler.CONTEXT_ATTRIBUTE ) ).thenReturn( context );
         this.portalRequest.setRawRequest( rawRequest );
+
+        assertHelper.assertJson( "request-oauth-consent.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test

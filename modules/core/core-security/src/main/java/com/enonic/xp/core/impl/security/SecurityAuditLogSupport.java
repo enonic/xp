@@ -7,6 +7,8 @@ import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.token.CreateClientParams;
+import com.enonic.xp.security.token.UpdateClientParams;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
@@ -41,4 +43,10 @@ public interface SecurityAuditLogSupport
     void removeRelationships( PrincipalKey key );
 
     void setPassword( PrincipalKey key );
+
+    void createClient( CreateClientParams params );
+
+    void updateClient( UpdateClientParams params );
+
+    void removeClient( IdProviderKey idProvider, String id );
 }

@@ -7,6 +7,7 @@ dependencies {
     testImplementation project( ':core:core-media' )
     testImplementation project( ':core:core-project' )
     testImplementation project( ':core:core-app' )
+    testImplementation project( ':core:core-shared' )
 
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )

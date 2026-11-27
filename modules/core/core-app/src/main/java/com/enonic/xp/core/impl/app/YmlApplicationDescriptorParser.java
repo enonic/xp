@@ -1,11 +1,14 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationScope;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
@@ -44,6 +47,9 @@ final class YmlApplicationDescriptorParser
 
         @JacksonInject("currentApplication")
         abstract ApplicationDescriptor.Builder key( ApplicationKey key );
+
+        @JsonProperty("scopes")
+        abstract ApplicationDescriptor.Builder scopes( List<ApplicationScope> scopes );
 
         @JsonProperty("config")
         abstract ApplicationDescriptor.Builder schemaConfig( GenericValue schemaConfig );

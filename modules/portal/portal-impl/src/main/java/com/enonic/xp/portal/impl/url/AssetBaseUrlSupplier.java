@@ -11,7 +11,6 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static java.util.Objects.requireNonNull;
 
@@ -50,7 +49,7 @@ final class AssetBaseUrlSupplier
         {
             uriBuilder.setLength( 0 );
 
-            final VirtualHost vhost = VirtualHostHelper.getVirtualHost( rawRequest );
+            final VirtualHost vhost = portalRequest.getVirtualHost();
             uriBuilder.append( vhost.getTarget() );
             UrlBuilderHelper.appendPart( uriBuilder, "_" );
             rewritingResult = ServletRequestUrlHelper.rewriteUri( rawRequest, uriBuilder.toString() );

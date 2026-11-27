@@ -13,7 +13,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true, service = StatusReporter.class)
+@Component(immediate = true, service = StatusReporter.class, property = "mount=management")
 public final class DeadlockReporter
     implements StatusReporter
 {

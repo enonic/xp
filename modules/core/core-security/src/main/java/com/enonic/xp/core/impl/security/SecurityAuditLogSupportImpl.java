@@ -17,14 +17,20 @@ import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.token.Client;
+import com.enonic.xp.security.token.CreateClientParams;
+import com.enonic.xp.security.token.UpdateClientParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(configurationPid = "com.enonic.xp.security")
@@ -61,6 +67,7 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "email", params.getEmail() );
             paramsSet.setString( "login", params.getLogin() );
             paramsSet.setString( "displayName", params.getDisplayName() );
+            paramsSet.setBoolean( "disabled", params.isDisabled() );
 
             log( "system.security.principal.create", data, AuditLogUris.from( params.getKey().toString() ) );
         }
@@ -77,6 +84,7 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "email", params.getEmail() );
             paramsSet.setString( "login", params.getLogin() );
             paramsSet.setString( "displayName", params.getDisplayName() );
+            paramsSet.setBoolean( "disabled", params.getDisabled() );
 
             log( "system.security.principal.update", data, AuditLogUris.from( params.getKey().toString() ) );
         }
@@ -152,6 +160,7 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "key", params.getKey().toString() );
             paramsSet.setString( "displayName", params.getDisplayName() );
             paramsSet.setString( "description", params.getDescription() );
+            addIdProviderBindingAndPermissions( paramsSet, params.getIdProviderConfig(), params.getIdProviderPermissions() );
 
             log( "system.security.idProvider.create", data, AuditLogUris.from( params.getKey().toString() ) );
         }
@@ -167,6 +176,7 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "key", params.getKey().toString() );
             paramsSet.setString( "displayName", params.getDisplayName() );
             paramsSet.setString( "description", params.getDescription() );
+            addIdProviderBindingAndPermissions( paramsSet, params.getIdProviderConfig(), params.getIdProviderPermissions() );
 
             log( "system.security.idProvider.update", data, AuditLogUris.from( params.getKey().toString() ) );
         }
@@ -253,6 +263,75 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "key", key.toString() );
 
             log( "system.security.principal.setPassword", data, AuditLogUris.from( key.toString() ) );
+        }
+    }
+
+    @Override
+    public void createClient( final CreateClientParams params )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final Client client = params.getClient();
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", client.getIdProvider().toString() );
+            paramsSet.setString( "id", client.getId() );
+            paramsSet.setString( "displayName", client.getDisplayName() );
+            paramsSet.addStrings( "grantTypes", client.getGrantTypes() );
+            paramsSet.addStrings( "redirectUris", client.getRedirectUris() );
+            paramsSet.addStrings( "scope", client.getScope() );
+            paramsSet.addStrings( "resource", client.getResource() );
+            paramsSet.setBoolean( "enabled", client.isEnabled() );
+
+            log( "system.security.client.create", data, AuditLogUris.from( client.getIdProvider().toString() ) );
+        }
+    }
+
+    @Override
+    public void updateClient( final UpdateClientParams params )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", params.getIdProvider().toString() );
+            paramsSet.setString( "id", params.getId() );
+
+            log( "system.security.client.update", data, AuditLogUris.from( params.getIdProvider().toString() ) );
+        }
+    }
+
+    @Override
+    public void removeClient( final IdProviderKey idProvider, final String id )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "idProvider", idProvider.toString() );
+            paramsSet.setString( "id", id );
+
+            log( "system.security.client.delete", data, AuditLogUris.from( idProvider.toString() ) );
+        }
+    }
+
+    /**
+     * Records which application the id provider is bound to and who may manage it. The config itself is left out: it may hold secrets.
+     */
+    private static void addIdProviderBindingAndPermissions( final PropertySet paramsSet, final IdProviderConfig idProviderConfig,
+                                                            final IdProviderAccessControlList permissions )
+    {
+        if ( idProviderConfig != null )
+        {
+            paramsSet.setString( "applicationKey", idProviderConfig.getApplicationKey().toString() );
+        }
+        if ( permissions != null )
+        {
+            final PropertySet permissionsSet = paramsSet.addSet( "permissions" );
+            for ( IdProviderAccessControlEntry entry : permissions )
+            {
+                permissionsSet.addString( entry.getAccess().toString(), entry.getPrincipal().toString() );
+            }
         }
     }
 

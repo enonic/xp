@@ -547,6 +547,7 @@ class NodeImporterIntegrationTest
                 .xpVersion( "1.0.0" )
                 .build()
                 .execute() );
+            writer.complete();
         }
 
         // Delete the node
@@ -606,6 +607,7 @@ class NodeImporterIntegrationTest
                 .xpVersion( "1.0.0" )
                 .build()
                 .execute() );
+            writer.complete();
         }
 
         // Delete the node
@@ -661,6 +663,7 @@ class NodeImporterIntegrationTest
                 .xpVersion( "1.0.0" )
                 .build()
                 .execute() );
+            writer.complete();
         }
 
         // Delete the tree
@@ -709,6 +712,7 @@ class NodeImporterIntegrationTest
                 .xpVersion( "1.0.0" )
                 .build()
                 .execute() );
+            writer.complete();
         }
 
         // Delete the node

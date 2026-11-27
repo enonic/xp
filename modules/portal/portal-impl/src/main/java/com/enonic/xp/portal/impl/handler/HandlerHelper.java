@@ -12,10 +12,12 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
 
 public final class HandlerHelper
 {
@@ -61,6 +63,26 @@ public final class HandlerHelper
     {
         final Collection<String> values = req.getParams().removeAll( name );
         return values.isEmpty() ? null : values.iterator().next();
+    }
+
+    public static boolean isPreflight( final WebRequest webRequest )
+    {
+        return webRequest.getMethod() == HttpMethod.OPTIONS;
+    }
+
+    /**
+     * A preflight that does not pass the access check may only be passed to a controller that exports an explicit
+     * {@code OPTIONS}/{@code options} handler. Otherwise the controller would run its {@code all} export,
+     * which may assume that the caller has already passed the access check.
+     */
+    public static boolean handlesPreflight( final ScriptExports exports )
+    {
+        return exports.hasMethod( "OPTIONS" ) || exports.hasMethod( "options" );
+    }
+
+    public static WebResponse defaultOptionsIfNotHandled( final WebResponse response )
+    {
+        return response.getStatus() == HttpStatus.METHOD_NOT_ALLOWED ? handleDefaultOptions( HttpMethod.standard() ) : response;
     }
 
     public static PortalResponse handleDefaultOptions( final EnumSet<HttpMethod> methodsAllowed )

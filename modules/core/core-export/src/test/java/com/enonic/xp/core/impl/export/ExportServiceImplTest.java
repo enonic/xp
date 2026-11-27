@@ -17,8 +17,11 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.export.ExportInfo;
+import com.enonic.xp.export.ExportNodeException;
+import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.ListExportsResult;
+import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
@@ -236,6 +239,29 @@ class ExportServiceImplTest
         assertThat( result.getImportErrors() ).isEmpty();
         assertThat( result.getAddedNodes().getSize() ).isEqualTo( 1 );
         assertThat( captor.getValue().getNode().data().getString( "controller" ) ).isEqualTo( "com.enonic.apps.genericapp:default" );
+    }
+
+    @Test
+    void exportNodes_publishesZipWhenComplete()
+    {
+        final NodeExportResult result =
+            exportService.exportNodes( ExportNodesParams.create().exportName( "new-export" ).sourceNodePath( NodePath.ROOT ).build() );
+
+        assertThat( result.getExportErrors() ).hasSize( 1 ); // mocked node service has no root node
+        assertThat( exportsDir.resolve( "new-export.zip" ) ).exists();
+        assertThat( exportsDir.resolve( "new-export.zip.partial" ) ).doesNotExist();
+    }
+
+    @Test
+    void exportNodes_failsIfExportExists()
+        throws IOException
+    {
+        createExportZip( "my-export" );
+        final byte[] existing = Files.readAllBytes( exportsDir.resolve( "my-export.zip" ) );
+
+        assertThrows( ExportNodeException.class, () -> exportService.exportNodes(
+            ExportNodesParams.create().exportName( "my-export" ).sourceNodePath( NodePath.ROOT ).build() ) );
+        assertThat( exportsDir.resolve( "my-export.zip" ) ).hasBinaryContent( existing );
     }
 
     private ArgumentCaptor<ImportNodeParams> captureImportedNode()

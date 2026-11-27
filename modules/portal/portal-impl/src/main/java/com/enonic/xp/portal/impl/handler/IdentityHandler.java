@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,11 +8,16 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.idprovider.OAuthEndpoints;
+import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
+import com.enonic.xp.portal.impl.idprovider.OAuthMetadataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
@@ -21,26 +25,33 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|authorize|token|register|\\.well-known/(?:openid-configuration|oauth-authorization-server)))?" );
 
     private final IdProviderControllerService idProviderControllerService;
 
     private final RedirectChecksumService redirectChecksumService;
 
+    private final OAuthHandler oauthHandler;
+
+    private final OAuthMetadataService oauthMetadata;
+
     @Activate
     public IdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
-                            @Reference final RedirectChecksumService redirectChecksumService )
+                            @Reference final RedirectChecksumService redirectChecksumService,
+                            @Reference final OAuthHandler oauthHandler, @Reference final OAuthMetadataService oauthMetadata )
     {
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
+        this.oauthHandler = oauthHandler;
+        this.oauthMetadata = oauthMetadata;
     }
 
     public PortalResponse handle( final WebRequest webRequest )
@@ -66,7 +77,7 @@ public class IdentityHandler
 
         final IdProviderKey idProviderKey = parseIdProviderKey( matcher.group( "idp" ) );
 
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
+        final VirtualHost virtualHost = webRequest.getVirtualHost();
 
         final VirtualHostIdProvider idProvider = virtualHost.getIdProviders().get( idProviderKey );
         if ( idProvider == null )
@@ -82,19 +93,77 @@ public class IdentityHandler
 
         String idProviderFunction = matcher.group( "fun" );
 
-        // Custom endpoints are always dispatched: the id provider app gates them itself, guided by
-        // the vhost's flow list on the request.
-        final String requiredFlow = idProviderFunction == null ? null
-            : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
-        final Set<String> flows = idProvider.getFlows();
-        if ( requiredFlow != null && !flows.isEmpty() && !flows.contains( requiredFlow ) )
+        if ( idProviderFunction != null && idProviderFunction.startsWith( ".well-known/" ) )
         {
-            throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
+            if ( !DispatchConstants.WEB_CONNECTOR.equals( webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
+            {
+                throw WebException.notFound( "OAuth metadata is served on the web endpoint only" );
+            }
+            if ( webRequest.getMethod() != HttpMethod.GET && webRequest.getMethod() != HttpMethod.HEAD )
+            {
+                throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
+            }
+            return PortalResponse.create()
+                .status( HttpStatus.OK )
+                .contentType( MediaType.JSON_UTF_8 )
+                .header( "Cache-Control", "public, max-age=300" )
+                .body( oauthMetadata.authorizationServer( webRequest, idProviderKey ) )
+                .build();
+        }
+
+        if ( OAuthEndpoints.isEndpoint( idProviderFunction ) )
+        {
+            if ( !DispatchConstants.WEB_CONNECTOR.equals( webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
+            {
+                throw WebException.notFound( "OAuth endpoints are served on the web endpoint only" );
+            }
+            final String requiredFlow = OAuthEndpoints.requiredFlow( idProviderFunction );
+            if ( requiredFlow != null )
+            {
+                requireFlow( idProvider, requiredFlow, idProviderKey );
+            }
+            else if ( OAuthEndpoints.ISSUING_FLOWS.stream().noneMatch( idProvider::serves ) )
+            {
+                throw WebException.forbidden(
+                    String.format( "No token-issuing flow %s is enabled for '%s' id provider", OAuthEndpoints.ISSUING_FLOWS,
+                                   idProviderKey ) );
+            }
+            return doHandleDevice( idProviderKey, idProviderFunction, createPortalRequest( webRequest, idProviderKey, null ), idProvider );
+        }
+
+        if ( idProviderFunction != null )
+        {
+            requireFlow( idProvider, "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN, idProviderKey );
         }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 
         return doHandle( idProviderKey, idProviderFunction, portalRequest );
+    }
+
+    private static void requireFlow( final VirtualHostIdProvider settings, final String requiredFlow, final IdProviderKey idProviderKey )
+    {
+        if ( !settings.serves( requiredFlow ) )
+        {
+            throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
+        }
+    }
+
+    @Traced("portalRequest")
+    private PortalResponse doHandleDevice( final IdProviderKey idProviderKey, final String endpoint, final PortalRequest portalRequest,
+                                           final VirtualHostIdProvider settings )
+    {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "path", portalRequest.getPath() );
+            trace.attribute( "method", portalRequest.getMethod().toString() );
+            trace.attribute( "host", portalRequest.getHost() );
+        } );
+        final PortalResponse portalResponse = oauthHandler.handle( portalRequest, idProviderKey, endpoint, settings );
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "status", portalResponse.getStatus().value() );
+            trace.attribute( "type", portalResponse.getContentType().toString() );
+        } );
+        return portalResponse;
     }
 
     @Traced("portalRequest")

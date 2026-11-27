@@ -2,16 +2,27 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.Objects;
 
+import java.util.List;
+import com.enonic.xp.audit.AuditLogUris;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.token.CreateClientParams;
+import com.enonic.xp.security.token.UpdateClientParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
@@ -19,8 +30,15 @@ import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.IdProviderAccess;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,6 +60,29 @@ class SecurityAuditLogSupportImplTest
 
         instance = new SecurityAuditLogSupportImpl( auditLogService );
         instance.activate( config );
+    }
+
+    @Test
+    void actorOfTheCallerReachesTheLog()
+    {
+        final PrincipalKey alice = PrincipalKey.from( "user:system:alice" );
+        final PrincipalKey service = PrincipalKey.from( "user:system:automation" );
+        final AuthenticationInfo acted =
+            AuthenticationInfo.create().user( User.create().key( alice ).login( "alice" ).build() ).actor( service ).build();
+        final AuthenticationInfo[] atLogTime = new AuthenticationInfo[1];
+        when( auditLogService.log( any() ) ).thenAnswer( i -> {
+            atLogTime[0] = ContextAccessor.current().getAuthInfo();
+            return null;
+        } );
+
+        ContextBuilder.create().authInfo( acted ).build().runWith( () -> instance.createUser(
+            CreateUserParams.create().userKey( PrincipalKey.from( "user:system:testUser" ) ).displayName( "d" ).login( "testUser" ).build() ) );
+
+        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 1 ) ).log( argumentCaptor.capture() );
+        assertEquals( alice, argumentCaptor.getValue().getUser() );
+        assertEquals( null, argumentCaptor.getValue().getActor() );
+        assertEquals( service, atLogTime[0].getActor(), "the serializer takes the actor from the context the writer logs under" );
     }
 
     @Test
@@ -201,6 +242,33 @@ class SecurityAuditLogSupportImplTest
     }
 
     @Test
+    void testUpdateIdProviderRecordsBindingAndPermissions()
+    {
+        final PropertyTree config = new PropertyTree();
+        config.setString( "clientSecret", "secret" );
+        instance.updateIdProvider( UpdateIdProviderParams.create()
+                                       .key( IdProviderKey.from( "corp" ) )
+                                       .displayName( "displayName" )
+                                       .idProviderConfig( IdProviderConfig.create()
+                                                              .applicationKey( ApplicationKey.from( "com.example.idp" ) )
+                                                              .config( config )
+                                                              .build() )
+                                       .permissions( IdProviderAccessControlList.of( IdProviderAccessControlEntry.create()
+                                                                                         .principal( PrincipalKey.ofRole( "corp.admins" ) )
+                                                                                         .access( IdProviderAccess.ADMINISTRATOR )
+                                                                                         .build() ) )
+                                       .build() );
+
+        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 1 ) ).log( argumentCaptor.capture() );
+
+        final PropertySet params = argumentCaptor.getValue().getData().getSet( "params" );
+        assertEquals( "com.example.idp", params.getString( "applicationKey" ) );
+        assertEquals( "role:corp.admins", params.getSet( "permissions" ).getString( "ADMINISTRATOR" ) );
+        assertFalse( argumentCaptor.getValue().getData().toString().contains( "secret" ) );
+    }
+
+    @Test
     void testRemoveIdProvider()
     {
         instance.removeIdProvider( IdProviderKey.from( "system" ) );
@@ -265,5 +333,27 @@ class SecurityAuditLogSupportImplTest
 
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.security.principal.setPassword", value.getType() );
+    }
+
+    @Test
+    void clientChangesAreLogged()
+    {
+        instance.createClient( CreateClientParams.create()
+                                   .idProvider( IdProviderKey.system() )
+                                   .id( "claude" )
+                                   .grantTypes( List.of( "authorization_code" ) )
+                                   .redirectUris( List.of( "https://claude.ai/callback" ) )
+                                   .build() );
+        instance.updateClient( UpdateClientParams.create().idProvider( IdProviderKey.system() ).id( "claude" ).editor( e -> e.enabled = false ).build() );
+        instance.removeClient( IdProviderKey.system(), "claude" );
+
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 3 ) ).log( captor.capture() );
+        assertEquals( List.of( "system.security.client.create", "system.security.client.update", "system.security.client.delete" ),
+                      captor.getAllValues().stream().map( LogAuditLogParams::getType ).toList() );
+        final PropertySet params = captor.getAllValues().get( 0 ).getData().getSet( "params" );
+        assertEquals( "claude", params.getString( "id" ) );
+        assertEquals( "https://claude.ai/callback", params.getString( "redirectUris" ) );
+        assertEquals( AuditLogUris.from( "system" ), captor.getAllValues().get( 2 ).getObjectUris() );
     }
 }

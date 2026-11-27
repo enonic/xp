@@ -94,7 +94,7 @@ class VirtualHostServiceImplTest
 
         assertMapping( mappings.get( 2 ), "c", "localhost", "/status/c", "/full/path/status/c", null, null );
 
-        assertMapping( mappings.get( 3 ), "d", "localhost", "/status/d", "/full/path/status/d", IdProviderKeys.from( "enonic.with.a.dot" ),
+        assertMapping( mappings.get( 3 ), "d", "localhost", "/status/d", "/full/path/status/d", IdProviderKeys.from( "enonic2" ),
                        IdProviderKeys.from( "enonic_disabled", "notSpecifiedProvider" ) );
     }
 

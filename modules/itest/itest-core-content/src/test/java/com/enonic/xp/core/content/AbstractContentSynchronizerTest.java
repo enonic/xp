@@ -50,6 +50,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -199,7 +200,7 @@ public abstract class AbstractContentSynchronizerTest
             passwordSecurityService.activate( securityConfig );
 
             final SecurityServiceImpl securityService =
-                new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
+                new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService, new LocalSharedMapService() );
 
             SecurityInitializer.create()
                 .setIndexService( indexService )

@@ -177,3 +177,157 @@ exports.loginWithSkipAuth = function () {
 
 };
 
+exports.loginWithRoles = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        roles: ['role:cms.project.site.viewer', 'role:system.admin']
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithActor = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        actor: 'user:enonic:automation'
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithGroupInRoles = function () {
+    auth.login({
+        user: 'user1',
+        password: 'password',
+        idProvider: 'enonic',
+        roles: ['role:cms.project.site.viewer', 'group:system:editors']
+    });
+};
+
+exports.loginWithEmptyRoles = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        roles: []
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithAccessToken = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        accessToken: {
+            issuer: 'https://issuer.example',
+            clientId: 'cli',
+            scope: ['content:read', 'profile', 'unknown'],
+            audience: ['xp-api']
+        }
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithAccessTokenWithoutScopes = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        accessToken: {
+            issuer: 'https://issuer.example',
+            clientId: 'cli',
+            audience: ['xp-api']
+        }
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithAccessTokenAndRoles = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        roles: ['role:cms.project.site.viewer'],
+        accessToken: {
+            issuer: 'https://issuer.example',
+            scope: ['content:read'],
+            audience: ['xp-api']
+        }
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithAccessTokenForAnotherAudience = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        accessToken: {
+            issuer: 'https://issuer.example',
+            audience: ['someone-else']
+        }
+    });
+
+    t.assertFalse(result.authenticated);
+    t.assertEquals('Token audience not accepted here', result.message);
+};
+
+exports.loginWithAccessTokenForXp = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        accessToken: {
+            issuer: 'https://issuer.example',
+            clientId: 'cli',
+            audience: ['xp']
+        }
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithAccessTokenWithoutAudience = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        accessToken: {
+            issuer: 'https://issuer.example',
+            clientId: 'cli'
+        }
+    });
+
+    t.assertFalse(result.authenticated);
+    t.assertEquals('Token audience not accepted here', result.message);
+};
+
+exports.loginWithAccessTokenWithoutIssuer = function () {
+    auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        accessToken: {
+            scope: ['content:read']
+        }
+    });
+};

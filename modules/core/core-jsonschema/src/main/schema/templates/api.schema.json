@@ -38,6 +38,14 @@
         ]
       }
     },
+    "scopes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[\\x21\\x23-\\x5B\\x5D-\\x7E]+$"
+      }
+    },
     "config": {
       "$ref": "#/$defs/genericValueDef"
     }

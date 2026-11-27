@@ -971,7 +971,7 @@ class ApplicationServiceImplTest
     {
         Event thisObject;
 
-        public ApplicationEventMatcher( Event thisObject )
+        ApplicationEventMatcher( Event thisObject )
         {
             this.thisObject = thisObject;
         }

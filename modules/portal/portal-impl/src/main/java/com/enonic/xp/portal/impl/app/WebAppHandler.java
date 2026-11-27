@@ -110,7 +110,7 @@ public final class WebAppHandler
         if ( sseConfig != null )
         {
             final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript, applicationKey );
-            this.sseManager.setupSse( req, sseEndpoint );
+            this.sseManager.setupSse( req, res, sseEndpoint );
         }
 
         return res;

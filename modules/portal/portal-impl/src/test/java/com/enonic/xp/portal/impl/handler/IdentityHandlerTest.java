@@ -1,10 +1,12 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
+import com.enonic.xp.portal.impl.idprovider.OAuthMetadataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
@@ -21,11 +25,12 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,6 +49,10 @@ class IdentityHandlerTest
     String virtualHostKey;
 
     RedirectChecksumService redirectChecksumService;
+
+    OAuthHandler oauthHandler;
+
+    OAuthMetadataService oauthMetadata;
 
     @BeforeEach
     public final void setup()
@@ -70,8 +79,10 @@ class IdentityHandlerTest
         } );
 
         redirectChecksumService = mock( RedirectChecksumService.class );
+        oauthHandler = mock( OAuthHandler.class );
 
-        this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService );
+        this.oauthMetadata = mock( OAuthMetadataService.class );
+        this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService, oauthHandler, oauthMetadata );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider" );
@@ -83,6 +94,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider() ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        this.request.setVirtualHost( virtualHost );
     }
 
     @Test
@@ -92,7 +104,7 @@ class IdentityHandlerTest
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler = new IdentityHandler( idProviderControllerService, mock() );
+        this.handler = new IdentityHandler( idProviderControllerService, mock(), mock(), mock() );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -197,7 +209,7 @@ class IdentityHandlerTest
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.from( "otherEnabledIdProvider" ), idProvider() ) );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
+        this.request.setVirtualHost( initVirtualHost( rawRequest, virtualHost ) );
 
         try
         {
@@ -216,10 +228,12 @@ class IdentityHandlerTest
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviders() ).thenReturn(
             Map.of( IdProviderKey.from( "otherEnabledIdProvider" ), idProvider(), IdProviderKey.from( "myidprovider" ), idProvider() ) );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
+        this.request.setVirtualHost( initVirtualHost( rawRequest, virtualHost ) );
 
         final WebResponse portalResponse = this.handler.handle( this.request );
 
@@ -229,19 +243,15 @@ class IdentityHandlerTest
 
     @Test
     void testHandleWithEmptyVirtualHostIdProviderConfig()
-        throws Exception
     {
-        final HttpServletRequest rawRequest = this.request.getRawRequest();
-
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getIdProviders() ).thenReturn( Map.of() );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, virtualHost );
+        this.request.setVirtualHost( virtualHost );
 
-        final WebResponse portalResponse = this.handler.handle( this.request );
-
-        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
+        // a host that enables no id provider serves none of them
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( "'myidprovider' id provider is forbidden", e.getMessage() );
     }
 
     @Test
@@ -257,6 +267,7 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviders() )
             .thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.AUTOLOGIN, IdProviderFlow.LOGOUT ) ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
 
         // the custom endpoints are always dispatched - the id provider app governs them itself
         final WebResponse portalResponse = this.handler.handle( this.request );
@@ -288,6 +299,7 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviders() )
             .thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
 
         // the interactive surface still works
         final WebResponse portalResponse = this.handler.handle( this.request );
@@ -324,7 +336,7 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider() ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
+        this.request.setVirtualHost( initVirtualHost( rawRequest, virtualHost ) );
 
         this.request.setRawPath( "/_/idprovider/myidprovider/login" );
 
@@ -346,9 +358,168 @@ class IdentityHandlerTest
 
         return virtualHost;
     }
+    @Test
+    void testDeviceEndpoints_routedToOAuthHandler()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final PortalResponse deviceResponse = PortalResponse.create().status( HttpStatus.OK ).build();
+        when( oauthHandler.handle( Mockito.any(), Mockito.eq( IdProviderKey.from( "myidprovider" ) ), Mockito.anyString(),
+                                         Mockito.any() ) ).thenReturn( deviceResponse );
+
+        for ( String endpoint : new String[]{"device/code", "device", "authorize", "token", "register"} )
+        {
+            this.request.setMethod( HttpMethod.POST );
+            this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/" + endpoint );
+            assertEquals( deviceResponse, this.handler.handle( this.request ) );
+            assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
+        }
+        final ArgumentCaptor<String> endpoints = ArgumentCaptor.forClass( String.class );
+        Mockito.verify( oauthHandler, Mockito.times( 5 ) ).handle( Mockito.any(), Mockito.any(), endpoints.capture(), Mockito.any() );
+        assertEquals( List.of( "device/code", "device", "authorize", "token", "register" ), endpoints.getAllValues() );
+        Mockito.verify( redirectChecksumService, Mockito.never() ).verifyChecksum( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    void testDeviceEndpoints_gatedByFlows()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
+        this.request.setMethod( HttpMethod.POST );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( "'device' flow is disabled for 'myidprovider' id provider", ex.getMessage() );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/token" );
+        ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertTrue( ex.getMessage().startsWith( "No token-issuing flow [" ), ex.getMessage() );
+        assertTrue( ex.getMessage().endsWith( "] is enabled for 'myidprovider' id provider" ), ex.getMessage() );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/authorize" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessage( "'code' flow is disabled for 'myidprovider' id provider" );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/register" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessage( "'register' flow is disabled for 'myidprovider' id provider" );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/token" );
+        Mockito.verifyNoInteractions( oauthHandler );
+
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.DEVICE ) ) );
+        when( oauthHandler.handle( Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any() ) )
+            .thenReturn( PortalResponse.create().build() );
+        assertNotNull( this.handler.handle( this.request ) );
+        final ArgumentCaptor<VirtualHostIdProvider> settings = ArgumentCaptor.forClass( VirtualHostIdProvider.class );
+        Mockito.verify( oauthHandler ).handle( Mockito.any(), Mockito.eq( myIdProvider ), Mockito.eq( "token" ), settings.capture() );
+        assertEquals( Set.of( IdProviderFlow.DEVICE ), settings.getValue().getFlows() );
+    }
+
+    @Test
+    void testDeviceEndpoints_onlyForIdProvidersTheVhostMaps()
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider() ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
+        this.request.setMethod( HttpMethod.POST );
+
+        for ( String endpoint : new String[]{"device/code", "device", "authorize", "token", "register"} )
+        {
+            this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/" + endpoint );
+            assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+                .hasMessage( "'myidprovider' id provider is forbidden" );
+        }
+        Mockito.verifyNoInteractions( oauthHandler );
+    }
+
+    @Test
+    void testDeviceEndpoints_webConnectorOnly()
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+        this.request.setMethod( HttpMethod.POST );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        Mockito.verifyNoInteractions( oauthHandler );
+    }
+
+    @Test
+    void testAuthorizationServerMetadata_webConnectorOnly()
+    {
+        when( this.request.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        this.request.setMethod( HttpMethod.GET );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/.well-known/oauth-authorization-server" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessageContaining( "web endpoint only" );
+    }
+
+    @Test
+    void testAuthorizationServerMetadata_underTheIssuer()
+        throws Exception
+    {
+        when( this.request.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( oauthMetadata.authorizationServer( Mockito.any(), Mockito.eq( IdProviderKey.from( "myidprovider" ) ) ) )
+            .thenReturn( Map.of( "issuer", "x" ) );
+        for ( String document : new String[]{".well-known/openid-configuration", ".well-known/oauth-authorization-server"} )
+        {
+            this.request.setMethod( HttpMethod.GET );
+            this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/" + document );
+            final PortalResponse response = this.handler.handle( this.request );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+            assertEquals( Map.of( "issuer", "x" ), response.getBody() );
+        }
+        this.request.setMethod( HttpMethod.POST );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOfSatisfying( WebException.class, e -> assertEquals(
+            HttpStatus.METHOD_NOT_ALLOWED, e.getStatus() ) );
+        Mockito.verifyNoInteractions( oauthHandler );
+    }
+
     private static VirtualHostIdProvider idProvider( final String... flows )
     {
-        return VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();
+        return flows.length == 0 ? VirtualHostIdProvider.create().allFlows().build() : VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();
+    }
+
+    @Test
+    void testDeviceEndpoints_offWithoutAFlowList()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.from( "myidprovider" ), VirtualHostIdProvider.create().build() ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
+        this.request.setMethod( HttpMethod.POST );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessage( "'device' flow is disabled for 'myidprovider' id provider" );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/token" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessageStartingWith( "No token-issuing flow [" );
+        Mockito.verifyNoInteractions( oauthHandler );
+
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.from( "myidprovider" ), idProvider() ) );
+        when( oauthHandler.handle( Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( PortalResponse.create().build() );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        this.handler.handle( this.request );
+        Mockito.verify( oauthHandler ).handle( Mockito.any(), Mockito.any(), Mockito.eq( "device/code" ), Mockito.any() );
     }
 
 }

@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MetricsReporterTest
     extends BaseReporterTest<MetricsReporter>
 {
-    public MetricsReporterTest()
+    MetricsReporterTest()
     {
         super( "metrics", MediaType.parse( "application/openmetrics-text; version=1.0.0; charset=utf-8" ));
     }

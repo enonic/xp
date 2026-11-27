@@ -41,6 +41,13 @@ export interface UserWithProfile<Profile extends Record<string, unknown> = Recor
     profile?: Profile;
 }
 
+export interface LoginAccessToken {
+    issuer: string;
+    clientId?: string;
+    scope?: string[];
+    audience?: string[];
+}
+
 export interface LoginParams {
     user: string;
     skipAuth?: boolean;
@@ -48,6 +55,9 @@ export interface LoginParams {
     idProvider?: string;
     scope?: LoginScopeType;
     sessionTimeout?: number;
+    roles?: RoleKey[];
+    actor?: PrincipalKey;
+    accessToken?: LoginAccessToken;
 }
 
 export interface LoginWithoutPasswordParams {
@@ -55,6 +65,9 @@ export interface LoginWithoutPasswordParams {
     idProvider?: string;
     scope?: LoginScopeType;
     sessionTimeout?: number;
+    roles?: RoleKey[];
+    actor?: PrincipalKey;
+    accessToken?: LoginAccessToken;
 }
 
 export interface LoginResult {
@@ -75,6 +88,18 @@ interface LoginHandler {
     setScope(value: LoginScopeType): void;
 
     setSessionTimeout(value: number | null): void;
+
+    setRoles(value: RoleKey[] | null): void;
+
+    setActor(value: PrincipalKey | null): void;
+
+    setTokenIssuer(value: string | null): void;
+
+    setTokenClientId(value: string | null): void;
+
+    setTokenScope(value: string[] | null): void;
+
+    setTokenAudience(value: string[] | null): void;
 
     login(): LoginResult;
 }
@@ -97,6 +122,13 @@ const isLoginParams = (params: unknown): params is LoginParams =>
  * @param {('SESSION'|'REQUEST'|'NONE')} [params.scope=SESSION] The scope of this login. Two values are valid. SESSION logs the user in and creates a session in XP for use in future requests. REQUEST logs the user in but only for this particular request and thus does not create a session.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
+ * @param {string[]} [params.roles] Restricts the login to these roles: the user gets only those of them they hold, directly or through a group. Groups are never kept. An empty list leaves only the user's own key and the roles every authenticated user has. Omit for no restriction. A SESSION login keeps the result for the session's lifetime.
+ * @param {string} [params.actor] The principal acting on the user's behalf, such as a service logging a user in for a call it makes for them. Recorded next to the user in the audit log.
+ * @param {object} [params.accessToken] An access token from another issuer, already verified by the caller. XP checks its audience against the virtual host and exposes it as `request.accessToken`.
+ * @param {string} params.accessToken.issuer The token's issuer.
+ * @param {string} [params.accessToken.clientId] The client the token was issued to.
+ * @param {string[]} [params.accessToken.scope] The token's scopes. An API that accepts scopes refuses the token when it carries none of them; elsewhere the scopes are the controller's to check, with `hasScope`.
+ * @param {string[]} [params.accessToken.audience] The token's audiences. One of them must be declared by the virtual host, or the login is refused.
  * @returns {LoginResult} Information for logged-in user.
  */
 export function login(params: LoginParams | LoginWithoutPasswordParams): LoginResult {
@@ -106,6 +138,9 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
         idProvider,
         scope = 'SESSION',
         sessionTimeout,
+        roles,
+        actor,
+        accessToken,
     } = params ?? {};
 
     const bean: LoginHandler = __.newBean<LoginHandler>('com.enonic.xp.lib.auth.LoginHandler');
@@ -125,7 +160,14 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
         }
     }
     bean.setIdProvider(__.nullOrValue(idProvider));
-
+    bean.setRoles(__.nullOrValue(roles));
+    bean.setActor(__.nullOrValue(actor));
+    if (accessToken) {
+        bean.setTokenIssuer(checkRequired(accessToken, 'issuer'));
+        bean.setTokenClientId(__.nullOrValue(accessToken.clientId));
+        bean.setTokenScope(__.nullOrValue(accessToken.scope));
+        bean.setTokenAudience(__.nullOrValue(accessToken.audience));
+    }
 
     return __.toNativeObject(bean.login());
 }
@@ -179,6 +221,31 @@ export function getUser(params?: GetUserParams): User | null {
     bean.setIncludeProfile(includeProfile);
 
     return __.toNativeObject(bean.getUser());
+}
+
+interface HasScopeHandler {
+    setScope(value: string): void;
+
+    hasScope(): boolean;
+}
+
+/**
+ * Checks if the request may use a scope: its access token was granted the scope, or a scope that
+ * includes it. A request that carries no access token, such as one of a signed-in session, is not
+ * limited by scopes, so the answer is true.
+ *
+ * @example-ref examples/auth/hasScope.js
+ *
+ * @param {string} scope The scope's id: a name of XP's, such as `read:content`, or `<application>:<name>`.
+ * @returns {boolean} True if the request may use the scope, false otherwise.
+ */
+export function hasScope(scope: string): boolean {
+    checkRequiredArg(scope, 'scope');
+    const bean: HasScopeHandler = __.newBean<HasScopeHandler>('com.enonic.xp.lib.auth.HasScopeHandler');
+
+    bean.setScope(scope);
+
+    return bean.hasScope();
 }
 
 interface HasRoleHandler {
@@ -235,7 +302,7 @@ interface ChangePasswordHandler {
 }
 
 /**
- * Changes or clears password for specified user.
+ * Changes or clears password for specified user. The password of the super user and the anonymous user cannot be changed.
  *
  * @example-ref examples/auth/changePassword.js
  *
@@ -341,6 +408,7 @@ export interface CreateUserParams {
     displayName?: string;
     idProvider: string;
     email?: string;
+    disabled?: boolean;
 }
 
 interface CreateUserHandler {
@@ -351,6 +419,8 @@ interface CreateUserHandler {
     setDisplayName(value: string | null): void;
 
     setEmail(value: string | null): void;
+
+    setDisabled(value: boolean | null): void;
 
     createUser(): User;
 }
@@ -365,6 +435,7 @@ interface CreateUserHandler {
  * @param {string} params.name User login name to set.
  * @param {string} [params.displayName] User display name.
  * @param {string} [params.email] User email.
+ * @param {boolean} [params.disabled=false] Whether the user is disabled. A disabled user cannot log in.
  * @returns {User} The created user.
  */
 export function createUser(params: CreateUserParams): User {
@@ -377,6 +448,7 @@ export function createUser(params: CreateUserParams): User {
     bean.setName(name);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setEmail(__.nullOrValue(params.email));
+    bean.setDisabled(__.nullOrValue(params.disabled));
 
     return __.toNativeObject(bean.createUser());
 }
@@ -401,7 +473,9 @@ interface ModifyUserHandler {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user to modify.
- * @param {function} params.editor User editor function to apply to user.
+ * @param {function} params.editor User editor function to apply to user. It may change
+ * `displayName`, `email` and `disabled`; a disabled user cannot log in.
+ * The super user and the anonymous user cannot be modified; their profile can, with `modifyProfile`.
  * @returns {User | null} The updated user, or null if user not found.
  */
 export function modifyUser(params: ModifyUserParams): User | null {
@@ -995,4 +1069,308 @@ export function getIdProviders(): IdProvider[] {
     const bean: GetIdProvidersHandler = __.newBean<GetIdProvidersHandler>('com.enonic.xp.lib.auth.GetIdProvidersHandler');
 
     return __.toNativeObject(bean.getIdProviders());
+}
+
+/**
+ * A client registered with an ID provider: its name and links for the consent page, the grant
+ * types it may use, its redirect URIs, and the most scopes and audiences it may ask for.
+ */
+export interface Client {
+    /** The ID provider the client belongs to. */
+    idProvider: string;
+    /** The client id, as the client sends it in `client_id`. */
+    id: string;
+    /** The name the consent page shows; the id when none was given. */
+    displayName: string;
+    /** The client's home page. */
+    uri?: string;
+    /** The client's logo. */
+    logoUri?: string;
+    /** The client's privacy policy. */
+    policyUri?: string;
+    /** The client's terms of service. */
+    tosUri?: string;
+    /** The grant types the client may use, sorted. A flow it does not list is refused to it. */
+    grantTypes: string[];
+    /** The redirect URIs the client may be sent an authorization code to, sorted; matched exactly. */
+    redirectUris: string[];
+    /** The most scopes the client may ask for, sorted, and what it gets when it names none. Empty means any. */
+    scope: string[];
+    /** The most audiences the client may ask for, sorted, and what it gets when it names none. Empty means any. */
+    resource: string[];
+    /** How long a grant to the client lives, as an ISO 8601 duration; absent for the configured default. */
+    grantTtl?: string;
+    /** Whether the client may obtain tokens. A disabled client gets no new grant and cannot refresh. */
+    enabled: boolean;
+}
+
+export interface CreateClientParams {
+    idProvider: string;
+    id: string;
+    displayName?: string;
+    uri?: string;
+    logoUri?: string;
+    policyUri?: string;
+    tosUri?: string;
+    grantTypes?: string[];
+    redirectUris?: string[];
+    scope?: string[];
+    resource?: string[];
+    grantTtl?: string;
+    enabled?: boolean;
+}
+
+interface CreateClientHandler {
+    setIdProvider(value: string): void;
+
+    setId(value: string): void;
+
+    setDisplayName(value: string | null): void;
+
+    setUri(value: string | null): void;
+
+    setLogoUri(value: string | null): void;
+
+    setPolicyUri(value: string | null): void;
+
+    setTosUri(value: string | null): void;
+
+    setGrantTypes(value: string[] | null): void;
+
+    setRedirectUris(value: string[] | null): void;
+
+    setScope(value: string[] | null): void;
+
+    setResource(value: string[] | null): void;
+
+    setGrantTtl(value: string | null): void;
+
+    setEnabled(value: boolean): void;
+
+    createClient(): Client;
+}
+
+/**
+ * Registers a client with an ID provider. The caller must be allowed to administer the ID provider.
+ *
+ * @example-ref examples/auth/createClient.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider to register the client with.
+ * @param {string} params.id The client id, as the client will send it; a valid node name.
+ * @param {string} [params.displayName] The name the consent page shows. Defaults to the id.
+ * @param {string} [params.uri] The client's home page.
+ * @param {string} [params.logoUri] The client's logo.
+ * @param {string} [params.policyUri] The client's privacy policy.
+ * @param {string} [params.tosUri] The client's terms of service.
+ * @param {string[]} [params.grantTypes] The grant types the client may use: `urn:ietf:params:oauth:grant-type:device_code`, `authorization_code`, `refresh_token`. A flow not listed is refused to it.
+ * @param {string[]} [params.redirectUris] The redirect URIs the client may be sent an authorization code to; matched exactly.
+ * @param {string[]} [params.scope] The most scopes the client may ask for, and what it gets when it names none. Omit for any declared scope.
+ * @param {string[]} [params.resource] The most audiences the client may ask for, and what it gets when it names none. Omit for any XP serves.
+ * @param {string} [params.grantTtl] How long a grant to the client lives, as an ISO 8601 duration such as `P30D`. Omit for the configured default.
+ * @param {boolean} [params.enabled=true] Whether the client may obtain tokens.
+ * @returns {Client} The registered client.
+ */
+export function createClient(params: CreateClientParams): Client {
+    const idProvider = checkRequired(params, 'idProvider');
+    const id = checkRequired(params, 'id');
+
+    const bean: CreateClientHandler = __.newBean<CreateClientHandler>('com.enonic.xp.lib.auth.CreateClientHandler');
+
+    bean.setIdProvider(idProvider);
+    bean.setId(id);
+    bean.setDisplayName(__.nullOrValue(params.displayName));
+    bean.setUri(__.nullOrValue(params.uri));
+    bean.setLogoUri(__.nullOrValue(params.logoUri));
+    bean.setPolicyUri(__.nullOrValue(params.policyUri));
+    bean.setTosUri(__.nullOrValue(params.tosUri));
+    bean.setGrantTypes(__.nullOrValue(params.grantTypes));
+    bean.setRedirectUris(__.nullOrValue(params.redirectUris));
+    bean.setScope(__.nullOrValue(params.scope));
+    bean.setResource(__.nullOrValue(params.resource));
+    bean.setGrantTtl(__.nullOrValue(params.grantTtl));
+    bean.setEnabled(params.enabled !== false);
+
+    return __.toNativeObject(bean.createClient());
+}
+
+export interface ModifyClientParams {
+    idProvider: string;
+    id: string;
+    displayName?: string | null;
+    uri?: string | null;
+    logoUri?: string | null;
+    policyUri?: string | null;
+    tosUri?: string | null;
+    grantTypes?: string[];
+    redirectUris?: string[];
+    scope?: string[];
+    resource?: string[];
+    grantTtl?: string | null;
+    enabled?: boolean;
+}
+
+interface ModifyClientHandler {
+    setIdProvider(value: string): void;
+
+    setId(value: string): void;
+
+    setDisplayName(value: string | null): void;
+
+    setUri(value: string | null): void;
+
+    setLogoUri(value: string | null): void;
+
+    setPolicyUri(value: string | null): void;
+
+    setTosUri(value: string | null): void;
+
+    setGrantTypes(value: string[]): void;
+
+    setRedirectUris(value: string[]): void;
+
+    setScope(value: string[]): void;
+
+    setResource(value: string[]): void;
+
+    setGrantTtl(value: string | null): void;
+
+    setEnabled(value: boolean): void;
+
+    modifyClient(): Client | null;
+}
+
+/**
+ * Changes a client. A property left out keeps its value; the name, the links and `grantTtl` set to
+ * null are cleared; a list given replaces the current one, and an empty list lifts a limit. The
+ * caller must be allowed to administer the ID provider.
+ *
+ * @example-ref examples/auth/modifyClient.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider the client belongs to.
+ * @param {string} params.id The client to change.
+ * @param {string|null} [params.displayName] A new name, or null to fall back to the id.
+ * @param {string|null} [params.uri] A new home page, or null to remove it.
+ * @param {string|null} [params.logoUri] A new logo, or null to remove it.
+ * @param {string|null} [params.policyUri] A new privacy policy, or null to remove it.
+ * @param {string|null} [params.tosUri] New terms of service, or null to remove them.
+ * @param {string[]} [params.grantTypes] The grant types the client may use.
+ * @param {string[]} [params.redirectUris] The redirect URIs.
+ * @param {string[]} [params.scope] The most scopes the client may ask for; empty for any.
+ * @param {string[]} [params.resource] The most audiences the client may ask for; empty for any.
+ * @param {string|null} [params.grantTtl] A new grant lifetime, or null for the configured default.
+ * @param {boolean} [params.enabled] Whether the client may obtain tokens.
+ * @returns {Client|null} The changed client, or null when the ID provider has no such client.
+ */
+export function modifyClient(params: ModifyClientParams): Client | null {
+    const idProvider = checkRequired(params, 'idProvider');
+    const id = checkRequired(params, 'id');
+
+    const bean: ModifyClientHandler = __.newBean<ModifyClientHandler>('com.enonic.xp.lib.auth.ModifyClientHandler');
+
+    bean.setIdProvider(idProvider);
+    bean.setId(id);
+    if ('displayName' in params) {
+        bean.setDisplayName(__.nullOrValue(params.displayName));
+    }
+    if ('uri' in params) {
+        bean.setUri(__.nullOrValue(params.uri));
+    }
+    if ('logoUri' in params) {
+        bean.setLogoUri(__.nullOrValue(params.logoUri));
+    }
+    if ('policyUri' in params) {
+        bean.setPolicyUri(__.nullOrValue(params.policyUri));
+    }
+    if ('tosUri' in params) {
+        bean.setTosUri(__.nullOrValue(params.tosUri));
+    }
+    if (params.grantTypes != null) {
+        bean.setGrantTypes(params.grantTypes);
+    }
+    if (params.redirectUris != null) {
+        bean.setRedirectUris(params.redirectUris);
+    }
+    if (params.scope != null) {
+        bean.setScope(params.scope);
+    }
+    if (params.resource != null) {
+        bean.setResource(params.resource);
+    }
+    if ('grantTtl' in params) {
+        bean.setGrantTtl(__.nullOrValue(params.grantTtl));
+    }
+    if (params.enabled != null) {
+        bean.setEnabled(params.enabled);
+    }
+
+    return __.toNativeObject(bean.modifyClient());
+}
+
+export interface GetClientsParams {
+    idProvider: string;
+}
+
+interface GetClientsHandler {
+    setIdProvider(value: string): void;
+
+    getClients(): Client[];
+}
+
+/**
+ * Returns an ID provider's registered clients, by id.
+ *
+ * @example-ref examples/auth/getClients.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider.
+ * @returns {Client[]} The clients; empty when the ID provider has none, or does not exist.
+ */
+export function getClients(params: GetClientsParams): Client[] {
+    const idProvider = checkRequired(params, 'idProvider');
+
+    const bean: GetClientsHandler = __.newBean<GetClientsHandler>('com.enonic.xp.lib.auth.GetClientsHandler');
+
+    bean.setIdProvider(idProvider);
+
+    return __.toNativeObject(bean.getClients());
+}
+
+export interface DeleteClientParams {
+    idProvider: string;
+    id: string;
+}
+
+interface DeleteClientHandler {
+    setIdProvider(value: string): void;
+
+    setId(value: string): void;
+
+    deleteClient(): boolean;
+}
+
+/**
+ * Removes a client from an ID provider. Grants to the client stay and keep refreshing, as a client
+ * without a record may: to stop them, revoke them, or keep the client disabled instead of removing
+ * it. The Enonic CLI, which XP registers itself, can be disabled but not removed.
+ * The caller must be allowed to administer the ID provider.
+ *
+ * @example-ref examples/auth/deleteClient.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.idProvider The ID provider the client belongs to.
+ * @param {string} params.id The client to remove.
+ * @returns {boolean} True when the client was removed, false when the ID provider had no such client.
+ */
+export function deleteClient(params: DeleteClientParams): boolean {
+    const idProvider = checkRequired(params, 'idProvider');
+    const id = checkRequired(params, 'id');
+
+    const bean: DeleteClientHandler = __.newBean<DeleteClientHandler>('com.enonic.xp.lib.auth.DeleteClientHandler');
+
+    bean.setIdProvider(idProvider);
+    bean.setId(id);
+
+    return bean.deleteClient();
 }

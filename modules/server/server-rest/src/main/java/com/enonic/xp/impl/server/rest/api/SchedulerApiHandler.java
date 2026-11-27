@@ -21,7 +21,7 @@ import com.enonic.xp.web.WebResponse;
 /**
  * {@code server:scheduler} - scheduled jobs: list and get.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:scheduler", "title=Scheduler API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:scheduler", "scopes=read:system", "scopes=system", "title=Scheduler API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class SchedulerApiHandler
     extends ManagementApiHandler

@@ -66,7 +66,7 @@ class FilterScriptImplTest
 
     protected ContentService contentService;
 
-    public FilterScriptImplTest()
+    FilterScriptImplTest()
     {
     }
 

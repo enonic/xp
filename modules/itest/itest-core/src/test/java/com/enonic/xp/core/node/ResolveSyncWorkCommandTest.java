@@ -1362,7 +1362,7 @@ class ResolveSyncWorkCommandTest
 
         private final NodeId nodeId;
 
-        public ExpectedNode( final NodeId nodeId, final Reason reason )
+        ExpectedNode( final NodeId nodeId, final Reason reason )
         {
             this.reason = reason;
             this.nodeId = nodeId;

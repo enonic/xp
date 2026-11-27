@@ -41,6 +41,7 @@ public final class EditableUser
             .displayName( displayName )
             .email( email )
             .login( login )
+            .disabled( loginDisabled )
             .key( key )
             .modifiedTime( modifiedTime )
             .profile( profile )

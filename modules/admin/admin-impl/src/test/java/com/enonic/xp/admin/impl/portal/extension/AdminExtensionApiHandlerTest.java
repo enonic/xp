@@ -16,7 +16,9 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +45,8 @@ class AdminExtensionApiHandlerTest
 
     private AdminToolDescriptorService adminToolDescriptorService;
 
+    private ScriptExports scriptExports;
+
     @BeforeEach
     void setUp()
     {
@@ -49,8 +54,13 @@ class AdminExtensionApiHandlerTest
         this.extensionDescriptorService = mock( AdminExtensionDescriptorService.class );
         this.adminToolDescriptorService = mock( AdminToolDescriptorService.class );
 
+        this.scriptExports = mock( ScriptExports.class );
+        final PortalScriptService scriptService = mock( PortalScriptService.class );
+        when( scriptService.execute( any( ResourceKey.class ) ) ).thenReturn( this.scriptExports );
+
         this.handler =
-            new AdminExtensionApiHandler( this.extensionDescriptorService, this.controllerScriptFactory, this.adminToolDescriptorService );
+            new AdminExtensionApiHandler( this.extensionDescriptorService, this.controllerScriptFactory, this.adminToolDescriptorService,
+                                          scriptService );
     }
 
 
@@ -115,6 +125,61 @@ class AdminExtensionApiHandlerTest
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+    }
+
+    @Test
+    void testOptionsOfProtectedExtensionReachesTheOptionsExport()
+    {
+        // a CORS preflight is sent without credentials and must not be rejected by the access check
+        final ControllerScript controllerScript = protectedExtension();
+        when( scriptExports.hasMethod( "OPTIONS" ) ).thenReturn( true );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().status( HttpStatus.NO_CONTENT ).build() );
+
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.OPTIONS );
+        webRequest.setRawPath( "/path/_/admin:extension/app:widgetName" );
+
+        final WebResponse response = this.handler.handle( webRequest );
+        assertEquals( HttpStatus.NO_CONTENT, response.getStatus() );
+        verify( controllerScript ).execute( any( PortalRequest.class ) );
+
+        // the actual request is still authorized
+        webRequest.setMethod( HttpMethod.POST );
+        final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+    }
+
+    @Test
+    void testOptionsWithoutOptionsExportIsNotExecuted()
+    {
+        // the request must not fall through to the "all" export
+        final ControllerScript controllerScript = protectedExtension();
+
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.OPTIONS );
+        webRequest.setRawPath( "/path/_/admin:extension/app:widgetName" );
+
+        final WebResponse response = this.handler.handle( webRequest );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", response.getHeaders().get( "Allow" ) );
+        verify( controllerScript, never() ).execute( any( PortalRequest.class ) );
+    }
+
+    private ControllerScript protectedExtension()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final AdminExtensionDescriptor widgetDescriptor = mock( AdminExtensionDescriptor.class );
+        when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( false );
+        when( widgetDescriptor.getKey() ).thenReturn( descriptorKey );
+        when( widgetDescriptor.hasInterface( AdminExtensionDescriptor.GENERIC_INTERFACE ) ).thenReturn( true );
+
+        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+        return controllerScript;
     }
 
     @Test

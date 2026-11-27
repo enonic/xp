@@ -47,12 +47,14 @@ public final class CmsConfigsValidator
 
             if ( cmsDescriptor != null )
             {
-                OccurrenceValidator.validate( cmsDescriptor.getForm(), siteConfig.getConfig().getRoot(),
-                                              ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.siteConfigError( errorCode,
-                                                                                                                          propertyPath,
-                                                                                                                          applicationKey )
-                                                  .i18n( i18nPrefix + ".siteConfig" )
-                                                  .args( applicationKey ), validationErrorsBuilder );
+                final OccurrenceValidator.ValidationErrorFactory errorFactory =
+                    ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.siteConfigError( errorCode, propertyPath, applicationKey )
+                        .i18n( i18nPrefix + ".siteConfig" )
+                        .args( applicationKey );
+
+                OccurrenceValidator.validate( cmsDescriptor.getForm(), siteConfig.getConfig().getRoot(), errorFactory,
+                                              validationErrorsBuilder );
+                InputValueValidator.validate( cmsDescriptor.getForm(), siteConfig.getConfig(), errorFactory, validationErrorsBuilder );
             }
         }
     }

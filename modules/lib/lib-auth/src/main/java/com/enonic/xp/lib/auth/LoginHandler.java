@@ -1,8 +1,12 @@
 package com.enonic.xp.lib.auth;
 
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import jakarta.servlet.http.HttpSession;
+
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.LocalScope;
@@ -10,14 +14,21 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.session.Session;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class LoginHandler
     implements ScriptBean
@@ -34,7 +45,21 @@ public final class LoginHandler
 
     private Scope scope;
 
+    private RoleRestriction restriction = RoleRestriction.none();
+
+    private PrincipalKey actor;
+
+    private String tokenIssuer;
+
+    private String tokenClientId;
+
+    private Set<String> tokenScope = Set.of();
+
+    private Set<String> tokenAudience = Set.of();
+
     private Supplier<SecurityService> securityServiceSupplier;
+
+    private Supplier<AccessTokenService> accessTokenServiceSupplier;
 
     private Supplier<Context> context;
 
@@ -70,12 +95,80 @@ public final class LoginHandler
         this.scope = Scope.valueOf( scope );
     }
 
+    public void setRoles( final String[] roles )
+    {
+        this.restriction = roles == null ? RoleRestriction.none() : RoleRestriction.to( PrincipalKeys.from( roles ) );
+    }
+
+    public void setActor( final String actor )
+    {
+        this.actor = actor == null ? null : PrincipalKey.from( actor );
+    }
+
+    public void setTokenIssuer( final String tokenIssuer )
+    {
+        this.tokenIssuer = tokenIssuer;
+    }
+
+    public void setTokenClientId( final String tokenClientId )
+    {
+        this.tokenClientId = tokenClientId;
+    }
+
+    public void setTokenScope( final String[] tokenScope )
+    {
+        this.tokenScope = tokenScope == null ? Set.of() : Set.copyOf( List.of( tokenScope ) );
+    }
+
+    public void setTokenAudience( final String[] tokenAudience )
+    {
+        this.tokenAudience = tokenAudience == null ? Set.of() : Set.copyOf( List.of( tokenAudience ) );
+    }
+
     public LoginResultMapper login()
     {
-        AuthenticationInfo authInfo = authenticate();
+        final IdProviderKey idp = idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider );
+
+        final RoleRestriction restriction = this.restriction;
+        AccessTokenInfo accessToken = null;
+
+        if ( tokenIssuer != null )
+        {
+            final PortalRequest portalRequest = this.portalRequestSupplier.get();
+            final VirtualHost virtualHost = portalRequest == null ? null : portalRequest.getVirtualHost();
+            final String self = this.accessTokenServiceSupplier.get().getIssuer();
+            final boolean audienceAccepted = virtualHost == null
+                ? tokenAudience.contains( self )
+                : virtualHost.acceptsAudience( tokenAudience, self, requestUrl( portalRequest ) );
+            if ( !audienceAccepted )
+            {
+                return new LoginResultMapper( AuthenticationInfo.unAuthenticated(), "Token audience not accepted here" );
+            }
+            accessToken = AccessTokenInfo.create()
+                .issuer( tokenIssuer )
+                .clientId( tokenClientId )
+                .scope( tokenScope )
+                .audience( tokenAudience )
+                .build();
+        }
+
+        AuthenticationInfo authInfo = authenticate( idp, restriction );
 
         if ( authInfo.isAuthenticated() )
         {
+            if ( actor != null || accessToken != null )
+            {
+                final AuthenticationInfo.Builder builder = AuthenticationInfo.copyOf( authInfo );
+                if ( actor != null )
+                {
+                    builder.actor( actor );
+                }
+                if ( accessToken != null )
+                {
+                    builder.accessToken( accessToken );
+                }
+                authInfo = builder.build();
+            }
             switch ( this.scope )
             {
                 case NONE:
@@ -123,16 +216,15 @@ public final class LoginHandler
         }
     }
 
-    private AuthenticationInfo authenticate()
+    private AuthenticationInfo authenticate( final IdProviderKey idp, final RoleRestriction restriction )
     {
-        final IdProviderKey idp = idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider );
-
         AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
 
         if ( isValidEmail( this.user ) )
         {
-            final AuthenticationToken authToken =
-                this.skipAuth ? new VerifiedEmailAuthToken( idp, this.user ) : new EmailPasswordAuthToken( idp, this.user, this.password );
+            final AuthenticationToken authToken = this.skipAuth
+                ? new VerifiedEmailAuthToken( idp, this.user, restriction )
+                : new EmailPasswordAuthToken( idp, this.user, this.password, restriction );
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }
 
@@ -141,11 +233,11 @@ public final class LoginHandler
             final AuthenticationToken authToken;
             if ( this.skipAuth )
             {
-                authToken = new VerifiedUsernameAuthToken( idp, this.user );
+                authToken = new VerifiedUsernameAuthToken( idp, this.user, restriction );
             }
             else
             {
-                authToken = new UsernamePasswordAuthToken( idp, this.user, this.password );
+                authToken = new UsernamePasswordAuthToken( idp, this.user, this.password, restriction );
             }
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }
@@ -171,10 +263,26 @@ public final class LoginHandler
         }
     }
 
+    /**
+     * The URL the request came to, as the client holds it, or null outside a request.
+     */
+    private static @Nullable String requestUrl( final PortalRequest request )
+    {
+        final String path = request.getRawRequest() == null ? null : VirtualHostHelper.getRequestedPath( request.getRawRequest() );
+        if ( path == null )
+        {
+            return null;
+        }
+        final int port = request.getPort();
+        final boolean defaultPort = port <= 0 || ( "https".equals( request.getScheme() ) ? port == 443 : "http".equals( request.getScheme() ) && port == 80 );
+        return request.getScheme() + "://" + request.getHost() + ( defaultPort ? "" : ":" + port ) + path;
+    }
+
     @Override
     public void initialize( final BeanContext context )
     {
         this.securityServiceSupplier = context.getService( SecurityService.class );
+        this.accessTokenServiceSupplier = context.getService( AccessTokenService.class );
         this.context = context.getBinding( Context.class );
         this.portalRequestSupplier = context.getBinding( PortalRequest.class );
     }

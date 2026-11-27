@@ -1,8 +1,10 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.Nullable;
 
@@ -11,6 +13,7 @@ import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static java.util.Objects.requireNonNull;
@@ -37,6 +40,10 @@ public final class VirtualHostMapping
 
     private final PrincipalKeys allowedPrincipals;
 
+    private final Set<String> audience;
+
+    private final @Nullable VirtualHostApiFilter apiFilter;
+
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
     {
@@ -61,6 +68,14 @@ public final class VirtualHostMapping
                                @Nullable final Map<String, String> context, @Nullable final String connector,
                                @Nullable final PrincipalKeys allowedPrincipals )
     {
+        this( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals, Set.of() );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order,
+                               @Nullable final Map<String, String> context, @Nullable final String connector,
+                               @Nullable final PrincipalKeys allowedPrincipals, @Nullable final Set<String> audience )
+    {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
         requireNonNull( source, "source must be set" );
@@ -76,6 +91,9 @@ public final class VirtualHostMapping
         this.context = Collections.unmodifiableMap( requireNonNullElse( context, Map.of() ) );
         this.connector = requireNonNullElse( connector, DispatchConstants.WEB_CONNECTOR );
         this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
+        this.audience = Set.copyOf( requireNonNullElse( audience, Set.of() ) );
+        final String apiAllow = this.context.get( VirtualHostApiFilter.CONTEXT_KEY );
+        this.apiFilter = apiAllow != null ? VirtualHostApiFilter.parse( apiAllow ) : null;
     }
 
     @Override
@@ -103,10 +121,9 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public IdProviderKey getDefaultIdProviderKey()
+    public @Nullable IdProviderKey getDefaultIdProviderKey()
     {
-        final Iterator<IdProviderKey> keys = idProvidersMapping.getIdProviders().keySet().iterator();
-        return keys.hasNext() ? keys.next() : null;
+        return idProvidersMapping.getDefaultIdProvider();
     }
 
     @Deprecated
@@ -129,6 +146,56 @@ public final class VirtualHostMapping
     }
 
     @Override
+    public Set<String> getAudience()
+    {
+        return audience;
+    }
+
+    @Override
+    public String identifier( final String scheme, final String host, final int port )
+    {
+        final boolean defaultPort = port <= 0 || ( "https".equals( scheme ) ? port == 443 : "http".equals( scheme ) && port == 80 );
+        final String source = getSource();
+        return scheme + "://" + host + ( defaultPort ? "" : ":" + port ) + ( "/".equals( source ) ? "" : source );
+    }
+
+    @Override
+    public boolean matchesHost( final String serverName )
+    {
+        for ( final String host : getHost().split( " ", -1 ) )
+        {
+            final String candidate = host.trim();
+            if ( candidate.startsWith( "~" )
+                ? Pattern.compile( candidate.substring( 1 ), Pattern.CASE_INSENSITIVE ).matcher( serverName ).matches()
+                : candidate.equalsIgnoreCase( serverName ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean acceptsAudience( final Set<String> audience, final String self, final @Nullable String requestUrl )
+    {
+        final Set<String> served = getAudience();
+        if ( served.isEmpty() ? audience.contains( self ) : audience.stream().anyMatch( served::contains ) )
+        {
+            return true;
+        }
+        if ( requestUrl == null )
+        {
+            return false;
+        }
+        final int pathStart = requestUrl.indexOf( '/', requestUrl.indexOf( "://" ) + 3 );
+        final String origin = pathStart < 0 ? requestUrl : requestUrl.substring( 0, pathStart );
+        final String identifier = origin + ( "/".equals( getSource() ) ? "" : getSource() );
+        return audience.stream()
+            .anyMatch( aud -> ( aud.equals( identifier ) || aud.startsWith( identifier + "/" ) ) &&
+                ( requestUrl.equals( aud ) || requestUrl.startsWith( aud.endsWith( "/" ) ? aud : aud + "/" ) ) );
+    }
+
+    @Override
     public PrincipalKeys getAllowedPrincipals()
     {
         return allowedPrincipals;
@@ -144,5 +211,11 @@ public final class VirtualHostMapping
     public Map<String, String> getContext()
     {
         return context;
+    }
+
+    @Override
+    public Optional<VirtualHostApiFilter> getApiFilter()
+    {
+        return Optional.ofNullable( apiFilter );
     }
 }

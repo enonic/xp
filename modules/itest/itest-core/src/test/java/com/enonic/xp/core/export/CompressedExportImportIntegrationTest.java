@@ -314,7 +314,7 @@ class CompressedExportImportIntegrationTest
         final Path exportDir = temporaryFolder.resolve( "exports" );
         Files.createDirectories( exportDir );
 
-        try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, "version-export" ))
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, "version-export" ))
         {
             final NodeExportResult exportResult = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
@@ -326,6 +326,7 @@ class CompressedExportImportIntegrationTest
 
             assertEquals( 2, exportResult.size() ); // root + node
             assertEquals( 0, exportResult.getExportErrors().size() );
+            writer.complete();
         }
 
         // Delete node
@@ -378,15 +379,17 @@ class CompressedExportImportIntegrationTest
     private NodeExportResult exportToZip( final String exportName, final NodePath sourcePath, final Path exportDir )
         throws IOException
     {
-        try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
-            return NodeHelper.runAsAdmin( NodeExporter.create()
+            final NodeExportResult result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( sourcePath )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.1.0" )
                 .build()::execute );
+            writer.complete();
+            return result;
         }
     }
 

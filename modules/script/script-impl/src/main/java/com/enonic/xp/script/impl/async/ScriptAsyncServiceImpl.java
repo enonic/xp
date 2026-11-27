@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

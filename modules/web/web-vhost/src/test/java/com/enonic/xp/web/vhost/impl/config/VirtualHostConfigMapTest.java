@@ -9,11 +9,14 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -181,6 +184,31 @@ class VirtualHostConfigMapTest
     }
 
     @Test
+    void enabled_id_providers_without_a_default_have_no_default()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "enabled" );
+        map.put( "mapping.myapp1.idProvider.myProvider", "enabled" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertNull( virtualHost.getDefaultIdProviderKey() );
+        assertEquals( Set.of( IdProviderKey.system(), IdProviderKey.from( "myProvider" ) ), virtualHost.getIdProviders().keySet() );
+    }
+
+    @Test
+    void the_default_id_provider_comes_first()
+    {
+        map.put( "mapping.myapp1.idProvider.aProvider", "enabled" );
+        map.put( "mapping.myapp1.idProvider.zProvider", "default" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( IdProviderKey.from( "zProvider" ), virtualHost.getDefaultIdProviderKey() );
+        assertThat( virtualHost.getIdProviders().keySet() ).containsExactly( IdProviderKey.from( "zProvider" ),
+                                                                           IdProviderKey.from( "aProvider" ) );
+    }
+
+    @Test
     void testIdProviderFlows_default()
     {
         map.put( "mapping.myapp1.idProvider.system", "default" );
@@ -194,8 +222,10 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProviderFlows_explicit()
     {
-        map.put( "mapping.myapp1.idProvider.system", "default&enabled=autologin" );
-        map.put( "mapping.myapp1.idProvider.myProvider", "enabled=login" );
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+        map.put( "mapping.myapp1.idProvider.system.flows", "autologin" );
+        map.put( "mapping.myapp1.idProvider.myProvider", "enabled" );
+        map.put( "mapping.myapp1.idProvider.myProvider.flows", "login" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
@@ -207,7 +237,8 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProviderFlows_additionalFlowsKept()
     {
-        map.put( "mapping.myapp1.idProvider.system", "enabled=autologin,Device" );
+        map.put( "mapping.myapp1.idProvider.system", "enabled" );
+        map.put( "mapping.myapp1.idProvider.system.flows", "autologin,Device" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
@@ -218,12 +249,100 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProviderFlows_emptyListMeansNoRestriction()
     {
-        map.put( "mapping.myapp1.idProvider.system", "enabled=" );
+        map.put( "mapping.myapp1.idProvider.system", "enabled" );
+        map.put( "mapping.myapp1.idProvider.system.flows", "" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
         assertEquals( Set.of( IdProviderKey.system() ), virtualHost.getIdProviders().keySet() );
         assertEquals( Set.of(), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
+    }
+
+    @Test
+    void testIdProvider_notEnabledIsLeftOut()
+    {
+        // settings alone do not enable an id provider
+        map.put( "mapping.myapp1.idProvider.system.flows", "autologin" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of(), virtualHost.getIdProviders().keySet() );
+    }
+
+    @Test
+    void testIdProvider_authorizationServer()
+    {
+        map.put( "mapping.mgmt.endpoint", "management" );
+        map.put( "mapping.mgmt.idProvider.system", "default" );
+        map.put( "mapping.mgmt.idProvider.system.authorizationServer", " https://admin.example.com/_/idprovider/system " );
+        map.put( "mapping.mgmt.idProvider.other", "enabled" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "https://admin.example.com/_/idprovider/system",
+                      virtualHost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+        assertNull( virtualHost.getIdProviders().get( IdProviderKey.from( "other" ) ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testIdProvider_authorizationServer_keptAsWritten()
+    {
+        // an issuer is compared as a string, and some end with a slash
+        map.put( "mapping.api.idProvider.auth0", "default" );
+        map.put( "mapping.api.idProvider.auth0.authorizationServer", "https://tenant.auth0.com/" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "https://tenant.auth0.com/", virtualHost.getIdProviders().get( IdProviderKey.from( "auth0" ) ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testIdProvider_authorizationServer_invalid()
+    {
+        for ( final String invalid : List.of( "admin.example.com", "/_/idprovider/system", "ftp://admin.example.com/idp",
+                                              "https://admin.example.com/idp?x=1", "https://admin.example.com/idp#x", "https://", "" ) )
+        {
+            map.clear();
+            map.put( "mapping.mgmt.idProvider.system", "default" );
+            map.put( "mapping.mgmt.idProvider.system.authorizationServer", invalid );
+            assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings(), invalid );
+        }
+    }
+
+    @Test
+    void testIdProvider_invalidValues()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "yes" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+
+        map.clear();
+        map.put( "mapping.myapp1.idProvider.system.color", "red" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+
+        // a dotted id provider name reads as a name and a setting, and is reported as such
+        map.clear();
+        map.put( "mapping.myapp1.idProvider.my.provider", "default" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
+
+    @Test
+    void testIdProvider_settingsOnlyNameIsValidated()
+    {
+        map.put( "mapping.myapp1.idProvider.roles.flows", "autologin" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+
+        map.clear();
+        map.put( "mapping.myapp1.idProvider..flows", "autologin" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
+
+    @Test
+    void testIdProvider_multipleDefaults()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+        map.put( "mapping.myapp1.idProvider.other", "default" );
+
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
     }
 
     @Test
@@ -267,6 +386,27 @@ class VirtualHostConfigMapTest
         final VirtualHostConfigMap virtualHostConfigMap = new VirtualHostConfigMap( map );
 
         assertThrows( IllegalArgumentException.class, virtualHostConfigMap::buildMappings );
+    }
+
+    @Test
+    void testAudience()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.audience", " api, management ,, " );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( "api", "management" ), virtualHost.getAudience() );
+    }
+
+    @Test
+    void testAudience_absentMeansNone()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of(), virtualHost.getAudience() );
     }
 
     @Test
@@ -398,5 +538,50 @@ class VirtualHostConfigMapTest
         map.put( "mapping.mgmt.context.api.not an app:snapshot.verbs", "list" );
 
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
+
+    @Test
+    void testApiFilter()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.filter", "!com.example.app:internal, media:image, com.example.* ,admin:event" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+        final VirtualHostApiFilter filter = virtualHost.getApiFilter().orElseThrow();
+
+        assertTrue( filter.accept( DescriptorKey.from( "media:image" ) ) );
+        assertTrue( filter.accept( DescriptorKey.from( "admin:event" ) ) );
+        assertTrue( filter.accept( DescriptorKey.from( "com.example.app:public" ) ) );
+        assertFalse( filter.accept( DescriptorKey.from( "com.example.app:internal" ) ) );
+        assertFalse( filter.accept( DescriptorKey.from( "media:attachment" ) ) );
+        assertEquals( "!com.example.app:internal, media:image, com.example.* ,admin:event", virtualHost.getContext().get( "api.filter" ) );
+    }
+
+    @Test
+    void testNoApiFilter()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+
+        assertTrue( new VirtualHostConfigMap( map ).buildMappings().get( 0 ).getApiFilter().isEmpty() );
+    }
+
+    @Test
+    void testApiFilterWithInvalidPattern()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.filter", "media:image, !notAnApi" );
+
+        assertThatThrownBy( () -> new VirtualHostConfigMap( map ).buildMappings() ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "mapping.site.context.api.filter" );
+    }
+
+    @Test
+    void testApiFilterEmpty()
+    {
+        map.put( "mapping.site.host", "www.example.com" );
+        map.put( "mapping.site.context.api.filter", " , " );
+
+        assertThatThrownBy( () -> new VirtualHostConfigMap( map ).buildMappings() ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "mapping.site.context.api.filter" );
     }
 }

@@ -90,6 +90,13 @@ export interface DoubleUnderscore {
     registerMock: (name: string, value: object) => void
 }
 
+/**
+ * Logger of the current application.
+ *
+ * The message may contain `%s` placeholders, filled by the arguments that follow it.
+ * Objects and arrays are written as JSON.
+ * An exception passed as the last argument is logged with its stack trace.
+ */
 export interface Log {
     /**
      * Log debug message.
@@ -291,6 +298,113 @@ export interface DefaultRequestHeaders
     'X-Forwarded-Server'?: string;
 }
 
+/**
+ * The access token the request was authenticated with.
+ */
+export interface RequestAccessToken {
+    /** Who issued the token: XP's issuer name, or the upstream issuer of a promoted token. */
+    issuer: string;
+    /** The client that obtained the token, as it named itself, or null. */
+    clientId: string | null;
+    /** The grant the token was issued under, or null. */
+    grantId: string | null;
+    /** The scopes the request was granted, sorted. */
+    scope: string[];
+    /** The audiences the token names, sorted. */
+    audience: string[];
+}
+
+export interface OAuthConsentUser {
+    key: string;
+    login: string;
+    displayName: string;
+    email?: string;
+}
+
+export interface OAuthConsentScope {
+    id: string;
+    /** The scope's title, as XP or its application defines it; the id when it has none. */
+    title: string;
+    /** What approving the scope allows, in the user's words, when the definition says. */
+    description?: string;
+    /** Whether the user may not drop it. */
+    required: boolean;
+}
+
+interface OAuthConsentBase {
+    idProvider: string;
+    user: OAuthConsentUser;
+}
+
+export interface OAuthConsentEnter extends OAuthConsentBase {
+    action: 'enter';
+    /** Why the previous code was refused, when one was. */
+    error?: string;
+}
+
+/**
+ * A client as the consent page may present it: the name and links it registered with the ID
+ * provider, or, unregistered, its id alone.
+ */
+export interface OAuthConsentClient {
+    id: string;
+    /** The registered name, or the id when the client is not registered. */
+    displayName: string;
+    uri?: string;
+    logoUri?: string;
+    policyUri?: string;
+    tosUri?: string;
+    /** Whether the ID provider has a record of the client. */
+    registered: boolean;
+}
+
+export interface OAuthConsentConfirm extends OAuthConsentBase {
+    action: 'confirm';
+    /** Which flow asks: device login, or the authorization code flow sending the browser back to the client. */
+    flow: 'device' | 'code';
+    /** The device flow's user code; the form posts it back as user_code. */
+    userCode?: string;
+    /** The code flow's request id; the form posts it back as request. */
+    requestId?: string;
+    /** How the client named itself; not a verified name. */
+    clientId: string;
+    /** The client's record, or its id alone when it has none. */
+    client: OAuthConsentClient;
+    scope: OAuthConsentScope[];
+    /** Whether the client asked for no scope, so an approved token carries the user's full memberships. */
+    unrestricted: boolean;
+    audience: string[];
+    /** The form must post it back as _csrf. */
+    csrf: string;
+}
+
+export interface OAuthConsentDone extends OAuthConsentBase {
+    action: 'done';
+    flow: 'device';
+    approved: boolean;
+}
+
+export interface OAuthConsentWrongAccount extends OAuthConsentBase {
+    action: 'wrongAccount';
+}
+
+/**
+ * The data a consent page renders, handed to an id provider's oauthConsent function as
+ * request.oauthConsent, for device login and for the authorization code flow alike.
+ */
+export type OAuthConsent = OAuthConsentEnter | OAuthConsentConfirm | OAuthConsentDone | OAuthConsentWrongAccount;
+
+/**
+ * An ID provider's settings on the virtual host serving the request (`mapping.<name>.idProvider.<idp>.*`
+ * and the mapping's audience): what the host serves for it.
+ */
+export interface IdProviderSettings {
+    /** The flows the host serves for the ID provider, sorted. Empty means no restriction. */
+    flows: string[];
+    /** The audiences the host serves, sorted: its own identifier, the URL of the request's mapping, and its configured list. */
+    audience: string[];
+}
+
 export interface RequestConstructorParams {
     body?: string;
     branch?: LiteralUnion<RequestBranch>;
@@ -319,6 +433,15 @@ export interface RequestConstructorParams {
     validTicket?: boolean;
     webSocket: boolean;
     locales: string[];
+    /** Present on a request authenticated with an access token. */
+    accessToken?: RequestAccessToken;
+    /**
+     * The virtual host's settings for the request's ID provider, on the ID provider's own function
+     * calls when the host maps that provider.
+     */
+    idProviderSettings?: IdProviderSettings;
+    /** Present when an id provider's oauthConsent function is called. */
+    oauthConsent?: OAuthConsent;
 }
 
 export interface RequestInterface

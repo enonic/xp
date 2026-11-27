@@ -2,17 +2,21 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.locks.Lock;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.Striped;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -58,6 +62,7 @@ import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
@@ -79,13 +84,22 @@ import com.enonic.xp.security.UserQueryResult;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.impl.security.token.ClientStore;
+import com.enonic.xp.security.token.Client;
+import com.enonic.xp.security.token.Clients;
+import com.enonic.xp.security.token.CreateClientParams;
+import com.enonic.xp.security.token.UpdateClientParams;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.PasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
+import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+import com.enonic.xp.shared.SharedMap;
+import com.enonic.xp.shared.SharedMapService;
 
+import static com.enonic.xp.core.impl.security.SharedLocks.withLock;
 import static java.util.Objects.requireNonNull;
 
 public final class SecurityServiceImpl
@@ -93,22 +107,49 @@ public final class SecurityServiceImpl
 {
     private static final Set<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = Set.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
-    private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
+    private static final Set<NodePath> NON_REMOVABLE_PRINCIPAL_PATHS =
+        Stream.concat( Stream.of( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() ), SecurityInitializer.SYSTEM_ROLES.stream() )
+            .map( PrincipalKey::toPath )
+            .collect( Collectors.toUnmodifiableSet() );
+
+    /**
+     * Role namespaces owned by the platform and by Content Studio. Only an administrator creates roles there, so a role cannot be
+     * squatted before the platform creates it (a project's roles are adopted together with their members).
+     */
+    private static final List<String> RESERVED_ROLE_PREFIXES = List.of( "system.", "cms." );
+
+    private static final String PROJECT_ROLE_PREFIX = "cms.project.";
+
+    /**
+     * Principals under an id provider are stored with their lower-cased key as node id, which allows only {@code [a-z0-9_.:-]}.
+     * A dot is refused as well: the key becomes a level of the vhost configuration ({@code mapping.<name>.idProvider.<key>}),
+     * where a dot makes nested settings ambiguous. Existing keys with a dot keep working.
+     */
+    private static final Pattern ID_PROVIDER_KEY_PATTERN = Pattern.compile( "[A-Za-z0-9_-]+" );
+
+    private static final Set<NodePath> NON_MODIFIABLE_USER_PATHS =
+        Set.of( PrincipalKey.ofSuperUser().toPath(), PrincipalKey.ofAnonymous().toPath() );
+
+    static final String ID_PROVIDER_LOCKS = "com.enonic.xp.security.lock.idprovider";
 
     private final PasswordSecurityService passwordSecurityService;
 
-    private final Striped<Lock> userEmailLocks = Striped.lazyWeakLock( 100 );
+    private final SharedMap<String, Boolean> idProviderLocks;
 
     private final NodeService nodeService;
 
     private final SecurityAuditLogSupport securityAuditLogSupport;
 
+    private final ClientStore clients;
+
     public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport,
-                                PasswordSecurityService passwordSecurityService )
+                                final PasswordSecurityService passwordSecurityService, final SharedMapService sharedMapService )
     {
         this.nodeService = nodeService;
+        this.idProviderLocks = sharedMapService.getSharedMap( ID_PROVIDER_LOCKS );
         this.securityAuditLogSupport = securityAuditLogSupport;
         this.passwordSecurityService = passwordSecurityService;
+        this.clients = new ClientStore( nodeService );
     }
 
     @Override
@@ -160,6 +201,13 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Invalid 'from' value in relationship: " + from );
         }
+        final PrincipalKey to = relationship.getTo();
+        if ( NON_MODIFIABLE_USER_PATHS.contains( to.toPath() ) && !isSuInAdministratorRole( from, to ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] cannot be added as a member", to ) );
+        }
+        requireAdministratorToChangeMembers( from );
+
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
@@ -170,6 +218,11 @@ public final class SecurityServiceImpl
         } );
     }
 
+    private static boolean isSuInAdministratorRole( final PrincipalKey from, final PrincipalKey to )
+    {
+        return RoleKeys.ADMIN.toPath().equals( from.toPath() ) && PrincipalKey.ofSuperUser().toPath().equals( to.toPath() );
+    }
+
     @Override
     public void removeRelationship( final PrincipalRelationship relationship )
     {
@@ -177,6 +230,7 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Super user cannot be removed from the administrator role" );
         }
+        requireAdministratorToChangeMembers( relationship.getFrom() );
 
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
@@ -190,6 +244,12 @@ public final class SecurityServiceImpl
 
     public void removeRelationships( final PrincipalKey from )
     {
+        if ( RoleKeys.ADMIN.toPath().equals( from.toPath() ) )
+        {
+            throw new IllegalArgumentException( "Super user cannot be removed from the administrator role" );
+        }
+        requireAdministratorToChangeMembers( from );
+
         callWithContext( () -> {
             nodeService.update( PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from ) );
 
@@ -297,10 +357,7 @@ public final class SecurityServiceImpl
                 .login( PrincipalKey.ofSuperUser().getId() )
                 .displayName( "Super User" )
                 .build();
-            return AuthenticationInfo.create()
-                .principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
-                .user( admin )
-                .build();
+            return createAuthInfo( admin, PrincipalKeys.from( RoleKeys.ADMIN ), authToken.getRestriction() );
         }
         else
         {
@@ -316,6 +373,14 @@ public final class SecurityServiceImpl
             final Predicate<User> credentialsVerifier;
             switch ( token )
             {
+                case VerifiedUserKeyAuthToken authToken ->
+                {
+                    final Node node = this.nodeService.getByPath( authToken.getUserKey().toPath() );
+                    final User user = node == null ? null : PrincipalNodeTranslator.userFromNode( node );
+                    return user != null && !user.isDisabled()
+                        ? createAuthInfo( user, token.getRestriction() )
+                        : AuthenticationInfo.unAuthenticated();
+                }
                 case PasswordAuthToken authToken ->
                 {
                     if ( authToken.getPassword().isEmpty() )
@@ -356,7 +421,7 @@ public final class SecurityServiceImpl
             // Order matters. First verify the password, then check for non-existing/disabled user to avoid timing attacks
             if ( credentialsVerifier.test( user ) && user != null && !user.isDisabled() )
             {
-                return createAuthInfo( user );
+                return createAuthInfo( user, token.getRestriction() );
             }
             else
             {
@@ -371,12 +436,26 @@ public final class SecurityServiceImpl
             .validate( password.toCharArray() );
     }
 
-    private AuthenticationInfo createAuthInfo( final User user )
+    private AuthenticationInfo createAuthInfo( final User user, final RoleRestriction restriction )
     {
-        final PrincipalKeys principals = resolveMemberships( user.getKey() );
+        final NodePath userPath = user.getKey().toPath();
+        if ( PrincipalKey.ofAnonymous().toPath().equals( userPath ) )
+        {
+            return AuthenticationInfo.unAuthenticated();
+        }
+        if ( PrincipalKey.ofSuperUser().toPath().equals( userPath ) )
+        {
+            return createAuthInfo( user, PrincipalKeys.from( RoleKeys.ADMIN ), restriction );
+        }
+        return createAuthInfo( user, resolveMemberships( user.getKey() ), restriction );
+    }
+
+    private static AuthenticationInfo createAuthInfo( final User user, final PrincipalKeys memberships, final RoleRestriction restriction )
+    {
         return AuthenticationInfo.create()
-            .principals( principals )
+            .principals( restriction.apply( memberships ) )
             .principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
+            .restriction( restriction )
             .user( user )
             .build();
     }
@@ -405,6 +484,8 @@ public final class SecurityServiceImpl
     public User setPassword( final PrincipalKey key, final String password )
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
+        requireModifiable( key );
+        requireAdministratorToModify( key );
 
         return callWithContext( () -> {
             final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
@@ -413,14 +494,12 @@ public final class SecurityServiceImpl
                 throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
             }
 
-            final User user = PrincipalNodeTranslator.userFromNode( node );
-
             final String authenticationHash =
                 password != null ? this.passwordSecurityService.defaultEncoder().encode( password.toCharArray() ) : null;
 
-            final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
-
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate ) );
+            final Node updatedNode = nodeService.update(
+                PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode,
+                                                            user -> User.create( user ).authenticationHash( authenticationHash ).build() ) );
 
             securityAuditLogSupport.setPassword( key );
 
@@ -435,6 +514,7 @@ public final class SecurityServiceImpl
             .login( createUser.getLogin() )
             .email( createUser.getEmail() )
             .displayName( createUser.getDisplayName() )
+            .disabled( createUser.isDisabled() )
             .modifiedTime( Millis.now() )
             .build();
 
@@ -458,65 +538,73 @@ public final class SecurityServiceImpl
         }
     }
 
-    private String idProviderEmailKey( final PrincipalKey principalKey, final String email )
-    {
-        return principalKey.getIdProviderKey().toString() + '|' + email;
-    }
-
     @Override
     public User createUser( final CreateUserParams createUser )
     {
-        final Lock lock = userEmailLocks.get( idProviderEmailKey( createUser.getKey(), createUser.getEmail() ) );
-        lock.lock();
-        try
+        if ( createUser.getEmail() == null )
         {
-            duplicateEmailValidation( createUser.getKey(), createUser.getEmail() );
             return doCreateUser( createUser );
         }
-        finally
-        {
-            lock.unlock();
-        }
-    }
-
-    private User doUpdateUser( final UpdateUserParams updateUserParams )
-    {
-        return callWithContext( () -> {
-
-            final Node node = this.nodeService.getByPath( updateUserParams.getKey().toPath() );
-            if ( node == null )
-            {
-                throw new PrincipalNotFoundException( updateUserParams.getKey() );
-            }
-
-            final User existingUser = PrincipalNodeTranslator.userFromNode( node );
-
-            final User userToUpdate = updateUserParams.update( existingUser );
-            duplicateEmailValidation( userToUpdate.getKey(), userToUpdate.getEmail() );
-
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate ) );
-
-            securityAuditLogSupport.updateUser( UpdateUserParams.create( userToUpdate ).build() );
-
-            return PrincipalNodeTranslator.userFromNode( updatedNode );
+        return withLock( idProviderLocks, createUser.getKey().getIdProviderKey().toString(), () -> {
+            duplicateEmailValidation( createUser.getKey(), createUser.getEmail() );
+            return doCreateUser( createUser );
         } );
-
     }
 
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        final String key = idProviderEmailKey( updateUserParams.getKey(), updateUserParams.getEmail() );
-        final Lock lock = userEmailLocks.get( key );
-        lock.lock();
-        try
+        if ( updateUserParams.getEmail() == null && updateUserParams.getEditor() == null )
         {
             return doUpdateUser( updateUserParams );
         }
-        finally
+        return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> doUpdateUser( updateUserParams ) );
+    }
+
+    private static void requireModifiable( final PrincipalKey key )
+    {
+        if ( NON_MODIFIABLE_USER_PATHS.contains( key.toPath() ) )
         {
-            lock.unlock();
+            throw new IllegalArgumentException( String.format( "[%s] user cannot be modified", key ) );
         }
+    }
+
+    private static boolean sameExceptProfile( final User current, final User changed )
+    {
+        return current.getKey().equals( changed.getKey() ) && Objects.equals( current.getDisplayName(), changed.getDisplayName() ) &&
+            Objects.equals( current.getEmail(), changed.getEmail() ) && Objects.equals( current.getLogin(), changed.getLogin() ) &&
+            current.isDisabled() == changed.isDisabled();
+    }
+
+    private User doUpdateUser( final UpdateUserParams updateUserParams )
+    {
+        return callWithContext( () -> {
+            final PrincipalKey key = updateUserParams.getKey();
+            if ( this.nodeService.getByPath( key.toPath() ) == null )
+            {
+                throw new PrincipalNotFoundException( key );
+            }
+            requireAdministratorToModify( key );
+
+            final Node updatedNode =
+                nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode, current -> {
+                    final User changed = updateUserParams.update( current );
+                    if ( !sameExceptProfile( current, changed ) || PrincipalKey.ofAnonymous().toPath().equals( key.toPath() ) )
+                    {
+                        requireModifiable( key );
+                    }
+                    if ( changed.getEmail() != null && !changed.getEmail().equals( current.getEmail() ) )
+                    {
+                        duplicateEmailValidation( key, changed.getEmail() );
+                    }
+                    return changed;
+                } ) );
+            final User updatedUser = PrincipalNodeTranslator.userFromNode( updatedNode );
+
+            securityAuditLogSupport.updateUser( UpdateUserParams.create( updatedUser ).build() );
+
+            return updatedUser;
+        } );
     }
 
     private void duplicateEmailValidation( final PrincipalKey key, final String email )
@@ -591,15 +679,14 @@ public final class SecurityServiceImpl
                 throw new PrincipalNotFoundException( updateGroupParams.getKey() );
             }
 
-            final Group existingGroup = PrincipalNodeTranslator.groupFromNode( node );
+            final Node updatedNode = nodeService.update(
+                PrincipalNodeTranslator.toUpdateNodeParams( updateGroupParams.getKey(), PrincipalNodeTranslator::groupFromNode,
+                                                            updateGroupParams::update ) );
+            final Group updatedGroup = PrincipalNodeTranslator.groupFromNode( updatedNode );
 
-            final Group groupToUpdate = updateGroupParams.update( existingGroup );
+            securityAuditLogSupport.updateGroup( UpdateGroupParams.create( updatedGroup ).build() );
 
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( groupToUpdate ) );
-
-            securityAuditLogSupport.updateGroup( UpdateGroupParams.create( groupToUpdate ).build() );
-
-            return PrincipalNodeTranslator.groupFromNode( updatedNode );
+            return updatedGroup;
         } );
     }
 
@@ -615,6 +702,12 @@ public final class SecurityServiceImpl
     @Override
     public Role createRole( final CreateRoleParams createRole )
     {
+        final String roleId = createRole.getKey().getId().toLowerCase( Locale.ROOT );
+        if ( RESERVED_ROLE_PREFIXES.stream().anyMatch( roleId::startsWith ) && !isCallerAdministrator() )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] role is in a reserved namespace", createRole.getKey() ) );
+        }
+
         final Role role = Role.create()
             .key( createRole.getKey() )
             .displayName( createRole.getDisplayName() )
@@ -648,15 +741,14 @@ public final class SecurityServiceImpl
                 throw new PrincipalNotFoundException( updateRoleParams.getKey() );
             }
 
-            final Role existingRole = PrincipalNodeTranslator.roleFromNode( node );
+            final Node updatedNode = nodeService.update(
+                PrincipalNodeTranslator.toUpdateNodeParams( updateRoleParams.getKey(), PrincipalNodeTranslator::roleFromNode,
+                                                            updateRoleParams::update ) );
+            final Role updatedRole = PrincipalNodeTranslator.roleFromNode( updatedNode );
 
-            final Role roleToUpdate = updateRoleParams.update( existingRole );
+            securityAuditLogSupport.updateRole( UpdateRoleParams.create( updatedRole ).build() );
 
-            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( roleToUpdate ) );
-
-            securityAuditLogSupport.updateRole( UpdateRoleParams.create( roleToUpdate ).build() );
-
-            return PrincipalNodeTranslator.roleFromNode( updatedNode );
+            return updatedRole;
         } );
     }
 
@@ -712,6 +804,12 @@ public final class SecurityServiceImpl
     @Override
     public void deleteIdProvider( final IdProviderKey idProviderKey )
     {
+        if ( IdProviderKey.system().toString().equalsIgnoreCase( idProviderKey.toString() ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] id provider cannot be removed", idProviderKey ) );
+        }
+        requireAdministratorToManageIdProvider( idProviderKey );
+
         final NodeIds deletedNodes;
         try
         {
@@ -735,10 +833,16 @@ public final class SecurityServiceImpl
     @Override
     public void deletePrincipal( final PrincipalKey principalKey )
     {
-        if ( NON_REMOVABLE_PRINCIPLES.contains( principalKey ) )
+        if ( NON_REMOVABLE_PRINCIPAL_PATHS.contains( principalKey.toPath() ) )
         {
             throw new IllegalArgumentException( String.format( "[%s] principal cannot be removed", principalKey ) );
         }
+        if ( principalKey.isRole() && principalKey.getId().toLowerCase( Locale.ROOT ).startsWith( PROJECT_ROLE_PREFIX ) &&
+            !isCallerAdministrator() )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] project role is removed with its project", principalKey ) );
+        }
+        requireAdministratorToModify( principalKey );
 
         final NodeIds deletedNodes;
         try
@@ -803,6 +907,19 @@ public final class SecurityServiceImpl
     @Override
     public IdProvider createIdProvider( final CreateIdProviderParams createIdProviderParams )
     {
+        requireAdministratorToManageIdProvider( createIdProviderParams.getKey() );
+        final ApplicationKey application = applicationOf( createIdProviderParams.getIdProviderConfig() );
+        if ( application != null || IdProviderKey.system().equals( createIdProviderParams.getKey() ) )
+        {
+            requireValidApplication( createIdProviderParams.getKey(), application );
+        }
+        if ( !ID_PROVIDER_KEY_PATTERN.matcher( createIdProviderParams.getKey().toString() ).matches() )
+        {
+            throw new IllegalArgumentException(
+                String.format( "Invalid IdProviderKey [%s]: only letters A-Z and a-z, digits, '_' and '-' are allowed",
+                               createIdProviderParams.getKey() ) );
+        }
+
         final PropertyTree data = new PropertyTree();
         data.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, createIdProviderParams.getDisplayName() );
         data.setString( IdProviderPropertyNames.DESCRIPTION_KEY, createIdProviderParams.getDescription() );
@@ -877,6 +994,8 @@ public final class SecurityServiceImpl
     @Override
     public IdProvider updateIdProvider( final UpdateIdProviderParams updateIdProviderParams )
     {
+        requireAdministratorToManageIdProvider( updateIdProviderParams.getKey() );
+
         return callWithContext( () -> {
 
             final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( updateIdProviderParams.getKey() );
@@ -886,12 +1005,12 @@ public final class SecurityServiceImpl
                 return null;
             }
 
-            final IdProvider existingIdProvider = IdProviderNodeTranslator.fromNode( node );
-
-            final IdProvider idProviderToUpdate = updateIdProviderParams.update( existingIdProvider );
-
-            final UpdateNodeParams updateNodeParams = IdProviderNodeTranslator.toUpdateNodeParams( idProviderToUpdate, node.id() );
-            final Node idProviderNode = nodeService.update( updateNodeParams );
+            final Node idProviderNode = nodeService.update( IdProviderNodeTranslator.toUpdateNodeParams( node.id(), current -> {
+                final IdProvider changed = updateIdProviderParams.update( current );
+                requireValidBinding( current, changed );
+                return changed;
+            } ) );
+            final IdProvider updatedIdProvider = IdProviderNodeTranslator.fromNode( idProviderNode );
 
             if ( updateIdProviderParams.getIdProviderPermissions() != null )
             {
@@ -916,11 +1035,14 @@ public final class SecurityServiceImpl
                 setNodePermissions( idProviderNode.id(), idProviderNodePermissions );
                 setNodePermissions( usersNode.id(), usersNodePermissions );
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
+                clients.setPermissions( updateIdProviderParams.getKey(), idProviderNodePermissions );
             }
 
-            securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( idProviderToUpdate ).build() );
+            securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( updatedIdProvider )
+                                                          .permissions( updateIdProviderParams.getIdProviderPermissions() )
+                                                          .build() );
 
-            return IdProviderNodeTranslator.fromNode( idProviderNode );
+            return updatedIdProvider;
         } );
     }
 
@@ -928,6 +1050,145 @@ public final class SecurityServiceImpl
     {
         nodeService.applyPermissions( ApplyNodePermissionsParams.create().nodeId( nodeId ).permissions( permissions ).build() );
         nodeService.refresh( RefreshMode.ALL );
+    }
+
+    @Override
+    public Client createClient( final CreateClientParams params )
+    {
+        final Client client = clients.create( params );
+        securityAuditLogSupport.createClient( params );
+        return client;
+    }
+
+    @Override
+    public Optional<Client> updateClient( final UpdateClientParams params )
+    {
+        final Optional<Client> client = clients.update( params );
+        client.ifPresent( c -> securityAuditLogSupport.updateClient( params ) );
+        return client;
+    }
+
+    @Override
+    public Optional<Client> getClient( final IdProviderKey idProvider, final String id )
+    {
+        return clients.get( idProvider, id );
+    }
+
+    @Override
+    public Clients getClients( final IdProviderKey idProvider )
+    {
+        return clients.list( idProvider );
+    }
+
+    @Override
+    public boolean deleteClient( final IdProviderKey idProvider, final String id )
+    {
+        final boolean deleted = clients.delete( idProvider, id );
+        if ( deleted )
+        {
+            securityAuditLogSupport.removeClient( idProvider, id );
+        }
+        return deleted;
+    }
+
+    /**
+     * The system id provider is bound to the standard id provider application, and only it is: su and every system account log in
+     * through that binding, and the standard id provider keeps its credentials in the system id provider's users. A binding that is
+     * already stored is kept as it is.
+     */
+    private static void requireValidBinding( final IdProvider current, final IdProvider changed )
+    {
+        final ApplicationKey currentApplication = applicationOf( current.getIdProviderConfig() );
+        final ApplicationKey changedApplication = applicationOf( changed.getIdProviderConfig() );
+        if ( IdProviderKey.system().equals( current.getKey() ) && changedApplication == null )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider cannot be unbound from its application", current.getKey() ) );
+        }
+        if ( !Objects.equals( currentApplication, changedApplication ) )
+        {
+            requireValidApplication( current.getKey(), changedApplication );
+        }
+    }
+
+    private static void requireValidApplication( final IdProviderKey idProviderKey, final ApplicationKey application )
+    {
+        final boolean system = IdProviderKey.system().equals( idProviderKey );
+        final boolean standard = IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY.equals( application );
+        if ( system && !standard )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider can only be bound to [%s]", idProviderKey,
+                               IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY ) );
+        }
+        if ( !system && standard )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] can only be bound to the [%s] id provider", application, IdProviderKey.system() ) );
+        }
+    }
+
+    private static ApplicationKey applicationOf( final IdProviderConfig idProviderConfig )
+    {
+        return idProviderConfig == null ? null : idProviderConfig.getApplicationKey();
+    }
+
+    /**
+     * Creating, configuring and removing an id provider is an administrator's task. Its users and groups are managed by whoever the
+     * id provider's permissions name; the id provider itself is not.
+     */
+    private static void requireAdministratorToManageIdProvider( final IdProviderKey idProviderKey )
+    {
+        if ( !isCallerAdministrator() )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] id provider can only be managed by an administrator", idProviderKey ) );
+        }
+    }
+
+    private static boolean isCallerAdministrator()
+    {
+        return ContextAccessor.current().getAuthInfo().hasRole( RoleKeys.ADMIN );
+    }
+
+    /**
+     * Only an administrator may change who holds the administrator role, directly or through a group or role that holds it.
+     */
+    private void requireAdministratorToChangeMembers( final PrincipalKey from )
+    {
+        if ( !isCallerAdministrator() && holdsAdministratorRole( from ) )
+        {
+            throw new IllegalArgumentException( String.format( "Members of [%s] can only be changed by an administrator", from ) );
+        }
+    }
+
+    /**
+     * Only an administrator may modify or remove a principal that holds the administrator role, directly or through a group or role.
+     * Otherwise anyone able to write principals could take over an administrator account: by its password, its login or email,
+     * or by a credential an id provider keeps in its profile.
+     */
+    private void requireAdministratorToModify( final PrincipalKey key )
+    {
+        if ( !isCallerAdministrator() && holdsAdministratorRole( key ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] can only be modified by an administrator", key ) );
+        }
+    }
+
+    private boolean holdsAdministratorRole( final PrincipalKey key )
+    {
+        return RoleKeys.ADMIN.toPath().equals( key.toPath() ) ||
+            callAsAdministrator( () -> resolveMemberships( key ) ).contains( RoleKeys.ADMIN );
+    }
+
+    /**
+     * The guards above must see every membership, whatever the caller may read; they only read.
+     */
+    private <T> T callAsAdministrator( final Callable<T> callable )
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
+        return ContextBuilder.from( ContextAccessor.current() ).authInfo( authInfo ).build().callWith( callable );
     }
 
     private <T> T callWithContext( Callable<T> runnable )

@@ -27,6 +27,37 @@
     "url": {
       "type": "string"
     },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[\\x21\\x23-\\x5B\\x5D-\\x7E]+$"
+          },
+          "title": {
+            "$ref": "#/$defs/localizedTextDef"
+          },
+          "description": {
+            "$ref": "#/$defs/localizedTextDef"
+          },
+          "includes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
     "config": {
       "$ref": "#/$defs/genericValueDef"
     }

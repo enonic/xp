@@ -59,8 +59,13 @@ public class ZipVirtualFile
     public static VirtualFile from( final Path zipPath )
         throws IOException
     {
-        final SeekableByteChannel seekableByteChannel = Files.newByteChannel( zipPath, StandardOpenOption.READ );
-        final ZipFile zipFile = ZipFile.builder().setSeekableByteChannel( seekableByteChannel ).get();
+        return from( Files.newByteChannel( zipPath, StandardOpenOption.READ ), zipPath );
+    }
+
+    static VirtualFile from( final SeekableByteChannel seekableByteChannel, final Path zipPath )
+        throws IOException
+    {
+        final ZipFile zipFile = ZipFile.builder().setSeekableByteChannel( seekableByteChannel ).setIgnoreLocalFileHeader( true ).get();
 
         final String basePath = resolveBasePath( zipFile, zipPath );
 

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InOrder;
 
 import com.google.common.io.Resources;
@@ -24,9 +26,11 @@ import com.enonic.xp.web.WebResponse;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -333,5 +337,33 @@ class ResponseSerializerTest
         final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
         new ResponseSerializer( req, resp ).serialize( httpResponse );
         return httpResponse;
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = HttpStatus.class, names = {"NO_CONTENT", "NOT_MODIFIED"})
+    void serializeStatusWithoutContent( final HttpStatus status )
+        throws Exception
+    {
+        final WebRequest req = new WebRequest();
+        req.setMethod( HttpMethod.GET );
+
+        final WebResponse resp = WebResponse.create()
+            .status( status )
+            .contentType( MediaType.PNG )
+            .header( "ETag", "\"abc\"" )
+            .cookie( new Cookie( "cookie-name", "cookie-value" ) )
+            .body( "String body" )
+            .build();
+
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+
+        new ResponseSerializer( req, resp ).serialize( httpResponse );
+
+        verify( httpResponse ).setStatus( status.value() );
+        verify( httpResponse ).setHeader( "etag", "\"abc\"" );
+        verify( httpResponse ).addCookie( any() );
+        verify( httpResponse, never() ).setContentType( any() );
+        verify( httpResponse, never() ).setContentLengthLong( anyLong() );
+        verify( httpResponse, never() ).getOutputStream();
     }
 }

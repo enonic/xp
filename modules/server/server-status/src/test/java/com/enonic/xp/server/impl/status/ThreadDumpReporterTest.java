@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ThreadDumpReporterTest
     extends BaseReporterTest<ThreadDumpReporter>
 {
-    public ThreadDumpReporterTest()
+    ThreadDumpReporterTest()
     {
         super( "dump.threads", MediaType.PLAIN_TEXT_UTF_8 );
     }

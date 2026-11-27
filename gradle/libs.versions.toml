@@ -1,18 +1,19 @@
 [versions]
-jackson = "2.22.3"
+jackson = "2.23.0"
 junit5 = "6.1.3"
 mockito = "5.24.0"
 slf4j = "2.0.20"
-jetty = "12.1.14"
-resteasy = "7.0.5.Final"
+jetty = "12.1.15"
+resteasy = "7.0.6.Final"
 hazelcast = "5.7.0"
 tika = "3.3.2"
 log4j = "2.26.1"
-micrometer = "1.17.1"
-prometheus = "1.9.0"
-graalvm = "25.4.4.1.1"
-caffeine = "3.3.0"
-guava = "33.7.2-jre"
+micrometer = "1.18.0"
+prometheus = "1.10.0"
+graalvm = "25.6.5.1"
+caffeine = "3.3.1"
+guava = "33.8.0-jre"
+checkstyle = "14.3.0"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
@@ -35,9 +36,10 @@ slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 slf4j-jcloverslf4j = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
 slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "slf4j" }
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.6.3.Final" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.6.5" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.6.8" }
 
 jakarta-activation = { module = "jakarta.activation:jakarta.activation-api", version = "2.1.4" }
+angus-activation = { module = "org.eclipse.angus:angus-activation", version = "2.0.3" }
 jakarta-mail = { module = "com.sun.mail:jakarta.mail", version = "2.0.2" }
 jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "3.0.0" }
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.1.1" }
@@ -55,17 +57,17 @@ osgi-core = { module = "org.osgi:osgi.core", version = "8.0.0" }
 
 felix-metatype = { module = "org.apache.felix:org.apache.felix.metatype", version = "1.2.4" }
 felix-eventadmin = { module = "org.apache.felix:org.apache.felix.eventadmin", version = "1.6.4" }
-felix-configadmin = { module = "org.apache.felix:org.apache.felix.configadmin", version = "1.9.26" }
-felix-scr = { module = "org.apache.felix:org.apache.felix.scr", version = "2.2.18" }
-felix-framework = { module = "org.apache.felix:org.apache.felix.framework", version = "7.0.5" }
-felix-utils = { module = "org.apache.felix:org.apache.felix.utils", version = "1.11.8" }
+felix-configadmin = { module = "org.apache.felix:org.apache.felix.configadmin", version = "1.10.0" }
+felix-scr = { module = "org.apache.felix:org.apache.felix.scr", version = "2.3.0" }
+felix-framework = { module = "org.apache.felix:org.apache.felix.framework", version = "8.0.0" }
+felix-utils = { module = "org.apache.felix:org.apache.felix.utils", version = "1.11.10" }
 felix-log = { module = "org.apache.felix:org.apache.felix.log", version = "1.3.2" }
 
-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.86" }
+bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.87" }
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 elasticsearch-icu = { module = "org.elasticsearch.plugin:analysis-icu", version = "2.4.6" }
-icu4j = { module = "com.ibm.icu:icu4j", version = "78.3" }
+icu4j = { module = "com.ibm.icu:icu4j", version = "79.1" }
 
 jna = { module = "net.java.dev.jna:jna", version = "5.19.1" }
 
@@ -75,17 +77,17 @@ caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "c
 guava-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.23.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.24.1" }
 
-owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20260924.2" }
+owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20261110.1" }
 
-bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.14" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.17" }
 
 cronutils = { module = "com.cronutils:cron-utils", version = "9.2.1" }
 
 jhlabs-filters = { module = "com.jhlabs:filters", version = "2.0.235-1" }
 
-attoparser = { module = "org.attoparser:attoparser", version = "2.0.9.RELEASE" }
+attoparser = { module = "org.attoparser:attoparser", version = "2.0.10.RELEASE" }
 
 nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.7" }
 graalvm-polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalvm" }
@@ -94,10 +96,10 @@ graalvm-jsse = { module = "org.graalvm.js:js-scriptengine", version.ref = "graal
 
 commons-io = { module = "commons-io:commons-io", version = "2.22.0" }
 commons-compress = { module = "org.apache.commons:commons-compress", version = "1.28.0" }
-commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.21.0" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.22.0" }
 
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.22" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.23" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-jakarta-jsonprovider = { module = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider", version.ref = "jackson" }
@@ -164,7 +166,6 @@ prometheus-metrics-exposition-textformats = { module = "io.prometheus:prometheus
 prometheus-metrics-model = { module = "io.prometheus:prometheus-metrics-model", version.ref = "prometheus" }
 prometheus-metrics-tracer-common = { module = "io.prometheus:prometheus-metrics-tracer-common", version.ref = "prometheus" }
 
-ethlo-time = { module = "com.ethlo.time:itu", version = "1.17.0" }
-networknt-jsv = { module = "com.networknt:json-schema-validator", version = "2.0.0" }
+networknt-jsv = { module = "com.networknt:json-schema-validator", version = "3.0.9" }
 
 [plugins]

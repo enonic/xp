@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,9 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.util.GenericValue;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlApiDescriptorParserTest
@@ -48,6 +51,26 @@ public class YmlApiDescriptorParserTest
         final GenericValue schemaConfig = apiDescriptor.getSchemaConfig();
         assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
         assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
+
+        assertEquals( Set.of( "read:content", "myapp:query" ), apiDescriptor.getScopes() );
+        assertTrue( apiDescriptor.isScopeSufficient( Set.of( "myapp:query", "openid" ) ) );
+        assertFalse( apiDescriptor.isScopeSufficient( Set.of( "myapp:other" ) ) );
+        assertFalse( apiDescriptor.isScopeSufficient( Set.of() ), "a token without scopes carries none of them" );
+    }
+
+    @Test
+    void testScopesAreOptionalAndAreScopeNames()
+    {
+        final ApplicationKey app = ApplicationKey.from( "myapp" );
+        final ApiDescriptor none = YmlApiDescriptorParser.parse( "kind: \"API\"\nallow: [\"role:system.admin\"]\n", app )
+            .key( DescriptorKey.from( app, "myapi" ) )
+            .build();
+        assertTrue( none.getScopes().isEmpty() );
+        assertTrue( none.isScopeSufficient( Set.of() ) );
+
+        final ApiDescriptor.Builder spaced = YmlApiDescriptorParser.parse(
+            "kind: \"API\"\nallow: [\"role:system.admin\"]\nscopes: [\"read all\"]\n", app ).key( DescriptorKey.from( app, "myapi" ) );
+        assertThatThrownBy( spaced::build ).isInstanceOf( IllegalArgumentException.class );
     }
 
     private String readAsString( final String name )

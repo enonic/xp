@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CustomSelectorTypeTest
     extends BaseInputTypeTest
 {
-    public CustomSelectorTypeTest()
+    CustomSelectorTypeTest()
     {
         super( CustomSelectorType.INSTANCE );
     }

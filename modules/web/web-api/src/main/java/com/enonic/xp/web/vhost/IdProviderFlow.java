@@ -1,16 +1,18 @@
 package com.enonic.xp.web.vhost;
 
+import java.util.Set;
+
 import org.jspecify.annotations.NullMarked;
 
 /**
- * The authentication flows an id provider may expose on a virtual host, configured per id provider
- * in the vhost mapping value, e.g. {@code enabled=login,autologin}. Without an explicit flow list
- * no restriction applies and the id provider serves whatever flows it supports.
+ * The authentication flows an id provider may serve on a virtual host, configured per id provider
+ * in the vhost mapping, for example {@code idProvider.<name>.flows = login,autologin}. Without a
+ * flow list the id provider serves whatever flows it supports, except {@link #TOKEN_FLOWS}, which a
+ * configured mapping serves only when its list names them. The default virtual host, used where no
+ * mapping is configured, serves every flow.
  * <p>
- * XP manages the flows with known functions: {@link #LOGIN}, {@link #AUTOLOGIN} and
- * {@link #LOGOUT}. Any other name in the list is an additional flow of the id provider app, which
- * may use this configuration to enable flows of its own - e.g. an id provider may serve a token
- * endpoint only where {@code device} is listed.
+ * {@link #LOGIN}, {@link #AUTOLOGIN}, {@link #LOGOUT}, {@link #DEVICE}, {@link #CODE} and {@link #REGISTER} are XP's.
+ * Any other name is a flow of the id provider app itself.
  */
 @NullMarked
 public final class IdProviderFlow
@@ -22,8 +24,9 @@ public final class IdProviderFlow
     public static final String LOGIN = "login";
 
     /**
-     * Non-interactive login (the id provider's {@code autoLogin} function), e.g. bearer-token or
-     * basic authentication.
+     * Non-interactive login from credentials in the request: XP's own access tokens as bearer tokens,
+     * then the id provider's {@code autoLogin} function, for an upstream bearer token or basic
+     * authentication.
      */
     public static final String AUTOLOGIN = "autologin";
 
@@ -31,6 +34,31 @@ public final class IdProviderFlow
      * The id provider's {@code logout} function.
      */
     public static final String LOGOUT = "logout";
+
+    /**
+     * Device login (RFC 8628): XP serves the id provider's device authorization endpoint and
+     * verification page, and accepts the device-code grant at the token endpoint. Web endpoint only.
+     */
+    public static final String DEVICE = "device";
+
+    /**
+     * Authorization code with PKCE (RFC 6749, RFC 7636): XP serves the id provider's authorization
+     * endpoint, which shows the same consent page as device login, and accepts the authorization
+     * code grant at the token endpoint. Web endpoint only.
+     */
+    public static final String CODE = "code";
+
+    /**
+     * Client self-registration (RFC 7591): XP serves the id provider's registration endpoint, where
+     * a client the id provider has no record of registers itself. Web endpoint only.
+     */
+    public static final String REGISTER = "register";
+
+    /**
+     * The flows that issue tokens to clients, or register clients for them: off on a configured
+     * mapping unless its list names them.
+     */
+    public static final Set<String> TOKEN_FLOWS = Set.of( DEVICE, CODE, REGISTER );
 
     private IdProviderFlow()
     {

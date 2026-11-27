@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OsgiBundleReporterTest
     extends BaseOsgiReporterTest<OsgiBundleReporter>
 {
-    public OsgiBundleReporterTest()
+    OsgiBundleReporterTest()
     {
         super( "osgi.bundle" );
     }

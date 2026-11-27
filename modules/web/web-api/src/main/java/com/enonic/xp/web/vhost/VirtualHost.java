@@ -1,6 +1,8 @@
 package com.enonic.xp.web.vhost;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -36,8 +38,16 @@ public interface VirtualHost
     String getTarget();
 
     /**
-     * Returns the vhost's default id provider - the first key of {@link #getIdProviders()} - or
-     * null when none is enabled.
+     * Returns the vhost's default id provider: the one marked {@code default} in the mapping
+     * ({@code mapping.<name>.idProvider.<idp> = default}), or null when none is. An id provider
+     * that is only {@code enabled} never becomes the default, so a mapping can enable id providers
+     * and have no default.
+     * <p>
+     * The default id provider serves what a request does not name an id provider for: the
+     * identity URLs built without an id provider, the login page shown on a 401, and the id
+     * provider of the request in an application. Without a default, only what names an id provider
+     * works, such as {@code /_/idprovider/<idp>/...}, and flows that need none, such as
+     * {@code autologin} and the OAuth endpoints. A 401 is then answered without a login page.
      */
     @Nullable
     IdProviderKey getDefaultIdProviderKey();
@@ -74,8 +84,51 @@ public interface VirtualHost
     int getOrder();
 
     /**
+     * The audiences this vhost is configured to serve (the mapping's {@code audience} list); empty
+     * if none is declared, in which case the mapping serves its own {@link #identifier identifier}
+     * and XP's issuer name. See {@link #acceptsAudience(Set, String, String)}.
+     */
+    Set<String> getAudience();
+
+    /**
+     * The mapping's own identifier as a resource (RFC 8707): the URL its source path is served at
+     * for the given scheme and port, {@code https://host/source}, without a trailing slash. The
+     * port is left out when it is the scheme's default or unknown. For a mapping matching hosts by
+     * pattern it is the identifier for the given host name.
+     *
+     * @param scheme the request scheme, {@code http} or {@code https}
+     * @param host   the host name the request was for
+     * @param port   the request port, or a value no greater than zero when unknown
+     */
+    String identifier( String scheme, String host, int port );
+
+    /**
+     * Whether the mapping matches a host name: the mapping's host, one of its space-separated
+     * hosts, or its regular expression when prefixed with {@code ~}.
+     */
+    boolean matchesHost( String serverName );
+
+    /**
+     * Whether a token with the given audiences is accepted here. The token must name one of the
+     * declared audiences, or XP's issuer name {@code self} where none is declared, or a resource
+     * under this mapping that the request is at or below: the mapping's own
+     * {@link #identifier identifier}, or that identifier with more of the request's path.
+     *
+     * @param self       XP's issuer name
+     * @param requestUrl the external URL the request came to, without query, or null when unknown
+     */
+    boolean acceptsAudience( Set<String> audience, String self, @Nullable String requestUrl );
+
+    /**
      * Returns the mapping's context attributes ({@code mapping.<name>.context.*}), copied into the
      * request's execution context.
      */
     Map<String, String> getContext();
+
+    /**
+     * Returns the APIs this vhost exposes ({@code mapping.<name>.context.api.filter}), or empty when the mapping does
+     * not restrict them. When present, an API the filter rejects is treated as not existing on this vhost, even when
+     * it is mounted: requests for it get the same response as requests for an unknown API.
+     */
+    Optional<VirtualHostApiFilter> getApiFilter();
 }

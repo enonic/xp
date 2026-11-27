@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AggregationTest
 {
-    private static final ArrayList<Aggregation> list = new ArrayList();
+    private static final ArrayList<Aggregation> LIST = new ArrayList();
 
     @BeforeAll
     public static void initApplicationKeys()
     {
-        AggregationTest.list.add( Aggregation.bucketAggregation( "aaa" ).build() );
-        AggregationTest.list.add( Aggregation.bucketAggregation( "bbb" ).build() );
-        AggregationTest.list.add( Aggregation.bucketAggregation( "ccc" ).build() );
+        AggregationTest.LIST.add( Aggregation.bucketAggregation( "aaa" ).build() );
+        AggregationTest.LIST.add( Aggregation.bucketAggregation( "bbb" ).build() );
+        AggregationTest.LIST.add( Aggregation.bucketAggregation( "ccc" ).build() );
     }
 
     @Test
@@ -28,7 +28,7 @@ class AggregationTest
         final BucketAggregation.Builder builder = Aggregation.bucketAggregation( "xxx" );
 
         final Aggregations aggregations =
-            Aggregations.from( AggregationTest.list.get( 0 ), AggregationTest.list.get( 1 ), AggregationTest.list.get( 2 ) );
+            Aggregations.from( AggregationTest.LIST.get( 0 ), AggregationTest.LIST.get( 1 ), AggregationTest.LIST.get( 2 ) );
 
         builder.addAggregations( aggregations );
         final Aggregation aggregation = builder.build();
@@ -44,9 +44,9 @@ class AggregationTest
     {
         final BucketAggregation.Builder builder = Aggregation.bucketAggregation( "xxx" );
 
-        builder.addSubAggregation( AggregationTest.list.get( 0 ) );
-        builder.addSubAggregation( AggregationTest.list.get( 1 ) );
-        builder.addSubAggregation( AggregationTest.list.get( 2 ) );
+        builder.addSubAggregation( AggregationTest.LIST.get( 0 ) );
+        builder.addSubAggregation( AggregationTest.LIST.get( 1 ) );
+        builder.addSubAggregation( AggregationTest.LIST.get( 2 ) );
 
         final Aggregation aggregation = builder.build();
 

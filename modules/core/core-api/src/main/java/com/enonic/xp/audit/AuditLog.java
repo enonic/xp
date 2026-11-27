@@ -3,6 +3,8 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
@@ -21,6 +23,8 @@ public final class AuditLog
 
     private final PrincipalKey user;
 
+    private final PrincipalKey actor;
+
     private final AuditLogUris objectUris;
 
     private final PropertyTree data;
@@ -32,6 +36,7 @@ public final class AuditLog
         time = requireNonNull( Millis.from( builder.time ), "time is required for AuditLog" );
         source = requireNonNull( builder.source, "source is required for AuditLog" );
         user = requireNonNull( builder.user, "user is required for AuditLog" );
+        actor = builder.actor;
         objectUris = requireNonNull( builder.objectUris, "objectUris is required for AuditLog" );
         data = requireNonNull( builder.data, "data is required for AuditLog" );
     }
@@ -61,6 +66,14 @@ public final class AuditLog
         return user;
     }
 
+    /**
+     * Returns the principal that acted on the user's behalf, or null when the user acted for themselves.
+     */
+    public @Nullable PrincipalKey getActor()
+    {
+        return actor;
+    }
+
     public AuditLogUris getObjectUris()
     {
         return objectUris;
@@ -84,14 +97,14 @@ public final class AuditLog
         }
         final AuditLog auditLog = (AuditLog) o;
         return Objects.equals( id, auditLog.id ) && Objects.equals( type, auditLog.type ) && Objects.equals( time, auditLog.time ) &&
-            Objects.equals( source, auditLog.source ) && Objects.equals( user, auditLog.user ) &&
+            Objects.equals( source, auditLog.source ) && Objects.equals( user, auditLog.user ) && Objects.equals( actor, auditLog.actor ) &&
             Objects.equals( objectUris, auditLog.objectUris ) && Objects.equals( data, auditLog.data );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, type, time, source, user, objectUris, data );
+        return Objects.hash( id, type, time, source, user, actor, objectUris, data );
     }
 
     public static Builder create()
@@ -110,6 +123,8 @@ public final class AuditLog
         private String source;
 
         private PrincipalKey user;
+
+        private PrincipalKey actor;
 
         private AuditLogUris objectUris;
 
@@ -147,6 +162,12 @@ public final class AuditLog
         public Builder user( final PrincipalKey val )
         {
             user = val;
+            return this;
+        }
+
+        public Builder actor( final @Nullable PrincipalKey val )
+        {
+            actor = val;
             return this;
         }
 

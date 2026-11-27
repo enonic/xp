@@ -45,11 +45,13 @@ public class MixinValidator
             }
 
             final Form form = mixinDescriptor.getForm();
-            OccurrenceValidator.validate( form, mixin.getData().getRoot(),
-                                          ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.mixinConfigError( errorCode,
-                                                                                                                       propertyPath, name )
-                                              .i18n( i18nPrefix + ".mixin" )
-                                              .args( name ), validationErrorsBuilder );
+            final OccurrenceValidator.ValidationErrorFactory errorFactory =
+                ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.mixinConfigError( errorCode, propertyPath, name )
+                    .i18n( i18nPrefix + ".mixin" )
+                    .args( name );
+
+            OccurrenceValidator.validate( form, mixin.getData().getRoot(), errorFactory, validationErrorsBuilder );
+            InputValueValidator.validate( form, mixin.getData(), errorFactory, validationErrorsBuilder );
         }
     }
 

@@ -45,6 +45,12 @@ public final class DispatchConstants
 
     public static final String CONNECTOR_ATTRIBUTE = "com.enonic.xp.web.dispatch.connector";
 
+    /**
+     * The servlet context attribute holding the port the web connector listens on, an
+     * {@link Integer}, on every connector; absent when the web connector is off.
+     */
+    public static final String WEB_PORT_ATTRIBUTE = "com.enonic.xp.web.dispatch.webPort";
+
     private DispatchConstants()
     {
     }

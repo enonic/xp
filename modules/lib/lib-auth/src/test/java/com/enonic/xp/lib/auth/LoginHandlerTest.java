@@ -1,7 +1,11 @@
 package com.enonic.xp.lib.auth;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
@@ -9,19 +13,31 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviders;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
+import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class LoginHandlerTest
     extends ScriptTestSupport
@@ -35,6 +51,9 @@ class LoginHandlerTest
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+        final AccessTokenService accessTokenService = Mockito.mock( AccessTokenService.class );
+        Mockito.when( accessTokenService.getIssuer() ).thenReturn( "xp" );
+        addService( AccessTokenService.class, accessTokenService );
 
         ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
@@ -87,6 +106,221 @@ class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         assertEquals( authInfo, sessionAuthInfo );
+    }
+
+    @Test
+    void testLoginWithRoles()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithRoles" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.to( PrincipalKeys.from( "role:cms.project.site.viewer", "role:system.admin" ) ), token.getValue().getRestriction() );
+        assertEquals( IdProviderKey.from( "enonic" ), token.getValue().getIdProvider() );
+        assertEquals( authInfo, ContextAccessor.current().getAuthInfo() );
+        assertNull( ContextAccessor.current().getLocalScope().getSession().getAttribute( AuthenticationInfo.class ) );
+    }
+
+    @Test
+    void testLoginWithGroupInRolesIsRefused()
+    {
+        final RuntimeException e = assertThrows( RuntimeException.class, () -> runFunction( "/test/login-test.js", "loginWithGroupInRoles" ) );
+        assertTrue( e.getMessage().contains( "group:system:editors" ), e.getMessage() );
+        verifyNoInteractions( this.securityService );
+    }
+
+    @Test
+    void testLoginWithEmptyRolesRestrictsToNothing()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithEmptyRoles" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.to(), token.getValue().getRestriction() );
+        assertEquals( authInfo, ContextAccessor.current().getAuthInfo() );
+    }
+
+    @Test
+    void testLoginWithoutRolesLeavesNoRestriction()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithSkipAuth" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+    }
+
+    @Test
+    void testLoginWithActor()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithActor" );
+
+        final AuthenticationInfo loggedIn = ContextAccessor.current().getAuthInfo();
+        assertEquals( TestDataFixtures.getTestUser().getKey(), loggedIn.getUser().getKey() );
+        assertEquals( PrincipalKey.from( "user:enonic:automation" ), loggedIn.getActor() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenLeavesTheScopesToTheApi()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessToken" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+
+        final AuthenticationInfo loggedIn = ContextAccessor.current().getAuthInfo();
+        assertEquals( TestDataFixtures.getTestUser().getKey(), loggedIn.getUser().getKey() );
+        assertEquals( AccessTokenInfo.create()
+                          .issuer( "https://issuer.example" )
+                          .clientId( "cli" )
+                          .scope( Set.of( "content:read", "profile", "unknown" ) )
+                          .audience( Set.of( "xp-api" ) )
+                          .build(), loggedIn.getAccessToken() );
+        assertNull( loggedIn.getAccessToken().getGrantId() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenAndRolesNarrowsFurther()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenAndRoles" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.to( PrincipalKeys.from( "role:cms.project.site.viewer" ) ), token.getValue().getRestriction() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenWithoutScopesLeavesNoRestrictionWhereScopesExist()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutScopes" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+        assertEquals( Set.of(), ContextAccessor.current().getAuthInfo().getAccessToken().getScope() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenWithoutScopesLeavesNoRestriction()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), null );
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessToken" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+        assertEquals( "https://issuer.example", ContextAccessor.current().getAuthInfo().getAccessToken().getIssuer() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenForAnotherAudienceIsRefused()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), withScopes() );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
+
+        verifyNoInteractions( this.securityService );
+        assertNull( ContextAccessor.current().getLocalScope().getAttribute( AuthenticationInfo.class ) );
+    }
+
+    @Test
+    void testLoginWithAccessTokenNamingAnAudienceOutsideAVirtualHostIsRefused()
+    {
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
+
+        verifyNoInteractions( this.securityService );
+    }
+
+    @Test
+    void testLoginWithAccessTokenForXpItselfOutsideAVirtualHost()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForXp" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+        assertEquals( Set.of( "xp" ), ContextAccessor.current().getAuthInfo().getAccessToken().getAudience() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenIsRefusedWhereItsAudienceIsNotDeclared()
+    {
+        runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutAudience" );
+        verifyNoInteractions( this.securityService );
+
+        serveVirtualHost( Set.of(), withScopes() );
+        runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutAudience" );
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
+        verifyNoInteractions( this.securityService );
+    }
+
+    @Test
+    void testLoginWithAccessTokenRequiresAnIssuer()
+    {
+        final RuntimeException e =
+            assertThrows( RuntimeException.class, () -> runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutIssuer" ) );
+        assertTrue( e.getMessage().contains( "issuer" ), e.getMessage() );
+        verifyNoInteractions( this.securityService );
+    }
+
+    private VirtualHostIdProvider withScopes()
+    {
+        return VirtualHostIdProvider.create().build();
+    }
+
+    private void serveVirtualHost( final Set<String> audience, final VirtualHostIdProvider enonic )
+    {
+        final VirtualHostIdProvidersMapping.Builder idProviders = VirtualHostIdProvidersMapping.create();
+        if ( enonic != null )
+        {
+            idProviders.addIdProviderWithSettings( IdProviderKey.from( "enonic" ), enonic );
+        }
+        this.portalRequest.setScheme( "https" );
+        this.portalRequest.setHost( "localhost" );
+        this.portalRequest.setPort( 443 );
+        this.portalRequest.setRawPath( "/portal" );
+        this.portalRequest.setVirtualHost(
+            new VirtualHostMapping( "m", "localhost", "/", "/", idProviders.build(), 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
+                                    PrincipalKeys.empty(), audience ) );
     }
 
     @Test

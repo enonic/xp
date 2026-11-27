@@ -1,18 +1,21 @@
 package com.enonic.xp.portal.impl.mapper;
 
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class PortalRequestMapper
     implements MapSerializable
@@ -63,17 +66,35 @@ public final class PortalRequestMapper
             gen.value( "contextPath", this.request.getContextPath() );
         }
 
-        final IdProviderKey idProviderKey = this.request.getIdProvider() == null ? null : this.request.getIdProvider().getKey();
-        if ( idProviderKey != null && this.request.getRawRequest() != null )
+        final VirtualHostIdProvider idProviderSettings = this.request.getIdProviderSettings();
+        if ( idProviderSettings != null )
         {
-            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
-            final VirtualHostIdProvider idProvider = virtualHost.getIdProviders().get( idProviderKey );
-            final Set<String> flows = idProvider == null ? Set.of() : idProvider.getFlows();
-            // An absent list means no flow restriction: the id provider app applies its own defaults.
-            if ( !flows.isEmpty() )
-            {
-                gen.value( "idProviderFlows", flows.stream().sorted().toList() );
-            }
+            gen.map( "idProviderSettings" );
+            final VirtualHost virtualHost = this.request.getVirtualHost();
+            final Set<String> audience = new LinkedHashSet<>( virtualHost.getAudience() );
+            audience.add( virtualHost.identifier( this.request.getScheme(), this.request.getHost(), this.request.getPort() ) );
+            new IdProviderSettingsMapper( idProviderSettings, audience ).serialize( gen );
+            gen.end();
+        }
+
+        final AccessTokenInfo accessToken = ContextAccessor.current().getAuthInfo().getAccessToken();
+        if ( accessToken != null )
+        {
+            gen.map( "accessToken" );
+            gen.value( "issuer", accessToken.getIssuer() );
+            gen.value( "clientId", accessToken.getClientId() );
+            gen.value( "grantId", accessToken.getGrantId() );
+            gen.value( "scope", accessToken.getScope().stream().sorted().toList() );
+            gen.value( "audience", accessToken.getAudience().stream().sorted().toList() );
+            gen.end();
+        }
+
+        @SuppressWarnings("unchecked") final Map<String, Object> oauthConsent = this.request.getRawRequest() == null
+            ? null
+            : (Map<String, Object>) this.request.getRawRequest().getAttribute( OAuthHandler.CONTEXT_ATTRIBUTE );
+        if ( oauthConsent != null )
+        {
+            gen.value( "oauthConsent", oauthConsent );
         }
 
         serializeBody( gen );

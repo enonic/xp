@@ -10,17 +10,21 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -121,6 +125,34 @@ class VirtualHostFilterTest
     }
 
     @Test
+    void only_a_canonical_path_is_kept_as_requested()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/rest/../rest/status" );
+        when( req.getPathInfo() ).thenReturn( "/rest/status" );
+
+        new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) ).doFilter( this.req, this.res, this.chain );
+
+        final ArgumentCaptor<Object> attributes = forClass( Object.class );
+        verify( req, times( 3 ) ).setAttribute( any(), attributes.capture() );
+        assertTrue( attributes.getAllValues().contains( null ), "no path as requested" );
+        assertTrue( attributes.getAllValues().stream().noneMatch( "/rest/../rest/status"::equals ) );
+
+        for ( String canonical : List.of( "/", "/a", "/a/b/", "/api/caf%C3%A9", "/a.b/..c" ) )
+        {
+            assertTrue( VirtualHostFilter.isCanonical( canonical ), canonical );
+        }
+        for ( String other : List.of( "", "a", "/a/../b", "/a/./b", "/a/..", "/a//b", "/a;x/b", "/a b", "/%" ) )
+        {
+            assertTrue( !VirtualHostFilter.isCanonical( other ), other );
+        }
+    }
+
+    @Test
     void testMapping_found()
         throws Exception
     {
@@ -135,6 +167,9 @@ class VirtualHostFilterTest
         filter.doFilter( this.req, this.res, this.chain );
 
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        final ArgumentCaptor<Object> attributes = forClass( Object.class );
+        verify( req, times( 3 ) ).setAttribute( any(), attributes.capture() );
+        assertTrue( attributes.getAllValues().contains( "/rest/status" ), "the path as requested travels with the request" );
         final ArgumentCaptor<HttpServletRequest> requestCaptor = forClass( HttpServletRequest.class );
         verify( this.chain ).doFilter( requestCaptor.capture(), eq( this.res ) );
         assertEquals( "/admin/rest/status", requestCaptor.getValue().getRequestURI() );
@@ -184,6 +219,9 @@ class VirtualHostFilterTest
         assertEquals( IdProviderKey.system(), vhostCaptor.getValue().getDefaultIdProviderKey() );
         // no flow restriction: interactive login is structurally impossible off the web connector
         assertEquals( Set.of(), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).getFlows() );
+        assertTrue( vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).serves( IdProviderFlow.DEVICE ) );
+        // with vhosts on there is no default web vhost to issue its tokens
+        assertNull( vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
         verify( this.chain, times( 1 ) ).doFilter( eq( this.req ), eq( this.res ) );
         verify( res, never() ).setStatus( 404 );
     }
@@ -247,6 +285,7 @@ class VirtualHostFilterTest
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
         assertEquals( Set.of(), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).getFlows() );
+        assertTrue( vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).serves( IdProviderFlow.DEVICE ) );
         verify( this.chain, times( 1 ) ).doFilter( eq( this.req ), eq( this.res ) );
     }
 
@@ -263,6 +302,125 @@ class VirtualHostFilterTest
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
         assertEquals( Set.of(), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).getFlows() );
+        assertTrue( vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ).serves( IdProviderFlow.DEVICE ) );
+    }
+
+    private VirtualHost defaultVhost( final String connector, final String scheme, final Integer webPort )
+        throws Exception
+    {
+        final ServletContext servletContext = mock( ServletContext.class );
+        when( servletContext.getAttribute( DispatchConstants.WEB_PORT_ATTRIBUTE ) ).thenReturn( webPort );
+        when( this.req.getServletContext() ).thenReturn( servletContext );
+        when( this.req.getScheme() ).thenReturn( scheme );
+        when( this.virtualHostService.isEnabled() ).thenReturn( false );
+        when( this.req.getServerName() ).thenReturn( "localhost" );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( connector );
+
+        new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) ).doFilter( this.req, this.res, this.chain );
+
+        final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
+        return vhostCaptor.getValue();
+    }
+
+    @Test
+    void testNotEnabled_managementDefaultVhost_namesTheWebConnectorAsItsAuthorizationServer()
+        throws Exception
+    {
+        final VirtualHost vhost = defaultVhost( DispatchConstants.MANAGEMENT_CONNECTOR, "http", 8080 );
+
+        assertEquals( "http://localhost:8080/_/idprovider/system",
+                      vhost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testNotEnabled_managementDefaultVhost_leavesOutTheSchemesDefaultPort()
+        throws Exception
+    {
+        final VirtualHost vhost = defaultVhost( DispatchConstants.MANAGEMENT_CONNECTOR, "http", 80 );
+
+        assertEquals( "http://localhost/_/idprovider/system", vhost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testNotEnabled_managementDefaultVhost_behindATlsProxy_namesThePlainHttpWebConnector()
+        throws Exception
+    {
+        final VirtualHost vhost = defaultVhost( DispatchConstants.MANAGEMENT_CONNECTOR, "https", 8080 );
+
+        assertEquals( "http://localhost:8080/_/idprovider/system",
+                      vhost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testNotEnabled_managementDefaultVhost_webPortUnknown_namesNone()
+        throws Exception
+    {
+        final VirtualHost vhost = defaultVhost( DispatchConstants.MANAGEMENT_CONNECTOR, "http", null );
+
+        assertNull( vhost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testNotEnabled_webDefaultVhost_issuesItsOwnTokens()
+        throws Exception
+    {
+        final VirtualHost vhost = defaultVhost( DispatchConstants.WEB_CONNECTOR, "http", 8080 );
+
+        assertNull( vhost.getIdProviders().get( IdProviderKey.system() ).getAuthorizationServer() );
+    }
+
+    @Test
+    void testWellKnown_resolvedByTheDescribedPath_notRewritten()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/.well-known/oauth-protected-resource/rest/status" );
+        when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/rest/status" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( this.chain ).doFilter( eq( this.req ), eq( this.res ) );
+    }
+
+    @Test
+    void testWellKnown_onTheManagementConnector_resolvedByTheDescribedPath_notRewritten()
+        throws Exception
+    {
+        this.virtualHosts.add( new VirtualHostMapping( "mgmt", "mgmt.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0,
+                                                       Map.of(), DispatchConstants.MANAGEMENT_CONNECTOR ) );
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+        when( req.getServerName() ).thenReturn( "mgmt.enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/.well-known/oauth-protected-resource/repo:list" );
+        when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/repo:list" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( this.chain ).doFilter( eq( this.req ), eq( this.res ) );
+    }
+
+    @Test
+    void testWellKnown_nothingServedAtTheDescribedPath_notFound()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/.well-known/oauth-protected-resource/elsewhere" );
+        when( req.getPathInfo() ).thenReturn( "/.well-known/oauth-protected-resource/elsewhere" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( this.res ).setStatus( 404 );
+        verify( this.chain, never() ).doFilter( any(), any() );
     }
 
     private void addMapping()

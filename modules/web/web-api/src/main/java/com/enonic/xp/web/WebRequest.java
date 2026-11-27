@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.web.csp.ContentSecurityPolicy;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.websocket.WebSocketContext;
 
 import static java.util.Objects.requireNonNull;
@@ -63,6 +65,8 @@ public class WebRequest
 
     private IdProvider idProvider;
 
+    private VirtualHost virtualHost;
+
     private final ContentSecurityPolicy contentSecurityPolicy;
 
     public WebRequest()
@@ -92,6 +96,7 @@ public class WebRequest
         this.rawRequest = webRequest.rawRequest;
         this.webSocketContext = webRequest.webSocketContext;
         this.idProvider = webRequest.idProvider;
+        this.virtualHost = webRequest.virtualHost;
         this.locales = webRequest.locales;
         this.contentSecurityPolicy = webRequest.contentSecurityPolicy;
         this.setRawPath( webRequest.rawPath );
@@ -211,6 +216,32 @@ public class WebRequest
     public void setIdProvider( final IdProvider idProvider )
     {
         this.idProvider = idProvider;
+    }
+
+    /**
+     * The virtual host mapping the request matched, or null if none did, as on a connector without
+     * mappings or in tests.
+     */
+    public VirtualHost getVirtualHost()
+    {
+        return virtualHost;
+    }
+
+    public void setVirtualHost( final VirtualHost virtualHost )
+    {
+        this.virtualHost = virtualHost;
+    }
+
+    /**
+     * The virtual host's settings for the request's id provider
+     * ({@code mapping.<name>.idProvider.<idp>.*}), or null if the request has no id provider with a
+     * key, matched no virtual host, or the host does not map that id provider.
+     */
+    public VirtualHostIdProvider getIdProviderSettings()
+    {
+        return idProvider == null || idProvider.getKey() == null || virtualHost == null
+            ? null
+            : virtualHost.getIdProviders().get( idProvider.getKey() );
     }
 
     public List<Locale> getLocales()

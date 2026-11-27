@@ -11,10 +11,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
+import com.enonic.xp.security.auth.AccessTokenInfo;
+import com.enonic.xp.security.token.XpScopes;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -33,6 +36,19 @@ public abstract class ManagementApiHandler
     protected static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private static final Pattern PLACEHOLDER = Pattern.compile( "\\{([a-zA-Z]+)}" );
+
+    /**
+     * The area of XP each management API belongs to, which names the scopes it accepts: {@code read:<area>} for
+     * reading, {@code <area>} for anything else.
+     */
+    private static final Map<String, String> AREAS =
+        Map.ofEntries( Map.entry( "server:content", XpScopes.CONTENT ), Map.entry( "server:project", XpScopes.CONTENT ),
+                       Map.entry( "server:repo", XpScopes.REPO ), Map.entry( "server:index", XpScopes.REPO ),
+                       Map.entry( "server:snapshot", XpScopes.REPO ), Map.entry( "server:dump", XpScopes.REPO ),
+                       Map.entry( "server:export", XpScopes.REPO ), Map.entry( "server:app", XpScopes.APP ),
+                       Map.entry( "server:idprovider", XpScopes.IDPROVIDER ), Map.entry( "server:system", XpScopes.SYSTEM ),
+                       Map.entry( "server:task", XpScopes.SYSTEM ), Map.entry( "server:scheduler", XpScopes.SYSTEM ),
+                       Map.entry( "server:auditlog", XpScopes.SYSTEM ) );
 
     private final String descriptorKey;
 
@@ -57,6 +73,15 @@ public abstract class ManagementApiHandler
         routes.add( new Route( method, pattern, verb, handler ) );
     }
 
+    /**
+     * Registers a route no vhost can switch off: it has no verb, so the {@link ManagementApiPolicy} of a mapping does
+     * not apply to it.
+     */
+    protected final void route( final HttpMethod method, final String pattern, final RouteHandler handler )
+    {
+        routes.add( new Route( method, pattern, null, handler ) );
+    }
+
     @Override
     public WebResponse handle( final WebRequest request )
     {
@@ -76,8 +101,13 @@ public abstract class ManagementApiHandler
                 continue;
             }
 
-            final ManagementApiPolicy policy = ManagementApiPolicy.of( descriptorKey );
-            if ( !policy.allows( route.verb ) )
+            final WebResponse insufficientScope = insufficientScope( route.method );
+            if ( insufficientScope != null )
+            {
+                return insufficientScope;
+            }
+
+            if ( route.verb != null && !ManagementApiPolicy.of( descriptorKey ).allows( route.verb ) )
             {
                 return error( HttpStatus.FORBIDDEN,
                               String.format( "Verb [%s] of API [%s] is not exposed on this virtual host", route.verb, descriptorKey ) );
@@ -96,6 +126,30 @@ public abstract class ManagementApiHandler
         return pathMatched
             ? error( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", request.getMethod() ) )
             : error( HttpStatus.NOT_FOUND, String.format( "Path [%s] not found in API [%s]", apiPath, descriptorKey ) );
+    }
+
+    /**
+     * The answer to a token that lacks the scope the route takes: 403 naming that scope (RFC 6750, section 3.1). Reading
+     * takes the read scope of the API's area, anything else the area's own, and a wider scope of XP's includes them. Null
+     * when the request carries no token, or its token has the scope.
+     */
+    private WebResponse insufficientScope( final HttpMethod method )
+    {
+        final AccessTokenInfo accessToken = ContextAccessor.current().getAuthInfo().getAccessToken();
+        final String area = AREAS.get( descriptorKey );
+        if ( accessToken == null || area == null )
+        {
+            return null;
+        }
+        final String required = method == HttpMethod.GET || method == HttpMethod.HEAD ? XpScopes.read( area ) : area;
+        if ( XpScopes.all().expand( accessToken.getScope() ).contains( required ) )
+        {
+            return null;
+        }
+        return WebResponse.create()
+            .status( HttpStatus.FORBIDDEN )
+            .header( "WWW-Authenticate", "Bearer error=\"insufficient_scope\", scope=\"" + required + "\"" )
+            .build();
     }
 
     protected final WebResponse json( final Object body )

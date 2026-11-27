@@ -21,7 +21,7 @@ import com.enonic.xp.web.WebResponse;
  * {@code server:idprovider} - the id providers, as vhost mappings refer to them. The provider configuration (which
  * holds client secrets for OIDC and similar providers) is never serialized.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:idprovider", "title=ID Provider API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:idprovider", "scopes=read:idprovider", "scopes=idprovider", "title=ID Provider API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class IdProviderApiHandler
     extends ManagementApiHandler

@@ -25,6 +25,8 @@ public class CreateAuditLogHandler
 
     private PrincipalKey user;
 
+    private PrincipalKey actor;
+
     private AuditLogUris objectUris;
 
     private PropertyTree data;
@@ -37,6 +39,7 @@ public class CreateAuditLogHandler
             time( this.time ).
             source( this.source ).
             user( this.user ).
+            actor( this.actor ).
             objectUris( this.objectUris ).
             data( this.data ).
             build() );
@@ -61,6 +64,11 @@ public class CreateAuditLogHandler
     public void setUser( final String user )
     {
         this.user = user != null ? PrincipalKey.from( user ) : null;
+    }
+
+    public void setActor( final String actor )
+    {
+        this.actor = actor != null ? PrincipalKey.from( actor ) : null;
     }
 
     public void setObjectUris( final ScriptValue objectUris )

@@ -1,12 +1,16 @@
 package com.enonic.xp.lib.auth;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreateUserHandlerTest
     extends ScriptTestSupport
@@ -43,6 +47,30 @@ class CreateUserHandlerTest
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUserWithoutEmail() );
 
         runFunction( "/test/createUser-test.js", "createUserNoEmail" );
+    }
+
+    @Test
+    void testCreateUserDisabled()
+    {
+        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
+
+        runFunction( "/test/createUser-test.js", "createUserDisabled" );
+
+        final ArgumentCaptor<CreateUserParams> captor = ArgumentCaptor.forClass( CreateUserParams.class );
+        Mockito.verify( securityService ).createUser( captor.capture() );
+        assertTrue( captor.getValue().isDisabled() );
+    }
+
+    @Test
+    void testCreateUserNotDisabledByDefault()
+    {
+        Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
+
+        runFunction( "/test/createUser-test.js", "createUser" );
+
+        final ArgumentCaptor<CreateUserParams> captor = ArgumentCaptor.forClass( CreateUserParams.class );
+        Mockito.verify( securityService ).createUser( captor.capture() );
+        assertFalse( captor.getValue().isDisabled() );
     }
 
     @Test

@@ -18,7 +18,6 @@ import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
-import com.enonic.xp.server.RunMode;
 import com.enonic.xp.util.Version;
 
 class GraalJSTest

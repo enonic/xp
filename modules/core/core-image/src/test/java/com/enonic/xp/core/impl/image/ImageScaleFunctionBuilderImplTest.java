@@ -25,7 +25,7 @@ public final class ImageScaleFunctionBuilderImplTest
     private BufferedImage source;
 
     @BeforeEach
-    public final void setUp()
+    public void setUp()
         throws Exception
     {
         source = ImageIO.read( getClass().getResourceAsStream( "effect/source.jpg" ) );

@@ -43,8 +43,10 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -163,6 +165,15 @@ class IdProviderControllerServiceImplTest
     }
 
     @Test
+    void hasFunction()
+    {
+        assertTrue( idProviderControllerService.hasFunction( IdProviderKey.from( "myidprovider" ), "myfunction" ) );
+        assertFalse( idProviderControllerService.hasFunction( IdProviderKey.from( "myidprovider" ), "missingfunction" ) );
+        assertFalse( idProviderControllerService.hasFunction( IdProviderKey.from( "myemptyidprovider" ), "myfunction" ) );
+        assertFalse( idProviderControllerService.hasFunction( IdProviderKey.from( "missingidprovider" ), "myfunction" ) );
+    }
+
+    @Test
     void execute()
         throws IOException
     {
@@ -216,6 +227,30 @@ class IdProviderControllerServiceImplTest
         assertNotNull( portalResponse );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "myapplication/myfunction", portalResponse.getBody() );
+    }
+
+    @Test
+    void executeWithVirtualHostWithoutDefaultIdProvider()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = createHttpServletRequest();
+
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        when( virtualHost.getIdProviders() )
+            .thenReturn( Map.of( IdProviderKey.from( "myuserstore" ), VirtualHostIdProvider.create().build() ) );
+        when( virtualHost.getTarget() ).thenReturn( "/" );
+        VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
+        when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final HttpServletResponse response = mock();
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .servletRequest( httpServletRequest )
+            .response( response )
+            .functionName( "myfunction" )
+            .build();
+
+        assertNull( idProviderControllerService.execute( executionParams ) );
+        Mockito.verifyNoInteractions( response );
     }
 
     private HttpServletRequest createHttpServletRequest()

@@ -22,7 +22,6 @@ public final class RepositoryId
     /**
      * RepositoryId validator.
      * This is translated into the Elasticsearch index name and needs to be limited accordingly.
-     * Length is limited to 63 characters. This magic number can be found in many other systems: DNS, MySQL, Kubernetes.
      */
     private static final NameValidator REPOSITORY_ID_VALIDATOR = NameValidator.builder( RepositoryId.class )
         .maxLength( RepositoryConstants.REPOSITORY_ID_MAX_LENGTH )

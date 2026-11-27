@@ -21,3 +21,5 @@ log.error('error message %s', true);
 log.error('error message %s %s', true, {a: 3});
 log.error('error message %s', [1, 2]);
 log.error('error message', new Error('cause'));
+
+log.info('not an exception %s', {nashornException: 1});

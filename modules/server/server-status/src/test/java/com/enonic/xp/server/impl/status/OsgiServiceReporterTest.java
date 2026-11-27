@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 class OsgiServiceReporterTest
     extends BaseOsgiReporterTest<OsgiServiceReporter>
 {
-    public OsgiServiceReporterTest()
+    OsgiServiceReporterTest()
     {
         super( "osgi.service" );
     }

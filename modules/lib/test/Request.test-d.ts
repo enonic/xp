@@ -824,3 +824,87 @@ expectNotAssignable<Request>({
 //     ...requiredProperties,
 //     custom: 'whatever', // Typed custom property allowed
 // });
+
+// Scenario: When implementing an idprovider oauthConsent function the Request has a oauthConsent property
+const oauthConsentRequest: Request = new RequestImplementation({
+    cookies: {},
+    headers: {},
+    host: 'localhost',
+    method: 'GET',
+    mode: 'live',
+    params: {user_code: 'BCDFGHJK'},
+    path: '/_/idprovider/system/device',
+    port: 8080,
+    rawPath: '/_/idprovider/system/device',
+    remoteAddress: '127.0.0.1',
+    url: 'http://localhost:8080/_/idprovider/system/device?user_code=BCDFGHJK',
+    scheme: 'http',
+    webSocket: false,
+    locales: ['en'],
+    oauthConsent: {
+        idProvider: 'system',
+        action: 'confirm',
+        flow: 'device',
+        user: {key: 'user:system:alice', login: 'alice', displayName: 'Alice'},
+        userCode: 'BCDF-GHJK',
+        clientId: 'my-cli',
+        client: {id: 'my-cli', displayName: 'My CLI', registered: true},
+        scope: [{id: 'content:read', title: 'Read content', required: true}],
+        unrestricted: false,
+        audience: ['api'],
+        csrf: 'token',
+    },
+}).toObject();
+expectAssignable<Request>(oauthConsentRequest);
+if (oauthConsentRequest.oauthConsent?.action === 'confirm') {
+    expectAssignable<string>(oauthConsentRequest.oauthConsent.csrf);
+}
+
+// Scenario: An id provider function sees the host's settings for its id provider
+const idProviderRequest: Request = new RequestImplementation({
+    cookies: {},
+    headers: {},
+    host: 'localhost',
+    method: 'GET',
+    mode: 'live',
+    params: {},
+    path: '/_/idprovider/system/login',
+    port: 8080,
+    rawPath: '/_/idprovider/system/login',
+    remoteAddress: '127.0.0.1',
+    url: 'http://localhost:8080/_/idprovider/system/login',
+    scheme: 'http',
+    webSocket: false,
+    locales: ['en'],
+    idProviderSettings: {
+        flows: ['device', 'login', 'logout'],
+        audience: ['api'],
+    },
+}).toObject();
+expectAssignable<Request>(idProviderRequest);
+expectAssignable<string[] | undefined>(idProviderRequest.idProviderSettings?.flows);
+expectAssignable<string[] | undefined>(idProviderRequest.idProviderSettings?.audience);
+
+// Scenario: A request authenticated with an access token XP issued carries what the token was granted
+const tokenRequest: Request = new RequestImplementation({
+    cookies: {},
+    headers: {Authorization: 'Bearer xp-token'},
+    host: 'api.example.com',
+    method: 'GET',
+    mode: 'live',
+    params: {},
+    path: '/api/content',
+    port: 443,
+    rawPath: '/api/content',
+    remoteAddress: '127.0.0.1',
+    url: 'https://api.example.com/api/content',
+    scheme: 'https',
+    webSocket: false,
+    locales: ['en'],
+    accessToken: {issuer: 'xp', clientId: 'my-cli', grantId: null, scope: ['content:read'], audience: ['api']},
+}).toObject();
+expectAssignable<Request>(tokenRequest);
+expectAssignable<string[] | undefined>(tokenRequest.accessToken?.scope);
+expectNotAssignable<Request>({...tokenRequest, accessToken: {scope: 'content:read'}});
+expectNotAssignable<Request>({...tokenRequest, accessToken: {clientId: null, grantId: null, scope: [], audience: []}});
+

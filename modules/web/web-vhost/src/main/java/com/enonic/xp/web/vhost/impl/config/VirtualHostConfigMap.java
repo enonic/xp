@@ -1,5 +1,7 @@
 package com.enonic.xp.web.vhost.impl.config;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -12,12 +14,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostApiFilter;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
@@ -28,6 +33,10 @@ final class VirtualHostConfigMap
     private static final String DEFAULT_ID_PROVIDER_VALUE = "default";
 
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
+
+    private static final String FLOWS_ID_PROVIDER_SETTING = "flows";
+
+    private static final String AUTHORIZATION_SERVER_ID_PROVIDER_SETTING = "authorizationServer";
 
     private static final String API_CONTEXT_PREFIX = "api.";
 
@@ -76,8 +85,20 @@ final class VirtualHostConfigMap
         final Map<String, String> context = getVirtualHostContext( prefix );
         final String connector = getConnector( prefix );
         final PrincipalKeys allowedPrincipals = getAllowedPrincipals( prefix );
+        final Set<String> audience = getAudience( prefix );
 
-        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals );
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals,
+                                       audience );
+    }
+
+    private Set<String> getAudience( final String mappingPrefix )
+    {
+        final String value = getString( mappingPrefix + "audience" );
+        if ( value == null )
+        {
+            return Set.of();
+        }
+        return list( value ).collect( Collectors.toUnmodifiableSet() );
     }
 
     private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )
@@ -112,54 +133,125 @@ final class VirtualHostConfigMap
     {
         final String idProviderPrefix = mappingPrefix + "idProvider" + ".";
 
-        final VirtualHostIdProvidersMapping.Builder hostIdProvidersMapping = VirtualHostIdProvidersMapping.create();
+        final Map<String, IdProviderSettings> idProviders = new TreeMap<>();
 
-        getIdProviders( idProviderPrefix ).forEach( ( idProviderName, idProviderStatus ) -> {
+        // Keys: "idProvider.<name> = default|enabled" enables the provider; "idProvider.<name>.<setting> = <value>"
+        // carries its settings. The first segment is the name: an id provider named with a dot cannot be configured.
+        getIdProviders( idProviderPrefix ).forEach( ( remainder, value ) -> {
+            final int dot = remainder.indexOf( '.' );
+            final String idProviderName = dot < 0 ? remainder : remainder.substring( 0, dot );
+            final IdProviderSettings settings = idProviders.computeIfAbsent( idProviderName, name -> {
+                IdProviderKey.from( name );
+                return new IdProviderSettings();
+            } );
 
-            final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
-
-            // Value grammar: "default" and/or "enabled[=flow,flow...]".
-            boolean isDefault = false;
-            boolean isEnabled = false;
-            Set<String> flows = null;
-
-            for ( final String token : idProviderStatus.split( "&" ) )
+            if ( dot < 0 )
             {
-                final String trimmed = token.trim();
-                final int eq = trimmed.indexOf( '=' );
-                final String name = eq < 0 ? trimmed : trimmed.substring( 0, eq );
-                final String value = eq < 0 ? null : trimmed.substring( eq + 1 );
-
-                if ( DEFAULT_ID_PROVIDER_VALUE.equals( name ) )
+                switch ( value.trim() )
                 {
-                    isDefault = true;
+                    case DEFAULT_ID_PROVIDER_VALUE -> settings.isDefault = true;
+                    case ENABLED_ID_PROVIDER_VALUE -> settings.isEnabled = true;
+                    default -> throw new IllegalArgumentException(
+                        "Invalid value [" + value + "] for id provider [" + idProviderName + "] in vhost mapping, must be [" +
+                            DEFAULT_ID_PROVIDER_VALUE + "] or [" + ENABLED_ID_PROVIDER_VALUE + "]" );
                 }
-                else if ( ENABLED_ID_PROVIDER_VALUE.equals( name ) )
-                {
-                    isEnabled = true;
-                    if ( value != null && !value.isBlank() )
-                    {
-                        flows = Stream.of( value.split( "," ) )
-                            .map( String::trim )
-                            .filter( flow -> !flow.isEmpty() )
-                            .map( flow -> flow.toLowerCase( Locale.ROOT ) )
-                            .collect( Collectors.toUnmodifiableSet() );
-                    }
-                }
+                return;
             }
 
-            if ( isDefault || isEnabled )
+            final String setting = remainder.substring( dot + 1 );
+            switch ( setting )
             {
-                hostIdProvidersMapping.addIdProvider( idProviderKey, flows );
-                if ( isDefault )
+                case FLOWS_ID_PROVIDER_SETTING -> settings.flows =
+                    list( value ).map( flow -> flow.toLowerCase( Locale.ROOT ) ).collect( Collectors.toUnmodifiableSet() );
+                case AUTHORIZATION_SERVER_ID_PROVIDER_SETTING -> settings.authorizationServer = authorizationServer( idProviderName, value );
+                default -> throw new IllegalArgumentException(
+                    "Unknown setting [" + setting + "] for id provider [" + idProviderName + "] in vhost mapping" +
+                        " (an id provider whose name contains a dot cannot be configured in a vhost mapping)" );
+            }
+        } );
+
+        final VirtualHostIdProvidersMapping.Builder hostIdProvidersMapping = VirtualHostIdProvidersMapping.create();
+
+        String defaultIdProvider = null;
+        for ( final Map.Entry<String, IdProviderSettings> entry : idProviders.entrySet() )
+        {
+            final IdProviderSettings settings = entry.getValue();
+            if ( settings.isDefault )
+            {
+                if ( defaultIdProvider != null )
+                {
+                    throw new IllegalArgumentException(
+                        "Multiple default id providers in vhost mapping: [" + defaultIdProvider + "] and [" + entry.getKey() + "]" );
+                }
+                defaultIdProvider = entry.getKey();
+            }
+            // Both default and enabled turn the id provider on; absent means off.
+            if ( settings.isDefault || settings.isEnabled )
+            {
+                final IdProviderKey idProviderKey = IdProviderKey.from( entry.getKey() );
+                hostIdProvidersMapping.addIdProviderWithSettings( idProviderKey, settings.build() );
+                if ( settings.isDefault )
                 {
                     hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
                 }
             }
-
-        } );
+        }
 
         return hostIdProvidersMapping.build();
+    }
+
+    /**
+     * The items of a comma-separated setting, trimmed, blanks dropped.
+     */
+    private static Stream<String> list( final String value )
+    {
+        return Stream.of( value.split( "," ) ).map( String::trim ).filter( s -> !s.isEmpty() );
+    }
+
+    private static final class IdProviderSettings
+    {
+        boolean isDefault;
+
+        boolean isEnabled;
+
+        Set<String> flows;
+
+        String authorizationServer;
+
+        VirtualHostIdProvider build()
+        {
+            final VirtualHostIdProvider.Builder builder = VirtualHostIdProvider.create().authorizationServer( authorizationServer );
+            if ( flows != null )
+            {
+                builder.flows( flows );
+            }
+            return builder.build();
+        }
+    }
+
+    /**
+     * An authorization server is named by its issuer URL (RFC 8414): http or https, with a host, and
+     * neither query nor fragment. It is kept as written, a trailing slash included: a client compares
+     * it with the issuer the authorization server states about itself.
+     */
+    private static String authorizationServer( final String idProviderName, final String value )
+    {
+        final String url = value.trim();
+        try
+        {
+            final URI uri = new URI( url );
+            if ( ( "https".equals( uri.getScheme() ) || "http".equals( uri.getScheme() ) ) && uri.getHost() != null &&
+                uri.getRawQuery() == null && uri.getRawFragment() == null )
+            {
+                return url;
+            }
+        }
+        catch ( URISyntaxException e )
+        {
+            // reported below
+        }
+        throw new IllegalArgumentException( "Invalid authorizationServer [" + value + "] for id provider [" + idProviderName +
+                                                "] in vhost mapping, must be an http or https URL without query or fragment" );
     }
 
     private Map<String, String> getVirtualHostContext( final String mappingPrefix )
@@ -171,16 +263,16 @@ final class VirtualHostConfigMap
             .filter( entry -> entry.getKey().startsWith( configPrefix ) )
             .collect( Collectors.toMap( entry -> entry.getKey().replace( configPrefix, "" ), Map.Entry::getValue ) );
 
-        context.keySet().forEach( key -> validateApiContextKey( mappingPrefix, key ) );
+        context.forEach( ( key, value ) -> validateApiContextKey( mappingPrefix, key, value ) );
         return context;
     }
 
     /**
-     * The {@code api.} context namespace carries the management API policies of a vhost and is validated eagerly: a
-     * key that fails to parse would otherwise be ignored, leaving the API it was meant to restrict unrestricted.
-     * Accepted forms are {@code api.rest.enabled} and {@code api.<application>:<api>.<setting>}.
+     * The {@code api.} context namespace carries the API policies of a vhost and is validated eagerly: a key that
+     * fails to parse would otherwise be ignored, leaving the API it was meant to restrict unrestricted. Accepted forms
+     * are {@code api.rest.enabled}, {@code api.filter} and {@code api.<application>:<api>.<setting>}.
      */
-    private static void validateApiContextKey( final String mappingPrefix, final String key )
+    private static void validateApiContextKey( final String mappingPrefix, final String key, final String value )
     {
         if ( !key.startsWith( API_CONTEXT_PREFIX ) )
         {
@@ -191,16 +283,35 @@ final class VirtualHostConfigMap
         {
             return;
         }
+        if ( VirtualHostApiFilter.CONTEXT_KEY.equals( key ) )
+        {
+            validateApiFilter( mappingPrefix, key, value );
+            return;
+        }
 
         final int colon = remainder.indexOf( ':' );
         final int dot = colon < 0 ? -1 : remainder.indexOf( '.', colon );
         if ( colon <= 0 || dot <= colon + 1 || dot == remainder.length() - 1 )
         {
             throw new IllegalArgumentException(
-                "Invalid context key [" + mappingPrefix + "context." + key + "] in vhost mapping, expected api.rest.enabled or " +
-                    "api.<application>\\:<api>.<setting> (the colon must be escaped in .cfg files)" );
+                "Invalid context key [" + mappingPrefix + "context." + key + "] in vhost mapping, expected api.rest.enabled, " +
+                    "api.filter or api.<application>\\:<api>.<setting> (the colon must be escaped in .cfg files)" );
         }
         ApplicationKey.from( remainder.substring( 0, colon ) );
+    }
+
+    private static void validateApiFilter( final String mappingPrefix, final String key, final String value )
+    {
+        try
+        {
+            VirtualHostApiFilter.parse( value );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new IllegalArgumentException(
+                "Invalid value [" + value + "] for [" + mappingPrefix + "context." + key + "] in vhost mapping, expected a comma " +
+                    "separated list of <application>:<api> patterns, optionally ending with * or starting with !", e );
+        }
     }
 
     private Map<String, String> getIdProviders( final String idProviderPrefix )
