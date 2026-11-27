@@ -5,10 +5,11 @@
     "description": "Root package for libs development.",
     "scripts": {
         "build": "tsc --declaration --project tsconfig.build.json",
-        "lint": "eslint . --quiet --cache --cache-location build/.eslintcache",
-        "fix": "eslint . --fix --cache",
+        "lint": "oxlint",
+        "fix": "oxlint --fix",
         "jsdoc": "jsdoc --configure jsdoc/conf.json",
-        "test:types": "tsd -t build/npm/global.d.ts -f test/**/*.test-d.ts"
+        "test:types": "tsd -t build/npm/global.d.ts -f test/**/*.test-d.ts",
+        "test:packages": "node scripts/test-packages.mjs"
     },
     "repository": {
         "type": "git",
@@ -22,13 +23,16 @@
         "url": "https://github.com/enonic/xp/issues"
     },
     "homepage": "https://github.com/enonic/xp/tree/master#readme",
+    "packageManager": "pnpm@12.11.2",
+    "tsd": {
+        "compilerOptions": {
+            "target": "es5"
+        }
+    },
     "devDependencies": {
-        "@enonic/eslint-config": "^2.1.0",
-        "@typescript-eslint/eslint-plugin": "^8.48.0",
-        "@typescript-eslint/parser": "^8.48.0",
-        "globals": "^16.5.0",
-        "eslint": "^9.39.1",
         "jsdoc": "^4.0.5",
+        "oxlint": "^1.88.0",
+        "oxlint-tsgolint": "^7.0.2004",
         "tsd": "^0.33.0",
         "typescript": "^5.9.3"
     }

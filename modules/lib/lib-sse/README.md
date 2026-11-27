@@ -12,8 +12,9 @@ npm i --save-dev @enonic-types/lib-sse
 
 ### Require and custom imports
 
-To make `require` work out of the box, you must install and add the `@enonic-types/global` types. Aside from providing definitions for XP
-global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default path will return typed object.
+To make `require` work out of the box, install `@enonic-types/global` and add it to `types` together with `@enonic-types/lib-sse`.
+The global types define XP global objects, e.g. `log`, `app`, `__`, etc, and listing the library makes requiring it by the default path
+return a typed object. To add the types of all XP libraries at once, use `@enonic-types/xp` instead.
 
 `tsconfig.json`
 
@@ -21,7 +22,8 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/global"
+      "@enonic-types/global",
+      "@enonic-types/lib-sse"
     ]
   }
 }
@@ -51,13 +53,11 @@ types mapping to your configuration.
 
 `tsconfig.json`
 
-
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/sse": ["node_modules/@enonic-types/lib-sse"]
+      "/lib/xp/sse": ["./node_modules/@enonic-types/lib-sse"]
     }
   }
 }
@@ -77,4 +77,4 @@ import {
 } from '/lib/xp/sse';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.

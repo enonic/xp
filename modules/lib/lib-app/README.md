@@ -10,24 +10,11 @@ npm i --save-dev @enonic-types/lib-app
 
 ## Use
 
-Add the corresponding types to your `tsconfig.json` file that is used for application's server-side TypeScript code.
-
-`tsconfig.json`
-
-```json
-{
-  "compilerOptions": {
-    "types": [
-      "@enonic-types/lib-app"
-    ]
-  }
-}
-```
-
 ### Require and custom imports
 
-To make `require` work out of the box, you must install and add the `@enonic-types/global` types. Aside from providing definitions for XP
-global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default path will return typed object.
+To make `require` work out of the box, install `@enonic-types/global` and add it to `types` together with `@enonic-types/lib-app`.
+The global types define XP global objects, e.g. `log`, `app`, `__`, etc, and listing the library makes requiring it by the default path
+return a typed object. To add the types of all XP libraries at once, use `@enonic-types/xp` instead.
 
 `tsconfig.json`
 
@@ -35,7 +22,8 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/global"
+      "@enonic-types/global",
+      "@enonic-types/lib-app"
     ]
   }
 }
@@ -67,9 +55,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/app": ["node_modules/@enonic-types/lib-app"]
+      "/lib/xp/app": ["./node_modules/@enonic-types/lib-app"]
     }
   }
 }
@@ -88,4 +75,7 @@ import {
 } from '/lib/xp/app';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
+
+With pnpm, also install `@enonic-types/core` directly, at the same version as `@enonic-types/lib-app`. The types imported through
+`paths` resolve their `@enonic-types/core` import from the top level of `node_modules`, and pnpm does not put it there.

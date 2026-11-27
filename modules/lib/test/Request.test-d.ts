@@ -20,7 +20,7 @@ const idproviderLogoutRequest: Request = new RequestImplementation({
     headers: {
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         // ...
-    } as Record<string, string>,
+    },
     host: 'localhost',
     method: 'GET',
     mode: 'live',
@@ -828,7 +828,7 @@ expectNotAssignable<Request>({
 // Scenario: When implementing an idprovider oauthConsent function the Request has a oauthConsent property
 const oauthConsentRequest: Request = new RequestImplementation({
     cookies: {},
-    headers: {} as Record<string, string>,
+    headers: {},
     host: 'localhost',
     method: 'GET',
     mode: 'live',
@@ -863,7 +863,7 @@ if (oauthConsentRequest.oauthConsent?.action === 'confirm') {
 // Scenario: An id provider function sees the host's settings for its id provider
 const idProviderRequest: Request = new RequestImplementation({
     cookies: {},
-    headers: {} as Record<string, string>,
+    headers: {},
     host: 'localhost',
     method: 'GET',
     mode: 'live',
@@ -888,7 +888,7 @@ expectAssignable<string[] | undefined>(idProviderRequest.idProviderSettings?.aud
 // Scenario: A request authenticated with an access token XP issued carries what the token was granted
 const tokenRequest: Request = new RequestImplementation({
     cookies: {},
-    headers: {Authorization: 'Bearer xp-token'} as Record<string, string>,
+    headers: {Authorization: 'Bearer xp-token'},
     host: 'api.example.com',
     method: 'GET',
     mode: 'live',
