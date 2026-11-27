@@ -617,7 +617,7 @@ class ApplicationServiceTest
     {
         final ApplicationKey appKey = ApplicationKey.from( "codelessapp" );
         final ByteSource codeless = createCodelessAppSource( Map.of( //
-            "enonic.yaml", "kind: \"Application\"\nname: \"codelessapp\"\nversion: \"1.0.0\"\ntitle: \"Codeless\"\n", //
+            "enonic.yaml", "kind: \"Application\"\nname: \"codelessapp\"\nversion: \"1.0.0-SNAPSHOT\"\ntitle: \"Codeless\"\n", //
             "enonic.svg", "<svg>codeless</svg>", //
             "cms/cms.yaml", "kind: \"CMS\"", //
             "cms/content-types/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"\n" ) );
@@ -626,7 +626,8 @@ class ApplicationServiceTest
             final Application installed = applicationService.installGlobalApplication( codeless );
             assertNull( installed.getClassLoader() );
             assertTrue( installed.isStarted() );
-            assertEquals( "1.0.0", installed.getVersion().toString() );
+            assertEquals( "1.0.0.SNAPSHOT", installed.getVersion().toString() );
+            assertEquals( "1.0.0-SNAPSHOT", applicationDescriptorService.get( appKey ).getVersion() );
             assertNull( appNode( "codelessapp" ).data().getBinaryReference( "applicationFile" ) );
             assertNotNull( appChildNode( "codelessapp", "cms" ) );
             assertEquals( "Codeless", applicationDescriptorService.get( appKey ).getTitle() );

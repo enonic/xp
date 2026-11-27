@@ -514,11 +514,11 @@ class ApplicationDescriptorServiceImplTest
 
         // the version is declared by the descriptor the application ships: it is not editable, an edit leaves it as it is
         final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> {
-            assertEquals( "1.0.0.SNAPSHOT", edit.source.getVersion() );
+            assertEquals( "1.0.0-SNAPSHOT", edit.source.getVersion() );
             edit.title = "New";
         } ) ) );
         assertEquals( "kind: \"Application\"\nname: \"myapp\"\nversion: \"1.0.0-SNAPSHOT\"\ntitle: \"New\"\n", persisted.get() );
-        assertEquals( "1.0.0.SNAPSHOT", result.getVersion() );
+        assertEquals( "1.0.0-SNAPSHOT", result.getVersion() );
     }
 
     @Test
@@ -544,8 +544,7 @@ class ApplicationDescriptorServiceImplTest
         verify( repoService, never() ).createApplicationNode( any() );
         verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
 
-        // written as a semantic version or as a bundle version: the file declares semantic versions, the descriptor reports
-        // bundle versions
+        // written as a semantic version or as a bundle version: the descriptor declares and holds semantic versions
         final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> {
             edit.minSystemVersion = "8.0.0-RC1";
             edit.maxSystemVersion = "9.0.0.RC1";
@@ -553,8 +552,8 @@ class ApplicationDescriptorServiceImplTest
 
         assertEquals( "kind: \"Application\"\nname: \"myapp\"\nminSystemVersion: \"8.0.0-RC1\"\nmaxSystemVersion: \"9.0.0-RC1\"\n",
                       persisted.get() );
-        assertEquals( "8.0.0.RC1", result.getMinSystemVersion() );
-        assertEquals( "9.0.0.RC1", result.getMaxSystemVersion() );
+        assertEquals( "8.0.0-RC1", result.getMinSystemVersion() );
+        assertEquals( "9.0.0-RC1", result.getMaxSystemVersion() );
     }
 
     @Test

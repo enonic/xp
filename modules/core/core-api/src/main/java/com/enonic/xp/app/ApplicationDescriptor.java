@@ -137,9 +137,9 @@ public final class ApplicationDescriptor
     }
 
     /**
-     * The version declared by the {@code version} field of the application descriptor. The descriptor file declares versions
-     * as semantic versions ({@code 1.2.3-SNAPSHOT}); they are held and reported the way {@link Application#getVersion()}
-     * reports them, as the version of a bundle ({@code 1.2.3.SNAPSHOT}). The same goes for the system versions.
+     * The version declared by the {@code version} field of the application descriptor, as declared: the descriptor file declares
+     * versions as semantic versions ({@code 1.2.3-SNAPSHOT}), while {@link Application#getVersion()} reports the version of a
+     * bundle it converts to ({@code 1.2.3.SNAPSHOT}). The same goes for the system versions.
      *
      * @return the declared version, or {@code null} when the descriptor declares none
      */

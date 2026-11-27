@@ -119,15 +119,16 @@ public class YmlApplicationDescriptorParserTest
     }
 
     @Test
-    void version_is_declared_as_a_semantic_version_and_held_as_a_bundle_version()
+    void version_is_declared_as_a_semantic_version_and_held_as_declared()
     {
         assertEquals( "1.2.3", parse( "kind: \"Application\"\nversion: \"1.2.3\"\n" ).getVersion() );
-        assertEquals( "1.2.3.SNAPSHOT", parse( "kind: \"Application\"\nversion: \"1.2.3-SNAPSHOT\"\n" ).getVersion() );
-        assertEquals( "1.2.3.rc_1_build_5", parse( "kind: \"Application\"\nversion: \"1.2.3-rc.1+build.5\"\n" ).getVersion() );
+        assertEquals( "1.2.3-SNAPSHOT", parse( "kind: \"Application\"\nversion: \"1.2.3-SNAPSHOT\"\n" ).getVersion() );
+        assertEquals( "1.2.3-rc.1+build.5", parse( "kind: \"Application\"\nversion: \"1.2.3-rc.1+build.5\"\n" ).getVersion() );
+        assertEquals( "1.2.3-rc+001", parse( "kind: \"Application\"\nversion: \"1.2.3-rc+001\"\n" ).getVersion() );
 
         final ApplicationDescriptor range =
             parse( "kind: \"Application\"\nminSystemVersion: \"8.0.0-SNAPSHOT\"\nmaxSystemVersion: \"9.0.0\"\n" );
-        assertEquals( "8.0.0.SNAPSHOT", range.getMinSystemVersion() );
+        assertEquals( "8.0.0-SNAPSHOT", range.getMinSystemVersion() );
         assertEquals( "9.0.0", range.getMaxSystemVersion() );
     }
 

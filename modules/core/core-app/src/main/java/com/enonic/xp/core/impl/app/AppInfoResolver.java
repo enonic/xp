@@ -15,6 +15,7 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
@@ -96,9 +97,9 @@ class AppInfoResolver
         appInfo.codeless = true;
         appInfo.hasCmsDescriptor = hasCmsDescriptor;
         appInfo.name = key.getName();
-        appInfo.version = descriptor.getVersion();
-        appInfo.minSystemVersion = descriptor.getMinSystemVersion();
-        appInfo.maxSystemVersion = descriptor.getMaxSystemVersion();
+        appInfo.version = ApplicationHelper.toBundleVersion( "version", descriptor.getVersion() ).toString();
+        appInfo.minSystemVersion = bundleVersion( "minSystemVersion", descriptor.getMinSystemVersion() );
+        appInfo.maxSystemVersion = bundleVersion( "maxSystemVersion", descriptor.getMaxSystemVersion() );
         appInfo.title = descriptor.getTitle();
         appInfo.vendorName = descriptor.getVendorName();
         return appInfo;
@@ -118,11 +119,16 @@ class AppInfoResolver
         appInfo.version = Optional.ofNullable( attrs.getValue( Constants.BUNDLE_VERSION ) ).orElse( "0.0.0" );
         appInfo.system = "system".equals( attrs.getValue( ApplicationManifestConstants.X_BUNDLE_TYPE ) );
 
+        // the descriptor declares a range closed at its minimum and open at its maximum: a bound of the manifest the descriptor
+        // cannot declare is left out, the manifest itself is checked on start all the same
         Optional.ofNullable( attrs.getValue( ApplicationManifestConstants.X_SYSTEM_VERSION ) )
             .map( ApplicationHelper::parseVersionRange )
             .ifPresent( vr -> {
-                appInfo.minSystemVersion = vr.getLeft().toString();
-                if ( vr.getRight() != null )
+                if ( vr.getLeftType() == VersionRange.LEFT_CLOSED )
+                {
+                    appInfo.minSystemVersion = vr.getLeft().toString();
+                }
+                if ( vr.getRight() != null && vr.getRightType() == VersionRange.RIGHT_OPEN )
                 {
                     appInfo.maxSystemVersion = vr.getRight().toString();
                 }
@@ -141,6 +147,11 @@ class AppInfoResolver
         }
 
         return appInfo;
+    }
+
+    private static String bundleVersion( final String field, final String value )
+    {
+        return isNullOrEmpty( value ) ? null : ApplicationHelper.toBundleVersion( field, value ).toString();
     }
 
     public static boolean hasValidApplicationHeader( final Manifest manifest )

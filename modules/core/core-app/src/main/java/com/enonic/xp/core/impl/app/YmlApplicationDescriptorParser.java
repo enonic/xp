@@ -87,8 +87,7 @@ final class YmlApplicationDescriptorParser
     }
 
     /**
-     * The descriptor file declares a semantic version ({@code 1.2.3-SNAPSHOT}), the descriptor holds it the way the platform
-     * reports versions, as the version of a bundle ({@code 1.2.3.SNAPSHOT}).
+     * The descriptor file declares a semantic version ({@code 1.2.3-SNAPSHOT}), held as declared: any other version is rejected.
      */
     private static class VersionDeserializer
         extends JsonDeserializer<String>
@@ -98,7 +97,11 @@ final class YmlApplicationDescriptorParser
             throws IOException
         {
             final String value = parser.getValueAsString();
-            return value == null || value.isEmpty() ? value : ApplicationHelper.parseVersion( parser.currentName(), value ).toString();
+            if ( value != null && !value.isEmpty() )
+            {
+                ApplicationHelper.parseVersion( parser.currentName(), value );
+            }
+            return value;
         }
     }
 

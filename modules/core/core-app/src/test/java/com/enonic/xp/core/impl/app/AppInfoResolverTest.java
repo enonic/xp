@@ -20,6 +20,7 @@ import com.google.common.io.ByteStreams;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -64,6 +65,33 @@ class AppInfoResolverTest
         final String appName = AppInfoResolver.resolve( source ).name;
 
         assertEquals( "myBundle", appName );
+    }
+
+    // the descriptor declares a range closed at its minimum and open at its maximum: a bound of the manifest it cannot declare
+    // is not taken from the manifest
+    @Test
+    void system_version_range_bounds_the_descriptor_cannot_declare_are_left_out()
+        throws Exception
+    {
+        final AppInfo closed = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "[8.0.0,9.0.0)" ) ) );
+        assertEquals( "8.0.0", closed.minSystemVersion );
+        assertEquals( "9.0.0", closed.maxSystemVersion );
+
+        final AppInfo rightClosed = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "[8.0.0,8.1.0]" ) ) );
+        assertEquals( "8.0.0", rightClosed.minSystemVersion );
+        assertNull( rightClosed.maxSystemVersion );
+
+        final AppInfo leftOpen = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "(8.0.0,9.0.0)" ) ) );
+        assertNull( leftOpen.minSystemVersion );
+        assertEquals( "9.0.0", leftOpen.maxSystemVersion );
+
+        final AppInfo unbounded = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "8.0.0" ) ) );
+        assertEquals( "8.0.0", unbounded.minSystemVersion );
+        assertNull( unbounded.maxSystemVersion );
     }
 
     @Test

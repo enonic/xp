@@ -164,7 +164,7 @@ public final class ApplicationImpl
             final ApplicationDescriptor descriptor = ApplicationHelper.loadDescriptor( this.key, this.urlResolver );
             final DescriptorVersions loaded = descriptor == null
                 ? new DescriptorVersions( revision, null, null )
-                : new DescriptorVersions( revision, emptyToNull( descriptor.getVersion() ),
+                : new DescriptorVersions( revision, declaredVersion( descriptor ),
                                           ApplicationHelper.toSystemVersionRange( descriptor.getMinSystemVersion(),
                                                                                   descriptor.getMaxSystemVersion() ) );
             this.descriptorVersions = loaded;
@@ -176,6 +176,13 @@ public final class ApplicationImpl
             LOG.debug( "Unable to read the versions of application {} from its descriptor", this.key, e );
             return null;
         }
+    }
+
+    private static String declaredVersion( final ApplicationDescriptor descriptor )
+    {
+        return emptyToNull( descriptor.getVersion() ) == null
+            ? null
+            : ApplicationHelper.toBundleVersion( "version", descriptor.getVersion() ).toString();
     }
 
     private record DescriptorVersions(Object revision, String version, VersionRange systemVersion)

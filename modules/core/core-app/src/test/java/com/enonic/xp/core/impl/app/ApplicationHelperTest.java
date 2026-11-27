@@ -15,6 +15,7 @@ import com.enonic.xp.resource.Resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -85,10 +86,15 @@ class ApplicationHelperTest
         assertEquals( "1.2.0", ApplicationHelper.toBundleVersion( "version", "1.2" ).toString() );
         assertEquals( Version.emptyVersion, ApplicationHelper.toBundleVersion( "version", null ) );
 
-        assertEquals( "1.2.3.SNAPSHOT", ApplicationHelper.normalizeVersion( "version", "1.2.3-SNAPSHOT" ) );
-        assertEquals( null, ApplicationHelper.normalizeVersion( "version", "" ) );
         assertEquals( "1.2.3-SNAPSHOT", ApplicationHelper.toSemVer( "version", "1.2.3.SNAPSHOT" ) );
-        assertEquals( null, ApplicationHelper.toSemVer( "version", null ) );
+        assertEquals( "1.2.3-SNAPSHOT", ApplicationHelper.toSemVer( "version", "1.2.3-SNAPSHOT" ) );
+        assertNull( ApplicationHelper.toSemVer( "version", null ) );
+        assertNull( ApplicationHelper.toSemVer( "version", "" ) );
+        // a semantic version is kept as declared, even one the bundle version it converts to does not convert back to
+        for ( final String declared : new String[]{"1.2.3-rc+001", "1.2.3-a--b", "1.2.3-rc.1+build.5", "1.2.3+007"} )
+        {
+            assertEquals( declared, ApplicationHelper.toSemVer( "version", declared ) );
+        }
 
         final IllegalArgumentException e =
             assertThrows( IllegalArgumentException.class, () -> ApplicationHelper.toBundleVersion( "minSystemVersion", "9.x" ) );

@@ -786,6 +786,26 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void install_global_leaves_out_a_manifest_bound_the_descriptor_cannot_declare()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // the maximum of the manifest is inclusive, the one of the descriptor is not: the descriptor declares the minimum alone
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true, "2.3.4" )
+                                                         .setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, "[5.0,8.1]" )
+                                                         .build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> "kind: \"Application\"\nname: \"my.bundle\"\nversion: \"2.3.4\"\nminSystemVersion: \"5.0.0\"\n".equals(
+                readResource( resources, "enonic.yaml" ) ) ) );
+    }
+
+    @Test
     void install_global_declares_the_version_of_the_manifest_as_a_semantic_version()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();

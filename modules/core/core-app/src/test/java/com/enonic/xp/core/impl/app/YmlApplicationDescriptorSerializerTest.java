@@ -62,14 +62,31 @@ class YmlApplicationDescriptorSerializerTest
         assertEquals( "Enonic", parsed.getVendorName() );
         assertEquals( "https://enonic.com", parsed.getVendorUrl() );
         assertEquals( "https://github.com/enonic/myapp", parsed.getUrl() );
-        // held as a bundle version, written to the file as a semantic version
-        assertEquals( "1.2.3.SNAPSHOT", parsed.getVersion() );
+        // given as a bundle version, written to the file and held from there on as a semantic version
+        assertEquals( "1.2.3-SNAPSHOT", parsed.getVersion() );
         assertTrue( yaml.contains( "version: \"1.2.3-SNAPSHOT\"\n" ), yaml );
         assertEquals( "8.0.0", parsed.getMinSystemVersion() );
         assertEquals( "9.0.0", parsed.getMaxSystemVersion() );
         assertEquals( descriptor.getSchemaConfig(), parsed.getSchemaConfig() );
         assertNull( parsed.getIcon() );
         assertFalse( yaml.contains( "icon" ), yaml );
+    }
+
+    // a declared version survives any number of writes and reads, whether or not the bundle version it converts to converts back
+    @Test
+    void versions_are_written_as_declared()
+    {
+        for ( final String version : new String[]{"1.2.3-rc+001", "1.2.3-a--b", "1.2.3-rc.1+build.5", "1.2.3+007", "1.2.3-SNAPSHOT"} )
+        {
+            final String declared = "kind: \"Application\"\nname: \"myapp\"\nversion: \"" + version + "\"\nminSystemVersion: \"" + version +
+                "\"\nmaxSystemVersion: \"" + version + "\"\n";
+            final ApplicationDescriptor parsed = YmlApplicationDescriptorParser.parse( declared, MYAPP ).build();
+
+            assertEquals( version, parsed.getVersion() );
+            assertEquals( declared, YmlApplicationDescriptorSerializer.serialize( parsed ) );
+            assertEquals( declared, YmlApplicationDescriptorSerializer.serialize(
+                YmlApplicationDescriptorParser.parse( YmlApplicationDescriptorSerializer.serialize( parsed ), MYAPP ).build() ) );
+        }
     }
 
     @Test

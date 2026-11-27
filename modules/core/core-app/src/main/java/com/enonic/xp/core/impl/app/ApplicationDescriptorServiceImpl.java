@@ -155,9 +155,9 @@ public class ApplicationDescriptorServiceImpl
             params.getEditor().edit( edit );
         }
 
-        // an editor may write the versions as semantic versions: the descriptor holds them the way the platform reports them
-        edit.minSystemVersion = ApplicationHelper.normalizeVersion( "minSystemVersion", edit.minSystemVersion );
-        edit.maxSystemVersion = ApplicationHelper.normalizeVersion( "maxSystemVersion", edit.maxSystemVersion );
+        // an editor may write the versions the way the platform reports them: the descriptor holds semantic versions
+        edit.minSystemVersion = ApplicationHelper.toSemVer( "minSystemVersion", edit.minSystemVersion );
+        edit.maxSystemVersion = ApplicationHelper.toSemVer( "maxSystemVersion", edit.maxSystemVersion );
         ApplicationHelper.checkSystemVersion( edit.minSystemVersion, edit.maxSystemVersion, this.context.getBundle().getVersion() );
 
         final IconUpdate iconUpdate = iconUpdate( source.getIcon(), edit.icon );

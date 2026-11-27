@@ -47,7 +47,9 @@ final class PersistedApplication
         this.locked = ApplicationHelper.isLocked( applicationNode );
 
         final ApplicationDescriptor descriptor = readDescriptor( applicationNode, this.key );
-        this.version = descriptor != null ? Version.parseVersion( descriptor.getVersion() ) : Version.emptyVersion;
+        this.version = descriptor != null
+            ? Version.parseVersion( ApplicationHelper.toBundleVersion( "version", descriptor.getVersion() ).toString() )
+            : Version.emptyVersion;
         this.systemVersion = descriptor != null ? systemVersionRange( descriptor ) : null;
     }
 

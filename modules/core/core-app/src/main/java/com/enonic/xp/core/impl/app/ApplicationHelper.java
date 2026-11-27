@@ -326,9 +326,9 @@ public final class ApplicationHelper
     }
 
     /**
-     * The version held by an application descriptor, which is written the way the version of a bundle is ({@code 1.2.3.SNAPSHOT}),
-     * as the platform reports versions. A semantic version ({@code 1.2.3-SNAPSHOT}), the way the descriptor file declares it, is
-     * taken as well: an editor of the descriptor may write either.
+     * The version of a bundle a version declared by an application descriptor converts to, the way the platform reports
+     * versions: a semantic version ({@code 1.2.3-SNAPSHOT}) is converted, see {@link #semVerToOsgi(String)}, a version already
+     * written the way the version of a bundle is ({@code 1.2.3.SNAPSHOT}) is taken as it is.
      *
      * @return the version, the empty version ({@code 0.0.0}) for no value
      * @throws IllegalArgumentException when the value is a version in neither form
@@ -353,24 +353,24 @@ public final class ApplicationHelper
     }
 
     /**
-     * A version of an application descriptor as the descriptor holds it: written the way the version of a bundle is, whichever
-     * way it was given, see {@link #toBundleVersion(String, String)}.
-     *
-     * @return the version, {@code null} for no value
-     */
-    static String normalizeVersion( final String field, final String value )
-    {
-        return isNullOrEmpty( value ) ? null : toBundleVersion( field, value ).toString();
-    }
-
-    /**
-     * A version of an application descriptor as the descriptor file ({@code enonic.yaml}) declares it: a semantic version.
+     * A version as the application descriptor holds it, the way the descriptor file ({@code enonic.yaml}) declares it: a semantic
+     * version. A semantic version is kept as declared, whatever the bundle version it converts to; one written the way the
+     * version of a bundle is ({@code 1.2.3.SNAPSHOT}) is converted, see {@link #osgiToSemVer(Version)}.
      *
      * @return the semantic version, {@code null} for no value
+     * @throws IllegalArgumentException when the value is a version in neither form
      */
     static String toSemVer( final String field, final String value )
     {
-        return isNullOrEmpty( value ) ? null : osgiToSemVer( toBundleVersion( field, value ) );
+        if ( isNullOrEmpty( value ) )
+        {
+            return null;
+        }
+        if ( SEMVER.matcher( value ).matches() )
+        {
+            return value;
+        }
+        return osgiToSemVer( toBundleVersion( field, value ) );
     }
 
     /**

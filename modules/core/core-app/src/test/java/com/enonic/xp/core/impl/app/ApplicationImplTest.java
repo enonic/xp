@@ -98,7 +98,7 @@ class ApplicationImplTest
         final Resource descriptor = Mockito.mock( Resource.class );
         when( descriptor.exists() ).thenReturn( true );
         when( descriptor.readString() ).thenReturn(
-            "kind: \"Application\"\nversion: \"3.4.5\"\nminSystemVersion: \"8.0.0\"\nmaxSystemVersion: \"9.0.0\"\n" );
+            "kind: \"Application\"\nversion: \"3.4.5-SNAPSHOT\"\nminSystemVersion: \"8.0.0-RC1\"\nmaxSystemVersion: \"9.0.0\"\n" );
         final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
         when( urlResolver.isStable() ).thenReturn( true );
         when( urlResolver.revision() ).thenReturn( "v1" );
@@ -106,9 +106,10 @@ class ApplicationImplTest
 
         final ApplicationImpl application = new ApplicationImpl( bundle, urlResolver, null, true );
 
-        assertEquals( "3.4.5", application.getVersion().toString() );
-        assertEquals( "[8.0.0,9.0.0)", application.getSystemVersion() );
-        assertEquals( "8.0.0", application.getMinSystemVersion() );
+        // declared as semantic versions, reported as the bundle versions they convert to
+        assertEquals( "3.4.5.SNAPSHOT", application.getVersion().toString() );
+        assertEquals( "[8.0.0.RC1,9.0.0)", application.getSystemVersion() );
+        assertEquals( "8.0.0.RC1", application.getMinSystemVersion() );
         assertEquals( "9.0.0", application.getMaxSystemVersion() );
         // the descriptor is read once for as long as the node stays the same
         verify( descriptor, times( 1 ) ).readString();

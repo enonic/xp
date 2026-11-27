@@ -101,8 +101,7 @@ record PreparedApplication(AppInfo appInfo, Map<String, ByteSource> schemaResour
 
         final ApplicationDescriptor.Builder completed = ApplicationDescriptor.copyOf( descriptor );
         boolean changed = false;
-        // the descriptor holds versions as the manifest writes them, its file declares them as semantic versions: 1.2.3.SNAPSHOT
-        // is written as 1.2.3-SNAPSHOT
+        // the descriptor declares semantic versions: the version of the manifest, 1.2.3.SNAPSHOT, is declared as 1.2.3-SNAPSHOT
         final String manifestVersion = manifestVersion( "Bundle-Version", appInfo.version );
         if ( isNullOrEmpty( descriptor.getVersion() ) && manifestVersion != null )
         {
@@ -138,7 +137,7 @@ record PreparedApplication(AppInfo appInfo, Map<String, ByteSource> schemaResour
             LOG.warn( "{} [{}] is not a valid version, it is not declared by the application descriptor", header, value );
             return null;
         }
-        return version.toString();
+        return ApplicationHelper.osgiToSemVer( version );
     }
 
     private static void requireSameVersion( final ApplicationKey key, final String field, final String declared, final String header,
