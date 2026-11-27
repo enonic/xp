@@ -13,7 +13,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true)
+@Component(immediate = true, property = "mount=management")
 public final class JettyServerDumpReporter
     implements StatusReporter
 {

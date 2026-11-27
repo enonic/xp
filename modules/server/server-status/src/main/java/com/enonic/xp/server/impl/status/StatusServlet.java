@@ -119,7 +119,7 @@ public final class StatusServlet
         serializeJson( res, status, json );
     }
 
-    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
+    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE, target = "(!(mount=management))")
     public void addReporter( final StatusReporter reporter )
     {
         this.reporters.put( reporter.getName(), reporter );
