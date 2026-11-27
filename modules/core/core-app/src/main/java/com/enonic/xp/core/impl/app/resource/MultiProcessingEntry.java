@@ -2,21 +2,12 @@ package com.enonic.xp.core.impl.app.resource;
 
 import java.util.List;
 
-final class MultiProcessingEntry
+import com.enonic.xp.app.ApplicationKey;
+
+/**
+ * A value computed from several resources of stable resolvers, possibly of several applications: the applications involved, in
+ * the order they first appear among the resources, and the stamp of each the value was computed under.
+ */
+record MultiProcessingEntry(Object value, List<ApplicationKey> applicationKeys, List<CacheStamp> stamps)
 {
-    final Object value;
-
-    final long[] timestamps;
-
-    final List<BundleStamp> stamps;
-
-    final boolean stable;
-
-    MultiProcessingEntry( final Object value, final long[] timestamps, final List<BundleStamp> stamps, final boolean stable )
-    {
-        this.value = value;
-        this.timestamps = timestamps;
-        this.stamps = stamps;
-        this.stable = stable;
-    }
 }

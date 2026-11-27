@@ -49,28 +49,15 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     protected final ResourceKey toYmlResourceKey( final N name )
     {
-        final ApplicationKey appKey = name.getApplicationKey();
-        final String localName = name.getLocalName();
-        final String basePath = this.path + "/" + localName + "/" + localName;
-
-        final ResourceKey yamlKey = ResourceKey.from( appKey, basePath + ".yaml" );
-        if ( resourceService.getResource( yamlKey ).exists() )
-        {
-            return yamlKey;
-        }
-        return ResourceKey.from( appKey, basePath + ".yml" );
+        return CmsResourceKeys.descriptorKey( resourceService, name.getApplicationKey(), this.path, name.getLocalName() );
     }
 
-    protected final ResourceKey toResourceKey( final N name, final String ext )
+    /**
+     * Icon of the schema, next to its {@code descriptor}.
+     */
+    protected final Icon loadIcon( final N name, final Resource descriptor )
     {
-        final ApplicationKey appKey = name.getApplicationKey();
-        final String localName = name.getLocalName();
-        return ResourceKey.from( appKey, this.path + "/" + localName + "/" + localName + "." + ext );
-    }
-
-    protected final Icon loadIcon( final N name )
-    {
-        final Icon svgIcon = loadIcon( name, "image/svg+xml", "svg" );
+        final Icon svgIcon = loadIcon( name, descriptor, "image/svg+xml", "svg" );
 
         if ( svgIcon != null )
         {
@@ -78,14 +65,14 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
         }
         else
         {
-            return loadIcon( name, "image/png", "png" );
+            return loadIcon( name, descriptor, "image/png", "png" );
         }
     }
 
-    private Icon loadIcon( final N name, final String mimeType, final String ext )
+    private Icon loadIcon( final N name, final Resource descriptor, final String mimeType, final String ext )
     {
-        final ResourceKey resourceKey = toResourceKey( name, ext );
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final Resource resource =
+            this.resourceService.getResource( CmsResourceKeys.siblingKey( name.getApplicationKey(), descriptor.getKey(), ext ) );
         return SchemaHelper.loadIcon( resource, mimeType );
     }
 

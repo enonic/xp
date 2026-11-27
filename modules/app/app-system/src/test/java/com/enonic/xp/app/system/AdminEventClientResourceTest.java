@@ -4,13 +4,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
+import com.enonic.xp.core.impl.app.ResourceSource;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -55,9 +55,9 @@ class AdminEventClientResourceTest
         application.setResourcePath( resourcesRoot() );
 
         final ApplicationFactoryService applicationFactoryService = mock( ApplicationFactoryService.class );
-        when( applicationFactoryService.findResolver( any(), any() ) ).thenReturn( Optional.empty() );
-        when( applicationFactoryService.findResolver( SYSTEM_APPLICATION_KEY, null ) ).thenReturn(
-            Optional.of( application.getUrlResolver() ) );
+        when( applicationFactoryService.findResourceSource( any(), any() ) ).thenReturn( ResourceSource.NONE );
+        when( applicationFactoryService.findResourceSource( SYSTEM_APPLICATION_KEY, null ) ).thenReturn(
+            new ResourceSource( null, application.getUrlResolver() ) );
 
         return new ResourceServiceImpl( applicationFactoryService );
     }

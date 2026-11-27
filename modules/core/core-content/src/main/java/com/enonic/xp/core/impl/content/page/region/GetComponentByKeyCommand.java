@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
+import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
@@ -52,9 +53,13 @@ class GetComponentByKeyCommand
         return regionsBuilder.build();
     }
 
+    // the component path is the legacy folder of the component, its descriptor may be flat or in that folder
     private boolean componentExists( final ResourceKey componentPath )
     {
-        return resourceService.getResource( componentPath.resolve( componentPath.getName() + ".yml" ) ).exists();
+        final String path = componentPath.getPath();
+        final String root = path.substring( 0, path.lastIndexOf( '/' ) );
+        return CmsResourceKeys.findDescriptorKey( resourceService, componentPath.getApplicationKey(), root, componentPath.getName() ) !=
+            null;
     }
 
     private PartDescriptor getPartDescriptor()

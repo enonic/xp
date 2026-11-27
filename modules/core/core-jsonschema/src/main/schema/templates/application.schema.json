@@ -12,6 +12,12 @@
       "type": "string",
       "const": "Application"
     },
+    "name": {
+      "type": "string",
+      "pattern": "^\\w+(?:\\.\\w+)*$",
+      "maxLength": 63,
+      "description": "Application name, e.g. com.example.myapp. Required only for Schema Applications."
+    },
     "title": {
       "$ref": "#/$defs/localizedTextDef"
     },

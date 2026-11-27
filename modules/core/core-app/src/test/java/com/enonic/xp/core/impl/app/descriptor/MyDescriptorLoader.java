@@ -20,6 +20,8 @@ public class MyDescriptorLoader
 
     boolean loadException = false;
 
+    boolean postProcessException = false;
+
     @Override
     public Class<MyDescriptor> getType()
     {
@@ -48,6 +50,16 @@ public class MyDescriptorLoader
         }
 
         return new MyDescriptor( key.toString() );
+    }
+
+    @Override
+    public MyDescriptor postProcess( final MyDescriptor descriptor )
+    {
+        if ( this.postProcessException )
+        {
+            throw new IllegalArgumentException( "Failed to post-process" );
+        }
+        return descriptor;
     }
 
     @Override

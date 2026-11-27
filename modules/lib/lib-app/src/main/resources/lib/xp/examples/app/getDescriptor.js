@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual app.
+// Get app descriptor.
 var result = appLib.getDescriptor({
     key: 'my_app',
 });
@@ -17,6 +17,7 @@ log.info('Fetched app descriptor: ' + result.key);
 assert.assertJsonEquals({
     key: 'my_app',
     description: 'my app description',
+    config: {},
     icon: {
         data: {},
         mimeType: 'image/png',

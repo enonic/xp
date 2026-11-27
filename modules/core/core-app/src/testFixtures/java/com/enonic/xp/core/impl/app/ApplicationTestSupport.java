@@ -2,10 +2,12 @@ package com.enonic.xp.core.impl.app;
 
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -42,13 +44,10 @@ public abstract class ApplicationTestSupport
         ApplicationFactoryService applicationFactoryService = mock( ApplicationFactoryService.class );
         when( applicationFactoryService.findActiveApplication( any() ) ).then(
             invocationOnMock -> Optional.ofNullable( apps.get( invocationOnMock.getArgument( 0 ) ) ) );
-        when( applicationFactoryService.findActiveBundle( any() ) ).then(
+        when( applicationFactoryService.findResourceSource( any(), any() ) ).then(
             invocationOnMock -> Optional.ofNullable( apps.get( invocationOnMock.getArgument( 0 ) ) )
-                .map( MockApplication::getBundle ) );
-        when( applicationFactoryService.findResolver( any(), any() ) ).then( invocationOnMock -> {
-            final Object argument = invocationOnMock.getArgument( 0 );
-            return Optional.ofNullable( apps.get( argument ) ).map( MockApplication::getUrlResolver );
-        } );
+                .map( app -> new ResourceSource( app.getBundle(), app.getUrlResolver() ) )
+                .orElse( ResourceSource.NONE ) );
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
@@ -60,11 +59,24 @@ public abstract class ApplicationTestSupport
 
     protected final MockApplication addApplication( final String key, final String prefix )
     {
+        return addApplication( key, Path.of( ROOT_TEST_PATH + prefix ) );
+    }
+
+    /**
+     * An application served from the files of a directory through its classloader, as an application in development is.
+     */
+    protected final MockApplication addApplication( final String key, final Path resourcePath )
+    {
         final MockApplication app = new MockApplication();
         app.setKey( ApplicationKey.from( key ) );
         app.setStarted( true );
 
-        app.setResourcePath( Path.of( ROOT_TEST_PATH + prefix ) );
+        // the bundle names the application the resources are served for: without one they would be served as the system application's
+        final Bundle bundle = mock( Bundle.class );
+        when( bundle.getSymbolicName() ).thenReturn( key );
+        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
+        app.setBundle( bundle );
+        app.setResourcePath( resourcePath );
 
         this.apps.put( app.getKey(), app );
         return app;

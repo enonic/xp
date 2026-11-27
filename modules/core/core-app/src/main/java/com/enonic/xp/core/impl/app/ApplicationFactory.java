@@ -12,7 +12,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.FakeCmsYamlUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
@@ -22,12 +22,9 @@ public final class ApplicationFactory
 {
     private final NodeService nodeService;
 
-    private final AppConfig appConfig;
-
-    ApplicationFactory( final NodeService nodeService, final AppConfig appConfig )
+    ApplicationFactory( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.appConfig = appConfig;
     }
 
     public ApplicationImpl create( final Bundle bundle )
@@ -42,47 +39,75 @@ public final class ApplicationFactory
             return createUrlResolverBySource( bundle, source );
         }
 
-        final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
         final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
-        final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
-            new NodeResourceApplicationUrlResolver( appKey, nodeService );
-        final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-        final FakeCmsYamlUrlResolver fakeSiteXmlUrlResolver = new FakeCmsYamlUrlResolver( appKey, nodeService );
+        final ApplicationUrlResolver bundleUrlResolver = createBundleUrlResolver( bundle );
 
-        final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
+        return isPersisted( bundle )
+            // the application descriptor and icon, and the schema of an application owning one, are served from nodes below
+            // the application node in the application repository; the bundle's own copies are never read.
+            ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey, nodeService ),
+                                               new FilteredApplicationUrlResolver( bundleUrlResolver, () -> ApplicationFactory::servedFromBundle ) )
+            : bundleUrlResolver;
+    }
 
-        if ( appConfig.virtual_enabled() && appConfig.virtual_schema_override() )
-        {
-            return addCLR ? new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver,
-                                                             fakeSiteXmlUrlResolver )
-                : new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver, fakeSiteXmlUrlResolver );
-        }
-        else
-        {
-            return addCLR ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ) : bundleUrlResolver;
-        }
+    /**
+     * The descriptor and schema of a globally installed application live in nodes. A local application is never persisted
+     * and must not be shadowed by what is persisted for a global installation of the same application, so everything
+     * comes from its bundle.
+     */
+    private static boolean isPersisted( final Bundle bundle )
+    {
+        return !ApplicationHelper.isLocalApplication( bundle );
+    }
+
+    /**
+     * Resolver for an application whose bundle is not active: only the persisted descriptor and schema are served,
+     * bundle resources (controllers, assets, ...) are not available until the application is started.
+     */
+    ApplicationUrlResolver createInactiveUrlResolver( final Bundle bundle )
+    {
+        return isPersisted( bundle ) ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService ) : null;
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
     {
-        switch ( source )
+        if ( "bundle".equals( source ) )
         {
-            case "bundle":
-                final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-                final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
-
-                return addCLR
-                    ? new MultiApplicationUrlResolver( classLoaderUrlResolver, new BundleApplicationUrlResolver( bundle ) )
-                    : new BundleApplicationUrlResolver( bundle );
-            case "virtual":
-                if ( !appConfig.virtual_enabled() )
-                {
-                    throw new IllegalStateException( "virtual apps are disabled" );
-                }
-                return new NodeResourceApplicationUrlResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService );
-            default:
-                throw new IllegalArgumentException( "invalid application resolver source: " + source );
+            return createBundleUrlResolver( bundle );
         }
+        throw new IllegalArgumentException( "invalid application resolver source: " + source );
+    }
+
+    private ApplicationUrlResolver createBundleUrlResolver( final Bundle bundle )
+    {
+        final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
+        final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
+
+        return RunMode.isDev() && classLoaderUrlResolver != null
+            ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver )
+            : bundleUrlResolver;
+    }
+
+    /**
+     * Resolver serving the schema persisted below the application node in the application repository.
+     */
+    static NodeResourceApplicationUrlResolver createPersistedSchemaResolver( final ApplicationKey applicationKey,
+                                                                            final NodeService nodeService )
+    {
+        return new NodeResourceApplicationUrlResolver( applicationKey, nodeService,
+                                                       ApplicationRepoServiceImpl.applicationNodePath( applicationKey ),
+                                                       ApplicationHelper::createAdminContext );
+    }
+
+    /**
+     * The application descriptor and icon ({@code enonic.yaml|yml}, {@code enonic.svg} and the legacy {@code application.*}) and the
+     * schema resources (cms descriptors, schema icons and i18n phrases) of a global application are persisted on install, the
+     * descriptor and icon always, the schema when the application ships {@code cms/cms.yaml}. They are served from the nodes only:
+     * what the bundle ships at those paths is never read, whether or not anything is persisted.
+     */
+    private static boolean servedFromBundle( final String path )
+    {
+        return !SchemaResourcePaths.isSchemaResourcePath( path );
     }
 
     private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )

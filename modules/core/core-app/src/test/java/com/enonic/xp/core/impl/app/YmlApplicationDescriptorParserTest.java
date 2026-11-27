@@ -21,20 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlApplicationDescriptorParserTest
 {
+    private static final ApplicationKey MYAPP = ApplicationKey.from( "myapp" );
+
     @Test
     void test()
         throws Exception
     {
         final String yml = readAsString( "/descriptors/application-descriptor.yml" );
 
-        final ApplicationKey myapp = ApplicationKey.from( "myapp" );
-
-        final ApplicationDescriptor.Builder descriptorBuilder = YmlApplicationDescriptorParser.parse( yml, myapp );
-        descriptorBuilder.key( myapp );
-
-        final ApplicationDescriptor descriptor = descriptorBuilder.build();
+        final ApplicationDescriptor descriptor = parse( yml );
         assertNotNull( descriptor );
-        assertEquals( myapp, descriptor.getKey() );
+        assertEquals( MYAPP, descriptor.getKey() );
         assertEquals( "Brief description of the application", descriptor.getDescription() );
 
         final GenericValue schemaConfig = descriptor.getSchemaConfig();
@@ -47,7 +44,7 @@ public class YmlApplicationDescriptorParserTest
         assertEquals( "Change orders", write.getTitle() );
         assertEquals( "scope.write.title", write.getTitleI18nKey() );
         assertEquals( "Create and change orders", write.getDescription() );
-        assertEquals( myapp, write.getApplication() );
+        assertEquals( MYAPP, write.getApplication() );
         assertEquals( Set.of( "myapp:read" ), write.getIncludes() );
         assertFalse( write.isRequired() );
         final Scope read = scopes.get( "myapp:read" ).orElseThrow();
@@ -87,6 +84,45 @@ public class YmlApplicationDescriptorParserTest
             .build()
             .getScopes()
             .getIds() );
+    }
+
+    @Test
+    void name_matching_application()
+    {
+        final ApplicationDescriptor descriptor = parse( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"My app\"\n" );
+        assertEquals( MYAPP, descriptor.getKey() );
+        assertEquals( "My app", descriptor.getTitle() );
+    }
+
+    @Test
+    void name_not_matching_application()
+    {
+        assertThatThrownBy( () -> parse( "kind: \"Application\"\nname: \"otherapp\"\n" ) )
+            .isInstanceOf( Exception.class )
+            .hasMessageContaining( "Application name \"otherapp\" in descriptor does not match application \"myapp\"" );
+    }
+
+    @Test
+    void name_invalid()
+    {
+        assertThatThrownBy( () -> parse( "kind: \"Application\"\nname: \"my-app\"\n" ) )
+            .isInstanceOf( Exception.class )
+            .hasMessageContaining( "ApplicationKey is invalid: my-app" );
+    }
+
+    @Test
+    void type_is_not_supported()
+    {
+        assertThatThrownBy( () -> parse( "kind: \"Application\"\ntype: \"Static\"\n" ) )
+            .isInstanceOf( Exception.class )
+            .hasMessageContaining( "\"type\"" );
+    }
+
+    private static ApplicationDescriptor parse( final String yml )
+    {
+        final ApplicationDescriptor.Builder descriptorBuilder = YmlApplicationDescriptorParser.parse( yml, MYAPP );
+        descriptorBuilder.key( MYAPP );
+        return descriptorBuilder.build();
     }
 
     private String readAsString( final String name )

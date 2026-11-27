@@ -13,7 +13,8 @@ exports.getWithoutIcon = function () {
         'title': 'Title',
         'titleI18nKey': 'app.title.key',
         'vendorName': 'Vendor Name',
-        'vendorUrl': 'vendorUrl'
+        'vendorUrl': 'vendorUrl',
+        'config': {}
     }, result);
 };
 

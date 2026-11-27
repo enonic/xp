@@ -1,27 +1,27 @@
 package com.enonic.xp.core.impl.app.resource;
 
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
+import com.enonic.xp.core.impl.app.ApplicationHelper;
+import com.enonic.xp.core.impl.app.ResourceSource;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -31,40 +31,59 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.vfs.VirtualFile;
 
+/**
+ * Serves the resources of applications and caches what is derived from them.
+ * <p>
+ * A cached value is stamped with the {@link CacheStamp} of its application: the incarnation of the bundle and the
+ * {@link ApplicationUrlResolver#revision() revision} of the resolver, the version of the application node for persisted resources,
+ * which every write of the persisted descriptor or schema moves. The stamp is read on every use, so a change written on another
+ * node of the cluster is seen by the next read without any event. While the stamp holds, a hit costs the stamp alone: neither the
+ * key translation nor the resource is looked at again. Only what is derived from a {@link ApplicationUrlResolver#isStable() stable}
+ * resolver is cached. The files of an application in development, served by its classloader, change under it without any signal,
+ * and a value holds more than its own resource (a content type with its form fragments inlined, the icon next to a descriptor, the
+ * {@code .yaml} looked for before the {@code .yml}): a value derived from them is computed on every read, as their listing is.
+ * <p>
+ * The bundle and the resolver a value is computed under are of one lookup, see {@link ResourceSource}, and the stamp is read
+ * before the resources: a change racing in-between costs a recompute, never staleness. A value is computed outside of any lock and
+ * put in the cache afterwards: a processor may itself read other resources through this service (a content type inlining its form
+ * fragments), and two threads computing the same value at once just agree on it. The caches are bounded in size and by last
+ * access only so that a key nobody reads any more does not hold its value forever; currency is never a matter of age, it is
+ * checked on every hit.
+ */
 @Component(immediate = true)
 public final class ResourceServiceImpl
     implements ResourceService
 {
-    private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+    private final Cache<ProcessingKey, ProcessingEntry> cache = newCache();
 
-    private final ConcurrentMap<ProcessingKey, ProcessingEntry> cache;
+    private final Cache<ProcessingKey, MultiProcessingEntry> multiCache = newCache();
 
-    private final ConcurrentMap<ProcessingKey, MultiProcessingEntry> multiCache;
+    private final Cache<FilesKey, FilesEntry> filesCache = newCache();
 
     private final ApplicationFactoryService applicationFactoryService;
 
     @Activate
     public ResourceServiceImpl( @Reference final ApplicationFactoryService applicationFactoryService )
     {
-        this.cache = new ConcurrentHashMap<>();
-        this.multiCache = new ConcurrentHashMap<>();
         this.applicationFactoryService = applicationFactoryService;
+    }
+
+    // bounded so that a key nobody reads any more (an application uninstalled, a descriptor removed) is let go of eventually
+    private static <K, V> Cache<K, V> newCache()
+    {
+        return Caffeine.newBuilder().maximumSize( 100_000 ).expireAfterAccess( Duration.ofHours( 1 ) ).build();
     }
 
     @Override
     public Resource getResource( final ResourceKey key )
     {
-        return findResource( findApplicationUrlResolver( key.getApplicationKey() ), key );
+        return findResource( source( key.getApplicationKey() ), key );
     }
 
-    private static Resource findResource( final Optional<ApplicationUrlResolver> urlResolver, final ResourceKey key )
+    private static Resource findResource( final ResourceSource source, final ResourceKey key )
     {
-        return urlResolver.map( resolver -> resolver.findResource( key.getPath() ) ).orElse( new UrlResource( key, null ) );
-    }
-
-    private static boolean isStable( final Optional<ApplicationUrlResolver> urlResolver )
-    {
-        return urlResolver.filter( resolver -> resolver instanceof BundleApplicationUrlResolver ).isPresent();
+        final Resource resource = source.resolver() == null ? null : source.resolver().findResource( key.getPath() );
+        return resource == null ? new UrlResource( key, null ) : resource;
     }
 
     @Override
@@ -72,118 +91,144 @@ public final class ResourceServiceImpl
     {
         final Pattern compiled = Pattern.compile( pattern );
 
-        return findApplicationUrlResolver( key ).map( ApplicationUrlResolver::findFiles )
-                                      .orElse( Set.of() )
-                                      .stream()
-                                      .map( name -> ResourceKey.from( key, name ) )
-                                      .filter( rk -> compiled.matcher( rk.getPath() ).find() )
+        return files( key ).stream()
+            .map( name -> ResourceKey.from( key, name ) )
+            .filter( rk -> compiled.matcher( rk.getPath() ).find() )
             .collect( ResourceKeys.collector() );
     }
 
-    private Optional<ApplicationUrlResolver> findApplicationUrlResolver( final ApplicationKey key )
+    // the files of the application, listed once per stamp for a stable resolver
+    private Set<String> files( final ApplicationKey key )
     {
-        final String resolverSource = (String) ContextAccessor.current().getAttribute( ResourceConstants.RESOURCE_SOURCE_ATTRIBUTE );
-        return applicationFactoryService.findResolver( effectiveKey( key ), resolverSource );
+        final FilesKey filesKey = new FilesKey( effectiveKey( key ), resolverSource() );
+        final FilesEntry cached = filesCache.getIfPresent( filesKey );
+        final ResourceSource source = source( key );
+        final CacheStamp stamp = stamp( source );
+        if ( cached != null && cached.stamp().equals( stamp ) )
+        {
+            return cached.files();
+        }
+
+        final Set<String> files = source.resolver() == null ? Set.of() : Set.copyOf( source.resolver().findFiles() );
+        if ( source.isStable() )
+        {
+            filesCache.put( filesKey, new FilesEntry( files, stamp ) );
+        }
+        else
+        {
+            filesCache.invalidate( filesKey );
+        }
+        return files;
+    }
+
+    private record FilesKey(ApplicationKey applicationKey, String source)
+    {
+    }
+
+    private static String resolverSource()
+    {
+        return (String) ContextAccessor.current().getAttribute( ResourceConstants.RESOURCE_SOURCE_ATTRIBUTE );
+    }
+
+    // the bundle and the resolver of the application as they are now, of one lookup
+    private ResourceSource source( final ApplicationKey key )
+    {
+        return applicationFactoryService.findResourceSource( effectiveKey( key ), resolverSource() );
     }
 
     private static ApplicationKey effectiveKey( final ApplicationKey key )
     {
-        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key ) ? SYSTEM_APPLICATION_KEY : key;
+        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key ) ? ApplicationHelper.SYSTEM_APPLICATION_KEY : key;
     }
 
-    private BundleStamp bundleStamp( final ApplicationKey key )
+    // the incarnation of the bundle and the revision of the resolver: what the resources are served from is the resolver's to know
+    private static CacheStamp stamp( final ResourceSource source )
     {
-        return applicationFactoryService.findActiveBundle( effectiveKey( key ) ).map( BundleStamp::from ).orElse( null );
+        return new CacheStamp( source.bundle() == null ? null : BundleStamp.from( source.bundle() ),
+                               source.resolver() == null ? null : source.resolver().revision() );
     }
 
     @Override
     public <K, V> V processResource( final ResourceProcessor<K, V> processor )
     {
+        final ProcessingKey cacheKey = new ProcessingKey( processor.getSegment(), processor.getKey(), resolverSource() );
+
+        final ProcessingEntry cached = this.cache.getIfPresent( cacheKey );
+        if ( cached != null && isCurrent( cached ) )
+        {
+            return (V) cached.value();
+        }
+
         final ResourceKey resourceKey = processor.toResourceKey();
-        final ProcessingEntry entry = this.cache.compute( new ProcessingKey( processor.getSegment(), processor.getKey() ), ( k, v ) -> {
-            // stamp is read before the resource: a redeploy racing in-between costs a recompute, never staleness
-            final BundleStamp stamp = bundleStamp( resourceKey.getApplicationKey() );
-            final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( resourceKey.getApplicationKey() );
-            final boolean stable = isStable( urlResolver );
+        final ApplicationKey applicationKey = resourceKey.getApplicationKey();
+        final ResourceSource source = source( applicationKey );
+        final CacheStamp stamp = stamp( source );
+        final V value = processor.process( findResource( source, resourceKey ) );
+        if ( value == null || !source.isStable() )
+        {
+            this.cache.invalidate( cacheKey );
+            return value;
+        }
+        this.cache.put( cacheKey, new ProcessingEntry( value, applicationKey, stamp ) );
+        return value;
+    }
 
-            final boolean sameStamp = v != null && Objects.equals( v.stamp, stamp );
-            if ( sameStamp && stable && v.stable )
-            {
-                // resources come straight from the immutable bundle: a new bundle is the only signal that
-                // files may be new - their timestamps prove nothing (constant with reproducible builds)
-                return v;
-            }
-
-            final Resource resource = findResource( urlResolver, resourceKey );
-            if ( sameStamp && resource.exists() && resource.getTimestamp() == v.timestamp )
-            {
-                return v;
-            }
-
-            final V value = processor.process( resource );
-            if ( value == null )
-            {
-                return null;
-            }
-            return new ProcessingEntry( value, resource.getTimestamp(), stamp, stable );
-        } );
-
-        return entry != null ? (V) entry.value : null;
+    private boolean isCurrent( final ProcessingEntry entry )
+    {
+        return entry.stamp().equals( stamp( source( entry.applicationKey() ) ) );
     }
 
     @Override
     public <K, V> V processResources( final MultiResourceProcessor<K, V> processor )
     {
+        final ProcessingKey cacheKey = new ProcessingKey( processor.getSegment(), processor.getKey(), resolverSource() );
+
+        final MultiProcessingEntry cached = this.multiCache.getIfPresent( cacheKey );
+        if ( cached != null && isCurrent( cached ) )
+        {
+            return (V) cached.value();
+        }
+
         final List<ResourceKey> resourceKeys = processor.toResourceKeys();
-        final MultiProcessingEntry entry =
-            this.multiCache.compute( new ProcessingKey( processor.getSegment(), processor.getKey() ), ( k, v ) -> {
-                // stamps are read before the resources: a redeploy racing in-between costs a recompute, never staleness
-                final List<ApplicationKey> applicationKeys =
-                    resourceKeys.stream().map( ResourceKey::getApplicationKey ).distinct().toList();
+        final List<ApplicationKey> applicationKeys = applicationKeys( resourceKeys );
+        final Map<ApplicationKey, ResourceSource> sources = new HashMap<>();
+        final List<CacheStamp> stamps = new ArrayList<>();
+        boolean stable = true;
+        for ( final ApplicationKey applicationKey : applicationKeys )
+        {
+            final ResourceSource source = source( applicationKey );
+            sources.put( applicationKey, source );
+            stamps.add( stamp( source ) );
+            stable = stable && source.isStable();
+        }
 
-                final List<BundleStamp> stamps = new ArrayList<>( applicationKeys.size() );
-                final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
-                boolean stable = true;
-                for ( final ApplicationKey applicationKey : applicationKeys )
-                {
-                    stamps.add( bundleStamp( applicationKey ) );
-                    final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( applicationKey );
-                    urlResolvers.put( applicationKey, urlResolver );
-                    stable = stable && isStable( urlResolver );
-                }
+        final List<Resource> resources = resourceKeys.stream()
+            .map( resourceKey -> findResource( sources.get( resourceKey.getApplicationKey() ), resourceKey ) )
+            .toList();
 
-                final boolean sameStamps = v != null && v.stamps.equals( stamps );
-                if ( sameStamps && stable && v.stable )
-                {
-                    // resources come straight from the immutable bundles: a new bundle is the only signal that
-                    // files may be new - their timestamps prove nothing (constant with reproducible builds)
-                    return v;
-                }
+        final V value = processor.process( resources );
+        if ( value == null || !stable )
+        {
+            this.multiCache.invalidate( cacheKey );
+            return value;
+        }
+        this.multiCache.put( cacheKey, new MultiProcessingEntry( value, applicationKeys, List.copyOf( stamps ) ) );
+        return value;
+    }
 
-                final List<Resource> resources = new ArrayList<>( resourceKeys.size() );
-                final long[] timestamps = new long[resourceKeys.size()];
-                for ( int i = 0; i < resourceKeys.size(); i++ )
-                {
-                    final ResourceKey resourceKey = resourceKeys.get( i );
-                    final Resource resource = findResource( urlResolvers.get( resourceKey.getApplicationKey() ), resourceKey );
-                    resources.add( resource );
-                    timestamps[i] = resource.getTimestamp();
-                }
+    private boolean isCurrent( final MultiProcessingEntry entry )
+    {
+        final List<CacheStamp> stamps = new ArrayList<>();
+        for ( final ApplicationKey applicationKey : entry.applicationKeys() )
+        {
+            stamps.add( stamp( source( applicationKey ) ) );
+        }
+        return entry.stamps().equals( stamps );
+    }
 
-                if ( sameStamps && Arrays.equals( v.timestamps, timestamps ) )
-                {
-                    return v;
-                }
-
-                final V value = processor.process( resources );
-                if ( value == null )
-                {
-                    return null;
-                }
-                return new MultiProcessingEntry( value, timestamps, stamps, stable );
-            } );
-
-        return entry != null ? (V) entry.value : null;
+    private static List<ApplicationKey> applicationKeys( final List<ResourceKey> resourceKeys )
+    {
+        return resourceKeys.stream().map( ResourceKey::getApplicationKey ).distinct().toList();
     }
 
     @Override
