@@ -162,6 +162,38 @@ class ApplicationFactoryTest
     }
 
     @Test
+    void flat_schema_never_served_from_bundle_while_the_controller_is()
+    {
+        // the flat structure (cms/<kind>/<name>.yaml|svg) is persisted and served from nodes like the legacy one; the controller
+        // (cms/<kind>/<name>/<name>.js) is not a schema resource and is served from the bundle
+        final TinyBundle tinyBundle = createBundleWithCmsDescriptor( "app1" );
+        tinyBundle.addResource( "cms/parts/flat.yaml", stream( "kind: \"Part\"" ) );
+        tinyBundle.addResource( "cms/parts/flat.svg", stream( "<svg/>" ) );
+        tinyBundle.addResource( "cms/parts/flat/flat.js", stream( "controller" ) );
+        tinyBundle.addResource( "cms/pages/flatpage.yml", stream( "kind: \"Page\"" ) );
+        tinyBundle.addResource( "cms/macros/flatmacro/flatmacro.js", stream( "controller" ) );
+        final Bundle bundle = deploy( "app1", tinyBundle );
+
+        when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
+        RunModeSupport.set( RunMode.PROD );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
+
+        assertNull( resolver.findResource( "/cms/parts/flat.yaml" ) );
+        assertNull( resolver.findResource( "/cms/parts/flat.svg" ) );
+        assertNull( resolver.findResource( "/cms/pages/flatpage.yml" ) );
+        assertNotNull( resolver.findResource( "/cms/parts/flat/flat.js" ) );
+        assertNotNull( resolver.findResource( "/cms/macros/flatmacro/flatmacro.js" ) );
+
+        final Set<String> files = resolver.findFiles();
+        assertFalse( files.contains( "cms/parts/flat.yaml" ) );
+        assertFalse( files.contains( "cms/parts/flat.svg" ) );
+        assertFalse( files.contains( "cms/pages/flatpage.yml" ) );
+        assertTrue( files.contains( "cms/parts/flat/flat.js" ) );
+        assertTrue( files.contains( "cms/macros/flatmacro/flatmacro.js" ) );
+    }
+
+    @Test
     void app_descriptor_and_icon_never_served_from_bundle()
     {
         // the descriptor and icon are persisted for every global application: the bundle's copies are never read

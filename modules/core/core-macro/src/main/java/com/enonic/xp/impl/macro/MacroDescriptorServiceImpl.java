@@ -46,7 +46,7 @@ public final class MacroDescriptorServiceImpl
     {
         this.resourceService = resourceService;
         this.applicationService = applicationService;
-        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, true );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
     }
 
     @Override

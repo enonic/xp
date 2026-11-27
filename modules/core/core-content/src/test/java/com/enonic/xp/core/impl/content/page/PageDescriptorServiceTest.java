@@ -53,6 +53,18 @@ class PageDescriptorServiceTest
         final PageDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 
         assertNotNull( result );
-        assertEquals( 2, result.getSize() );
+        assertEquals( 1, result.getSize() );
+    }
+
+    // myapp2 ships cms/pages/mypage/mypage.js and no descriptor: the controller alone declares no page, while a page referencing
+    // it still gets the default descriptor
+    @Test
+    void controller_without_descriptor_is_not_listed()
+    {
+        assertEquals( 0, this.service.getByApplication( ApplicationKey.from( "myapp2" ) ).getSize() );
+
+        final PageDescriptor descriptor = this.service.getByKey( DescriptorKey.from( "myapp2:mypage" ) );
+        assertNotNull( descriptor );
+        assertEquals( "mypage", descriptor.getTitle() );
     }
 }

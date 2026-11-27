@@ -21,7 +21,8 @@ import com.google.common.io.ByteSource;
  * ({@code application.yaml|yml}, {@code application.svg}) are returned as {@code enonic.yaml} and {@code enonic.svg}.
  * Descriptors are normalized to {@code .yaml}.
  * When a jar holds several variants of a resource, the flat structure (and {@code enonic.*}) wins over the legacy one, then {@code .yaml}
- * over {@code .yml}, regardless of the zip entry order.
+ * over {@code .yml}, regardless of the zip entry order. Controllers are not schema resources: a component without a descriptor
+ * is not part of the schema.
  */
 final class AppSchemaResolver
 {

@@ -113,7 +113,19 @@ class MacroDescriptorServiceTest
             this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2", ApplicationKey.SYSTEM.getName() ) );
 
         assertNotNull( result );
-        assertEquals( 4, result.getSize() );
+        assertEquals( 3, result.getSize() );
+    }
+
+    // myapp2 ships cms/macros/macro2/macro2.js and no descriptor: the controller alone declares no macro, while a macro
+    // referencing it still gets the default descriptor
+    @Test
+    void controller_without_descriptor_is_not_listed()
+    {
+        assertEquals( 0, this.service.getByApplication( ApplicationKey.from( "myapp2" ) ).getSize() );
+
+        final MacroDescriptor descriptor = this.service.getByKey( MacroKey.from( ApplicationKey.from( "myapp2" ), "macro2" ) );
+        assertNotNull( descriptor );
+        assertEquals( "macro2", descriptor.getTitle() );
     }
 
     @Test

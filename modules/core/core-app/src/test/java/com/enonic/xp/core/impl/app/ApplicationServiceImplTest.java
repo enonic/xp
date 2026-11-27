@@ -740,6 +740,32 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void install_global_ignores_controllers_without_descriptor()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
+                                                         .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
+                                                         .addResource( "cms/parts/mypart/mypart.js", stream( "controller" ) )
+                                                         .addResource( "cms/pages/mypage/mypage.js", stream( "controller" ) )
+                                                         .addResource( "cms/macros/mymacro/mymacro.js", stream( "controller" ) )
+                                                         .addResource( "cms/macros/mymacro/mymacro.yaml", stream( MACRO ) )
+                                                         .addResource( "cms/layouts/mylayout/mylayout.js", stream( "controller" ) )
+                                                         .build() ) );
+
+        // a controller declares nothing: only the components with a descriptor are persisted
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 3 && APP_DESCRIPTOR_WITH_VERSION.equals( readResource( resources, "enonic.yaml" ) ) &&
+                CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                MACRO.equals( readResource( resources, "cms/macros/mymacro.yaml" ) ) ) );
+    }
+
+    @Test
     void install_global_without_cms_descriptor_persists_descriptor_and_icon_only()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();

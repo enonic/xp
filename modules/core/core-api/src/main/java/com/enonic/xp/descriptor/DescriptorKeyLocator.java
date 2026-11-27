@@ -10,9 +10,11 @@ public final class DescriptorKeyLocator
     private final String pattern;
 
     /**
-     * Descriptors are located in a folder named like the descriptor: {@code <path>/<name>/<name>.yaml|yml}
-     * (with {@code optional}, a {@code <path>/<name>/<name>.js} controller without descriptor counts as well).
-     * CMS schemas ({@code path} below {@code /cms}) are also located in the flat structure {@code <path>/<name>.yaml|yml}.
+     * Descriptors are located in a folder named like the descriptor: {@code <path>/<name>/<name>.yaml|yml}.
+     * With {@code optional}, a {@code <path>/<name>/<name>.js} controller without descriptor counts as well, for descriptors
+     * the owner can do without, such as a service. A CMS schema ({@code path} below {@code /cms}: a part, page, layout, macro,
+     * content type, ...) exists only by its own descriptor, which is also located in the flat structure
+     * {@code <path>/<name>.yaml|yml}.
      */
     public DescriptorKeyLocator( final ResourceService service, final String path, final boolean optional )
     {

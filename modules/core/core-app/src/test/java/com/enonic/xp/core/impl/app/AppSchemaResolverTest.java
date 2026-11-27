@@ -173,6 +173,18 @@ class AppSchemaResolverTest
         assertEquals( "yaml", read( AppSchemaResolver.resolve( yamlFirst ), "enonic.yaml" ) );
     }
 
+    @Test
+    void resolve_ignores_controllers()
+        throws Exception
+    {
+        // a component without a descriptor is not part of the schema, whatever the kind
+        final ByteSource byteSource = zip( new String[][]{{"cms/parts/mypart/mypart.js", "ignored"}, {"cms/pages/mypage/mypage.js", "ignored"},
+            {"cms/macros/mymacro/mymacro.js", "ignored"}, {"cms/layouts/mylayout/mylayout.js", "ignored"},
+            {"cms/content-types/mytype/mytype.js", "ignored"}, {"cms/style/style.js", "ignored"}} );
+
+        assertTrue( AppSchemaResolver.resolve( byteSource ).isEmpty() );
+    }
+
     private static ByteSource zip( final String[][] entries )
         throws Exception
     {
