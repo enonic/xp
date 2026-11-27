@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
@@ -34,13 +37,15 @@ class ApplicationResourceServiceTest
 {
     private ApplicationService applicationService;
 
+    private ApplicationDescriptorService applicationDescriptorService;
+
     private ApplicationResourceService service;
 
     @BeforeEach
     void setUp()
     {
         applicationService = mock( ApplicationService.class );
-        final ApplicationDescriptorService applicationDescriptorService = mock( ApplicationDescriptorService.class );
+        applicationDescriptorService = mock( ApplicationDescriptorService.class );
         service = new ApplicationResourceService( applicationService, applicationDescriptorService, _ -> {
         } );
         service.applicationLoader = mock( ApplicationLoader.class );
@@ -177,6 +182,82 @@ class ApplicationResourceServiceTest
                                                             new ApplicationActionResultJson.ActionResult( "com.enonic.app2", false ) );
     }
 
+    @Test
+    void getGlobalApplications_leavesOutLocalAndSystem()
+    {
+        final Application global = createApplication( "global" );
+        final Application local = createApplication( "local" );
+        final Application system = createApplication( "system" );
+        when( system.isSystem() ).thenReturn( true );
+        when( applicationService.getInstalledApplications() ).thenReturn( Applications.from( global, local, system ) );
+        when( applicationService.isLocalApplication( ApplicationKey.from( "local" ) ) ).thenReturn( true );
+
+        assertThat( service.getInstalledApplications() ).extracting( ApplicationInfoJson::getKey )
+            .containsExactly( "global", "local", "system" );
+        assertThat( service.getGlobalApplications() ).extracting( ApplicationInfoJson::getKey ).containsExactly( "global" );
+    }
+
+    @Test
+    void getInstalledApplication_reportsIconHash()
+    {
+        final Application application = createApplication( "withicon" );
+        final ApplicationKey key = ApplicationKey.from( "withicon" );
+        final Icon icon = Icon.from( new byte[]{1, 2, 3}, "image/png", Instant.EPOCH );
+        final ApplicationDescriptor descriptor = mock( ApplicationDescriptor.class );
+        when( descriptor.getIcon() ).thenReturn( icon );
+        when( applicationService.getInstalledApplication( key ) ).thenReturn( application );
+        when( applicationDescriptorService.get( key ) ).thenReturn( descriptor );
+
+        assertThat( service.getInstalledApplication( key ).getIconHash() ).isEqualTo( IconHash.of( icon ) ).hasSize( 22 );
+    }
+
+    @Test
+    void getInstalledApplication_withoutIcon_hasNoIconHash()
+    {
+        final Application application = createApplication( "noicon" );
+        final ApplicationKey key = ApplicationKey.from( "noicon" );
+        when( applicationService.getInstalledApplication( key ) ).thenReturn( application );
+        when( applicationDescriptorService.get( key ) ).thenReturn( mock( ApplicationDescriptor.class ) );
+
+        assertThat( service.getInstalledApplication( key ).getIconHash() ).isNull();
+    }
+
+    @Test
+    void getApplicationIcon()
+    {
+        final Application application = createApplication( "withicon" );
+        final ApplicationKey key = ApplicationKey.from( "withicon" );
+        final Icon icon = Icon.from( new byte[]{1, 2, 3}, "image/png", Instant.EPOCH );
+        final ApplicationDescriptor descriptor = mock( ApplicationDescriptor.class );
+        when( descriptor.getIcon() ).thenReturn( icon );
+        when( applicationService.getInstalledApplication( key ) ).thenReturn( application );
+        when( applicationDescriptorService.get( key ) ).thenReturn( descriptor );
+
+        assertThat( service.getApplicationIcon( key ) ).contains( icon );
+    }
+
+    @Test
+    void getApplicationIcon_withoutIcon()
+    {
+        final Application application = createApplication( "noicon" );
+        final ApplicationKey key = ApplicationKey.from( "noicon" );
+        when( applicationService.getInstalledApplication( key ) ).thenReturn( application );
+        when( applicationDescriptorService.get( key ) ).thenReturn( mock( ApplicationDescriptor.class ) );
+
+        assertThat( service.getApplicationIcon( key ) ).isEmpty();
+    }
+
+    @Test
+    void getApplicationIcon_notInstalled()
+    {
+        final ApplicationKey key = ApplicationKey.from( "missing" );
+        final ApplicationDescriptor descriptor = mock( ApplicationDescriptor.class );
+        when( descriptor.getIcon() ).thenReturn( Icon.from( new byte[]{1}, "image/png", Instant.EPOCH ) );
+        when( applicationDescriptorService.get( key ) ).thenReturn( descriptor );
+
+        assertThat( service.getApplicationIcon( key ) ).isEmpty();
+    }
+
     private static ApplicationParams createApplicationParams( final String... keys )
     {
         final ApplicationParams params = new ApplicationParams();
@@ -216,8 +297,13 @@ class ApplicationResourceServiceTest
 
     private Application createApplication()
     {
+        return createApplication( "testapplication" );
+    }
+
+    private Application createApplication( final String key )
+    {
         final Application application = mock( Application.class );
-        when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( key ) );
         when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
         when( application.getMinSystemVersion() ).thenReturn( "5.0" );
         when( application.getMaxSystemVersion() ).thenReturn( "5.1" );

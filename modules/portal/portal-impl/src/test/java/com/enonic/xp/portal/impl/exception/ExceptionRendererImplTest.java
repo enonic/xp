@@ -40,7 +40,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -322,8 +321,8 @@ class ExceptionRendererImplTest
         when( virtualHost.getSource() ).thenReturn( "/admin" );
         when( virtualHost.getTarget() ).thenReturn( "/admin" );
         when( request.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
 
-        VirtualHostHelper.setVirtualHost( request.getRawRequest(), virtualHost );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
 
@@ -362,6 +361,7 @@ class ExceptionRendererImplTest
         when( virtualHost.getSource() ).thenReturn( "/intranet" );
         when( virtualHost.getTarget() ).thenReturn( "/site/intra/master" );
         when( request.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
 

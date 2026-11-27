@@ -43,22 +43,24 @@ final class IdProviderControllerScriptImpl
 
     private PortalResponse doExecute( final String functionName, final PortalRequest portalRequest )
     {
-        final boolean exists = this.scriptExports.hasMethod( functionName );
-        if ( !exists )
-        {
-            return new PortalResponseSerializer( null, HttpStatus.NOT_FOUND ).serialize();
-        }
+        return this.scriptExports.executeBound( bound -> {
+            final boolean exists = bound.hasMethod( functionName );
+            if ( !exists )
+            {
+                return new PortalResponseSerializer( null, HttpStatus.NOT_FOUND ).serialize();
+            }
 
-        final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
-        final ScriptValue result = this.scriptExports.executeMethod( functionName, requestMapper );
+            final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
+            final ScriptValue result = bound.executeMethod( functionName, requestMapper );
 
-        if ( ( result == null ) || !result.isObject() )
-        {
-            return null;
-        }
-        else
-        {
-            return new PortalResponseSerializer( result ).serialize();
-        }
+            if ( ( result == null ) || !result.isObject() )
+            {
+                return null;
+            }
+            else
+            {
+                return new PortalResponseSerializer( result ).serialize();
+            }
+        } );
     }
 }

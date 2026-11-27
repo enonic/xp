@@ -9,3 +9,6 @@ documentationUrl: "https://docs.mygraphqlapi.com"
 config:
   property_1: "value_1"
   property_2: "value_2"
+scopes:
+  - "read:content"
+  - "myapp:query"

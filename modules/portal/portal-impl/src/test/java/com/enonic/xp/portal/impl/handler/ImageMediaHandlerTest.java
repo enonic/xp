@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,14 +40,19 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ImageMediaHandlerTest
@@ -338,5 +344,114 @@ class ImageMediaHandlerTest
             .data( data )
             .attachments( Attachments.from( attachments ) )
             .build();
+    }
+
+    private WebRequest imageRequest()
+        throws Exception
+    {
+        setupContent();
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/api/media:image/myproject/123456/scale-100-100/image-name.jpg" );
+        return request;
+    }
+
+    @Test
+    void etag()
+        throws Exception
+    {
+        final WebResponse res = this.handler.handle( imageRequest() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertTrue( res.getHeaders().get( "ETag" ).matches( "\"[0-9a-f]{32}\"" ) );
+    }
+
+    @Test
+    void ifNoneMatchSkipsTransform()
+        throws Exception
+    {
+        final WebResponse first = this.handler.handle( imageRequest() );
+        final String etag = first.getHeaders().get( "ETag" );
+
+        final WebRequest request = imageRequest();
+        request.getHeaders().put( "If-None-Match", etag );
+        final WebResponse res = this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( Map.of( "ETag", etag, "Content-Security-Policy", first.getHeaders().get( "Content-Security-Policy" ) ),
+                      res.getHeaders() );
+        assertNull( res.getBody() );
+        verify( this.imageService, times( 1 ) ).readImage( any() );
+    }
+
+    @Test
+    void ifNoneMatchMismatchTransforms()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getHeaders().put( "If-None-Match", "\"other\"" );
+        final WebResponse res = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNotNull( res.getBody() );
+        verify( this.imageService, times( 1 ) ).readImage( any() );
+    }
+
+    @Test
+    void ifNoneMatchDoesNotBypassQualityValidation()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getParams().put( "quality", "high" );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.BAD_REQUEST );
+    }
+
+    @Test
+    void ifNoneMatchDoesNotBypassQualityBoundsValidation()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getParams().put( "quality", "101" );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.BAD_REQUEST );
+    }
+
+    @Test
+    void ifNoneMatchDoesNotBypassBackgroundValidation()
+        throws Exception
+    {
+        final WebRequest request = imageRequest();
+        request.getParams().put( "background", "0xzz" );
+        request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.BAD_REQUEST );
+    }
+
+    @Test
+    void ifNoneMatchOmitsRepresentationHeaders()
+        throws Exception
+    {
+        setupContentSvgz();
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/api/media:image/myproject/123456/full/image-name.svgz" );
+
+        final WebResponse ok = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, ok.getStatus() );
+        assertEquals( "gzip", ok.getHeaders().get( "Content-Encoding" ) );
+        assertNotNull( ok.getHeaders().get( "Content-Security-Policy" ) );
+        final String etag = ok.getHeaders().get( "ETag" );
+
+        request.getHeaders().put( "If-None-Match", etag );
+        final WebResponse res = this.handler.handle( request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertEquals( Map.of( "ETag", etag, "Content-Security-Policy", ok.getHeaders().get( "Content-Security-Policy" ) ),
+                      res.getHeaders() );
     }
 }

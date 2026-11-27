@@ -25,7 +25,7 @@ import com.enonic.xp.web.WebResponse;
  * {@code server:content} - content operations across projects. {@code sync} runs as a local task on the node that
  * received the request: it needs the content applications installed there.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:content", "title=Content API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:content", "scopes=read:content", "scopes=content", "title=Content API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class ContentApiHandler
     extends ManagementApiHandler

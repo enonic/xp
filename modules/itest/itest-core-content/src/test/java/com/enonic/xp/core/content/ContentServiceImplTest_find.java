@@ -147,6 +147,22 @@ class ContentServiceImplTest_find
     }
 
     @Test
+    void parent_recursive_keeps_accents_of_parent_path()
+    {
+        final Content plain = createNamedContent( ContentPath.ROOT, "cafe" );
+        final Content plainChild = createNamedContent( plain.getPath(), "menu" );
+        final Content accented = createNamedContent( ContentPath.ROOT, "café" );
+        final Content accentedChild = createNamedContent( accented.getPath(), "menu" );
+
+        assertThat( contentService.find( ContentQuery.create().parentPath( accented.getPath() ).recursive( true ).size( -1 ).build() )
+                        .getContentIds() ).containsExactly( accentedChild.getId() );
+        assertThat( contentService.find( ContentQuery.create().parentPath( plain.getPath() ).recursive( true ).size( -1 ).build() )
+                        .getContentIds() ).containsExactly( plainChild.getId() );
+        assertThat( contentService.find( ContentQuery.create().size( -1 ).build() ).getContentIds() ).containsExactlyInAnyOrder(
+            plain.getId(), plainChild.getId(), accented.getId(), accentedChild.getId() );
+    }
+
+    @Test
     void parent_recursive_from_root_matches_every_content()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
@@ -891,5 +907,17 @@ class ContentServiceImplTest_find
             ContentQuery.create().queryExpr( QueryParser.parse( "_id='" + contentId.toString() + "'" ) ).build();
 
         return contentService.find( query );
+    }
+
+    private Content createNamedContent( final ContentPath parent, final String name )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().callWith( () -> contentService.create(
+            CreateContentParams.create()
+                .name( name )
+                .displayName( name )
+                .parent( parent )
+                .contentData( new PropertyTree() )
+                .type( ContentTypeName.folder() )
+                .build() ) );
     }
 }

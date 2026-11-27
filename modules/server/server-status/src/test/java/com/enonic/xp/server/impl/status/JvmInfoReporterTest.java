@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class JvmInfoReporterTest
     extends BaseReporterTest<JvmInfoReporter>
 {
-    public JvmInfoReporterTest()
+    JvmInfoReporterTest()
     {
         super( "jvm.info", MediaType.JSON_UTF_8 );
     }

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ApplicationsTest
 {
-    private static final ArrayList<Application> list = new ArrayList();
+    private static final ArrayList<Application> LIST = new ArrayList();
 
     @BeforeAll
     public static void initList()
@@ -24,9 +24,9 @@ class ApplicationsTest
         Mockito.when( application2.getKey() ).thenReturn( ApplicationKey.from( "bbb" ) );
         Mockito.when( application3.getKey() ).thenReturn( ApplicationKey.from( "ccc" ) );
 
-        ApplicationsTest.list.add( application1 );
-        ApplicationsTest.list.add( application2 );
-        ApplicationsTest.list.add( application3 );
+        ApplicationsTest.LIST.add( application1 );
+        ApplicationsTest.LIST.add( application2 );
+        ApplicationsTest.LIST.add( application3 );
     }
 
     @Test
@@ -39,7 +39,7 @@ class ApplicationsTest
     @Test
     void fromIterable()
     {
-        final Applications applications = Applications.from( ApplicationsTest.list );
+        final Applications applications = Applications.from( ApplicationsTest.LIST );
 
         assertThat( applications ).extracting( Application::getKey )
             .containsExactly( ApplicationKey.from( "aaa" ), ApplicationKey.from( "bbb" ), ApplicationKey.from( "ccc" ) );
@@ -49,7 +49,7 @@ class ApplicationsTest
     @Test
     void getApplicationKeys()
     {
-        final Applications applications = Applications.from( ApplicationsTest.list );
+        final Applications applications = Applications.from( ApplicationsTest.LIST );
 
         final ApplicationKeys applicationKeys = ApplicationKeys.from( "aaa", "bbb", "ccc" );
 

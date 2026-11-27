@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -27,6 +26,7 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+import com.enonic.xp.web.vhost.WellKnownPaths;
 
 @Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-30)
@@ -47,19 +47,18 @@ public final class IdProviderFilter
         throws Exception
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
+        final Object connector = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
 
         // handle401 (interactive login) exists on the web connector only.
-        final HttpServletResponse response =
-            DispatchConstants.WEB_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
-                ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
-                : res;
+        final HttpServletResponse response = DispatchConstants.WEB_CONNECTOR.equals( connector )
+            ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
+            : new BearerChallengeResponseWrapper( req, res );
 
         if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {
             for ( final Map.Entry<IdProviderKey, VirtualHostIdProvider> idProvider : virtualHost.getIdProviders().entrySet() )
             {
-                final Set<String> flows = idProvider.getValue().getFlows();
-                if ( !flows.isEmpty() && !flows.contains( IdProviderFlow.AUTOLOGIN ) )
+                if ( !idProvider.getValue().serves( IdProviderFlow.AUTOLOGIN ) )
                 {
                     continue;
                 }
@@ -85,11 +84,17 @@ public final class IdProviderFilter
             final String idProviderEndpoints =
                 ( "/".equals( virtualHost.getTarget() ) ? "" : virtualHost.getTarget() ) + "/_/idprovider/";
             final String path = req.getPathInfo();
-            if ( path == null || !path.startsWith( idProviderEndpoints ) )
+            if ( path == null || !( path.startsWith( idProviderEndpoints ) || WellKnownPaths.resourcePath( path ) != null ) )
             {
                 final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
                 if ( !authInfo.isAuthenticated() )
                 {
+                    if ( DispatchConstants.MANAGEMENT_CONNECTOR.equals( connector ) )
+                    {
+                        // The request ends here, before the filter that challenges on this connector: challenge as it does.
+                        response.addHeader( BearerChallenge.HEADER, "Basic" );
+                        response.addHeader( BearerChallenge.HEADER, "Bearer" );
+                    }
                     response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
                     return;
                 }
@@ -102,5 +107,9 @@ public final class IdProviderFilter
         }
 
         chain.doFilter( new IdProviderRequestWrapper( req ), response );
+        if ( response instanceof IdProviderResponseWrapper wrapper )
+        {
+            wrapper.complete();
+        }
     }
 }

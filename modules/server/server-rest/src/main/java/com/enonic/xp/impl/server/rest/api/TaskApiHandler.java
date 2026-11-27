@@ -37,7 +37,7 @@ import com.enonic.xp.web.sse.SseMessage;
  * {@code server:task} - the tasks the other management APIs hand out ids for. {@code watch} streams task events over SSE:
  * for every task on the cluster, or for one task.
  */
-@Component(service = {UniversalApiHandler.class, EventListener.class}, property = {"key=server:task", "title=Task API",
+@Component(service = {UniversalApiHandler.class, EventListener.class}, property = {"key=server:task", "scopes=read:system", "scopes=system", "title=Task API",
     "mount=management", "allowedPrincipals=role:system.admin"})
 public class TaskApiHandler
     extends ManagementApiHandler

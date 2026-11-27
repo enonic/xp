@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class JvmThreadsReporterTest
     extends BaseReporterTest<JvmThreadsReporter>
 {
-    public JvmThreadsReporterTest()
+    JvmThreadsReporterTest()
     {
         super( "jvm.threads", MediaType.JSON_UTF_8 );
     }

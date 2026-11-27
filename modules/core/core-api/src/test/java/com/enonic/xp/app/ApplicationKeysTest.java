@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ApplicationKeysTest
 {
-    private static final ArrayList<ApplicationKey> list = new ArrayList<>();
+    private static final ArrayList<ApplicationKey> LIST = new ArrayList<>();
 
     @BeforeAll
     public static void initApplicationKeys()
     {
-        ApplicationKeysTest.list.add( ApplicationKey.from( "aaa" ) );
-        ApplicationKeysTest.list.add( ApplicationKey.from( "bbb" ) );
-        ApplicationKeysTest.list.add( ApplicationKey.from( "ccc" ) );
+        ApplicationKeysTest.LIST.add( ApplicationKey.from( "aaa" ) );
+        ApplicationKeysTest.LIST.add( ApplicationKey.from( "bbb" ) );
+        ApplicationKeysTest.LIST.add( ApplicationKey.from( "ccc" ) );
     }
 
     @Test
@@ -34,35 +34,35 @@ class ApplicationKeysTest
     @Test
     void fromArray()
     {
-        ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.list.get( 0 ), ApplicationKeysTest.list.get( 1 ),
-                                                                ApplicationKeysTest.list.get( 2 ) );
+        ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.LIST.get( 0 ), ApplicationKeysTest.LIST.get( 1 ),
+                                                                ApplicationKeysTest.LIST.get( 2 ) );
 
         assertEquals( 3, applicationKeys.getSize() );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 2 ) ) );
     }
 
     @Test
     void fromIterable()
     {
-        ApplicationKeys applicationKeys = ApplicationKeys.from( (Iterable<ApplicationKey>) ApplicationKeysTest.list );
+        ApplicationKeys applicationKeys = ApplicationKeys.from( (Iterable<ApplicationKey>) ApplicationKeysTest.LIST );
 
         assertEquals( 3, applicationKeys.getSize() );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 2 ) ) );
     }
 
     @Test
     void fromCollection()
     {
-        ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.list );
+        ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.LIST );
 
         assertEquals( 3, applicationKeys.getSize() );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 2 ) ) );
     }
 
     @Test
@@ -71,9 +71,9 @@ class ApplicationKeysTest
         ApplicationKeys applicationKeys = ApplicationKeys.from( "aaa", "bbb", "ccc" );
 
         assertEquals( 3, applicationKeys.getSize() );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
-        assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 0 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 1 ) ) );
+        assertTrue( applicationKeys.contains( ApplicationKeysTest.LIST.get( 2 ) ) );
     }
 
     @Test

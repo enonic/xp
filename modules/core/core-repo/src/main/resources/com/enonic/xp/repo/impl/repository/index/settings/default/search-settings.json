@@ -276,8 +276,7 @@
         "tokenizer": "path-tokenizer",
         "filter": [
           "standard",
-          "lowercase",
-          "asciifolding"
+          "lowercase"
         ]
       },
       "language_analyzer_nn": {

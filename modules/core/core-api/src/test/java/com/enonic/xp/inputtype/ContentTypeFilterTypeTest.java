@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ContentTypeFilterTypeTest
     extends BaseInputTypeTest
 {
-    public ContentTypeFilterTypeTest()
+    ContentTypeFilterTypeTest()
     {
         super( ContentTypeFilterType.INSTANCE );
     }

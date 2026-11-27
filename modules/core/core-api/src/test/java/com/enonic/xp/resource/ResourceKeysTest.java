@@ -17,14 +17,14 @@ class ResourceKeysTest
     private static final String RESOURCE_URI_3 = "myapplication_1.0.0:/a/c.txt";
 
 
-    private static final ArrayList<ResourceKey> list = new ArrayList();
+    private static final ArrayList<ResourceKey> LIST = new ArrayList();
 
     @BeforeAll
     public static void initResourceKeys()
     {
-        ResourceKeysTest.list.add( ResourceKey.from( RESOURCE_URI_1 ) );
-        ResourceKeysTest.list.add( ResourceKey.from( RESOURCE_URI_2 ) );
-        ResourceKeysTest.list.add( ResourceKey.from( RESOURCE_URI_3 ) );
+        ResourceKeysTest.LIST.add( ResourceKey.from( RESOURCE_URI_1 ) );
+        ResourceKeysTest.LIST.add( ResourceKey.from( RESOURCE_URI_2 ) );
+        ResourceKeysTest.LIST.add( ResourceKey.from( RESOURCE_URI_3 ) );
     }
 
     @Test
@@ -39,34 +39,34 @@ class ResourceKeysTest
     void fromArray()
     {
         ResourceKeys resourceKeys =
-            ResourceKeys.from( ResourceKeysTest.list.get( 0 ), ResourceKeysTest.list.get( 1 ), ResourceKeysTest.list.get( 2 ) );
+            ResourceKeys.from( ResourceKeysTest.LIST.get( 0 ), ResourceKeysTest.LIST.get( 1 ), ResourceKeysTest.LIST.get( 2 ) );
 
         assertEquals( 3, resourceKeys.getSize() );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 0 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 1 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 2 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 0 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 1 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 2 ) ) );
     }
 
     @Test
     void fromIterable()
     {
-        ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.list );
+        ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.LIST );
 
         assertEquals( 3, resourceKeys.getSize() );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 0 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 1 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 2 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 0 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 1 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 2 ) ) );
     }
 
     @Test
     void fromCollection()
     {
-        ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.list );
+        ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.LIST );
 
         assertEquals( 3, resourceKeys.getSize() );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 0 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 1 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 2 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 0 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 1 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 2 ) ) );
     }
 
     @Test
@@ -75,8 +75,8 @@ class ResourceKeysTest
         ResourceKeys resourceKeys = ResourceKeys.from( RESOURCE_URI_1, RESOURCE_URI_2, RESOURCE_URI_3 );
 
         assertEquals( 3, resourceKeys.getSize() );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 0 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 1 ) ) );
-        assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 2 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 0 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 1 ) ) );
+        assertTrue( resourceKeys.contains( ResourceKeysTest.LIST.get( 2 ) ) );
     }
 }

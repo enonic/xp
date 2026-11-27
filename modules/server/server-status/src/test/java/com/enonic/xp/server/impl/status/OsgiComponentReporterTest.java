@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 class OsgiComponentReporterTest
     extends BaseOsgiReporterTest<OsgiComponentReporter>
 {
-    public OsgiComponentReporterTest()
+    OsgiComponentReporterTest()
     {
         super( "osgi.component" );
     }

@@ -307,8 +307,19 @@ export interface PushNodeParams {
     key?: string | null;
     keys?: string[] | null;
     target: string;
+    /**
+     * @deprecated Applies only when `resolve` is `true`, and is scheduled for removal together with it.
+     */
     includeChildren?: boolean;
+    /**
+     * @deprecated Resolving dependencies before pushing is scheduled for removal. The default changes to `false` in a future version.
+     * Pass `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving. Every push that
+     * resolves logs a deprecation warning.
+     */
     resolve?: boolean;
+    /**
+     * @deprecated Applies only when `resolve` is `true`, and is scheduled for removal together with it.
+     */
     exclude?: string[] | null;
 }
 
@@ -788,16 +799,19 @@ export interface RepoConnection {
      * This function push a node to a given branch.
      *
      * @example-ref examples/node/push-1.js
-     * @example-ref examples/node/push-2.js
-     * @example-ref examples/node/push-3.js
      *
      * @param {object} params JSON with the parameters
      * @param {string} [params.key] Id or path to the nodes. Either `key` or `keys` must be specified.
      * @param {string[]} [params.keys] Array of ids or paths to the nodes. Either `key` or `keys` must be specified.
      * @param {string} params.target Branch to push nodes to
-     * @param {boolean} [params.includeChildren=false] Also push children of given nodes
-     * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed
-     * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway)
+     * @param {boolean} [params.includeChildren=false] Also push children of given nodes.
+     * Deprecated: applies only when `resolve` is `true`, and is scheduled for removal together with it.
+     * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed.
+     * Deprecated: resolving dependencies is scheduled for removal, and the default changes to `false` in a future version. Pass
+     * `resolve: false` to push exactly the given nodes. `includeChildren` and `exclude` apply only when resolving. Every push that
+     * resolves logs a deprecation warning.
+     * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway).
+     * Deprecated: applies only when `resolve` is `true`, and is scheduled for removal together with it.
      *
      * @returns {object} PushNodesResult
      */
@@ -814,6 +828,8 @@ export interface RepoConnection {
      * @param {boolean} [params.includeChildren=false] also resolve dependencies for children
      *
      * @returns {object} DiffNodesResult
+     *
+     * @deprecated Use {@link RepoConnection.getActiveVersion} on a connection to each branch and compare the versions.
      */
     diff(params: DiffBranchesParams): DiffBranchesResult;
 

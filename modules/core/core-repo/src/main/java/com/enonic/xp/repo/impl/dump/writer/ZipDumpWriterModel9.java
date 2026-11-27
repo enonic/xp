@@ -3,10 +3,12 @@ package com.enonic.xp.repo.impl.dump.writer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
+
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.jspecify.annotations.Nullable;
 
@@ -42,6 +44,8 @@ public class ZipDumpWriterModel9
 {
     private static final String ZIP_FILE_EXTENSION = ".zip";
 
+    private static final String PARTIAL_FILE_EXTENSION = ".partial";
+
     private final DedupZipArchiveOutputStream zipArchiveOutputStream;
 
     private final @Nullable ZipDumpBlobStore store;
@@ -50,56 +54,68 @@ public class ZipDumpWriterModel9
 
     private final DumpSerializer serializer;
 
+    private final Path partialFile;
+
+    private final Path targetFile;
+
     private PathRef currentMetaPath;
 
+    private boolean completed;
+
+    private boolean closed;
+
     private ZipDumpWriterModel9( final PathRef basePath, final DedupZipArchiveOutputStream zipArchiveOutputStream,
-                             final @Nullable ZipDumpBlobStore store )
+                                 final @Nullable ZipDumpBlobStore store, final Path partialFile, final Path targetFile )
     {
         this.basePath = basePath;
         this.zipArchiveOutputStream = zipArchiveOutputStream;
         this.store = store;
         this.serializer = new JsonDumpSerializer();
+        this.partialFile = partialFile;
+        this.targetFile = targetFile;
     }
 
     public static ZipDumpWriterModel9 create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore )
     {
-        Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
-        try
-        {
-            final DedupZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
-
-            final PathRef basePathInZip = PathRef.of();
-            return new ZipDumpWriterModel9( basePathInZip, zipArchiveOutputStream,
-                                        new ZipDumpBlobStore( basePathInZip, sourceBlobStore::getRecord, zipArchiveOutputStream ) );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return doCreate( basePath, dumpName, requireNonNull( sourceBlobStore ) );
     }
 
     public static ZipDumpWriterModel9 create( final Path basePath, final String dumpName )
     {
+        return doCreate( basePath, dumpName, null );
+    }
+
+    private static ZipDumpWriterModel9 doCreate( final Path basePath, final String dumpName, final @Nullable BlobStore sourceBlobStore )
+    {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
+
+        final Path targetFile = basePath.resolve( dumpName + ZIP_FILE_EXTENSION );
+        final Path partialFile = basePath.resolve( dumpName + ZIP_FILE_EXTENSION + PARTIAL_FILE_EXTENSION );
+
+        if ( Files.exists( targetFile ) )
+        {
+            throw new RepoDumpException( "Dump '" + dumpName + "' already exists" );
+        }
+
         try
         {
-            final DedupZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
+            final DedupZipArchiveOutputStream zipArchiveOutputStream = new DedupZipArchiveOutputStream(
+                new ZipArchiveOutputStream( Files.newOutputStream( partialFile, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE ) ) );
 
             final PathRef basePathInZip = PathRef.of();
-            return new ZipDumpWriterModel9( basePathInZip, zipArchiveOutputStream, null );
+            final ZipDumpBlobStore store =
+                sourceBlobStore != null ? new ZipDumpBlobStore( basePathInZip, sourceBlobStore::getRecord, zipArchiveOutputStream ) : null;
+            return new ZipDumpWriterModel9( basePathInZip, zipArchiveOutputStream, store, partialFile, targetFile );
+        }
+        catch ( FileAlreadyExistsException e )
+        {
+            throw new RepoDumpException( "Dump '" + dumpName + "' is already in progress or a previous one was interrupted: " +
+                                             partialFile.getFileName() + " exists", e );
         }
         catch ( IOException e )
         {
             throw new UncheckedIOException( e );
         }
-    }
-
-    public static DedupZipArchiveOutputStream newZipOutputStream( final Path basePath, final String dumpName )
-        throws IOException
-    {
-        return new DedupZipArchiveOutputStream( new ZipArchiveOutputStream(
-            Files.newOutputStream( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-                                   StandardOpenOption.TRUNCATE_EXISTING ) ) );
     }
 
     @Override
@@ -212,10 +228,45 @@ public class ZipDumpWriterModel9
     }
 
     @Override
+    public void complete()
+    {
+        this.completed = true;
+    }
+
+    @Override
     public void close()
         throws IOException
     {
-        zipArchiveOutputStream.close();
+        if ( closed )
+        {
+            return;
+        }
+        closed = true;
+
+        try
+        {
+            zipArchiveOutputStream.close();
+            if ( completed )
+            {
+                Files.move( partialFile, targetFile );
+            }
+            else
+            {
+                Files.deleteIfExists( partialFile );
+            }
+        }
+        catch ( IOException | RuntimeException e )
+        {
+            try
+            {
+                Files.deleteIfExists( partialFile );
+            }
+            catch ( IOException suppressed )
+            {
+                e.addSuppressed( suppressed );
+            }
+            throw e;
+        }
     }
 
     private void addBlob( final Segment segment, final BlobKey blobKey )

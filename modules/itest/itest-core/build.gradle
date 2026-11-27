@@ -9,6 +9,7 @@ dependencies {
     testImplementation project( ':core:core-scheduler' )
     testImplementation project( ':core:core-app' )
     testImplementation project( ':core:core-export' )
+    testImplementation project( ':core:core-shared' )
 
     testImplementation libs.hazelcast.hazelcast
 

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class LongTypeTest
     extends BaseInputTypeTest
 {
-    public LongTypeTest()
+    LongTypeTest()
     {
         super( LongType.INSTANCE );
     }

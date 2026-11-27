@@ -15,7 +15,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.export.reader.ZipVirtualFile;
-import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.core.internal.FilePredicates;
@@ -56,11 +55,11 @@ public class ExportServiceImpl
     {
         final Path targetDirectory = exportConfiguration.getExportsDir().resolve( params.getExportName() );
 
-        final ExportWriter exportWriter = ZipExportWriter.create( exportConfiguration.getExportsDir(), params.getExportName() );
+        final ZipExportWriter exportWriter = ZipExportWriter.create( exportConfiguration.getExportsDir(), params.getExportName() );
 
         try (exportWriter)
         {
-            return NodeExporter.create()
+            final NodeExportResult result = NodeExporter.create()
                 .sourceNodePath( params.getSourceNodePath() )
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
@@ -69,6 +68,8 @@ public class ExportServiceImpl
                 .nodeExportListener( params.getNodeExportListener() )
                 .build()
                 .execute();
+            exportWriter.complete();
+            return result;
         }
         catch ( IOException e )
         {

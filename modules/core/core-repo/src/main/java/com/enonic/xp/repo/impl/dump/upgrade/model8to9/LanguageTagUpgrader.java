@@ -38,7 +38,17 @@ public class LanguageTagUpgrader
             return null;
         }
 
-        final String languageTag = Locale.forLanguageTag( language.replace( '_', '-' ) ).toLanguageTag();
+        final Locale locale = Locale.forLanguageTag( language.replace( '_', '-' ) );
+        if ( locale.getLanguage().isEmpty() )
+        {
+            data.removeProperties( ContentPropertyNames.LANGUAGE );
+
+            LOG.info( "Removed undetermined language [{}] for node [{}] in repository [{}]", language, nodeVersion.id(), repositoryId );
+
+            return nodeVersion;
+        }
+
+        final String languageTag = locale.toLanguageTag();
         if ( languageTag.equals( language ) )
         {
             return null;

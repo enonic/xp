@@ -50,6 +50,15 @@ class UuidHelperTest
     }
 
     @Test
+    void givenTime()
+    {
+        final UUID uuid = UuidHelper.newUUIDv7( 1_700_000_000_123L );
+        assertEquals( 1_700_000_000_123L, uuid.getMostSignificantBits() >>> 16 );
+        assertEquals( 7, uuid.version() );
+        assertEquals( 2, uuid.variant() );
+    }
+
+    @Test
     void parseable()
     {
         final UUID uuid = UuidHelper.newUUIDv7();

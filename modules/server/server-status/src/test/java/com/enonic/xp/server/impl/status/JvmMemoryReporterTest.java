@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class JvmMemoryReporterTest
     extends BaseReporterTest<JvmMemoryReporter>
 {
-    public JvmMemoryReporterTest()
+    JvmMemoryReporterTest()
     {
         super( "jvm.memory", MediaType.JSON_UTF_8 );
     }

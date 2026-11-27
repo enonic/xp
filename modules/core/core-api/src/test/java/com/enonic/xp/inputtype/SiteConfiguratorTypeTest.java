@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class SiteConfiguratorTypeTest
     extends BaseInputTypeTest
 {
-    public SiteConfiguratorTypeTest()
+    SiteConfiguratorTypeTest()
     {
         super( SiteConfiguratorType.INSTANCE );
     }

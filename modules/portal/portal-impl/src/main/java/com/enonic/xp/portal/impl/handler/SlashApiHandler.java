@@ -11,6 +11,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
@@ -32,8 +34,11 @@ import com.enonic.xp.portal.impl.sse.SseApiEndpointImpl;
 import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketApiEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.auth.AccessTokenInfo;
+import com.enonic.xp.security.token.ScopeService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
@@ -47,6 +52,8 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.sse.SseConfig;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -56,6 +63,8 @@ import com.enonic.xp.webapp.WebappService;
 @Component(service = SlashApiHandler.class, configurationPid = "com.enonic.xp.portal")
 public class SlashApiHandler
 {
+    private static final DescriptorKey ADMIN_EXTENSION_API = DescriptorKey.from( "admin:extension" );
+
     private final ControllerScriptFactory controllerScriptFactory;
 
     private final ApiDescriptorService apiDescriptorService;
@@ -70,6 +79,10 @@ public class SlashApiHandler
 
     private final SseManager sseManager;
 
+    private final PortalScriptService scriptService;
+
+    private final ScopeService scopeService;
+
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
@@ -78,7 +91,8 @@ public class SlashApiHandler
                             @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
                             @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry,
-                            @Reference final SseManager sseManager )
+                            @Reference final SseManager sseManager, @Reference final PortalScriptService scriptService,
+                            @Reference final ScopeService scopeService )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -87,6 +101,8 @@ public class SlashApiHandler
         this.adminToolDescriptorService = adminToolDescriptorService;
         this.universalApiHandlerRegistry = universalApiHandlerRegistry;
         this.sseManager = sseManager;
+        this.scriptService = scriptService;
+        this.scopeService = scopeService;
     }
 
     @Activate
@@ -125,10 +141,8 @@ public class SlashApiHandler
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
-        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
-        {
-            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
-        }
+
+        verifyAcceptedByVirtualHost( descriptorKey, webRequest );
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
@@ -141,12 +155,28 @@ public class SlashApiHandler
         }
 
         final MountContext mountContext = resolveMountContext( portalRequest );
-        verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
+        final boolean preflight = HandlerHelper.isPreflight( portalRequest );
+        final boolean accessAllowed = verifyAccessToApi( apiDescriptor, portalRequest, mountContext, preflight );
         verifyRequestMounted( apiDescriptor, portalRequest, mountContext );
 
-        final Supplier<WebResponse> handler = dynamicApiHandler != null
-            ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
-            : () -> executeController( portalRequest, descriptorKey );
+        // A handler registered with XP checks the scopes itself, as it may take a different one for each of its operations.
+        final WebResponse insufficientScope = preflight || dynamicApiHandler != null ? null : insufficientScope( apiDescriptor );
+        if ( insufficientScope != null )
+        {
+            return insufficientScope;
+        }
+
+        final Supplier<WebResponse> handler;
+        if ( preflight )
+        {
+            handler = () -> executePreflight( portalRequest, dynamicApiHandler, descriptorKey, accessAllowed );
+        }
+        else
+        {
+            handler = dynamicApiHandler != null
+                ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
+                : () -> executeController( portalRequest, descriptorKey );
+        }
 
         return execute( portalRequest, descriptorKey, handler );
     }
@@ -200,6 +230,16 @@ public class SlashApiHandler
             return MountContext.adminTool( resolveAdminTool( portalRequest ) );
         }
         return MountContext.none();
+    }
+
+    private static void verifyAcceptedByVirtualHost( final DescriptorKey descriptorKey, final WebRequest webRequest )
+    {
+        final HttpServletRequest rawRequest = webRequest.getRawRequest();
+        final VirtualHost virtualHost = rawRequest != null ? VirtualHostHelper.getVirtualHost( rawRequest ) : null;
+        if ( virtualHost != null && !virtualHost.getApiFilter().map( filter -> filter.accept( descriptorKey ) ).orElse( true ) )
+        {
+            throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
+        }
     }
 
     private void verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest, final MountContext mountContext )
@@ -290,6 +330,27 @@ public class SlashApiHandler
         }
     }
 
+    /**
+     * A CORS preflight is sent without credentials, so it is not rejected: the result tells if it passed the access check.
+     */
+    private boolean verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest,
+                                       final MountContext mountContext, final boolean preflight )
+    {
+        try
+        {
+            verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
+            return true;
+        }
+        catch ( WebException e )
+        {
+            if ( preflight )
+            {
+                return false;
+            }
+            throw e;
+        }
+    }
+
     private void verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest, final MountContext mountContext )
     {
         final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
@@ -309,6 +370,26 @@ public class SlashApiHandler
         {
             throw forbidden( apiDescriptor );
         }
+    }
+
+    /**
+     * The answer to a token that carries none of the scopes the API accepts, itself or through a
+     * scope that includes it: 403 with the scopes that would do (RFC 6750, section 3.1). Null when
+     * the request may go on.
+     */
+    private WebResponse insufficientScope( final ApiDescriptor apiDescriptor )
+    {
+        final AccessTokenInfo accessToken = ContextAccessor.current().getAuthInfo().getAccessToken();
+        if ( accessToken == null || apiDescriptor.getScopes().isEmpty() ||
+            apiDescriptor.isScopeSufficient( scopeService.getScopes().expand( accessToken.getScope() ) ) )
+        {
+            return null;
+        }
+        final String scope = String.join( " ", apiDescriptor.getScopes() );
+        return WebResponse.create()
+            .status( HttpStatus.FORBIDDEN )
+            .header( "WWW-Authenticate", "Bearer error=\"insufficient_scope\", scope=\"" + scope + "\"" )
+            .build();
     }
 
     private static WebException forbidden( final ApiDescriptor apiDescriptor )
@@ -384,10 +465,30 @@ public class SlashApiHandler
         if ( sseConfig != null )
         {
             final SseApiEndpointImpl sseEndpoint = new SseApiEndpointImpl( sseConfig, () -> dynamicApiHandler, req.getApplicationKey() );
-            this.sseManager.setupSse( req, sseEndpoint );
+            this.sseManager.setupSse( req, res, sseEndpoint );
         }
 
         return res;
+    }
+
+    private WebResponse executePreflight( final PortalRequest req, final DynamicUniversalApiHandler dynamicApiHandler,
+                                          final DescriptorKey descriptorKey, final boolean accessAllowed )
+    {
+        if ( dynamicApiHandler != null )
+        {
+            // native handlers rely on the access check, so they never receive a preflight. The only exception is
+            // the built-in dispatcher of admin extensions, which passes it to an explicit OPTIONS export only
+            return ADMIN_EXTENSION_API.equals( descriptorKey )
+                ? executeDynamicApiHandler( req, dynamicApiHandler )
+                : HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+        }
+
+        if ( !accessAllowed &&
+            !HandlerHelper.handlesPreflight( scriptService.execute( apiDescriptorService.getControllerResourceKey( descriptorKey ) ) ) )
+        {
+            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+        }
+        return HandlerHelper.defaultOptionsIfNotHandled( executeController( req, descriptorKey ) );
     }
 
     private PortalResponse executeController( final PortalRequest req, final DescriptorKey descriptorKey )
@@ -411,7 +512,7 @@ public class SlashApiHandler
         if ( sseConfig != null )
         {
             final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript, descriptorKey.getApplicationKey() );
-            this.sseManager.setupSse( req, sseEndpoint );
+            this.sseManager.setupSse( req, res, sseEndpoint );
         }
 
         return res;

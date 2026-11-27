@@ -1,0 +1,253 @@
+package com.enonic.xp.portal.impl.handler;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import com.enonic.xp.portal.impl.api.ScopeRegistry;
+import com.enonic.xp.portal.impl.idprovider.OAuthMetadataService;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.Scopes;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.VirtualHostService;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class WellKnownHandlerTest
+{
+    private final ScopeRegistry scopeService = mock( ScopeRegistry.class );
+
+    private final WebHandlerChain chain = mock( WebHandlerChain.class );
+
+    private OAuthMetadataService metadata;
+
+    private WellKnownHandler handler;
+
+    @BeforeEach
+    void setUp()
+    {
+        when( scopeService.getScopes( any(), org.mockito.ArgumentMatchers.anyBoolean() ) ).thenReturn( Scopes.empty() );
+        metadata = new OAuthMetadataService( scopeService, mock( VirtualHostService.class ) );
+        handler = new WellKnownHandler( metadata );
+    }
+
+    private static WebRequest request( final String path, final String connector, final VirtualHost mapping )
+    {
+        return request( path, path, connector, mapping );
+    }
+
+    /**
+     * @param path          the path decoded, as the request carries it
+     * @param requestedPath the path as the client sent it
+     */
+    private static WebRequest request( final String path, final String requestedPath, final String connector, final VirtualHost mapping )
+    {
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setScheme( "https" );
+        request.setHost( "h" );
+        request.setPort( 443 );
+        request.setRawPath( path );
+        request.setVirtualHost( mapping );
+        final HttpServletRequest raw = mock( HttpServletRequest.class );
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put( DispatchConstants.CONNECTOR_ATTRIBUTE, connector );
+        doAnswer( i -> attributes.put( i.getArgument( 0 ), i.getArgument( 1 ) ) ).when( raw ).setAttribute( any(), any() );
+        when( raw.getAttribute( any() ) ).thenAnswer( i -> attributes.get( i.<String>getArgument( 0 ) ) );
+        VirtualHostHelper.setRequestedPath( raw, requestedPath );
+        request.setRawRequest( raw );
+        return request;
+    }
+
+    private static VirtualHost mapping( final String source, final IdProviderKey idProvider )
+    {
+        final VirtualHost mapping = mock( VirtualHost.class );
+        when( mapping.getConnector() ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( mapping.getSource() ).thenReturn( source );
+        when( mapping.getDefaultIdProviderKey() ).thenReturn( idProvider );
+        when( mapping.getIdProviders() ).thenReturn( idProvider == null ? Map.of() : Map.of( idProvider, VirtualHostIdProvider.create().allFlows().build() ) );
+        return mapping;
+    }
+
+    @Test
+    void serves_the_two_documents_on_the_web_connector_only()
+        throws Exception
+    {
+        final VirtualHost root = mapping( "/", IdProviderKey.system() );
+        final WebRequest resource = request( "/.well-known/oauth-protected-resource/api/mcp", DispatchConstants.WEB_CONNECTOR, root );
+        assertThat( handler.canHandle( resource ) ).isTrue();
+        final WebResponse answered = handler.handle( resource, WebResponse.create().build(), chain );
+        assertThat( answered.getStatus() ).isEqualTo( HttpStatus.OK );
+        assertThat( answered.getHeaders() ).containsEntry( "Cache-Control", "public, max-age=300" );
+        @SuppressWarnings("unchecked") final Map<String, Object> body = (Map<String, Object>) answered.getBody();
+        assertThat( body ).containsEntry( "resource", "https://h/api/mcp" )
+            .containsEntry( "authorization_servers", List.of( "https://h/_/idprovider/system" ) );
+        @SuppressWarnings("unchecked") final Map<String, Object> slashed = (Map<String, Object>) handler.handle(
+            request( "/.well-known/oauth-protected-resource/api/mcp/", DispatchConstants.WEB_CONNECTOR, root ), WebResponse.create().build(),
+            chain ).getBody();
+        assertThat( slashed ).as( "the resource is named as it was requested" ).containsEntry( "resource", "https://h/api/mcp/" );
+
+        final WebRequest server = request( "/.well-known/oauth-authorization-server/_/idprovider/system", DispatchConstants.WEB_CONNECTOR, root );
+        @SuppressWarnings("unchecked") final Map<String, Object> serverBody =
+            (Map<String, Object>) handler.handle( server, WebResponse.create().build(), chain ).getBody();
+        assertThat( serverBody ).containsEntry( "issuer", "https://h/_/idprovider/system" )
+            .containsEntry( "token_endpoint", "https://h/_/idprovider/system/token" );
+
+        assertThat( handler.canHandle( request( "/.well-known/oauth-protected-resource", DispatchConstants.MANAGEMENT_CONNECTOR, root ) ) ).isFalse();
+        assertThat( handler.canHandle( request( "/.well-known/openid-configuration", DispatchConstants.WEB_CONNECTOR, root ) ) ).isFalse();
+        assertThat( handler.canHandle( request( "/api/mcp", DispatchConstants.WEB_CONNECTOR, root ) ) ).isFalse();
+    }
+
+    @Test
+    void the_resource_is_named_as_the_client_sent_it()
+        throws Exception
+    {
+        final WebRequest accented = request( "/.well-known/oauth-protected-resource/api/caf\u00e9", "/.well-known/oauth-protected-resource/api/caf%C3%A9",
+                                             DispatchConstants.WEB_CONNECTOR, mapping( "/", IdProviderKey.system() ) );
+        @SuppressWarnings("unchecked") final Map<String, Object> body =
+            (Map<String, Object>) handler.handle( accented, WebResponse.create().build(), chain ).getBody();
+        assertThat( body ).containsEntry( "resource", "https://h/api/caf%C3%A9" );
+    }
+
+    @Test
+    void nothing_to_describe_is_not_found()
+    {
+        final WebRequest noIdProvider = request( "/.well-known/oauth-protected-resource", DispatchConstants.WEB_CONNECTOR, mapping( "/", null ) );
+        assertThatThrownBy( () -> handler.handle( noIdProvider, WebResponse.create().build(), chain ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+
+        final WebRequest notAServer = request( "/.well-known/oauth-authorization-server/api/mcp", DispatchConstants.WEB_CONNECTOR,
+                                               mapping( "/", IdProviderKey.system() ) );
+        assertThatThrownBy( () -> handler.handle( notAServer, WebResponse.create().build(), chain ) ).isInstanceOf( WebException.class );
+
+        final WebRequest noMapping = request( "/.well-known/oauth-protected-resource", DispatchConstants.WEB_CONNECTOR, null );
+        assertThatThrownBy( () -> handler.handle( noMapping, WebResponse.create().build(), chain ) ).isInstanceOf( WebException.class );
+    }
+
+    private static VirtualHost mapping( final String connector, final IdProviderKey idProvider, final VirtualHostIdProvider settings )
+    {
+        final VirtualHost mapping = mock( VirtualHost.class );
+        when( mapping.getConnector() ).thenReturn( connector );
+        when( mapping.getSource() ).thenReturn( "/" );
+        when( mapping.getDefaultIdProviderKey() ).thenReturn( idProvider );
+        when( mapping.getIdProviders() ).thenReturn( Map.of( idProvider, settings ) );
+        return mapping;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> protectedResource( final String connector, final VirtualHost mapping )
+    {
+        return (Map<String, Object>) WellKnownDocuments.serve( metadata, request( "/.well-known/oauth-protected-resource/server:app", connector,
+                                                                                    mapping ) ).getBody();
+    }
+
+    private void assertNothingToDescribe( final String connector, final VirtualHost mapping )
+    {
+        final WebRequest request = request( "/.well-known/oauth-protected-resource", connector, mapping );
+        assertThatThrownBy( () -> WellKnownDocuments.serve( metadata, request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    @Test
+    void a_mapping_names_the_authorization_server_it_is_configured_with()
+    {
+        final IdProviderKey cloud = IdProviderKey.from( "enonic-cloud" );
+        final String elsewhere = "https://admin.example.com/_/idprovider/enonic-cloud";
+
+        final VirtualHost management = mapping( DispatchConstants.MANAGEMENT_CONNECTOR, cloud,
+                                                VirtualHostIdProvider.create().flows( Set.of( "autologin" ) ).authorizationServer( elsewhere ).build() );
+        assertThat( protectedResource( DispatchConstants.MANAGEMENT_CONNECTOR, management ) ).containsEntry( "resource", "https://h/server:app" )
+            .containsEntry( "authorization_servers", List.of( elsewhere ) );
+
+        final VirtualHost api = mapping( DispatchConstants.WEB_CONNECTOR, cloud,
+                                         VirtualHostIdProvider.create().flows( Set.of( "autologin" ) ).authorizationServer( elsewhere ).build() );
+        assertThat( protectedResource( DispatchConstants.WEB_CONNECTOR, api ) ).as( "a web mapping that issues no tokens itself" )
+            .containsEntry( "authorization_servers", List.of( elsewhere ) );
+
+        final VirtualHost both = mapping( DispatchConstants.WEB_CONNECTOR, cloud,
+                                          VirtualHostIdProvider.create().flows( Set.of( "device" ) ).authorizationServer( elsewhere ).build() );
+        assertThat( protectedResource( DispatchConstants.WEB_CONNECTOR, both ) ).as( "what is configured wins over the mapping itself" )
+            .containsEntry( "authorization_servers", List.of( elsewhere ) );
+    }
+
+    @Test
+    void a_web_mapping_that_serves_a_token_flow_is_its_own_authorization_server()
+    {
+        final IdProviderKey cloud = IdProviderKey.from( "enonic-cloud" );
+        for ( final String flow : List.of( "device", "code" ) )
+        {
+            final VirtualHost web =
+                mapping( DispatchConstants.WEB_CONNECTOR, cloud, VirtualHostIdProvider.create().flows( Set.of( "login", flow ) ).build() );
+            assertThat( protectedResource( DispatchConstants.WEB_CONNECTOR, web ) ).containsEntry( "authorization_servers",
+                                                                                                  List.of( "https://h/_/idprovider/enonic-cloud" ) );
+        }
+    }
+
+    @Test
+    void every_enabled_id_provider_adds_its_authorization_server_the_default_first()
+    {
+        final IdProviderKey auth0 = IdProviderKey.from( "auth0" );
+        final IdProviderKey okta = IdProviderKey.from( "okta" );
+        final IdProviderKey ldap = IdProviderKey.from( "ldap" );
+        final Map<IdProviderKey, VirtualHostIdProvider> idProviders = new LinkedHashMap<>();
+        idProviders.put( auth0, VirtualHostIdProvider.create().authorizationServer( "https://tenant.auth0.com/" ).build() );
+        idProviders.put( ldap, VirtualHostIdProvider.create().flows( Set.of( "login" ) ).build() );
+        idProviders.put( okta, VirtualHostIdProvider.create().authorizationServer( "https://tenant.auth0.com/" ).build() );
+        idProviders.put( IdProviderKey.system(), VirtualHostIdProvider.create().flows( Set.of( "login", "device" ) ).build() );
+        final VirtualHost web = mock( VirtualHost.class );
+        when( web.getConnector() ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( web.getSource() ).thenReturn( "/" );
+        when( web.getIdProviders() ).thenReturn( idProviders );
+        when( scopeService.getScopes( any(), org.mockito.ArgumentMatchers.anyBoolean() ) ).thenReturn( scopes( "content:read", "content:write" ) );
+
+        assertThat( protectedResource( DispatchConstants.WEB_CONNECTOR, web ) ).as( "an id provider with no server adds nothing, a server is named once" )
+            .containsEntry( "authorization_servers", List.of( "https://tenant.auth0.com/", "https://h/_/idprovider/system" ) )
+            .containsEntry( "scopes_supported", List.of( "content:read", "content:write" ) );
+    }
+
+    private static Scopes scopes( final String... ids )
+    {
+        return Stream.of( ids ).map( id -> Scope.create().id( id ).build() ).collect( Scopes.collector() );
+    }
+
+    @Test
+    void a_mapping_that_neither_issues_tokens_nor_names_who_does_has_nothing_to_describe()
+    {
+        final IdProviderKey cloud = IdProviderKey.from( "enonic-cloud" );
+
+        assertNothingToDescribe( DispatchConstants.WEB_CONNECTOR, mapping( DispatchConstants.WEB_CONNECTOR, cloud,
+                                                                           VirtualHostIdProvider.create().flows( Set.of( "login", "register" ) ).build() ) );
+        assertNothingToDescribe( DispatchConstants.WEB_CONNECTOR,
+                                 mapping( DispatchConstants.WEB_CONNECTOR, cloud, VirtualHostIdProvider.create().build() ) );
+        assertNothingToDescribe( DispatchConstants.MANAGEMENT_CONNECTOR, mapping( DispatchConstants.MANAGEMENT_CONNECTOR, cloud,
+                                                                                  VirtualHostIdProvider.create().flows( Set.of( "device" ) ).build() ) );
+        assertNothingToDescribe( DispatchConstants.MANAGEMENT_CONNECTOR, mapping( DispatchConstants.MANAGEMENT_CONNECTOR, cloud,
+                                                                                  VirtualHostIdProvider.create().allFlows().build() ) );
+    }
+}

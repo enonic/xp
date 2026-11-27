@@ -22,6 +22,7 @@ import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
+import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
@@ -155,7 +156,7 @@ public abstract class AbstractIssueServiceTest
         passwordSecurityService.activate( securityConfig );
 
         final SecurityServiceImpl securityService =
-            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService, new LocalSharedMapService() );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

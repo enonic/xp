@@ -48,6 +48,7 @@ import com.enonic.xp.core.impl.site.CmsServiceImpl;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.impl.shared.LocalSharedMapService;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.EmbeddedElasticsearchServer;
 import com.enonic.xp.page.PageDescriptorService;
@@ -239,7 +240,7 @@ public final class Bootstrap
         passwordSecurityService.activate( securityConfig );
 
         final SecurityServiceImpl securityService =
-            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService, new LocalSharedMapService() );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

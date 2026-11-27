@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher.impl;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,6 +18,7 @@ import com.enonic.xp.launcher.impl.framework.FrameworkService;
 import com.enonic.xp.launcher.impl.log.LogActivator;
 import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
+import com.enonic.xp.launcher.impl.util.Heartbeat;
 
 public final class LauncherImpl
 {
@@ -34,6 +36,8 @@ public final class LauncherImpl
 
     private volatile ExecutorService frameworkLifecycleExecutor;
 
+    private final Heartbeat heartbeat;
+
     public LauncherImpl( final String... args )
         throws Exception
     {
@@ -44,11 +48,14 @@ public final class LauncherImpl
         this.env = new EnvironmentResolver( this.systemProperties ).resolve();
         System.getProperties().putAll( this.env.getAsMap() );
         this.config = loadConfiguration();
+        // must be created after configuration is loaded: its logger initializes Logback, which needs logback.configurationFile
+        this.heartbeat = new Heartbeat( this.version.getVersion() );
     }
 
     public void start()
     {
         printBanner();
+        this.heartbeat.start( Duration.ofHours( 1 ) );
         createFramework();
         this.framework.start();
     }
@@ -57,6 +64,7 @@ public final class LauncherImpl
     {
         this.framework.stop();
         this.frameworkLifecycleExecutor.shutdownNow();
+        this.heartbeat.stop();
     }
 
     private void printBanner()

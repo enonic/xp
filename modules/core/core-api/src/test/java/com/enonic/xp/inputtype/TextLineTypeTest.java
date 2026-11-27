@@ -18,7 +18,7 @@ class TextLineTypeTest
 
     public static final String IP_ADDRESS_REGEXP = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
 
-    public TextLineTypeTest()
+    TextLineTypeTest()
     {
         super( TextLineType.INSTANCE );
     }

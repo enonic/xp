@@ -42,6 +42,9 @@ public final class YmlApiDescriptorParser
         @JsonProperty("mount")
         abstract ApiDescriptor.Builder mount( String... value );
 
+        @JsonProperty("scopes")
+        abstract ApiDescriptor.Builder scopes( String... scopes );
+
         @JsonProperty("config")
         abstract ApiDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }

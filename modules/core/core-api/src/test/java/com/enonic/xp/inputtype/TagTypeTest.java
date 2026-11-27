@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class TagTypeTest
     extends BaseInputTypeTest
 {
-    public TagTypeTest()
+    TagTypeTest()
     {
         super( TagType.INSTANCE );
     }

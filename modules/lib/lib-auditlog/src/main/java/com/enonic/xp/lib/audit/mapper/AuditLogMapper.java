@@ -31,6 +31,10 @@ public class AuditLogMapper
         gen.value( "time", auditLog.getTime() );
         gen.value( "source", auditLog.getSource() );
         gen.value( "user", auditLog.getUser() );
+        if ( auditLog.getActor() != null )
+        {
+            gen.value( "actor", auditLog.getActor() );
+        }
         serializeObjectUris( gen, auditLog.getObjectUris() );
         serializeData( gen, auditLog.getData() );
     }

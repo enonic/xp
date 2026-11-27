@@ -51,7 +51,7 @@ class FindNodesByMultiRepoQueryCommandTest
     private static final User REPO_USER_3 =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-user-3" ) ).login( "repo-user-3" ).build();
 
-    public FindNodesByMultiRepoQueryCommandTest()
+    FindNodesByMultiRepoQueryCommandTest()
     {
         super( true );
     }

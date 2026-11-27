@@ -3,13 +3,10 @@ package com.enonic.xp.repo.impl.dump;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -152,8 +149,7 @@ public class DumpServiceImpl
         final String fileName = zipPath.getFileName().toString();
         final String dumpName = fileName.substring( 0, fileName.length() - ".zip".length() );
 
-        try (SeekableByteChannel channel = Files.newByteChannel( zipPath, EnumSet.of(
-            StandardOpenOption.READ ) ); ZipFile zipFile = ZipFile.builder().setSeekableByteChannel( channel ).get())
+        try (ZipFile zipFile = DumpZipFiles.open( zipPath ))
         {
             ZipArchiveEntry metaEntry = zipFile.getEntry( "dump.json" );
             if ( metaEntry == null )
@@ -222,6 +218,7 @@ public class DumpServiceImpl
                                           .timestamp( Millis.now() )
                                           .systemDumpResult( systemDumpResult )
                                           .build() );
+            writer.complete();
 
             LOG.info( "Dump completed" );
             return systemDumpResult;

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DateTimeTypeTest
     extends BaseInputTypeTest
 {
-    public DateTimeTypeTest()
+    DateTimeTypeTest()
     {
         super( DateTimeType.INSTANCE );
     }

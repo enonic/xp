@@ -83,6 +83,11 @@ public final class SecurityInitializer
                  CreateRoleParams.create().roleKey( RoleKeys.AUDIT_LOG ).displayName( "Audit Log" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.SCHEMA_ADMIN ).displayName( "Schema Admin" ).build() );
 
+    /**
+     * The roles every installation has. They are recreated empty on restart, so deleting one silently drops every membership.
+     */
+    static final List<PrincipalKey> SYSTEM_ROLES = ROLES_TO_CREATE.stream().map( CreateRoleParams::getKey ).toList();
+
     private static final List<CreateUserParams> USERS_TO_CREATE = List.of( CreateUserParams.create()
                                                                                .userKey( PrincipalKey.ofAnonymous() )
                                                                                .displayName( "Anonymous User" )

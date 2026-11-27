@@ -38,6 +38,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,6 +50,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AttachmentHandlerTest
@@ -500,4 +503,73 @@ class AttachmentHandlerTest
         assertEquals( "Not a valid request", ex.getMessage() );
     }
 
+    @Test
+    void noEtagInLegacyMode()
+        throws Exception
+    {
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "ETag" ) );
+    }
+
+    @Test
+    void ifNoneMatchTagWithoutEtag()
+        throws Exception
+    {
+        this.request.getHeaders().put( "If-None-Match", "\"ec25d6e4126c7064f82aaab8b34693fc\"" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchStarWithoutEtag()
+        throws Exception
+    {
+        this.request.getHeaders().put( "If-None-Match", " * " );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.NOT_MODIFIED, res.getStatus() );
+        assertNull( res.getHeaders().get( "ETag" ) );
+        assertNull( res.getBody() );
+        verify( this.contentService, never() ).getBinary( any(), any() );
+    }
+
+    @Test
+    void ifRangeWithoutEtagIgnoresRange()
+        throws Exception
+    {
+        this.request.getHeaders().put( "Range", "bytes=2-4" );
+        this.request.getHeaders().put( "If-Range", "\"ec25d6e4126c7064f82aaab8b34693fc\"" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "Content-Range" ) );
+        assertEquals( "bytes", res.getHeaders().get( "Accept-Ranges" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void ifNoneMatchStarDoesNotBypassAccessCheck()
+    {
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
+        when( this.contentService.contentExists( any( ContentId.class ) ) ).thenReturn( true );
+        this.request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.UNAUTHORIZED );
+    }
+
+    @Test
+    void ifNoneMatchStarForMissingContent()
+    {
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
+        this.request.getHeaders().put( "If-None-Match", "*" );
+
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .extracting( e -> ( (WebException) e ).getStatus() )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
 }

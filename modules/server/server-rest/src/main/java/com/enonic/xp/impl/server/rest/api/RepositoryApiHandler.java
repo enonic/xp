@@ -22,7 +22,7 @@ import com.enonic.xp.web.WebResponse;
 /**
  * {@code server:repo} - the repository inventory.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:repo", "title=Repository API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:repo", "scopes=read:repo", "scopes=repo", "title=Repository API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class RepositoryApiHandler
     extends ManagementApiHandler

@@ -6,7 +6,6 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,7 +32,7 @@ public final class GetCurrentIdProviderKeyHandler
             return idProvider.getKey();
         }
 
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
+        final VirtualHost virtualHost = request.getVirtualHost();
         if ( virtualHost != null )
         {
             return virtualHost.getDefaultIdProviderKey();

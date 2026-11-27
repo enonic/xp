@@ -10,6 +10,8 @@ import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -64,17 +66,14 @@ public final class PageValidator
             return;
         }
 
-        // Get the page descriptor to validate against
         PageDescriptor pageDescriptor = null;
 
         if ( page.hasDescriptor() )
         {
-            // Direct page descriptor
             pageDescriptor = pageDescriptorService.getByKey( page.getDescriptor() );
         }
         else if ( page.hasTemplate() )
         {
-            // Page template - get descriptor from the template
             final PageTemplate pageTemplate = (PageTemplate) contentService.getById( page.getTemplate().getContentId() );
             if ( pageTemplate != null && pageTemplate.getPage() != null && pageTemplate.getPage().hasDescriptor() )
             {
@@ -82,25 +81,26 @@ public final class PageValidator
             }
         }
 
-        // Validate page config against descriptor
         if ( pageDescriptor != null && page.getConfig() != null )
         {
             final ApplicationKey applicationKey = pageDescriptor.getApplicationKey();
+            final OccurrenceValidator.ValidationErrorFactory errorFactory =
+                ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode, propertyPath, applicationKey,
+                                                                                                 ComponentPath.from( "/" ) )
+                    .i18n( i18nPrefix + ".component" )
+                    .args( "/" );
 
-            OccurrenceValidator.validate( pageDescriptor.getConfig(), page.getConfig().getRoot(),
-                                          ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode,
-                                                                                                                           propertyPath,
-                                                                                                                           applicationKey,
-                                                                                                                           ComponentPath.from(
-                                                                                                                               "/" ) )
-                                              .i18n( i18nPrefix + ".component" )
-                                              .args( "/" ), validationErrorsBuilder );
+            validateConfig( pageDescriptor.getConfig(), page.getConfig(), errorFactory, validationErrorsBuilder );
         }
 
-        // Validate component configs in regions
         if ( page.hasRegions() )
         {
             validateRegions( page.getRegions(), validationErrorsBuilder );
+        }
+
+        if ( page.isFragment() )
+        {
+            validateComponent( page.getFragment(), validationErrorsBuilder );
         }
     }
 
@@ -110,14 +110,20 @@ public final class PageValidator
         {
             for ( com.enonic.xp.region.Component component : region.getComponents() )
             {
-                if ( component instanceof PartComponent )
-                {
-                    validatePartComponent( (PartComponent) component, validationErrorsBuilder );
-                }
-                else if ( component instanceof LayoutComponent )
-                {
-                    validateLayoutComponent( (LayoutComponent) component, validationErrorsBuilder );
-                }
+                validateComponent( component, validationErrorsBuilder );
+            }
+        }
+    }
+
+    private void validateComponent( final com.enonic.xp.region.Component component,
+                                    final ValidationErrors.Builder validationErrorsBuilder )
+    {
+        switch ( component )
+        {
+            case PartComponent part -> validatePartComponent( part, validationErrorsBuilder );
+            case LayoutComponent layout -> validateLayoutComponent( layout, validationErrorsBuilder );
+            default ->
+            {
             }
         }
     }
@@ -133,13 +139,14 @@ public final class PageValidator
 
         if ( partDescriptor != null )
         {
-            OccurrenceValidator.validate( partDescriptor.getConfig(), component.getConfig().getRoot(),
-                                          ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode,
-                                                                                                                           propertyPath,
-                                                                                                                           partDescriptor.getApplicationKey(),
-                                                                                                                           component.getPath() )
-                                              .i18n( i18nPrefix + ".component" )
-                                              .args( component.getPath().toString() ), validationErrorsBuilder );
+            final OccurrenceValidator.ValidationErrorFactory errorFactory =
+                ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode, propertyPath,
+                                                                                                 partDescriptor.getApplicationKey(),
+                                                                                                 component.getPath() )
+                    .i18n( i18nPrefix + ".component" )
+                    .args( component.getPath().toString() );
+
+            validateConfig( partDescriptor.getConfig(), component.getConfig(), errorFactory, validationErrorsBuilder );
         }
     }
 
@@ -154,19 +161,27 @@ public final class PageValidator
 
         if ( layoutDescriptor != null )
         {
-            OccurrenceValidator.validate( layoutDescriptor.getConfig(), component.getConfig().getRoot(),
-                                          ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode,
-                                                                                                                           propertyPath,
-                                                                                                                           layoutDescriptor.getApplicationKey(),
-                                                                                                                           component.getPath() )
-                                              .i18n( i18nPrefix + ".component" )
-                                              .args( component.getPath().toString() ), validationErrorsBuilder );
+            final OccurrenceValidator.ValidationErrorFactory errorFactory =
+                ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode, propertyPath,
+                                                                                                 layoutDescriptor.getApplicationKey(),
+                                                                                                 component.getPath() )
+                    .i18n( i18nPrefix + ".component" )
+                    .args( component.getPath().toString() );
+
+            validateConfig( layoutDescriptor.getConfig(), component.getConfig(), errorFactory, validationErrorsBuilder );
         }
 
-        // Recursively validate nested regions in layout
         if ( component.hasRegions() )
         {
             validateRegions( component.getRegions(), validationErrorsBuilder );
         }
+    }
+
+    private static void validateConfig( final Form form, final PropertyTree config,
+                                        final OccurrenceValidator.ValidationErrorFactory errorFactory,
+                                        final ValidationErrors.Builder validationErrorsBuilder )
+    {
+        OccurrenceValidator.validate( form, config.getRoot(), errorFactory, validationErrorsBuilder );
+        InputValueValidator.validate( form, config, errorFactory, validationErrorsBuilder );
     }
 }

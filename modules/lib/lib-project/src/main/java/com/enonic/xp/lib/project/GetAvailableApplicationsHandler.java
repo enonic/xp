@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.project;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;

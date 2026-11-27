@@ -80,6 +80,16 @@ class NodePathNormalizeUpgraderTest
         assertThat( result ).isSameAs( entry );
     }
 
+    @Test
+    void devanagari_nodePath_is_unchanged()
+    {
+        final VersionDumpEntryJson entry = createEntry( "/content/project/ट्रैकिंग/पर्यावरण" );
+
+        final VersionDumpEntryJson result = upgrader.upgradeVersionEntry( entry );
+
+        assertThat( result ).isSameAs( entry );
+    }
+
     private static VersionDumpEntryJson createEntry( final String nodePath )
     {
         return VersionDumpEntryJson.create()

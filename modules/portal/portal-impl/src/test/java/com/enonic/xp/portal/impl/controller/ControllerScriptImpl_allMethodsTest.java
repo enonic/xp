@@ -77,4 +77,29 @@ class ControllerScriptImpl_allMethodsTest
         execute( "myapplication:/controller/methods.js" );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
     }
+
+    @Test
+    void testOPTIONS_fallsBackToAll()
+    {
+        this.portalRequest.setMethod( HttpMethod.OPTIONS );
+        execute( "myapplication:/controller/allHandler.js" );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
+    }
+
+    @Test
+    void testOPTIONS_explicitExportWinsOverAll()
+    {
+        this.portalRequest.setMethod( HttpMethod.OPTIONS );
+        execute( "myapplication:/controller/optionsHandler.js" );
+        assertEquals( HttpStatus.NO_CONTENT, this.portalResponse.getStatus() );
+        assertEquals( "https://example.com", this.portalResponse.getHeaders().get( "Access-Control-Allow-Origin" ) );
+    }
+
+    @Test
+    void testOPTIONS_lowercaseExportWinsOverAll()
+    {
+        this.portalRequest.setMethod( HttpMethod.OPTIONS );
+        execute( "myapplication:/controller/lowercaseOptionsHandler.js" );
+        assertEquals( HttpStatus.NO_CONTENT, this.portalResponse.getStatus() );
+    }
 }

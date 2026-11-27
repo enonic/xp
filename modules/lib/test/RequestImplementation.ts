@@ -4,6 +4,8 @@ import type {
     RequestCookies,
     RequestHeaders,
     RequestParams,
+    OAuthConsent,
+    RequestAccessToken,
 } from '../core/index';
 
 type ReplacerFn = (this: unknown, key: string, value: unknown) => unknown;
@@ -78,6 +80,8 @@ export class RequestImplementation implements Request {
     contentType?: string;
     repositoryId?: string;
     validTicket?: boolean;
+    accessToken?: RequestAccessToken;
+    oauthConsent?: OAuthConsent;
     body?: string;
 
     constructor({
@@ -102,6 +106,8 @@ export class RequestImplementation implements Request {
         contentType,
         repositoryId,
         validTicket,
+        accessToken,
+        oauthConsent,
         // Special
         body,
     }: RequestConstructorParams) {
@@ -125,6 +131,8 @@ export class RequestImplementation implements Request {
         this.contentType = contentType;
         this.repositoryId = repositoryId;
         this.validTicket = validTicket;
+        this.accessToken = accessToken;
+        this.oauthConsent = oauthConsent;
 
         this.body = body;
     }
@@ -183,6 +191,12 @@ export class RequestImplementation implements Request {
         }
         if (this.validTicket) {
             obj.validTicket = this.validTicket;
+        }
+        if (this.accessToken) {
+            obj.accessToken = this.accessToken;
+        }
+        if (this.oauthConsent) {
+            obj.oauthConsent = this.oauthConsent;
         }
         return obj;
     }

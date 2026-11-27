@@ -4,7 +4,10 @@ import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.security.PrincipalKey;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,4 +56,18 @@ class AuditLogParamsTest
         assertEquals( AuditLogTestBuilder.data, params.getData() );
     }
 
+    @Test
+    void actor_is_part_of_equality()
+    {
+        final PrincipalKey service = PrincipalKey.from( "user:system:automation" );
+        final LogAuditLogParams plain = LogAuditLogParams.create().type( AuditLogTestBuilder.type ).time( AuditLogTestBuilder.time ).build();
+        final LogAuditLogParams acted =
+            LogAuditLogParams.create().type( AuditLogTestBuilder.type ).time( AuditLogTestBuilder.time ).actor( service ).build();
+
+        assertEquals( service, acted.getActor() );
+        assertNull( plain.getActor() );
+        assertNotEquals( plain, acted );
+        assertNotEquals( plain.hashCode(), acted.hashCode() );
+        assertEquals( acted, LogAuditLogParams.create().type( AuditLogTestBuilder.type ).time( AuditLogTestBuilder.time ).actor( service ).build() );
+    }
 }

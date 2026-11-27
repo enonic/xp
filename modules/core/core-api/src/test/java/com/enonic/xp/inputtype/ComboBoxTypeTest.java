@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ComboBoxTypeTest
     extends BaseInputTypeTest
 {
-    public ComboBoxTypeTest()
+    ComboBoxTypeTest()
     {
         super( ComboBoxType.INSTANCE );
     }

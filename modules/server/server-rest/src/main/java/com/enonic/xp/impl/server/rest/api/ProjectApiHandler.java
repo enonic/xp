@@ -19,7 +19,7 @@ import com.enonic.xp.web.WebResponse;
 /**
  * {@code server:project} - content projects with their sites.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:project", "title=Project API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:project", "scopes=read:content", "scopes=content", "title=Project API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class ProjectApiHandler
     extends ManagementApiHandler

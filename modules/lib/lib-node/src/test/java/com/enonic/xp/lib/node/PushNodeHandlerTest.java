@@ -51,7 +51,7 @@ class PushNodeHandlerTest
                             .add( createNodePushResultFailed( "d", PushNodeResult.Reason.ACCESS_DENIED ) ).
                 build() );
 
-        runScript( "/lib/xp/examples/node/push-2.js" );
+        runScript( "/test/PushNodeHandlerTest_resolveChildren.js" );
     }
 
     @Test
@@ -70,7 +70,7 @@ class PushNodeHandlerTest
                             .add( createPushNodeResult( "d", "/d") )
                             .build() );
 
-        runScript( "/lib/xp/examples/node/push-3.js" );
+        runScript( "/test/PushNodeHandlerTest_resolveExclude.js" );
     }
 
     @Test
@@ -90,7 +90,7 @@ class PushNodeHandlerTest
                             .add( createNodePushResultFailed( "c", PushNodeResult.Reason.ACCESS_DENIED ) ).
                 build() );
 
-        runScript( "/lib/xp/examples/node/push-4.js" );
+        runScript( "/test/PushNodeHandlerTest_resolveKey.js" );
     }
 
     private NodeComparison createNodeComparison( String a, String b )
