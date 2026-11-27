@@ -489,6 +489,22 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
+    void createOrUpdate_keeps_the_scopes()
+    {
+        final AtomicReference<String> persisted = stubUpsert();
+        persisted.set( "kind: \"Application\"\nscopes:\n  - name: \"write\"\n    includes: [\"read\"]\n  - name: \"read\"\n    required: true\n" );
+        stubDescriptorNodeFrom( persisted, null );
+        stubApplicationNode();
+
+        final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.title = "New" ) ) );
+
+        assertEquals( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"New\"\nscopes:\n- name: \"write\"\n  includes:\n  - \"read\"\n"
+                          + "- name: \"read\"\n  required: true\n", persisted.get() );
+        assertEquals( Set.of( "myapp:write", "myapp:read" ), result.getScopes().getIds() );
+        assertTrue( result.getScopes().get( "myapp:read" ).orElseThrow().isRequired() );
+    }
+
+    @Test
     void createOrUpdate_keeps_the_version()
     {
         final AtomicReference<String> persisted = stubUpsert();

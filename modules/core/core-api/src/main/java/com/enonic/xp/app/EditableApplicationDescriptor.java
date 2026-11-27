@@ -68,8 +68,9 @@ public final class EditableApplicationDescriptor
             .vendorName( vendorName )
             .vendorUrl( vendorUrl )
             .url( url )
-            // the version is declared by the descriptor the application ships: it is not editable
+            // the version and the scopes are declared by the descriptor the application ships: they are not editable
             .version( source.getVersion() )
+            .scopes( source.getDeclaredScopes() )
             .minSystemVersion( minSystemVersion )
             .maxSystemVersion( maxSystemVersion );
         if ( schemaConfig != null )

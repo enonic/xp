@@ -44,6 +44,8 @@ public final class ApplicationDescriptor
 
     private final String maxSystemVersion;
 
+    private final List<ApplicationScope> declaredScopes;
+
     private final Scopes scopes;
 
     private ApplicationDescriptor( final Builder builder )
@@ -61,7 +63,8 @@ public final class ApplicationDescriptor
         this.minSystemVersion = builder.minSystemVersion;
         this.maxSystemVersion = builder.maxSystemVersion;
         this.schemaConfig = builder.schemaConfig.build();
-        this.scopes = toScopes( this.key, builder.scopes );
+        this.declaredScopes = List.copyOf( builder.scopes );
+        this.scopes = toScopes( this.key, this.declaredScopes );
     }
 
     private static Scopes toScopes( final ApplicationKey key, final List<ApplicationScope> defined )
@@ -178,6 +181,17 @@ public final class ApplicationDescriptor
         return scopes;
     }
 
+    /**
+     * The scopes as the descriptor declares them, in the order of its {@code scopes} field: what {@link #getScopes()} is built
+     * from, and what a descriptor written from this one declares again.
+     *
+     * @return the declared scopes, empty when the descriptor declares none
+     */
+    public List<ApplicationScope> getDeclaredScopes()
+    {
+        return declaredScopes;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -268,6 +282,7 @@ public final class ApplicationDescriptor
             this.version = source.version;
             this.minSystemVersion = source.minSystemVersion;
             this.maxSystemVersion = source.maxSystemVersion;
+            this.scopes = source.declaredScopes;
             schemaConfig( source.schemaConfig );
         }
 

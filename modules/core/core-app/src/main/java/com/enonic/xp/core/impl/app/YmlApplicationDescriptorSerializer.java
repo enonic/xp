@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.app.ApplicationDescriptor;
+import com.enonic.xp.app.ApplicationScope;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.core.impl.schema.mapper.PropertyValueSerializer;
 import com.enonic.xp.util.GenericValue;
@@ -39,6 +41,12 @@ final class YmlApplicationDescriptorSerializer
         putIfPresent( root, "vendorUrl", descriptor.getVendorUrl() );
         putIfPresent( root, "url", descriptor.getUrl() );
 
+        if ( !descriptor.getDeclaredScopes().isEmpty() )
+        {
+            final ArrayNode scopes = root.putArray( "scopes" );
+            descriptor.getDeclaredScopes().forEach( scope -> putScope( scopes.addObject(), scope ) );
+        }
+
         final GenericValue config = descriptor.getSchemaConfig();
         if ( !config.properties().isEmpty() )
         {
@@ -46,6 +54,28 @@ final class YmlApplicationDescriptorSerializer
         }
 
         return PARSER.toYaml( root );
+    }
+
+    private static void putScope( final ObjectNode node, final ApplicationScope scope )
+    {
+        node.put( "name", scope.name() );
+        if ( scope.title() != null )
+        {
+            putLocalized( node, "title", scope.title().text(), scope.title().i18n() );
+        }
+        if ( scope.description() != null )
+        {
+            putLocalized( node, "description", scope.description().text(), scope.description().i18n() );
+        }
+        if ( !scope.includes().isEmpty() )
+        {
+            final ArrayNode includes = node.putArray( "includes" );
+            scope.includes().forEach( includes::add );
+        }
+        if ( scope.required() )
+        {
+            node.put( "required", true );
+        }
     }
 
     private static void putLocalized( final ObjectNode root, final String field, final String text, final String i18n )

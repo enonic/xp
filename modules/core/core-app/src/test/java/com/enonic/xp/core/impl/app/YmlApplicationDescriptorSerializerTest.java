@@ -1,11 +1,14 @@
 package com.enonic.xp.core.impl.app;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationScope;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
@@ -89,6 +92,28 @@ class YmlApplicationDescriptorSerializerTest
     }
 
     @Test
+    void round_trip_scopes()
+    {
+        final ApplicationDescriptor descriptor = ApplicationDescriptor.create()
+            .key( MYAPP )
+            .scopes( List.of( new ApplicationScope( "write", new LocalizedText( "Change orders", "scope.write.title" ),
+                                                    new LocalizedText( "Create and change orders" ), List.of( "read" ), false ),
+                              new ApplicationScope( "read", null, null, List.of(), true ) ) )
+            .build();
+
+        final String yaml = YmlApplicationDescriptorSerializer.serialize( descriptor );
+        final ApplicationDescriptor parsed = YmlApplicationDescriptorParser.parse( yaml, MYAPP ).build();
+
+        assertEquals( descriptor.getDeclaredScopes(), parsed.getDeclaredScopes() );
+        assertEquals( descriptor.getScopes(), parsed.getScopes() );
+        assertEquals( Set.of( "myapp:write", "myapp:read" ), parsed.getScopes().getIds() );
+        assertEquals( Set.of( "myapp:read" ), parsed.getScopes().get( "myapp:write" ).orElseThrow().getIncludes() );
+        assertTrue( parsed.getScopes().get( "myapp:read" ).orElseThrow().isRequired() );
+        assertTrue( yaml.contains( "i18n: \"scope.write.title\"" ), yaml );
+        assertFalse( yaml.contains( "required: false" ), yaml );
+    }
+
+    @Test
     void empty_fields_are_omitted()
     {
         final String yaml = YmlApplicationDescriptorSerializer.serialize(
@@ -107,5 +132,6 @@ class YmlApplicationDescriptorSerializerTest
         assertFalse( yaml.contains( "minSystemVersion" ), yaml );
         assertFalse( yaml.contains( "maxSystemVersion" ), yaml );
         assertFalse( yaml.contains( "config" ), yaml );
+        assertFalse( yaml.contains( "scopes" ), yaml );
     }
 }

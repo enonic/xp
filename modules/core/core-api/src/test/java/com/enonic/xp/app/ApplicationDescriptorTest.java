@@ -1,6 +1,8 @@
 package com.enonic.xp.app;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -88,5 +90,24 @@ class ApplicationDescriptorTest
         assertEquals( desc1.hashCode(), desc1.hashCode() );
         assertEquals( desc1.hashCode(), desc2.hashCode() );
         assertNotEquals( desc1.hashCode(), desc3.hashCode() );
+    }
+
+    @Test
+    void scopes_are_declared_and_copied()
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        final List<ApplicationScope> declared = List.of( new ApplicationScope( "write", "read" ), new ApplicationScope( "read" ) );
+        final ApplicationDescriptor descriptor = ApplicationDescriptor.create().key( key ).scopes( declared ).build();
+
+        assertEquals( declared, descriptor.getDeclaredScopes() );
+        assertEquals( Set.of( "myapp:write", "myapp:read" ), descriptor.getScopes().getIds() );
+
+        assertEquals( descriptor, ApplicationDescriptor.copyOf( descriptor ).build() );
+        assertEquals( declared, ApplicationDescriptor.copyOf( descriptor ).title( "Renamed" ).build().getDeclaredScopes() );
+
+        final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( descriptor );
+        edit.title = "Edited";
+        assertEquals( declared, edit.build().getDeclaredScopes() );
+        assertEquals( descriptor.getScopes(), edit.build().getScopes() );
     }
 }
