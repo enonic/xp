@@ -48,46 +48,21 @@ export interface ModifyParams<Map extends GridMap, Key extends keyof Map> {
     ttlSeconds?: number;
 }
 
-export interface SharedMap<Map extends GridMap> {
-    get<Key extends keyof Map>(key: Key): Map[Key] | null;
-
-    set<Key extends keyof Map>(params: SetParams<Map, Key>): void;
-
-    modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key] | null;
-
-    delete(key: keyof Map): void;
-}
-
 /**
  * Shared Map is similar to other Map, but its instances are shared across all applications and even cluster nodes.
  *
  *  WARNING: Due to distributed nature of the Shared Map not all types of keys and values can be used.
  *  Strings, numbers, booleans, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons.
  *  The developer is also responsible for not modifying shared objects (keys and values) in place.
- *
- * @constructor
- * @hideconstructor
- * @alias SharedMap
  */
-class SharedMapImpl<Map extends GridMap>
-    implements SharedMap<Map> {
-
-    private map: JavaSharedMap<Map>;
-
-    constructor(mapId: string) {
-        const bean: SharedMapHandler<Map> = __.newBean('com.enonic.xp.lib.grid.SharedMapHandler');
-        this.map = bean.getMap(mapId);
-    }
-
+export interface SharedMap<Map extends GridMap> {
     /**
      * Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
      *
      * @param {string} key the key whose associated value is to be returned
      * @returns {string|number|boolean|JSON|null} the value to which the specified key is mapped, or null if this map contains no mapping for the key
      */
-    get<Key extends keyof Map>(key: Key): Map[Key] | null {
-        return __.toNativeObject(this.map.get(key));
-    }
+    get<Key extends keyof Map>(key: Key): Map[Key] | null;
 
     /**
      * Puts an entry into this map with a given time to live (TTL).
@@ -98,16 +73,7 @@ class SharedMapImpl<Map extends GridMap>
      * @param {string|number|boolean|JSON|null} params.value value of the entry
      * @param {number} [params.ttlSeconds] maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
      */
-    set(params: SetParams<Map, keyof Map>): void {
-        const key = requireNotNull(params.key, 'key');
-        const ttlSeconds = __.nullOrValue(params.ttlSeconds);
-        const value = convertValue(params.value);
-        if (ttlSeconds === null) {
-            this.map.set(key, value);
-        } else {
-            this.map.set(key, value, ttlSeconds);
-        }
-    }
+    set<Key extends keyof Map>(params: SetParams<Map, Key>): void;
 
     /**
      * Attempts to compute a mapping for the specified key and its current mapped value.
@@ -120,6 +86,41 @@ class SharedMapImpl<Map extends GridMap>
      * @param {number} [params.ttlSeconds] maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
      * @returns {string|number|boolean|JSON|null} the new value to which the specified key is mapped, or null if this map no longer contains mapping for the key
      */
+    modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key] | null;
+
+    /**
+     * Removes the mapping for the key from this map if it is present.
+     *
+     * @param {string} key the key whose associated value is to be removed
+     */
+    delete(key: keyof Map): void;
+}
+
+class SharedMapImpl<Map extends GridMap>
+    implements SharedMap<Map> {
+
+    private map: JavaSharedMap<Map>;
+
+    constructor(mapId: string) {
+        const bean: SharedMapHandler<Map> = __.newBean('com.enonic.xp.lib.grid.SharedMapHandler');
+        this.map = bean.getMap(mapId);
+    }
+
+    get<Key extends keyof Map>(key: Key): Map[Key] | null {
+        return __.toNativeObject(this.map.get(key));
+    }
+
+    set(params: SetParams<Map, keyof Map>): void {
+        const key = requireNotNull(params.key, 'key');
+        const ttlSeconds = __.nullOrValue(params.ttlSeconds);
+        const value = convertValue(params.value);
+        if (ttlSeconds === null) {
+            this.map.set(key, value);
+        } else {
+            this.map.set(key, value, ttlSeconds);
+        }
+    }
+
     modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key] | null {
         const key = requireNotNull(params.key, 'key');
         const func = requireNotNull(params.func, 'func');
@@ -140,11 +141,6 @@ class SharedMapImpl<Map extends GridMap>
         }
     }
 
-    /**
-     * Removes the mapping for the key from this map if it is present.
-     *
-     * @param {string} key the key whose associated value is to be removed
-     */
     delete(key: keyof Map): void {
         this.map.delete(key);
     }

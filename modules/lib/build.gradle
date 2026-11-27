@@ -1,3 +1,5 @@
+import com.enonic.gradle.ExampleRefInliner
+
 plugins {
     id 'base'
     id 'com.github.node-gradle.node'
@@ -88,35 +90,6 @@ tasks.register( 'typescript', PnpmTask ) {
     } )
 }
 
-tasks.register( 'prepareToJsdoc', Copy ) {
-    dependsOn tasks.named( 'typescript' )
-    into layout.buildDirectory.dir( "js" )
-    from( layout.projectDirectory ) {
-        include "lib-*/build/typescript/lib/xp/*.js"
-        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 3 ) ) }
-    }
-    into( "examples" ) {
-        from layout.projectDirectory
-        include "lib-*/src/main/resources/lib/xp/examples/**/*.js"
-        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 5 ) ) }
-    }
-    includeEmptyDirs = false
-}
-
-tasks.register( 'jsdoc', PnpmTask ) {
-    description = 'Build JSDoc for libraries.'
-    args = ['run', 'jsdoc']
-    doLast {
-        copy {
-            from 'jsdoc/template/jsdoc-main.css'
-            into layout.buildDirectory.dir( "resources/main/jsdoc/styles" )
-        }
-    }
-    inputs.file( 'jsdoc/template/jsdoc-main.css' )
-    inputs.dir( tasks.named( 'prepareToJsdoc', Copy ).map { it.destinationDir } )
-    outputs.dirs( layout.buildDirectory.dir( "resources/main/jsdoc" ) )
-}
-
 /* Publish */
 tasks.register( 'prepareGlobalToPublish', Copy ) {
     into layout.buildDirectory.dir( "npm" )
@@ -166,22 +139,6 @@ subprojects.each { sub ->
     }
 }
 
-tasks.register( 'packageJsdoc', Jar ) {
-    dependsOn tasks.named( 'jsdoc' )
-    from layout.buildDirectory.dir( "resources/main/jsdoc" )
-    archiveClassifier.set( 'jsdoc' )
-}
-
-assemble.dependsOn tasks.named( 'packageJsdoc' )
-
-publishing {
-    publications {
-        mavenDocs( MavenPublication ) {
-            artifact tasks.named( 'packageJsdoc' )
-        }
-    }
-}
-
 subprojects { p ->
     apply plugin: 'com.github.node-gradle.node'
 
@@ -190,7 +147,12 @@ subprojects { p ->
             include '**/*.ts'
             includeEmptyDirs = false
         }
+        inputs.files( fileTree( 'src/main/resources' ) { include '**/examples/**/*.js' } )
         into layout.buildDirectory.dir( "typescript" )
+        eachFile { fcd ->
+            def dir = fcd.file.parentFile
+            fcd.filter { line -> ExampleRefInliner.inline( line, dir ) }
+        }
     }
 
     parent.tasks.named( 'typescript' ).configure {

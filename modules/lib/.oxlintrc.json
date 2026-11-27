@@ -144,7 +144,6 @@
         "**/out",
         "**/build",
         "**/bin",
-        "jsdoc/**/*.js",
         "test-packages/**",
         "lib-*/**/*.d.ts",
         "**/src/main/resources/lib/xp/*.js",

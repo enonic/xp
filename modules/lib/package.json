@@ -7,7 +7,6 @@
         "build": "tsc --declaration --project tsconfig.build.json",
         "lint": "oxlint",
         "fix": "oxlint --fix",
-        "jsdoc": "jsdoc --configure jsdoc/conf.json",
         "test:types": "tsd -t build/npm/global.d.ts -f test/**/*.test-d.ts",
         "test:packages": "node scripts/test-packages.mjs"
     },
@@ -30,7 +29,6 @@
         }
     },
     "devDependencies": {
-        "jsdoc": "^4.0.5",
         "oxlint": "^1.88.0",
         "oxlint-tsgolint": "^7.0.2004",
         "tsd": "^0.33.0",
