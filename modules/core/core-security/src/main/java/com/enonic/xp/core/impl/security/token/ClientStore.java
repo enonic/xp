@@ -62,7 +62,7 @@ public final class ClientStore
         final Client client = params.getClient();
         final NodePath path = ClientNodes.clientPath( client.getIdProvider(), client.getId() );
         return asCaller( () -> {
-            if ( !nodeService.nodeExists( ScopeNodes.idProviderPath( client.getIdProvider() ) ) )
+            if ( !nodeService.nodeExists( ClientNodes.idProviderPath( client.getIdProvider() ) ) )
             {
                 throw new IdProviderNotFoundException( client.getIdProvider() );
             }

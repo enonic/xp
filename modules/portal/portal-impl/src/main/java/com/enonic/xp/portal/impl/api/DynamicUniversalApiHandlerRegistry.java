@@ -73,6 +73,10 @@ public class DynamicUniversalApiHandlerRegistry
         {
             builder.mount( resolveMount( properties.get( "mount" ) ) );
         }
+        if ( properties.get( "scopes" ) != null )
+        {
+            builder.scopes( resolveScopes( properties.get( "scopes" ) ) );
+        }
 
         return builder.build();
     }
@@ -85,6 +89,16 @@ public class DynamicUniversalApiHandlerRegistry
             case String s -> PrincipalKeys.from( s );
             case String[] strings -> PrincipalKeys.from( strings );
             default -> throw new IllegalArgumentException( "Invalid allowedPrincipals. Value must be string or string array." );
+        };
+    }
+
+    private String[] resolveScopes( final Object scopes )
+    {
+        return switch ( scopes )
+        {
+            case String s -> new String[]{s};
+            case String[] strings -> strings;
+            default -> throw new IllegalArgumentException( "Invalid scopes. Value must be string or string array." );
         };
     }
 

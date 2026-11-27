@@ -1,6 +1,9 @@
 package com.enonic.xp.security.token;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collector;
@@ -11,12 +14,10 @@ import com.google.common.collect.ImmutableSet;
 
 import org.jspecify.annotations.NullMarked;
 
-import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 /**
- * The scopes of an id provider.
+ * A list of scopes, such as those an application defines or all that are defined here.
  */
 @NullMarked
 public final class Scopes
@@ -83,23 +84,23 @@ public final class Scopes
     }
 
     /**
-     * The restriction a set of approved scopes implies: none when the id provider has no scopes at
-     * all or when no scope was approved, since a token without scopes carries the user's full
-     * memberships; else exactly the union of the roles of the approved scopes among these. An id not
-     * among these implies nothing.
+     * The scopes a token granted the given ones passes for: those, and all that they include among
+     * these, directly or through others. An id not among these stands for itself alone.
      *
-     * @param approved the ids of the scopes granted
+     * @param granted the ids of the scopes granted
      */
-    public RoleRestriction restrictionFor( final Collection<String> approved )
+    public Set<String> expand( final Collection<String> granted )
     {
-        final Set<String> ids = Set.copyOf( approved );
-        if ( isEmpty() || ids.isEmpty() )
+        final Set<String> expanded = new LinkedHashSet<>();
+        final Deque<String> pending = new ArrayDeque<>( granted );
+        while ( !pending.isEmpty() )
         {
-            return RoleRestriction.none();
+            final String id = pending.pop();
+            if ( expanded.add( id ) )
+            {
+                get( id ).ifPresent( scope -> pending.addAll( scope.getIncludes() ) );
+            }
         }
-        return RoleRestriction.to( stream()
-                                       .filter( scope -> ids.contains( scope.getId() ) )
-                                       .flatMap( scope -> scope.getRoles().stream() )
-                                       .collect( PrincipalKeys.collector() ) );
+        return expanded;
     }
 }

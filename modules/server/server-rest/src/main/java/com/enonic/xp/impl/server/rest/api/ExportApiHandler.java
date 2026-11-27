@@ -27,7 +27,7 @@ import com.enonic.xp.web.WebResponse;
  * {@code server:export} - node exports under {@code $XP_HOME/data/export}: list them, create one from a repository
  * path, load one back into a repository path.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:export", "title=Export API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:export", "scopes=read:repo", "scopes=repo", "title=Export API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class ExportApiHandler
     extends ManagementApiHandler

@@ -33,6 +33,7 @@ import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.api.ScopeRegistry;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
@@ -58,6 +59,9 @@ import com.enonic.xp.security.token.GrantTypes;
 import com.enonic.xp.security.token.GrantWithRefreshToken;
 import com.enonic.xp.security.token.IssueAccessTokenParams;
 import com.enonic.xp.security.token.RegisterClientParams;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.security.token.Scope;
 import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.session.SessionMock;
@@ -111,6 +115,10 @@ class OAuthHandlerTest
 
     private final SecurityService securityService = mock( SecurityService.class );
 
+    private final ScopeRegistry scopeService = mock( ScopeRegistry.class );
+
+    private final LocaleService localeService = mock( LocaleService.class );
+
     private final VirtualHostService virtualHostService = mock( VirtualHostService.class );
 
     /** No flow restriction. */
@@ -131,6 +139,7 @@ class OAuthHandlerTest
         throws Exception
     {
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of() );
+        when( virtualHostService.isEnabled() ).thenReturn( true );
         when( idProviderControllerService.hasFunction( any(), eq( OAuthHandler.CONSENT_FUNCTION ) ) ).thenReturn( true );
         when( idProviderControllerService.execute( any() ) ).thenAnswer( i -> {
             final IdProviderControllerExecutionParams params = i.getArgument( 0 );
@@ -147,7 +156,7 @@ class OAuthHandlerTest
                 .body( "page:" + context.get( "action" ) )
                 .build();
         } );
-        when( securityService.getScopes( any() ) ).thenReturn( Scopes.empty() );
+        declared( Scopes.empty() );
         when( securityService.getClient( any(), any() ) ).thenAnswer( i -> {
             final IdProviderKey idProvider = i.getArgument( 0 );
             final String id = i.getArgument( 1 );
@@ -162,7 +171,7 @@ class OAuthHandlerTest
                                                                       .user( User.create().key( ALICE ).login( "alice" ).build() )
                                                                       .principals( RoleKeys.AUTHENTICATED )
                                                                       .build() );
-        handler = new OAuthHandler( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService,
+        handler = new OAuthHandler( grantService, accessTokenService, securityService, scopeService, localeService, virtualHostService, idProviderControllerService,
                                           new InMemorySharedMapService(), new Clock()
         {
             @Override
@@ -298,14 +307,20 @@ class OAuthHandlerTest
         return VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();
     }
 
+    private void declared( final Scopes scopes )
+    {
+        when( scopeService.getScopes() ).thenReturn( scopes );
+        when( scopeService.getScopes( any(), org.mockito.ArgumentMatchers.anyBoolean() ) ).thenReturn( scopes );
+    }
+
     /**
-     * Gives the id provider these scopes, none required, and returns settings without flow restriction.
+     * Declares these scopes and returns settings without flow restriction.
      */
     private VirtualHostIdProvider withScopes( final Map<String, PrincipalKeys> scopes )
     {
         final List<Scope> known = new ArrayList<>();
-        scopes.forEach( ( id, roles ) -> known.add( Scope.create().idProvider( IDP ).id( id ).roles( roles ).build() ) );
-        when( securityService.getScopes( IDP ) ).thenReturn( Scopes.from( known ) );
+        scopes.keySet().forEach( id -> known.add( Scope.create().id( id ).build() ) );
+        declared( Scopes.from( known ) );
         return UNRESTRICTED;
     }
 
@@ -1173,11 +1188,11 @@ class OAuthHandlerTest
             UNRESTRICTED );
         assertThat( refused.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
         assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "invalid_scope" );
-        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "has no scopes" );
+        assertThat( body( refused ).get( "error_description" ).asText() ).contains( "No scopes are declared for" );
     }
 
     @Test
-    void known_scopes_are_required_and_restrict_the_grant()
+    void known_scopes_are_required_and_recorded_on_the_grant()
         throws Exception
     {
         final VirtualHostIdProvider settings = withScopes(
@@ -1208,17 +1223,17 @@ class OAuthHandlerTest
         assertThat( shown.getFirst() ).containsEntry( "id", "content:read" )
             .containsEntry( "title", "content:read" )
             .doesNotContainKey( "description" )
-            .containsEntry( "roles", List.of( "role:cms.cm.app", "role:cms.project.site.viewer" ) )
+            .doesNotContainKey( "roles" )
             .containsEntry( "required", false );
-        assertThat( shown.get( 1 ) ).containsEntry( "id", "profile" ).containsEntry( "roles", List.of() );
+        assertThat( shown.get( 1 ) ).containsEntry( "id", "profile" );
 
         handler.handle( request( HttpMethod.POST, "token",
                                  Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
                                          "client_id", self ) ), IDP, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
-        assertThat( grant.getValue().getRestriction() ).isEqualTo(
-            RoleRestriction.to( PrincipalKey.ofRole( "cms.cm.app" ), PrincipalKey.ofRole( "cms.project.site.viewer" ) ) );
+        assertThat( grant.getValue().getRestriction() ).as( "scopes limit a token in their API, not the grant" )
+            .isEqualTo( RoleRestriction.none() );
         assertThat( grant.getValue().getScope() ).containsExactly( "content:read", "profile" );
     }
 
@@ -1244,7 +1259,7 @@ class OAuthHandlerTest
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getScope() ).containsExactly( "content:read" );
-        assertThat( grant.getValue().getRestriction() ).as( "the viewer role the sign-in lacks is not granted" )
+        assertThat( grant.getValue().getRestriction() ).as( "the grant carries on what limits the sign-in" )
             .isEqualTo( RoleRestriction.to( PrincipalKey.ofRole( "cms.cm.app" ) ) );
     }
 
@@ -1273,9 +1288,9 @@ class OAuthHandlerTest
     void required_scopes_cannot_be_dropped()
         throws Exception
     {
-        when( securityService.getScopes( IDP ) ).thenReturn(
-            Scopes.from( Scope.create().idProvider( IDP ).id( "content:read" ).roles( PrincipalKeys.from( "role:cms.cm.app" ) ).required( true ).build(),
-                     Scope.create().idProvider( IDP ).id( "content:write" ).roles( PrincipalKeys.from( "role:cms.project.site.editor" ) ).build() ) );
+        declared(
+            Scopes.from( Scope.create().id( "content:read" ).required( true ).build(),
+                     Scope.create().id( "content:write" ).build() ) );
         final VirtualHostIdProvider settings = UNRESTRICTED;
         final JsonNode issued = body( handler.handle(
             request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:write content:read" ) ), IDP,
@@ -1292,7 +1307,35 @@ class OAuthHandlerTest
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getScope() ).containsExactly( "content:read" );
-        assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.to( PrincipalKey.ofRole( "cms.cm.app" ) ) );
+        assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.none() );
+    }
+
+    @Test
+    void a_scope_is_worded_in_the_language_the_browser_prefers()
+        throws Exception
+    {
+        final ApplicationKey app = ApplicationKey.from( "com.example.orders" );
+        declared( Scopes.from( Scope.create()
+                                                                      .id( "com.example.orders:orders:read" )
+                                                                      .application( app )
+                                                                      .title( "Read orders" )
+                                                                      .titleI18nKey( "scope.read.title" )
+                                                                      .description( "See orders" )
+                                                                      .descriptionI18nKey( "scope.read.missing" )
+                                                                      .build() ) );
+        final MessageBundle bundle = mock( MessageBundle.class );
+        when( bundle.localize( "scope.read.title" ) ).thenReturn( "Les ordrer" );
+        when( localeService.getBundle( org.mockito.ArgumentMatchers.eq( app ), any() ) ).thenReturn( bundle );
+
+        final JsonNode issued = body( handler.handle(
+            request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "com.example.orders:orders:read" ) ), IDP,
+            "device/code", UNRESTRICTED ) );
+        approve( UNRESTRICTED, issued.get( "user_code" ).asText(), "com.example.orders:orders:read" );
+
+        @SuppressWarnings("unchecked") final List<Map<String, Object>> shown = (List<Map<String, Object>>) lastContextOfConfirm.get( "scope" );
+        assertThat( shown.getFirst() ).containsEntry( "title", "Les ordrer" )
+            .as( "a phrase the application lacks leaves the descriptor's text" )
+            .containsEntry( "description", "See orders" );
     }
 
     @Test
@@ -1349,7 +1392,7 @@ class OAuthHandlerTest
         final JsonNode issued = body( handler.handle(
             request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read" ) ), IDP, "device/code",
             settings ) );
-        when( securityService.getScopes( IDP ) ).thenReturn( Scopes.empty() );
+        declared( Scopes.empty() );
 
         approve( settings, issued.get( "user_code" ).asText(), "content:read" );
 
@@ -1360,6 +1403,88 @@ class OAuthHandlerTest
                                                      UNRESTRICTED ) );
         assertThat( token.get( "error" ).asText() ).isEqualTo( "access_denied" );
         verify( grantService, never() ).create( any() );
+    }
+
+    private static VirtualHost mappingServing( final String name, final String host, final Set<String> audience, final String... flows )
+    {
+        final VirtualHostIdProvidersMapping.Builder idProviders = VirtualHostIdProvidersMapping.create();
+        idProviders.addIdProviderWithSettings( IDP, VirtualHostIdProvider.create().flows( Set.of( flows ) ).build() );
+        return new VirtualHostMapping( name, host, "/", "/", idProviders.build(), 0, Map.of(), DispatchConstants.WEB_CONNECTOR,
+                                       PrincipalKeys.empty(), audience );
+    }
+
+    @Test
+    void the_scopes_offered_are_those_of_the_mappings_that_would_accept_the_token()
+        throws Exception
+    {
+        final VirtualHost api = mappingServing( "api", "api.example.com", Set.of( "api" ), "autologin" );
+        final VirtualHost other = mappingServing( "other", "other.example.com", Set.of( "other" ), "autologin" );
+        final VirtualHost noTokens = mappingServing( "login", "login.example.com", Set.of( "api" ), "login" );
+        final VirtualHost open = mappingServing( "open", "open.example.com", Set.of(), "autologin" );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( api, other, noTokens, open ) );
+        @SuppressWarnings("unchecked") final ArgumentCaptor<Iterable<VirtualHost>> mappings = ArgumentCaptor.forClass( Iterable.class );
+
+        final PortalRequest named = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        named.getParams().put( "resource", "api" );
+        handler.handle( named, IDP, "device/code", UNRESTRICTED );
+        verify( scopeService ).getScopes( mappings.capture(), org.mockito.ArgumentMatchers.anyBoolean() );
+        assertThat( mappings.getValue() ).extracting( VirtualHost::getName ).containsExactly( "api" );
+
+        org.mockito.Mockito.clearInvocations( scopeService );
+        final PortalRequest url = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        url.getParams().put( "resource", "https://other.example.com/api/x" );
+        handler.handle( url, IDP, "device/code", UNRESTRICTED );
+        verify( scopeService ).getScopes( mappings.capture(), org.mockito.ArgumentMatchers.anyBoolean() );
+        assertThat( mappings.getValue() ).extracting( VirtualHost::getName ).containsExactly( "other" );
+
+        org.mockito.Mockito.clearInvocations( scopeService );
+        handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP, "device/code", UNRESTRICTED );
+        verify( scopeService ).getScopes( mappings.capture(), org.mockito.ArgumentMatchers.anyBoolean() );
+        assertThat( mappings.getValue() ).as( "a token for XP itself is taken where no audience is declared" )
+            .extracting( VirtualHost::getName )
+            .containsExactly( "open" );
+    }
+
+    private boolean managementByDefault( final String resource )
+        throws Exception
+    {
+        org.mockito.Mockito.clearInvocations( scopeService );
+        final PortalRequest request = request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) );
+        request.setVirtualHost( mappingServing( "web", "shop.example.com", Set.of(), "autologin", "device" ) );
+        request.setScheme( "https" );
+        request.setHost( "shop.example.com" );
+        request.setPort( 443 );
+        if ( resource != null )
+        {
+            request.getParams().put( "resource", resource );
+        }
+        handler.handle( request, IDP, "device/code", UNRESTRICTED );
+        final ArgumentCaptor<Boolean> management = ArgumentCaptor.forClass( Boolean.class );
+        verify( scopeService ).getScopes( any(), management.capture() );
+        return management.getValue();
+    }
+
+    @Test
+    void management_scopes_are_offered_by_default_only_for_a_resource_that_reaches_the_endpoint()
+        throws Exception
+    {
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of() );
+
+        assertThat( managementByDefault( null ) ).as( "a token for XP itself" ).isTrue();
+        assertThat( managementByDefault( "http://shop.example.com:4848" ) ).as( "another port than the web endpoint" ).isTrue();
+        assertThat( managementByDefault( "https://shop.example.com/api/com.example.orders:orders" ) ).as( "a URL the web mapping serves" )
+            .isFalse();
+        assertThat( managementByDefault( "https://shop.example.com" ) ).isFalse();
+
+        final VirtualHost mgmt = new VirtualHostMapping( "mgmt", "mgmt.example.com", "/", "/", VirtualHostIdProvidersMapping.create()
+            .addIdProviderWithSettings( IDP, VirtualHostIdProvider.create().flows( Set.of( "autologin" ) ).build() )
+            .build(), 0, Map.of(), DispatchConstants.MANAGEMENT_CONNECTOR, PrincipalKeys.empty(), Set.of() );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( mgmt ) );
+        assertThat( managementByDefault( "http://shop.example.com:4848" ) ).as( "the endpoint has a mapping of its own" ).isFalse();
+
+        when( virtualHostService.isEnabled() ).thenReturn( false );
+        assertThat( managementByDefault( "http://shop.example.com:4848" ) ).as( "mappings are not in use while virtual hosts are off" )
+            .isTrue();
     }
 
     @Test
@@ -1569,7 +1694,7 @@ class OAuthHandlerTest
         try
         {
             final OAuthHandler strict =
-                new OAuthHandler( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService,
+                new OAuthHandler( grantService, accessTokenService, securityService, scopeService, localeService, virtualHostService, idProviderControllerService,
                                   new InMemorySharedMapService(), Clock.systemUTC() );
             final PortalResponse refused =
                 strict.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "enonic-cli" ) ), IDP, "device/code", UNRESTRICTED );
@@ -1911,7 +2036,7 @@ class OAuthHandlerTest
 
         final PortalResponse back = asAlice( () -> {
             handler.handle( request( HttpMethod.GET, "authorize", params ), IDP, "authorize", UNRESTRICTED );
-            when( securityService.getScopes( IDP ) ).thenReturn( Scopes.empty() );
+            declared( Scopes.empty() );
             final PortalRequest decision = request( HttpMethod.POST, "authorize",
                                                     Map.of( "request", (String) lastContext.get( "requestId" ), "approve", "true", "_csrf",
                                                             (String) lastContext.get( "csrf" ), "scope", "content:read" ) );
@@ -2271,7 +2396,7 @@ class OAuthHandlerTest
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
         assertThat( grant.getValue().getScope() ).containsExactly( "content:read" );
-        assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.to( PrincipalKey.ofRole( "cms.cm.app" ) ) );
+        assertThat( grant.getValue().getRestriction() ).isEqualTo( RoleRestriction.none() );
 
         final Map<String, String> missing = new HashMap<>( exchange );
         missing.remove( "code_verifier" );

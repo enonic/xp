@@ -849,7 +849,7 @@ const oauthConsentRequest: Request = new RequestImplementation({
         userCode: 'BCDF-GHJK',
         clientId: 'my-cli',
         client: {id: 'my-cli', displayName: 'My CLI', registered: true},
-        scope: [{id: 'content:read', title: 'Read content', roles: ['role:cms.project.site.viewer'], required: true}],
+        scope: [{id: 'content:read', title: 'Read content', required: true}],
         unrestricted: false,
         audience: ['api'],
         csrf: 'token',

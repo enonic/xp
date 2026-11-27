@@ -24,7 +24,7 @@ import com.enonic.xp.web.WebResponse;
 /**
  * {@code server:dump} - system dumps under {@code $XP_HOME/data/dump}: list, create, load and upgrade.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:dump", "title=Dump API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:dump", "scopes=read:repo", "scopes=repo", "title=Dump API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class DumpApiHandler
     extends ManagementApiHandler

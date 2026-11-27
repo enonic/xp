@@ -129,7 +129,7 @@ public final class LoginHandler
     {
         final IdProviderKey idp = idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider );
 
-        RoleRestriction restriction = this.restriction;
+        final RoleRestriction restriction = this.restriction;
         AccessTokenInfo accessToken = null;
 
         if ( tokenIssuer != null )
@@ -144,8 +144,6 @@ public final class LoginHandler
             {
                 return new LoginResultMapper( AuthenticationInfo.unAuthenticated(), "Token audience not accepted here" );
             }
-            restriction = restriction.narrow(
-                this.securityServiceSupplier.get().getScopes( idp ).restrictionFor( tokenScope ) );
             accessToken = AccessTokenInfo.create()
                 .issuer( tokenIssuer )
                 .clientId( tokenClientId )

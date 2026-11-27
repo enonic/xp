@@ -44,7 +44,11 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.ScopeService;
+import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -127,8 +131,14 @@ class SlashApiHandlerTest
         final PortalScriptService scriptService = mock( PortalScriptService.class );
         when( scriptService.execute( any( ResourceKey.class ) ) ).thenReturn( scriptExports );
 
+        final Scopes defined = Scopes.from(
+            Scope.create().id( "com.enonic.app.myapp:write" ).includes( List.of( "com.enonic.app.myapp:read" ) ).build(),
+            Scope.create().id( "com.enonic.app.myapp:read" ).build(),
+            Scope.create().id( "com.enonic.app.myapp:all" ).includes( List.of( "com.enonic.app.myapp:write" ) ).build() );
+        final ScopeService scopeService = () -> defined;
+
         handler = new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
-                                       universalApiHandlerRegistry, sseManager, scriptService );
+                                       universalApiHandlerRegistry, sseManager, scriptService, scopeService );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
@@ -530,6 +540,79 @@ class SlashApiHandlerTest
         assertNull( request.getSite() );
         assertNull( request.getContent() );
         assertEquals( "/api/com.enonic.app.myapp:api-key", request.getContextPath() );
+    }
+
+    @Test
+    void testHandlerRegisteredWithXpChecksItsScopesItself()
+        throws Exception
+    {
+        universalApiHandlerRegistry.addApiHandler( new MyUniversalApiHandler(),
+                                                   Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString(), "mount", "web", "scopes",
+                                                           new String[]{"read:repo", "repo"} ) );
+        request.setRawPath( "/api/com.enonic.app.external.app:myapi" );
+
+        final AuthenticationInfo authInfo = AuthenticationInfo.create()
+            .user( User.create().key( PrincipalKey.from( "user:system:alice" ) ).login( "alice" ).build() )
+            .principals( RoleKeys.EVERYONE )
+            .accessToken( AccessTokenInfo.create().issuer( "xp" ).scope( List.of( "read:content" ) ).build() )
+            .build();
+        final WebResponse webResponse =
+            ContextBuilder.copyOf( ContextAccessor.current() ).authInfo( authInfo ).build().callWith( () -> this.handler.handle( request ) );
+
+        assertEquals( HttpStatus.OK, webResponse.getStatus(), "the handler is reached, and names the scope an operation takes" );
+    }
+
+    private WebResponse handleWithTokenScope( final String... tokenScope )
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .scopes( "com.enonic.app.myapp:read", "com.enonic.app.myapp:write" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        final AuthenticationInfo authInfo = AuthenticationInfo.create()
+            .user( User.create().key( PrincipalKey.from( "user:system:alice" ) ).login( "alice" ).build() )
+            .principals( RoleKeys.EVERYONE )
+            .accessToken( AccessTokenInfo.create().issuer( "xp" ).scope( List.of( tokenScope ) ).build() )
+            .build();
+        return ContextBuilder.copyOf( ContextAccessor.current() ).authInfo( authInfo ).build().callWith( () -> this.handler.handle( request ) );
+    }
+
+    @Test
+    void testTokenWithNoneOfTheApiScopesIsRefused()
+        throws Exception
+    {
+        final WebResponse webResponse = handleWithTokenScope( "com.enonic.app.other:read", "openid" );
+
+        assertEquals( HttpStatus.FORBIDDEN, webResponse.getStatus() );
+        assertEquals( "Bearer error=\"insufficient_scope\", scope=\"com.enonic.app.myapp:read com.enonic.app.myapp:write\"",
+                      webResponse.getHeaders().get( "WWW-Authenticate" ) );
+    }
+
+    @Test
+    void testTokenWithOneOfTheApiScopesPasses()
+        throws Exception
+    {
+        assertEquals( HttpStatus.OK, handleWithTokenScope( "com.enonic.app.myapp:write" ).getStatus() );
+    }
+
+    @Test
+    void testTokenWithAScopeThatIncludesOneOfTheApiScopesPasses()
+        throws Exception
+    {
+        assertEquals( HttpStatus.OK, handleWithTokenScope( "com.enonic.app.myapp:all" ).getStatus() );
+    }
+
+    @Test
+    void testTokenWithoutScopesIsRefusedByAnApiThatDeclaresScopes()
+        throws Exception
+    {
+        assertEquals( HttpStatus.FORBIDDEN, handleWithTokenScope().getStatus() );
     }
 
     @Test

@@ -323,12 +323,10 @@ export interface OAuthConsentUser {
 
 export interface OAuthConsentScope {
     id: string;
-    /** The scope's title, as its id provider defines it; the id when it defines none. */
+    /** The scope's title, as XP or its application defines it; the id when it has none. */
     title: string;
-    /** What approving the scope allows, in the user's words, when the id provider says. */
+    /** What approving the scope allows, in the user's words, when the definition says. */
     description?: string;
-    /** The roles the scope implies; empty for a scope that is only a label. */
-    roles: string[];
     /** Whether the user may not drop it. */
     required: boolean;
 }

@@ -122,6 +122,7 @@ public class ApiIndexHandler
         result.put( "description", apiDescriptor.getDescription() );
         result.put( "documentationUrl", apiDescriptor.getDocumentationUrl() );
         result.put( "mount", apiDescriptor.getMount() );
+        result.put( "scopes", apiDescriptor.getScopes() );
 
         return result;
     }

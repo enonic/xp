@@ -11,7 +11,6 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.token.Client;
 import com.enonic.xp.security.token.Scope;
@@ -38,8 +37,8 @@ import com.enonic.xp.security.token.Scopes;
  *                                          // confirm: the client as XP knows it; registered is true when the
  *                                          //          id provider's administrators registered it, false when
  *                                          //          it registered itself and its name is only its own claim
- *   scope: [ { id, title, description, roles: [...], required } ],
- *                                          // confirm: the scopes asked for, each as the id provider
+ *   scope: [ { id, title, description, required } ],
+ *                                          // confirm: the scopes asked for, each as XP or its application
  *                                          //          defines it, and whether the user may drop it
  *   unrestricted: true | false,            // confirm: the request carries no scope, the token gets the user's full rights
  *   audience: [ "api" ],                   // confirm
@@ -54,7 +53,7 @@ import com.enonic.xp.security.token.Scopes;
  * {@code approve} ({@code true} or {@code false}), {@code _csrf} and one {@code scope} per scope
  * the user keeps. A scope left out is not granted, except a required one, which is granted
  * whenever the request is approved. The page may word a scope itself or show the title and
- * description its id provider gave it. In the device flow the page then shows {@code done}; in the
+ * description its definition gave it. In the device flow the page then shows {@code done}; in the
  * code flow the browser is sent back to the client.
  */
 sealed interface OAuthConsentContext
@@ -103,7 +102,7 @@ sealed interface OAuthConsentContext
          *
          * @param client         the client's record
          * @param selfRegistered whether the client registered itself, rather than the id provider's administrators
-         * @param known          the id provider's scopes
+         * @param known          the defined scopes
          */
         static Confirm forDevice( final IdProviderKey idProvider, final User user, final String userCode, final String clientId,
                                   final Client client, final boolean selfRegistered, final Set<String> scope,
@@ -168,9 +167,8 @@ sealed interface OAuthConsentContext
             final List<RequestedScope> scopes = scope.stream().map( id -> {
                 final Scope found = known.get( id ).orElse( null );
                 return found == null
-                    ? new RequestedScope( id, id, null, List.of(), false )
-                    : new RequestedScope( id, found.getTitle(), found.getDescription(),
-                                          found.getRoles().stream().map( PrincipalKey::toString ).toList(), found.isRequired() );
+                    ? new RequestedScope( id, id, null, false )
+                    : new RequestedScope( id, found.getTitle(), found.getDescription(), found.isRequired() );
             } ).toList();
             return new Confirm( idProvider, user, flow, userCode, requestId, clientId, client, scopes,
                                 List.copyOf( audience ), scope.isEmpty(), csrf, redirectOrigin );
@@ -192,10 +190,10 @@ sealed interface OAuthConsentContext
     }
 
     /**
-     * A requested scope as its id provider defines it: its title and description, the roles it
-     * implies and whether the user may drop it.
+     * A requested scope as XP or its application defines it: its title and description, and whether
+     * the user may drop it.
      */
-    record RequestedScope(String id, String title, @Nullable String description, List<String> roles, boolean required)
+    record RequestedScope(String id, String title, @Nullable String description, boolean required)
     {
     }
 
@@ -265,7 +263,6 @@ sealed interface OAuthConsentContext
                     {
                         entry.put( "description", s.description() );
                     }
-                    entry.put( "roles", s.roles() );
                     entry.put( "required", s.required() );
                     return entry;
                 } ).toList() );

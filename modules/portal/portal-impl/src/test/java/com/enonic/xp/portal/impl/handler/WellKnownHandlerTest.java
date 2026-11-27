@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.portal.impl.api.ScopeRegistry;
 import com.enonic.xp.portal.impl.idprovider.OAuthMetadataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
@@ -27,6 +28,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.VirtualHostService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 class WellKnownHandlerTest
 {
-    private final SecurityService securityService = mock( SecurityService.class );
+    private final ScopeRegistry scopeService = mock( ScopeRegistry.class );
 
     private final WebHandlerChain chain = mock( WebHandlerChain.class );
 
@@ -48,8 +50,8 @@ class WellKnownHandlerTest
     @BeforeEach
     void setUp()
     {
-        when( securityService.getScopes( any() ) ).thenReturn( Scopes.empty() );
-        metadata = new OAuthMetadataService( securityService );
+        when( scopeService.getScopes( any(), org.mockito.ArgumentMatchers.anyBoolean() ) ).thenReturn( Scopes.empty() );
+        metadata = new OAuthMetadataService( scopeService, mock( VirtualHostService.class ) );
         handler = new WellKnownHandler( metadata );
     }
 
@@ -222,18 +224,16 @@ class WellKnownHandlerTest
         when( web.getConnector() ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( web.getSource() ).thenReturn( "/" );
         when( web.getIdProviders() ).thenReturn( idProviders );
-        when( securityService.getScopes( auth0 ) ).thenReturn( scopes( auth0, "content:read" ) );
-        when( securityService.getScopes( ldap ) ).thenReturn( scopes( ldap, "ldap:only" ) );
-        when( securityService.getScopes( okta ) ).thenReturn( scopes( okta, "content:read", "content:write" ) );
+        when( scopeService.getScopes( any(), org.mockito.ArgumentMatchers.anyBoolean() ) ).thenReturn( scopes( "content:read", "content:write" ) );
 
         assertThat( protectedResource( DispatchConstants.WEB_CONNECTOR, web ) ).as( "an id provider with no server adds nothing, a server is named once" )
             .containsEntry( "authorization_servers", List.of( "https://tenant.auth0.com/", "https://h/_/idprovider/system" ) )
             .containsEntry( "scopes_supported", List.of( "content:read", "content:write" ) );
     }
 
-    private static Scopes scopes( final IdProviderKey idProvider, final String... ids )
+    private static Scopes scopes( final String... ids )
     {
-        return Stream.of( ids ).map( id -> Scope.create().idProvider( idProvider ).id( id ).build() ).collect( Scopes.collector() );
+        return Stream.of( ids ).map( id -> Scope.create().id( id ).build() ).collect( Scopes.collector() );
     }
 
     @Test
