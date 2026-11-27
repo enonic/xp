@@ -532,9 +532,35 @@ export type HttpFilterNext<
     ResponseToJava extends ResponseInterface = DefaultResponse
 > = (request: RequestToJava) => ResponseToJava;
 
-export interface WebSocketResponse {
-    data?: Record<string, string>;
+/**
+ * @template Data Shape of `data`. XP converts every value to a string, so all values must be strings.
+ * Declare it with `type`, not `interface`, since it must be assignable to `Record<string, string>`.
+ */
+export interface WebSocketResponse<Data extends Record<string, string> = Record<string, string>> {
+    /**
+     * Data attached to the WebSocket session. It is available as `event.data` in `webSocketEvent`.
+     */
+    data?: Data;
+
+    /**
+     * Subprotocols the server supports. During the handshake, the first subprotocol in the client's
+     * `Sec-WebSocket-Protocol` header that is also listed here is selected. A single string is the same as a
+     * one-item array. By default no subprotocol is negotiated.
+     */
     subProtocols?: string | string[];
+
+    /**
+     * Decides whether to accept the WebSocket upgrade, based on the `Origin` header. Return `true` to accept;
+     * any other return value, or a thrown error, rejects the upgrade. It replaces the default same-origin check.
+     *
+     * The function is called during the handshake, after the controller has returned, and receives only the
+     * `Origin` header value (`null` when the header is absent, as with non-browser clients). Capture any other
+     * request data it needs in a closure.
+     *
+     * When omitted, XP accepts the upgrade if the origin matches the request's scheme, host and port, or if
+     * there is no `Origin` header. Opaque origins (`"null"`) are rejected. If `websocket.defaultOriginCheck`
+     * is set to `false` in `com.enonic.xp.web.jetty.cfg`, any origin is accepted instead.
+     */
     checkOrigin?: (origin: string) => boolean;
 
     /**
@@ -625,6 +651,73 @@ export interface Controller<
     trace?: RequestHandler<Request, Response>;
     webSocketEvent?: WebSocketEventHandler;
     sseEvent?: SseEventHandler;
+}
+
+/**
+ * Context passed to the `macro` function of a macro controller.
+ *
+ * @template Params Shape of the macro parameters.
+ */
+export interface MacroContext<Params extends Record<keyof Params, string> = Record<string, string>> {
+    name: string;
+    body: string;
+    params: Params;
+    document: string;
+    request: Request;
+}
+
+/**
+ * Parameters that Content Studio sends to the service of a CustomSelector input. Which ones are set depends
+ * on the call: resolving already selected options sends only `ids`, while searching and paging sends
+ * `start`, `count` and `query` (when the user has typed something). Any `params` from the input config are
+ * sent as well, and can be added with an intersection.
+ *
+ * @example Request<{ params: CustomSelectorServiceParams }>
+ */
+// Must be a type alias, not an interface, so it is assignable to RequestParams (which has an index signature).
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type CustomSelectorServiceParams = {
+    /**
+     * Maximum number of hits to return.
+     */
+    count?: string;
+    /**
+     * Offset of the first hit to return, used for paging.
+     */
+    start?: string;
+    /**
+     * Comma-separated ids of options that are already selected, and must be resolved.
+     */
+    ids?: string;
+    /**
+     * Search text the user has typed.
+     */
+    query?: string;
+};
+
+/**
+ * One option returned by the service of a CustomSelector input.
+ */
+export interface CustomSelectorServiceHit {
+    id: string;
+    displayName: string;
+    description?: string;
+    iconUrl?: string;
+    icon?: {
+        data: string;
+        type: string;
+    };
+}
+
+/**
+ * Response body that the service of a CustomSelector input must return.
+ *
+ * @example Response<{ body: CustomSelectorServiceResponseBody }>
+ */
+export interface CustomSelectorServiceResponseBody {
+    total: number;
+    count: number;
+    hits: CustomSelectorServiceHit[];
 }
 
 export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {
