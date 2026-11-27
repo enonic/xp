@@ -22,7 +22,8 @@ assert.assertJsonEquals([
         modifiedTime: '2020-09-25T10:00:00Z',
         started: true,
         system: false,
-        schema: false
+        codeless: false,
+        locked: false
     },
     {
         key: 'app2',
@@ -33,7 +34,8 @@ assert.assertJsonEquals([
         modifiedTime: '2021-09-25T10:00:00Z',
         started: false,
         system: true,
-        schema: false
+        codeless: false,
+        locked: false
     }
 ], result);
 

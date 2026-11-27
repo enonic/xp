@@ -48,13 +48,19 @@ public interface Application
 
     /**
      * Returns the class loader loading the classes and resources of the application.
+     * <p>
+     * A codeless application has none: installed from a jar without a manifest or created through
+     * {@link ApplicationDescriptorService#createOrUpdate}, it has no bundle, and its descriptor, icon and schema are served from
+     * the application repository. It is always started and can neither be started nor stopped, and its descriptor is edited
+     * through the application descriptor service.
      *
-     * @return the application class loader
+     * @return the application class loader, or {@code null} for a codeless application
      */
     ClassLoader getClassLoader();
 
     /**
-     * Returns the time the application was last installed or updated.
+     * Returns the time the application was last installed or created, or its schema, descriptor or icon was last changed
+     * through the schema and application descriptor services, whichever is later.
      *
      * @return the modification time
      */
@@ -90,14 +96,6 @@ public interface Application
     boolean isSystem();
 
     /**
-     * Returns whether the application is a schema application: one that owns a CMS schema, with content types, components
-     * and other schema resources served through the schema service.
-     *
-     * @return {@code true} for a schema application
-     */
-    boolean isSchema();
-
-    /**
      * Returns whether the application is a local application: one deployed from the deploy directory of this node only.
      * The schema and the application descriptor of a local application cannot be modified through the schema and application
      * descriptor services.
@@ -105,4 +103,13 @@ public interface Application
      * @return {@code true} for a local application
      */
     boolean isLocal();
+
+    /**
+     * Returns whether the application is locked: while it is, the application can neither be installed over (uploaded or
+     * pulled) nor uninstalled. The flag is kept on the node of the application, never in its descriptor, and is set and reset
+     * through {@link ApplicationDescriptorService#createOrUpdate}.
+     *
+     * @return {@code true} when installing over and uninstalling the application are prevented, {@code false} by default
+     */
+    boolean isLocked();
 }

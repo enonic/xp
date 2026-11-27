@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -139,7 +141,7 @@ class PersistedSchemaLookupTest
         auditLogSupport.activate( appConfig );
 
         this.applicationRegistry = new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
-        this.applicationService = new ApplicationServiceImpl( applicationRegistry, repoService,
+        this.applicationService = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
                                                               new AppFilterServiceImpl( appConfig ), auditLogSupport );
 
@@ -185,6 +187,7 @@ class PersistedSchemaLookupTest
     @Test
     void content_type_follows_a_form_fragment_written_through_the_schema_service()
     {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
         final ContentTypeName typeName = ContentTypeName.from( "staticapp:withfragment" );
 
         adminContext().runWith( () -> {
@@ -193,6 +196,7 @@ class PersistedSchemaLookupTest
                 "cms/cms.yaml", "kind: \"CMS\"", //
                 "cms/form-fragments/address.yaml", FRAGMENT_V1, //
                 "cms/content-types/withfragment.yaml", CONTENT_TYPE_WITH_FRAGMENT ) ) );
+            final Instant installed = applicationService.getInstalledApplication( appKey ).getModifiedTime();
 
             final ContentType before = contentTypeService.getByName( GetContentTypeParams.from( typeName ) );
             assertEquals( List.of( "street" ), inputNames( before ) );
@@ -206,8 +210,10 @@ class PersistedSchemaLookupTest
 
             final ContentType after = contentTypeService.getByName( GetContentTypeParams.from( typeName ) );
             assertEquals( List.of( "street", "city" ), inputNames( after ) );
-            // one change of the schema since the install
+            // one change of the schema since the install, moving the modification time of the application
             assertEquals( 1, schemaRevision( "staticapp" ) );
+            final Instant fragmentEdited = applicationService.getInstalledApplication( appKey ).getModifiedTime();
+            assertThat( fragmentEdited ).isAfterOrEqualTo( installed );
 
             // and the content type itself, written through the schema service, replaces the one shipped by the bundle
             dynamicSchemaService.createOrUpdateContentType( CreateOrUpdateContentSchemaParams.create()
@@ -217,6 +223,7 @@ class PersistedSchemaLookupTest
             assertEquals( "Rewritten", contentTypeService.getByName( GetContentTypeParams.from( typeName ) ).getTitle() );
             assertTrue( inputNames( contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) ).isEmpty() );
             assertEquals( 2, schemaRevision( "staticapp" ) );
+            assertThat( applicationService.getInstalledApplication( appKey ).getModifiedTime() ).isAfterOrEqualTo( fragmentEdited );
 
             // a new version of the bundle ships its schema anew: nothing changed since
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //

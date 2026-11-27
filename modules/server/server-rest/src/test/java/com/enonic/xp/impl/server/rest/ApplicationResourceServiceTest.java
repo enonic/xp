@@ -148,13 +148,13 @@ class ApplicationResourceServiceTest
     void start_stop_schema_application_rejected()
     {
         final Application schemaApp = mock( Application.class );
-        when( schemaApp.isSchema() ).thenReturn( true );
+        when( schemaApp.getClassLoader() ).thenReturn( null );
         when( applicationService.getInstalledApplication( ApplicationKey.from( "com.enonic.schema" ) ) ).thenReturn( schemaApp );
 
         final ApplicationParams params = createApplicationParams( "com.enonic.app1", "com.enonic.schema" );
 
         final ApplicationActionResultJson.ActionResult rejected =
-            new ApplicationActionResultJson.ActionResult( "com.enonic.schema", false, ApplicationResourceService.SCHEMA_APPLICATION_MESSAGE );
+            new ApplicationActionResultJson.ActionResult( "com.enonic.schema", false, ApplicationResourceService.CODELESS_APPLICATION_MESSAGE );
 
         assertThat( service.start( params ).getResults() ).containsExactlyInAnyOrder(
             new ApplicationActionResultJson.ActionResult( "com.enonic.app1", true ), rejected );
@@ -169,10 +169,10 @@ class ApplicationResourceServiceTest
     void installed_application_schema_flag()
     {
         final Application application = createApplication();
-        when( application.isSchema() ).thenReturn( true );
+        when( application.getClassLoader() ).thenReturn( null );
         when( applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
 
-        assertThat( service.getInstalledApplication( application.getKey() ).getSchema() ).isTrue();
+        assertThat( service.getInstalledApplication( application.getKey() ).getCodeless() ).isTrue();
     }
 
     @Test
@@ -341,6 +341,7 @@ class ApplicationResourceServiceTest
         when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
         when( application.isStarted() ).thenReturn( true );
         when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
+        when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         return application;
     }
 }

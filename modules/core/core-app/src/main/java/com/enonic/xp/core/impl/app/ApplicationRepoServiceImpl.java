@@ -5,7 +5,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import com.google.common.io.ByteSource;
 
@@ -246,15 +246,18 @@ public class ApplicationRepoServiceImpl
     }
 
     /**
-     * The persisted schema of the application was changed through the schema API: one more revision since the install, and the
-     * version of the application node moves. The schema lives in nodes below the application node, which a write of does not move
-     * it, and the version is what every node of the cluster checks its cached schema against on every read (the revision of
-     * {@code NodeResourceApplicationUrlResolver}). Called after the write, never before: a node seeing the new version reads the
-     * new schema. Must run in the context of the application repository.
+     * The persisted schema of the application was changed through the schema API: one more revision since the install, the
+     * modification time of the application moves to now, and the version of the application node moves. The schema lives in nodes
+     * below the application node, which a write of does not move it, and the version is what every node of the cluster checks its
+     * cached schema against on every read (the revision of {@code NodeResourceApplicationUrlResolver}). Called after the write,
+     * never before: a node seeing the new version reads the new schema. Must run in the context of the application repository.
      */
     static void markSchemaChanged( final NodeService nodeService, final ApplicationKey applicationKey )
     {
-        writeSchemaRevision( nodeService, applicationKey, ApplicationRepoServiceImpl::nextRevision );
+        writeSchemaRevision( nodeService, applicationKey, data -> {
+            data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, nextRevision( data.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
+            data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
+        } );
     }
 
     // one more change since the install or creation; a node without a revision counts from zero
@@ -271,21 +274,18 @@ public class ApplicationRepoServiceImpl
      */
     private void markSchemaPersisted( final ApplicationKey applicationKey )
     {
-        writeSchemaRevision( this.nodeService, applicationKey, revision -> 0L );
+        writeSchemaRevision( this.nodeService, applicationKey, data -> data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 0L ) );
     }
 
     private static void writeSchemaRevision( final NodeService nodeService, final ApplicationKey applicationKey,
-                                             final Function<Long, Long> revision )
+                                             final Consumer<PropertyTree> edit )
     {
         final NodePath appPath = applicationNodePath( applicationKey );
         if ( !nodeService.nodeExists( appPath ) )
         {
             return;
         }
-        nodeService.update( UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
-            toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION,
-                                     revision.apply( toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
-        } ).build() );
+        nodeService.update( UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> edit.accept( toBeEdited.data ) ).build() );
     }
 
     @Override
@@ -322,7 +322,8 @@ public class ApplicationRepoServiceImpl
      * longer referenced and dropped by the update.
      *
      * @param change whether a descriptor written over one the node holds is a change of the application, counted in its schema
-     *               revision in the same write; the first descriptor of a node never is, it is part of its creation
+     *               revision and moving its modification time in the same write; the first descriptor of a node never is, it is
+     *               part of its creation
      */
     private Node writeApplicationDescriptor( final NodePath appPath, final String descriptor, final IconUpdate iconUpdate,
                                              final boolean change )
@@ -334,6 +335,7 @@ public class ApplicationRepoServiceImpl
             {
                 toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION,
                                          nextRevision( toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
+                toBeEdited.data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
             }
             toBeEdited.data.setString( SchemaNodePropertyNames.DESCRIPTOR, descriptor );
             switch ( iconUpdate )
@@ -422,6 +424,24 @@ public class ApplicationRepoServiceImpl
                 .collect( NodeIds.collector() ) );
 
         return this.nodeService.getByIds( applicationIds );
+    }
+
+    @Override
+    public Node updateLocked( final ApplicationKey applicationKey, final boolean locked )
+    {
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath appPath = applicationNodePath( applicationKey );
+            if ( !this.nodeService.nodeExists( appPath ) )
+            {
+                throw new NodeNotFoundException( String.format( "Application node [%s] not found", appPath ) );
+            }
+            return this.nodeService.update( UpdateNodeParams.create()
+                                                .path( appPath )
+                                                .editor( toBeEdited -> toBeEdited.data.setBoolean(
+                                                    ApplicationPropertyNames.LOCKED, locked ) )
+                                                .refresh( RefreshMode.ALL )
+                                                .build() );
+        } );
     }
 
     @Override

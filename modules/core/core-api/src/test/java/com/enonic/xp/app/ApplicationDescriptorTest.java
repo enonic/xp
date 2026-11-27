@@ -1,6 +1,8 @@
 package com.enonic.xp.app;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +11,7 @@ import com.enonic.xp.icon.Icon;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ApplicationDescriptorTest
@@ -43,6 +46,26 @@ class ApplicationDescriptorTest
     }
 
     @Test
+    void versions()
+    {
+        final ApplicationKey key = ApplicationKey.from( "app" );
+        final ApplicationDescriptor desc =
+            ApplicationDescriptor.create().key( key ).version( "1.2.3" ).minSystemVersion( "8.0.0" ).maxSystemVersion( "9.0.0" ).build();
+
+        assertEquals( "1.2.3", desc.getVersion() );
+        assertEquals( "8.0.0", desc.getMinSystemVersion() );
+        assertEquals( "9.0.0", desc.getMaxSystemVersion() );
+        assertEquals( desc, new EditableApplicationDescriptor( desc ).build() );
+        assertEquals( desc, ApplicationDescriptor.copyOf( desc ).build() );
+        assertNotEquals( desc, ApplicationDescriptor.create().key( key ).version( "1.2.3" ).build() );
+
+        final ApplicationDescriptor empty = ApplicationDescriptor.create().key( key ).build();
+        assertNull( empty.getVersion() );
+        assertNull( empty.getMinSystemVersion() );
+        assertNull( empty.getMaxSystemVersion() );
+    }
+
+    @Test
     void testHashCode()
     {
         final Icon icon = Icon.from( new byte[]{0, 1}, "image/png", Instant.now() );
@@ -67,5 +90,24 @@ class ApplicationDescriptorTest
         assertEquals( desc1.hashCode(), desc1.hashCode() );
         assertEquals( desc1.hashCode(), desc2.hashCode() );
         assertNotEquals( desc1.hashCode(), desc3.hashCode() );
+    }
+
+    @Test
+    void scopes_are_declared_and_copied()
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        final List<ApplicationScope> declared = List.of( new ApplicationScope( "write", "read" ), new ApplicationScope( "read" ) );
+        final ApplicationDescriptor descriptor = ApplicationDescriptor.create().key( key ).scopes( declared ).build();
+
+        assertEquals( declared, descriptor.getDeclaredScopes() );
+        assertEquals( Set.of( "myapp:write", "myapp:read" ), descriptor.getScopes().getIds() );
+
+        assertEquals( descriptor, ApplicationDescriptor.copyOf( descriptor ).build() );
+        assertEquals( declared, ApplicationDescriptor.copyOf( descriptor ).title( "Renamed" ).build().getDeclaredScopes() );
+
+        final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( descriptor );
+        edit.title = "Edited";
+        assertEquals( declared, edit.build().getDeclaredScopes() );
+        assertEquals( descriptor.getScopes(), edit.build().getScopes() );
     }
 }

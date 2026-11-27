@@ -129,7 +129,7 @@ class ApplicationRepoMigratorTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         auditLogSupport.activate( appConfig );
 
-        this.applicationService = new ApplicationServiceImpl(
+        this.applicationService = new ApplicationServiceImpl( bundleContext,
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ), auditLogSupport );
 
@@ -154,8 +154,10 @@ class ApplicationRepoMigratorTest
 
         migrator.migrate();
 
-        // the same tree below the application node, whichever way the application got there
-        assertEquals( describe( "/installedapp" ), describe( "/legacyapp" ) );
+        // the same tree below the application node, whichever way the application got there: nothing but the name of the
+        // application, declared by the persisted descriptor, tells them apart
+        assertEquals( describe( "/installedapp" ),
+                      describe( "/legacyapp" ).stream().map( line -> line.replace( "legacyapp", "installedapp" ) ).toList() );
 
         final Node migrated = appNode( "legacyapp" );
         assertEquals( Boolean.TRUE, migrated.data().getBoolean( "started" ) );

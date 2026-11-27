@@ -34,6 +34,16 @@ final class YmlApplicationDescriptorParser
         return PARSER.parse( "Application", resource, ApplicationDescriptor.Builder.class, currentApplication );
     }
 
+    /**
+     * The {@code name} the descriptor declares, {@code null} when it declares none: read ahead of the descriptor where the
+     * application is not known yet, as for the jar of a codeless application, which carries no manifest to name it.
+     */
+    static ApplicationKey name( final String resource )
+    {
+        final String name = PARSER.field( resource, "name" );
+        return name == null ? null : ApplicationKey.from( name );
+    }
+
     @JsonIgnoreProperties("kind")
     private abstract static class ApplicationDescriptorBuilderMapper
     {
@@ -52,6 +62,18 @@ final class YmlApplicationDescriptorParser
         @JsonProperty("url")
         abstract ApplicationDescriptor.Builder url( String value );
 
+        @JsonProperty("version")
+        @JsonDeserialize(using = VersionDeserializer.class)
+        abstract ApplicationDescriptor.Builder version( String value );
+
+        @JsonProperty("minSystemVersion")
+        @JsonDeserialize(using = VersionDeserializer.class)
+        abstract ApplicationDescriptor.Builder minSystemVersion( String value );
+
+        @JsonProperty("maxSystemVersion")
+        @JsonDeserialize(using = VersionDeserializer.class)
+        abstract ApplicationDescriptor.Builder maxSystemVersion( String value );
+
         @JsonProperty("name")
         @JacksonInject(CURRENT_APPLICATION)
         @JsonDeserialize(using = ApplicationNameDeserializer.class)
@@ -62,6 +84,25 @@ final class YmlApplicationDescriptorParser
 
         @JsonProperty("config")
         abstract ApplicationDescriptor.Builder schemaConfig( GenericValue schemaConfig );
+    }
+
+    /**
+     * The descriptor file declares a semantic version ({@code 1.2.3-SNAPSHOT}), held as declared: any other version is rejected.
+     */
+    private static class VersionDeserializer
+        extends JsonDeserializer<String>
+    {
+        @Override
+        public String deserialize( final JsonParser parser, final DeserializationContext context )
+            throws IOException
+        {
+            final String value = parser.getValueAsString();
+            if ( value != null && !value.isEmpty() )
+            {
+                ApplicationHelper.parseVersion( parser.currentName(), value );
+            }
+            return value;
+        }
     }
 
     private static class ApplicationNameDeserializer

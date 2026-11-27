@@ -5,14 +5,17 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
@@ -20,6 +23,8 @@ import com.google.common.io.MoreFiles;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class AppInfoResolver
 {
@@ -41,28 +46,72 @@ class AppInfoResolver
     private static AppInfo findAppInfo( final Path file )
         throws Exception
     {
-        final Manifest man;
-        final String descriptorYaml;
-        final boolean hasCmsDescriptor;
-
         try (JarFile jarFile = new JarFile( file.toFile() ))
         {
-            man = jarFile.getManifest();
+            final Manifest man = jarFile.getManifest();
+            final String descriptorYaml = readDescriptorYaml( jarFile );
+            final boolean hasCmsDescriptor =
+                SchemaResourcePaths.CMS_DESCRIPTOR_PATHS.stream().anyMatch( path -> jarFile.getJarEntry( path ) != null );
 
-            if ( man == null )
-            {
-                throw new ApplicationInvalidException( "Not a valid application. Manifest not found" );
-            }
-
-            descriptorYaml = readDescriptorYaml( jarFile );
-
-            if ( descriptorYaml == null && !hasValidApplicationHeader( man ) )
-            {
-                throw new ApplicationInvalidException( "Not a valid application." );
-            }
-
-            hasCmsDescriptor = SchemaResourcePaths.CMS_DESCRIPTOR_PATHS.stream().anyMatch( path -> jarFile.getJarEntry( path ) != null );
+            return man == null
+                ? codelessAppInfo( jarFile, descriptorYaml, hasCmsDescriptor )
+                : bundleAppInfo( man, descriptorYaml, hasCmsDescriptor );
         }
+    }
+
+    /**
+     * A jar without a manifest is a codeless application: it is never installed as a bundle, its descriptor declares what the
+     * manifest of a bundle declares, and it ships nothing but the resources served from the application repository.
+     */
+    private static AppInfo codelessAppInfo( final JarFile jarFile, final String descriptorYaml, final boolean hasCmsDescriptor )
+    {
+        if ( descriptorYaml == null )
+        {
+            throw new ApplicationInvalidException( "Not a valid application. Neither manifest nor application descriptor found" );
+        }
+
+        final ApplicationKey key = YmlApplicationDescriptorParser.name( descriptorYaml );
+        if ( key == null )
+        {
+            throw new ApplicationInvalidException( "Not a valid codeless application. The application descriptor declares no name" );
+        }
+
+        final List<String> unservable = jarFile.stream()
+            .filter( entry -> !entry.isDirectory() )
+            .map( ZipEntry::getName )
+            .filter( name -> !SchemaResourcePaths.SCHEMA_RESOURCE_PATTERN.matcher( name ).matches() )
+            .toList();
+        if ( !unservable.isEmpty() )
+        {
+            throw new ApplicationInvalidException(
+                "Not a valid codeless application. It ships resources that are not served without a bundle: " + unservable );
+        }
+
+        final ApplicationDescriptor descriptor = YmlApplicationDescriptorParser.parse( descriptorYaml, key ).build();
+        if ( isNullOrEmpty( descriptor.getVersion() ) )
+        {
+            throw new ApplicationInvalidException( "Not a valid codeless application. The application descriptor declares no version" );
+        }
+
+        final AppInfo appInfo = new AppInfo();
+        appInfo.codeless = true;
+        appInfo.hasCmsDescriptor = hasCmsDescriptor;
+        appInfo.name = key.getName();
+        appInfo.version = ApplicationHelper.toBundleVersion( "version", descriptor.getVersion() ).toString();
+        appInfo.minSystemVersion = bundleVersion( "minSystemVersion", descriptor.getMinSystemVersion() );
+        appInfo.maxSystemVersion = bundleVersion( "maxSystemVersion", descriptor.getMaxSystemVersion() );
+        appInfo.title = descriptor.getTitle();
+        appInfo.vendorName = descriptor.getVendorName();
+        return appInfo;
+    }
+
+    private static AppInfo bundleAppInfo( final Manifest man, final String descriptorYaml, final boolean hasCmsDescriptor )
+    {
+        if ( descriptorYaml == null && !hasValidApplicationHeader( man ) )
+        {
+            throw new ApplicationInvalidException( "Not a valid application." );
+        }
+
         final AppInfo appInfo = new AppInfo();
         appInfo.hasCmsDescriptor = hasCmsDescriptor;
         final Attributes attrs = man.getMainAttributes();
@@ -70,11 +119,16 @@ class AppInfoResolver
         appInfo.version = Optional.ofNullable( attrs.getValue( Constants.BUNDLE_VERSION ) ).orElse( "0.0.0" );
         appInfo.system = "system".equals( attrs.getValue( ApplicationManifestConstants.X_BUNDLE_TYPE ) );
 
+        // the descriptor declares a range closed at its minimum and open at its maximum: a bound of the manifest the descriptor
+        // cannot declare is left out, the manifest itself is checked on start all the same
         Optional.ofNullable( attrs.getValue( ApplicationManifestConstants.X_SYSTEM_VERSION ) )
             .map( ApplicationHelper::parseVersionRange )
             .ifPresent( vr -> {
-                appInfo.minSystemVersion = vr.getLeft().toString();
-                if ( vr.getRight() != null )
+                if ( vr.getLeftType() == VersionRange.LEFT_CLOSED )
+                {
+                    appInfo.minSystemVersion = vr.getLeft().toString();
+                }
+                if ( vr.getRight() != null && vr.getRightType() == VersionRange.RIGHT_OPEN )
                 {
                     appInfo.maxSystemVersion = vr.getRight().toString();
                 }
@@ -93,6 +147,11 @@ class AppInfoResolver
         }
 
         return appInfo;
+    }
+
+    private static String bundleVersion( final String field, final String value )
+    {
+        return isNullOrEmpty( value ) ? null : ApplicationHelper.toBundleVersion( field, value ).toString();
     }
 
     public static boolean hasValidApplicationHeader( final Manifest manifest )

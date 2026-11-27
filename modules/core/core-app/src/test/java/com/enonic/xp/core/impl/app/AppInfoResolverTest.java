@@ -1,8 +1,13 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.junit.jupiter.api.Test;
 import org.ops4j.pax.tinybundles.TinyBundle;
@@ -15,6 +20,7 @@ import com.google.common.io.ByteStreams;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -59,6 +65,33 @@ class AppInfoResolverTest
         final String appName = AppInfoResolver.resolve( source ).name;
 
         assertEquals( "myBundle", appName );
+    }
+
+    // the descriptor declares a range closed at its minimum and open at its maximum: a bound of the manifest it cannot declare
+    // is not taken from the manifest
+    @Test
+    void system_version_range_bounds_the_descriptor_cannot_declare_are_left_out()
+        throws Exception
+    {
+        final AppInfo closed = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "[8.0.0,9.0.0)" ) ) );
+        assertEquals( "8.0.0", closed.minSystemVersion );
+        assertEquals( "9.0.0", closed.maxSystemVersion );
+
+        final AppInfo rightClosed = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "[8.0.0,8.1.0]" ) ) );
+        assertEquals( "8.0.0", rightClosed.minSystemVersion );
+        assertNull( rightClosed.maxSystemVersion );
+
+        final AppInfo leftOpen = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "(8.0.0,9.0.0)" ) ) );
+        assertNull( leftOpen.minSystemVersion );
+        assertEquals( "9.0.0", leftOpen.maxSystemVersion );
+
+        final AppInfo unbounded = AppInfoResolver.resolve( wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "8.0.0" ) ) );
+        assertEquals( "8.0.0", unbounded.minSystemVersion );
+        assertNull( unbounded.maxSystemVersion );
     }
 
     @Test
@@ -152,6 +185,100 @@ class AppInfoResolverTest
         // cms.yaml is only recognized below the cms root
         final ByteSource rootCms = wrapBundle( newBundle( "myBundle", true ).addResource( "cms.yaml", content( "kind: \"CMS\"" ) ) );
         assertFalse( AppInfoResolver.resolve( rootCms ).hasCmsDescriptor );
+    }
+
+    // a jar without a manifest is a codeless application: named and versioned by its descriptor, shipping schema resources only
+    @Test
+    void codeless_jar_without_manifest()
+        throws Exception
+    {
+        final AppInfo appInfo = AppInfoResolver.resolve( zipWithoutManifest( Map.of( //
+            "enonic.yaml", "kind: \"Application\"\nname: \"myCodeless\"\nversion: \"1.2.3-SNAPSHOT\"\ntitle: \"Codeless\"\n"
+                + "minSystemVersion: \"8.0.0\"\nmaxSystemVersion: \"9.0.0\"\nvendorName: \"Enonic\"\n", //
+            "enonic.svg", "<svg/>", //
+            "cms/cms.yaml", "kind: \"CMS\"", //
+            "cms/content-types/mytype.yaml", "kind: \"ContentType\"" ) ) );
+
+        assertTrue( appInfo.codeless );
+        assertEquals( "myCodeless", appInfo.name );
+        assertEquals( "1.2.3.SNAPSHOT", appInfo.version );
+        assertEquals( "8.0.0", appInfo.minSystemVersion );
+        assertEquals( "9.0.0", appInfo.maxSystemVersion );
+        assertEquals( "Codeless", appInfo.title );
+        assertEquals( "Enonic", appInfo.vendorName );
+        assertTrue( appInfo.hasCmsDescriptor );
+        assertFalse( appInfo.system );
+    }
+
+    @Test
+    void codeless_jar_without_cms_descriptor()
+        throws Exception
+    {
+        final AppInfo appInfo = AppInfoResolver.resolve(
+            zipWithoutManifest( Map.of( "enonic.yaml", "kind: \"Application\"\nname: \"myCodeless\"\nversion: \"1.0.0\"\n" ) ) );
+
+        assertTrue( appInfo.codeless );
+        assertFalse( appInfo.hasCmsDescriptor );
+    }
+
+    @Test
+    void codeless_jar_without_descriptor_is_invalid()
+    {
+        final ByteSource source = zipWithoutManifest( Map.of( "cms/cms.yaml", "kind: \"CMS\"" ) );
+
+        assertThatThrownBy( () -> AppInfoResolver.resolve( source ) ).isInstanceOf( ApplicationInvalidException.class )
+            .hasMessageContaining( "Neither manifest nor application descriptor" );
+    }
+
+    @Test
+    void codeless_jar_without_name_is_invalid()
+    {
+        final ByteSource source = zipWithoutManifest( Map.of( "enonic.yaml", "kind: \"Application\"\nversion: \"1.0.0\"\n" ) );
+
+        assertThatThrownBy( () -> AppInfoResolver.resolve( source ) ).isInstanceOf( ApplicationInvalidException.class )
+            .hasMessageContaining( "declares no name" );
+    }
+
+    @Test
+    void codeless_jar_without_version_is_invalid()
+    {
+        final ByteSource source = zipWithoutManifest( Map.of( "enonic.yaml", "kind: \"Application\"\nname: \"myCodeless\"\n" ) );
+
+        assertThatThrownBy( () -> AppInfoResolver.resolve( source ) ).isInstanceOf( ApplicationInvalidException.class )
+            .hasMessageContaining( "declares no version" );
+    }
+
+    @Test
+    void codeless_jar_shipping_code_is_invalid()
+    {
+        final ByteSource source = zipWithoutManifest( Map.of( //
+            "enonic.yaml", "kind: \"Application\"\nname: \"myCodeless\"\nversion: \"1.0.0\"\n", //
+            "cms/cms.yaml", "kind: \"CMS\"", //
+            "lib/util.js", "exports.util = function() {}", //
+            "com/example/Code.class", "code" ) );
+
+        assertThatThrownBy( () -> AppInfoResolver.resolve( source ) ).isInstanceOf( ApplicationInvalidException.class )
+            .hasMessageContaining( "lib/util.js" )
+            .hasMessageContaining( "com/example/Code.class" );
+    }
+
+    private static ByteSource zipWithoutManifest( final Map<String, String> entries )
+    {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream( out ))
+        {
+            for ( final Map.Entry<String, String> entry : entries.entrySet() )
+            {
+                zip.putNextEntry( new ZipEntry( entry.getKey() ) );
+                zip.write( entry.getValue().getBytes( StandardCharsets.UTF_8 ) );
+                zip.closeEntry();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+        return ByteSource.wrap( out.toByteArray() );
     }
 
     private static InputStream content( final String value )

@@ -1,11 +1,14 @@
 package com.enonic.xp.core.impl.app;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationScope;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
@@ -37,6 +40,9 @@ class YmlApplicationDescriptorSerializerTest
             .vendorName( "Enonic" )
             .vendorUrl( "https://enonic.com" )
             .url( "https://github.com/enonic/myapp" )
+            .version( "1.2.3.SNAPSHOT" )
+            .minSystemVersion( "8.0.0" )
+            .maxSystemVersion( "9.0.0" )
             .schemaConfig( GenericValue.newObject()
                                .put( "property_1", "value_1" )
                                .put( "number", 42 )
@@ -56,9 +62,31 @@ class YmlApplicationDescriptorSerializerTest
         assertEquals( "Enonic", parsed.getVendorName() );
         assertEquals( "https://enonic.com", parsed.getVendorUrl() );
         assertEquals( "https://github.com/enonic/myapp", parsed.getUrl() );
+        // given as a bundle version, written to the file and held from there on as a semantic version
+        assertEquals( "1.2.3-SNAPSHOT", parsed.getVersion() );
+        assertTrue( yaml.contains( "version: \"1.2.3-SNAPSHOT\"\n" ), yaml );
+        assertEquals( "8.0.0", parsed.getMinSystemVersion() );
+        assertEquals( "9.0.0", parsed.getMaxSystemVersion() );
         assertEquals( descriptor.getSchemaConfig(), parsed.getSchemaConfig() );
         assertNull( parsed.getIcon() );
         assertFalse( yaml.contains( "icon" ), yaml );
+    }
+
+    // a declared version survives any number of writes and reads, whether or not the bundle version it converts to converts back
+    @Test
+    void versions_are_written_as_declared()
+    {
+        for ( final String version : new String[]{"1.2.3-rc+001", "1.2.3-a--b", "1.2.3-rc.1+build.5", "1.2.3+007", "1.2.3-SNAPSHOT"} )
+        {
+            final String declared = "kind: \"Application\"\nname: \"myapp\"\nversion: \"" + version + "\"\nminSystemVersion: \"" + version +
+                "\"\nmaxSystemVersion: \"" + version + "\"\n";
+            final ApplicationDescriptor parsed = YmlApplicationDescriptorParser.parse( declared, MYAPP ).build();
+
+            assertEquals( version, parsed.getVersion() );
+            assertEquals( declared, YmlApplicationDescriptorSerializer.serialize( parsed ) );
+            assertEquals( declared, YmlApplicationDescriptorSerializer.serialize(
+                YmlApplicationDescriptorParser.parse( YmlApplicationDescriptorSerializer.serialize( parsed ), MYAPP ).build() ) );
+        }
     }
 
     @Test
@@ -81,13 +109,46 @@ class YmlApplicationDescriptorSerializerTest
     }
 
     @Test
+    void round_trip_scopes()
+    {
+        final ApplicationDescriptor descriptor = ApplicationDescriptor.create()
+            .key( MYAPP )
+            .scopes( List.of( new ApplicationScope( "write", new LocalizedText( "Change orders", "scope.write.title" ),
+                                                    new LocalizedText( "Create and change orders" ), List.of( "read" ), false ),
+                              new ApplicationScope( "read", null, null, List.of(), true ) ) )
+            .build();
+
+        final String yaml = YmlApplicationDescriptorSerializer.serialize( descriptor );
+        final ApplicationDescriptor parsed = YmlApplicationDescriptorParser.parse( yaml, MYAPP ).build();
+
+        assertEquals( descriptor.getDeclaredScopes(), parsed.getDeclaredScopes() );
+        assertEquals( descriptor.getScopes(), parsed.getScopes() );
+        assertEquals( Set.of( "myapp:write", "myapp:read" ), parsed.getScopes().getIds() );
+        assertEquals( Set.of( "myapp:read" ), parsed.getScopes().get( "myapp:write" ).orElseThrow().getIncludes() );
+        assertTrue( parsed.getScopes().get( "myapp:read" ).orElseThrow().isRequired() );
+        assertTrue( yaml.contains( "i18n: \"scope.write.title\"" ), yaml );
+        assertFalse( yaml.contains( "required: false" ), yaml );
+    }
+
+    @Test
     void empty_fields_are_omitted()
     {
         final String yaml = YmlApplicationDescriptorSerializer.serialize(
-            ApplicationDescriptor.create().key( MYAPP ).description( "" ).vendorName( "" ).build() );
+            ApplicationDescriptor.create()
+                .key( MYAPP )
+                .description( "" )
+                .vendorName( "" )
+                .version( "" )
+                .minSystemVersion( "" )
+                .maxSystemVersion( "" )
+                .build() );
 
         assertFalse( yaml.contains( "description" ), yaml );
         assertFalse( yaml.contains( "vendorName" ), yaml );
+        assertFalse( yaml.contains( "version" ), yaml );
+        assertFalse( yaml.contains( "minSystemVersion" ), yaml );
+        assertFalse( yaml.contains( "maxSystemVersion" ), yaml );
         assertFalse( yaml.contains( "config" ), yaml );
+        assertFalse( yaml.contains( "scopes" ), yaml );
     }
 }

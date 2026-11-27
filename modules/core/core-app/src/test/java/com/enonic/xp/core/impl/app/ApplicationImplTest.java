@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.InputStream;
+import java.time.Instant;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,11 +11,18 @@ import org.osgi.framework.Bundle;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.resource.Resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class ApplicationImplTest
     extends BundleBasedTest
@@ -28,18 +37,43 @@ class ApplicationImplTest
         final ApplicationImpl application = new ApplicationImpl( bundle, urlResolver, null );
 
         assertEquals( "myapplication", application.getKey().toString() );
-        assertEquals( "1.0.0", application.getVersion().toString() );
         assertEquals( bundle, application.getBundle() );
         assertTrue( application.getModifiedTime().getEpochSecond() > 0 );
         assertFalse( application.isStarted() );
         assertTrue( ApplicationBundleUtils.isApplication( bundle ) );
         assertNotNull( application.getClassLoader() );
+        assertEquals( "1.0.0", application.getVersion().toString() );
         assertEquals( "[1.2.0,2.0.0)", application.getSystemVersion() );
         assertEquals( "2.0.0", application.getMaxSystemVersion() );
         assertEquals( "1.2.0", application.getMinSystemVersion() );
 
+        // an application with a node declares its versions in the persisted descriptor, the manifest is not consulted
+        final ApplicationImpl persisted = new ApplicationImpl( bundle, urlResolver, null, true );
+        assertEquals( "0.0.0", persisted.getVersion().toString() );
+        assertNull( persisted.getSystemVersion() );
+        assertNull( persisted.getMaxSystemVersion() );
+        assertNull( persisted.getMinSystemVersion() );
+
         bundle.start();
         assertTrue( application.isStarted() );
+    }
+
+    // the time kept on the node of a persisted application moves with its schema and descriptor; the bundle's own time is the
+    // install alone, reported for an application without a node
+    @Test
+    void modified_time_is_the_one_of_the_node_when_the_application_has_one()
+        throws Exception
+    {
+        final Bundle bundle = deployBundle();
+        final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
+        final Instant edited = Instant.parse( "2026-10-12T10:00:00Z" );
+
+        final ApplicationImpl persisted =
+            new ApplicationImpl( bundle, urlResolver, null, true, () -> false, () -> Optional.of( edited ) );
+        assertEquals( edited, persisted.getModifiedTime() );
+
+        final ApplicationImpl withoutNode = new ApplicationImpl( bundle, urlResolver, null, false, () -> false, Optional::empty );
+        assertEquals( Instant.ofEpochMilli( bundle.getLastModified() ), withoutNode.getModifiedTime() );
     }
 
     @Test
@@ -53,6 +87,58 @@ class ApplicationImplTest
 
         final Bundle local = deploy( ApplicationHelper.toBundleLocation( key, true ), newBundle( "myapplication", true, "1.0.1" ) );
         assertTrue( new ApplicationImpl( local, urlResolver, null ).isLocal() );
+    }
+
+    @Test
+    void versions_are_read_from_the_descriptor_of_an_application_with_a_node()
+    {
+        // the manifest declares 1.0.0 and [1.2.0,2.0.0)
+        final Bundle bundle = deployBundle();
+
+        final Resource descriptor = Mockito.mock( Resource.class );
+        when( descriptor.exists() ).thenReturn( true );
+        when( descriptor.readString() ).thenReturn(
+            "kind: \"Application\"\nversion: \"3.4.5-SNAPSHOT\"\nminSystemVersion: \"8.0.0-RC1\"\nmaxSystemVersion: \"9.0.0\"\n" );
+        final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
+        when( urlResolver.isStable() ).thenReturn( true );
+        when( urlResolver.revision() ).thenReturn( "v1" );
+        when( urlResolver.findResource( "/enonic.yaml" ) ).thenReturn( descriptor );
+
+        final ApplicationImpl application = new ApplicationImpl( bundle, urlResolver, null, true );
+
+        // declared as semantic versions, reported as the bundle versions they convert to
+        assertEquals( "3.4.5.SNAPSHOT", application.getVersion().toString() );
+        assertEquals( "[8.0.0.RC1,9.0.0)", application.getSystemVersion() );
+        assertEquals( "8.0.0.RC1", application.getMinSystemVersion() );
+        assertEquals( "9.0.0", application.getMaxSystemVersion() );
+        // the descriptor is read once for as long as the node stays the same
+        verify( descriptor, times( 1 ) ).readString();
+
+        // the node changed: what the descriptor no longer declares is not read from the manifest
+        when( urlResolver.revision() ).thenReturn( "v2" );
+        when( descriptor.readString() ).thenReturn( "kind: \"Application\"\n" );
+
+        assertEquals( "0.0.0", application.getVersion().toString() );
+        assertNull( application.getSystemVersion() );
+        assertNull( application.getMinSystemVersion() );
+        assertNull( application.getMaxSystemVersion() );
+    }
+
+    @Test
+    void versions_of_an_application_without_a_node_are_read_from_the_manifest()
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapplication" );
+        final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
+
+        final Bundle local = deploy( ApplicationHelper.toBundleLocation( key, true ), newBundle( "myapplication", true, "1.0.1" ).setHeader(
+            ApplicationManifestConstants.X_SYSTEM_VERSION, "[1.2,2)" ) );
+        final ApplicationImpl application = new ApplicationImpl( local, urlResolver, null, false );
+
+        assertEquals( "1.0.1", application.getVersion().toString() );
+        assertEquals( "[1.2.0,2.0.0)", application.getSystemVersion() );
+        assertEquals( "1.2.0", application.getMinSystemVersion() );
+        assertEquals( "2.0.0", application.getMaxSystemVersion() );
+        verify( urlResolver, never() ).findResource( any() );
     }
 
     private Bundle deployBundle()

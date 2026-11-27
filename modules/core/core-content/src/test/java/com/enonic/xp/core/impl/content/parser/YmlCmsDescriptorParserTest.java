@@ -24,6 +24,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class YmlCmsDescriptorParserTest
 {
     @Test
+    void protected_is_false_by_default()
+    {
+        final ApplicationKey currentApplication = ApplicationKey.from( "myapp" );
+
+        assertFalse( YmlCmsDescriptorParser.parse( "kind: \"CMS\"\n", currentApplication ).build().isProtected() );
+        assertFalse( YmlCmsDescriptorParser.parse( "kind: \"CMS\"\nprotected: false\n", currentApplication ).build().isProtected() );
+
+        final CmsDescriptor protectedDescriptor =
+            YmlCmsDescriptorParser.parse( "kind: \"CMS\"\nprotected: true\n", currentApplication ).build();
+        assertTrue( protectedDescriptor.isProtected() );
+        assertTrue( CmsDescriptor.copyOf( protectedDescriptor ).build().isProtected() );
+    }
+
+    @Test
     void test()
         throws Exception
     {

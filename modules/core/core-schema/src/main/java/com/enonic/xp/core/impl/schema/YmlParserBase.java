@@ -126,9 +126,17 @@ public final class YmlParserBase
      */
     public String kind( final String resource )
     {
+        return field( resource, "kind" );
+    }
+
+    /**
+     * A top-level scalar field of the descriptor, {@code null} if it has none.
+     */
+    public String field( final String resource, final String name )
+    {
         try
         {
-            return mapper.readTree( resource ).path( "kind" ).asText( null );
+            return mapper.readTree( resource ).path( name ).asText( null );
         }
         catch ( final JsonProcessingException e )
         {

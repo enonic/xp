@@ -33,6 +33,12 @@ public class MockApplication
     private Bundle bundle;
 
     @Override
+    public boolean isLocked()
+    {
+        return false;
+    }
+
+    @Override
     public ApplicationKey getKey()
     {
         return this.key;
@@ -136,12 +142,6 @@ public class MockApplication
 
     @Override
     public boolean isSystem()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isSchema()
     {
         return false;
     }

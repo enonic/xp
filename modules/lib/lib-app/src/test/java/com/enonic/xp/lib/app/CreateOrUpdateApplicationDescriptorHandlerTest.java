@@ -30,6 +30,9 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
 
     private static final Icon SOURCE_ICON = Icon.from( new byte[]{0, 1, 3}, "image/png", ICON_TIME );
 
+    // the flag the service was last asked to set, null when it was left as is
+    private final AtomicReference<Boolean> locked = new AtomicReference<>();
+
     @Test
     void testExample()
     {
@@ -90,6 +93,61 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
         assertEquals( "Old description", edit.description );
         assertTrue( edit.schemaConfig.properties().isEmpty() );
         assertSame( SOURCE_ICON, edit.icon );
+    }
+
+    @Test
+    void setsSystemVersions()
+    {
+        final AtomicReference<EditableApplicationDescriptor> edited = stubService(
+            ApplicationDescriptor.create().key( ApplicationKey.from( "my_app" ) ).version( "1.0.0" ).maxSystemVersion( "9.0.0" ).build() );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "setSystemVersions" );
+        final EditableApplicationDescriptor edit = edited.get();
+
+        assertEquals( "8.0.0", edit.minSystemVersion );
+        assertNull( edit.maxSystemVersion );
+    }
+
+    @Test
+    void rejectsChangeOfVersion()
+    {
+        // the version is not editable: an editor returning another one, or none, is refused
+        stubService( ApplicationDescriptor.create().key( ApplicationKey.from( "my_app" ) ).version( "1.0.0" ).build() );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "changeVersion" );
+    }
+
+    @Test
+    void setsLockedAlone()
+    {
+        final AtomicReference<EditableApplicationDescriptor> edited = stubService( sourceDescriptor() );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "lockedAlone" );
+
+        // no editor: the descriptor is left as is
+        assertEquals( Boolean.TRUE, locked.get() );
+        assertEquals( "Old title", edited.get().title );
+    }
+
+    @Test
+    void resetsLockedWithAnEdit()
+    {
+        final AtomicReference<EditableApplicationDescriptor> edited = stubService( sourceDescriptor() );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "resetLockedWithEdit" );
+
+        assertEquals( Boolean.FALSE, locked.get() );
+        assertEquals( "New title", edited.get().title );
+    }
+
+    @Test
+    void leavesLockedAsIs()
+    {
+        stubService( sourceDescriptor() );
+
+        runFunction( "/test/CreateOrUpdateApplicationDescriptorHandlerTest.js", "keepUntouched" );
+
+        assertNull( locked.get() );
     }
 
     @Test
@@ -217,8 +275,12 @@ class CreateOrUpdateApplicationDescriptorHandlerTest
             final CreateOrUpdateApplicationDescriptorParams params = invocation.getArgument( 0 );
             assertEquals( source.getKey(), params.getKey() );
             final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( source );
-            params.getEditor().edit( edit );
+            if ( params.getEditor() != null )
+            {
+                params.getEditor().edit( edit );
+            }
             edited.set( edit );
+            locked.set( params.getLocked() );
             final ApplicationDescriptor.Builder result = ApplicationDescriptor.create()
                 .key( source.getKey() )
                 .title( new LocalizedText( edit.title, edit.titleI18nKey ) )

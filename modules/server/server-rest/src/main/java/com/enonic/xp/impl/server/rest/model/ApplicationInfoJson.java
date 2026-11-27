@@ -35,14 +35,16 @@ public class ApplicationInfoJson
 
     private final boolean system;
 
-    private final boolean schema;
+    private final boolean codeless;
+
+    private final boolean locked;
 
     private final @Nullable String iconHash;
 
     private ApplicationInfoJson( final String key, final String version, final String title, final String maxSystemVersion,
                                  final String minSystemVersion, final String url, final String vendorName, final String vendorUrl,
                                  final Instant modifiedTime, final String state, final boolean local, final boolean system,
-                                 final boolean schema, final @Nullable String iconHash )
+                                 final boolean codeless, final boolean locked, final @Nullable String iconHash )
     {
         this.key = key;
         this.version = version;
@@ -56,7 +58,8 @@ public class ApplicationInfoJson
         this.state = state;
         this.local = local;
         this.system = system;
-        this.schema = schema;
+        this.codeless = codeless;
+        this.locked = locked;
         this.iconHash = iconHash;
     }
 
@@ -69,7 +72,8 @@ public class ApplicationInfoJson
                                         descriptor != null ? descriptor.getVendorName() : null,
                                         descriptor != null ? descriptor.getVendorUrl() : null, application.getModifiedTime(),
                                         application.isStarted() ? "started" : "stopped", local,
-                                        application.isSystem(), application.isSchema(), icon != null ? IconHash.of( icon ) : null );
+                                        application.isSystem(), application.getClassLoader() == null, application.isLocked(),
+                                        icon != null ? IconHash.of( icon ) : null );
     }
 
     public String getKey()
@@ -132,9 +136,14 @@ public class ApplicationInfoJson
         return system;
     }
 
-    public boolean getSchema()
+    public boolean getCodeless()
     {
-        return schema;
+        return codeless;
+    }
+
+    public boolean getLocked()
+    {
+        return locked;
     }
 
     public @Nullable String getIconHash()

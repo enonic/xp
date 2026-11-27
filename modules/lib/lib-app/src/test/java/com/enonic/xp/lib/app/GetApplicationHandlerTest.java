@@ -32,6 +32,7 @@ class GetApplicationHandlerTest
             when( application.getModifiedTime() ).thenReturn( Instant.parse( "2020-09-25T10:00:00.00Z" ) );
             when( application.isStarted() ).thenReturn( true );
             when( application.isSystem() ).thenReturn( true );
+            when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
 
             return application;
         } );

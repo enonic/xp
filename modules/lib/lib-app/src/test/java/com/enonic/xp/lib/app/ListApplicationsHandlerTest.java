@@ -23,6 +23,7 @@ class ListApplicationsHandlerTest
 
         when( applicationService.list() ).thenAnswer( params -> {
             final Application application1 = mock( Application.class );
+            when( application1.getClassLoader() ).thenReturn( getClass().getClassLoader() );
 
             when( application1.getKey() ).thenReturn( ApplicationKey.from( "app1" ) );
             when( application1.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
@@ -39,6 +40,7 @@ class ListApplicationsHandlerTest
                 .build() );
 
             final Application application2 = mock( Application.class );
+            when( application2.getClassLoader() ).thenReturn( getClass().getClassLoader() );
 
             when( application2.getKey() ).thenReturn( ApplicationKey.from( "app2" ) );
             when( application2.getVersion() ).thenReturn( Version.parseVersion( "4.1.2" ) );

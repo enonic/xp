@@ -61,6 +61,9 @@ public class YmlCmsDescriptorParser
         @JsonProperty("config")
         abstract CmsDescriptor.Builder schemaConfig( GenericValue schemaConfig );
 
+        @JsonProperty("protected")
+        abstract CmsDescriptor.Builder protectedSchema( boolean protectedSchema );
+
         @JacksonInject("currentApplication")
         abstract CmsDescriptor.Builder applicationKey( ApplicationKey currentApplication );
 

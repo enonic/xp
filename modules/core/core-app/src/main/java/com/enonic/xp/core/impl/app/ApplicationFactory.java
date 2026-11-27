@@ -5,6 +5,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import org.osgi.framework.Bundle;
 
@@ -16,6 +19,7 @@ import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -30,7 +34,18 @@ public final class ApplicationFactory
 
     public ApplicationImpl create( final Bundle bundle )
     {
-        return new ApplicationImpl( bundle, createUrlResolver( bundle, null ), null );
+        final boolean persisted = isPersisted( bundle );
+        final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
+        // both are kept on the application node, read anew on every call: they change while the bundle stays installed
+        return new ApplicationImpl( bundle, createUrlResolver( bundle, null ), null, persisted,
+                                    () -> persisted && readNode( appKey, ApplicationHelper::isLocked ),
+                                    () -> persisted ? readNode( appKey, ApplicationHelper::modifiedTime ) : Optional.empty() );
+    }
+
+    private <T> T readNode( final ApplicationKey appKey, final Function<Node, T> read )
+    {
+        final Callable<T> call = () -> read.apply( nodeService.getByPath( ApplicationRepoServiceImpl.applicationNodePath( appKey ) ) );
+        return ApplicationHelper.runAsAdmin( call );
     }
 
     ApplicationUrlResolver createUrlResolver( final Bundle bundle, final String source )

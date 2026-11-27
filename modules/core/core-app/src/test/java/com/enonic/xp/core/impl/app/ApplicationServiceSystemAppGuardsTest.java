@@ -53,7 +53,7 @@ class ApplicationServiceSystemAppGuardsTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         auditLogSupport.activate( appConfig );
 
-        this.applicationService = new ApplicationServiceImpl(
+        this.applicationService = new ApplicationServiceImpl( bundleContext,
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ),
             mock( ApplicationRepoService.class ), mock( EventPublisher.class ), new AppFilterServiceImpl( appConfig ), auditLogSupport );
     }
