@@ -13,6 +13,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.felix.framework.Felix;
 import org.junit.jupiter.api.AfterEach;
@@ -120,7 +122,7 @@ class ApplicationServiceTest
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         applicationAuditLogSupport.activate( appConfig );
 
-        this.applicationService = new ApplicationServiceImpl(
+        this.applicationService = new ApplicationServiceImpl( bundleContext,
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
             applicationAuditLogSupport );
@@ -442,11 +444,11 @@ class ApplicationServiceTest
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
+            // a codeless application: the descriptor of an application installed from a bundle is never edited
             final Instant before = Instant.now();
-            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\ndescription: \"Persisted\"\n", //
-                "enonic.svg", "<svg>app</svg>", //
-                "lib/util.js", "exports.util = function() {}" ) ) );
+            applicationService.installGlobalApplication( createCodelessAppSource( Map.of( //
+                "enonic.yaml", "kind: \"Application\"\nname: \"staticapp\"\nversion: \"1.0.0\"\ntitle: \"Shipped\"\ndescription: \"Persisted\"\n", //
+                "enonic.svg", "<svg>app</svg>" ) ) );
 
             assertEquals( 0, schemaRevision( "staticapp" ) );
             final Instant installed = applicationService.getInstalledApplication( appKey ).getModifiedTime();
@@ -520,8 +522,8 @@ class ApplicationServiceTest
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
-            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n", //
+            applicationService.installGlobalApplication( createCodelessAppSource( Map.of( //
+                "enonic.yaml", "kind: \"Application\"\nname: \"staticapp\"\nversion: \"1.0.0\"\ntitle: \"Shipped\"\n", //
                 "enonic.svg", "<svg>app</svg>" ) ) );
 
             final ResourceService otherNode = new ResourceServiceImpl( applicationFactoryService );
@@ -563,8 +565,8 @@ class ApplicationServiceTest
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
-            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of(
-                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n" ) ) );
+            applicationService.installGlobalApplication( createCodelessAppSource( Map.of(
+                "enonic.yaml", "kind: \"Application\"\nname: \"staticapp\"\nversion: \"1.0.0\"\ntitle: \"Shipped\"\n" ) ) );
 
             final ApplicationDescriptorServiceImpl otherNodeDescriptors =
                 new ApplicationDescriptorServiceImpl( felix.getBundleContext(), new ResourceServiceImpl( applicationFactoryService ), applicationFactoryService,
@@ -608,6 +610,75 @@ class ApplicationServiceTest
                                                     .build() );
     }
 
+    // a jar without a manifest is a codeless application: it lives as nodes, never as a bundle, like one created through the
+    // descriptor service; a bundle installed over it replaces the nodes, the codeless jar installed over a bundle uninstalls it
+    @Test
+    void installCodelessApplication()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "codelessapp" );
+        final ByteSource codeless = createCodelessAppSource( Map.of( //
+            "enonic.yaml", "kind: \"Application\"\nname: \"codelessapp\"\nversion: \"1.0.0\"\ntitle: \"Codeless\"\n", //
+            "enonic.svg", "<svg>codeless</svg>", //
+            "cms/cms.yaml", "kind: \"CMS\"", //
+            "cms/content-types/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"\n" ) );
+
+        adminContext().runWith( () -> {
+            final Application installed = applicationService.installGlobalApplication( codeless );
+            assertNull( installed.getClassLoader() );
+            assertTrue( installed.isStarted() );
+            assertEquals( "1.0.0", installed.getVersion().toString() );
+            assertNull( appNode( "codelessapp" ).data().getBinaryReference( "applicationFile" ) );
+            assertNotNull( appChildNode( "codelessapp", "cms" ) );
+            assertEquals( "Codeless", applicationDescriptorService.get( appKey ).getTitle() );
+            assertEquals( "<svg>codeless</svg>",
+                          new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ).getResolverName() );
+            assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );
+            assertThatThrownBy( () -> applicationService.startApplication( appKey ) ).isInstanceOf( IllegalArgumentException.class );
+            assertThatThrownBy( () -> applicationService.stopApplication( appKey ) ).isInstanceOf( IllegalArgumentException.class );
+
+            // the descriptor of a codeless application is edited through the service
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Edited" ).build() );
+            assertEquals( "Edited", applicationDescriptorService.get( appKey ).getTitle() );
+
+            // a bundle installed over it replaces the nodes and brings code: no codeless application any more, its descriptor is
+            // the build's
+            applicationService.installGlobalApplication( createAppSource( "codelessapp", "1.0.1", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n", //
+                "lib/util.js", "exports.util = function() {}" ) ) );
+            assertNotNull( applicationService.getInstalledApplication( appKey ).getClassLoader() );
+            assertNotNull( appNode( "codelessapp" ).data().getBinaryReference( "applicationFile" ) );
+            assertNull( appChildNode( "codelessapp", "cms" ) );
+            assertEquals( "Shipped", applicationDescriptorService.get( appKey ).getTitle() );
+            assertThatThrownBy( () -> applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Hijacked" ).build() ) )
+                .isInstanceOf( IllegalArgumentException.class );
+
+            // locked, the bundle is not replaced by the codeless jar
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).locked( true ).build() );
+            assertThatThrownBy( () -> applicationService.installGlobalApplication( codeless ) )
+                .isInstanceOf( ApplicationBundleException.class )
+                .hasMessage( "Cannot install application codelessapp: it is locked" );
+            assertNotNull( applicationService.getInstalledApplication( appKey ).getClassLoader() );
+
+            // unlocked, the codeless jar replaces the bundle: uninstalled, the nodes are the codeless application again
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).locked( false ).build() );
+            applicationService.installGlobalApplication( codeless );
+            assertNull( applicationService.getInstalledApplication( appKey ).getClassLoader() );
+            assertNull( appNode( "codelessapp" ).data().getBinaryReference( "applicationFile" ) );
+            assertNotNull( appChildNode( "codelessapp", "cms" ) );
+            assertEquals( "Codeless", applicationDescriptorService.get( appKey ).getTitle() );
+
+            // a codeless jar is never a local application
+            assertThatThrownBy( () -> applicationService.installLocalApplication( codeless ) )
+                .isInstanceOf( ApplicationBundleException.class )
+                .hasMessageContaining( "locally" );
+        } );
+    }
+
     @Test
     void createOrUpdateApplicationDescriptorWithoutBundle()
     {
@@ -633,11 +704,9 @@ class ApplicationServiceTest
         assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
         assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
 
-        // without a bundle the application is still an application: listed, always started, nothing to start or stop; it is no
-        // codeless application until it owns a schema, which takes the cms descriptor
+        // without a bundle the application is a codeless application: listed, always started, nothing to start or stop
         final Application nodeOnly = applicationService.get( appKey );
         assertNotNull( nodeOnly );
-        assertFalse( nodeOnly.isCodeless() );
         assertTrue( nodeOnly.isStarted() );
         assertNull( nodeOnly.getClassLoader() );
         assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );
@@ -922,6 +991,25 @@ class ApplicationServiceTest
                                                              .setHeader( "X-Bundle-Type", "application" )
                                                              .addResource( "cms/site.yml", getClass().getResource( "/myapp/cms/site.yml" ) )
                                                              .build() ) );
+    }
+
+    private static ByteSource createCodelessAppSource( final Map<String, String> resources )
+    {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream( out ))
+        {
+            for ( final Map.Entry<String, String> entry : resources.entrySet() )
+            {
+                zip.putNextEntry( new ZipEntry( entry.getKey() ) );
+                zip.write( entry.getValue().getBytes( StandardCharsets.UTF_8 ) );
+                zip.closeEntry();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException( e );
+        }
+        return ByteSource.wrap( out.toByteArray() );
     }
 
     private static ByteSource createAppSource( final String name, final String version, final Map<String, String> resources )

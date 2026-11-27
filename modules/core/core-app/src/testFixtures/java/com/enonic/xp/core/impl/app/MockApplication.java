@@ -147,12 +147,6 @@ public class MockApplication
     }
 
     @Override
-    public boolean isCodeless()
-    {
-        return false;
-    }
-
-    @Override
     public boolean isLocal()
     {
         return false;

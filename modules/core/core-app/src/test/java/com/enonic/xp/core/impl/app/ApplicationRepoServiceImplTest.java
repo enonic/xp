@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -83,6 +84,49 @@ class ApplicationRepoServiceImplTest
         this.service.upsertApplicationNode( app, ByteSource.wrap( "myBinary".getBytes() ) );
 
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).update( Mockito.isA( UpdateNodeParams.class ) );
+    }
+
+    // the node of a codeless application carries what the manifest of a bundle would, and no bundle binary
+    @Test
+    void create_codeless_node()
+    {
+        final AppInfo app = createApp();
+        app.codeless = true;
+        app.version = "1.2.3";
+
+        this.service.upsertApplicationNode( app, ByteSource.wrap( "schema".getBytes() ) );
+
+        final ArgumentCaptor<CreateNodeParams> captor = ArgumentCaptor.forClass( CreateNodeParams.class );
+        Mockito.verify( this.nodeService ).create( captor.capture() );
+        Mockito.verify( this.nodeService, Mockito.never() ).update( Mockito.any( UpdateNodeParams.class ) );
+        assertEquals( "myBundle", captor.getValue().getName().toString() );
+        assertEquals( "1.2.3", captor.getValue().getData().getString( ApplicationPropertyNames.VERSION ) );
+        assertNotNull( captor.getValue().getData().getInstant( ApplicationPropertyNames.MODIFIED_TIME ) );
+        assertNull( captor.getValue().getData().getBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
+        assertEquals( 0, captor.getValue().getBinaryAttachments().getSize() );
+    }
+
+    @Test
+    void update_codeless_node_drops_the_bundle_binary()
+    {
+        final AppInfo app = createApp();
+        app.codeless = true;
+        app.version = "1.2.3";
+        final PropertyTree data = new PropertyTree();
+        data.setString( ApplicationPropertyNames.VERSION, "1.0.0" );
+        data.setBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF,
+                                 BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
+        final AtomicReference<PropertyTree> edited = new AtomicReference<>();
+        stubApplicationNode( data, edited::set );
+
+        this.service.upsertApplicationNode( app, ByteSource.wrap( "schema".getBytes() ) );
+
+        final ArgumentCaptor<UpdateNodeParams> captor = ArgumentCaptor.forClass( UpdateNodeParams.class );
+        Mockito.verify( this.nodeService ).update( captor.capture() );
+        Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
+        assertEquals( "1.2.3", edited.get().getString( ApplicationPropertyNames.VERSION ) );
+        assertNull( edited.get().getBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
+        assertEquals( 0, captor.getValue().getBinaryAttachments().getSize() );
     }
 
     @Test

@@ -16,17 +16,19 @@ class ApplicationNodeTransformer
 {
     static final String APPLICATION_BINARY_REF = "applicationFile";
 
+    // the jar of a codeless application is no bundle: it is not kept, the node carries no binary
     static CreateNodeParams toCreateNodeParams( final AppInfo app, final ByteSource source )
     {
-        final PropertyTree data = createApplicationProperties( app );
-
-        return CreateNodeParams.create()
+        final CreateNodeParams.Builder params = CreateNodeParams.create()
             .parent( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .name( app.name )
-            .data( data )
-            .attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source )
-            .refresh( RefreshMode.ALL )
-            .build();
+            .data( createApplicationProperties( app ) )
+            .refresh( RefreshMode.ALL );
+        if ( !app.codeless )
+        {
+            params.attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source );
+        }
+        return params.build();
     }
 
     private static PropertyTree createApplicationProperties( final AppInfo app )
@@ -37,17 +39,23 @@ class ApplicationNodeTransformer
         data.setString( ApplicationPropertyNames.VERSION, app.version );
         data.setString( ApplicationPropertyNames.VENDOR_NAME, app.vendorName );
         data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
-        data.setBinaryReference( APPLICATION_BINARY_REF, BinaryReference.from( APPLICATION_BINARY_REF ) );
+        if ( !app.codeless )
+        {
+            data.setBinaryReference( APPLICATION_BINARY_REF, BinaryReference.from( APPLICATION_BINARY_REF ) );
+        }
         return data;
     }
 
     static UpdateNodeParams toUpdateNodeParams( final AppInfo app, final ByteSource source )
     {
-        return UpdateNodeParams.create()
+        final UpdateNodeParams.Builder params = UpdateNodeParams.create()
             .path( new NodePath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT, NodeName.from( app.name ) ) )
-            .attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source )
             .editor( node -> node.data = createApplicationProperties( app ) )
-            .refresh( RefreshMode.ALL )
-            .build();
+            .refresh( RefreshMode.ALL );
+        if ( !app.codeless )
+        {
+            params.attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source );
+        }
+        return params.build();
     }
 }

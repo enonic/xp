@@ -141,7 +141,7 @@ class PersistedSchemaLookupTest
         auditLogSupport.activate( appConfig );
 
         this.applicationRegistry = new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
-        this.applicationService = new ApplicationServiceImpl( applicationRegistry, repoService,
+        this.applicationService = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
                                                               new AppFilterServiceImpl( appConfig ), auditLogSupport );
 

@@ -242,12 +242,6 @@ public final class ApplicationImpl
     }
 
     @Override
-    public boolean isCodeless()
-    {
-        return ApplicationHelper.isCodelessApplication( this.bundle );
-    }
-
-    @Override
     public boolean isLocal()
     {
         return ApplicationHelper.isLocalApplication( this.bundle );

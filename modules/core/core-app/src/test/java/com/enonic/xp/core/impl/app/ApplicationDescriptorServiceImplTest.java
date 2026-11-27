@@ -441,28 +441,20 @@ class ApplicationDescriptorServiceImplTest
         verify( eventPublisher, never() ).publish( any() );
     }
 
+    // the descriptor of an application installed from a bundle is owned by the build of the bundle
     @Test
-    void createOrUpdate_rejects_applications_built_with_gradle()
+    void createOrUpdate_rejects_applications_installed_from_a_bundle()
     {
-        // the XP gradle plugin builds the manifest with Bnd, which stamps it
-        for ( final Map.Entry<String, String> header : Map.of( "Bnd-LastModified", "1783360499694", "Tool", "Bnd-7.3.0.202606021345" )
-            .entrySet() )
-        {
-            final ApplicationKey key = ApplicationKey.from( "com.enonic.gradleapp" );
-            final Bundle gradleBundle = mockAppBundle( key.getName() );
-            final Hashtable<String, String> headers = new Hashtable<>();
-            headers.put( header.getKey(), header.getValue() );
-            Mockito.when( gradleBundle.getHeaders() ).thenReturn( headers );
-            installed.install( gradleBundle );
+        final ApplicationKey key = ApplicationKey.from( "com.enonic.bundleapp" );
+        installed.install( mockAppBundle( key.getName() ) );
 
-            final CreateOrUpdateApplicationDescriptorParams params =
-                CreateOrUpdateApplicationDescriptorParams.create().key( key ).editor( edit -> edit.title = "Hijacked" ).build();
-            assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params ) ) )
-                .isInstanceOf( IllegalArgumentException.class )
-                .hasMessage( "Cannot modify application built with Gradle: " + key );
+        final CreateOrUpdateApplicationDescriptorParams params =
+            CreateOrUpdateApplicationDescriptorParams.create().key( key ).editor( edit -> edit.title = "Hijacked" ).build();
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Cannot modify descriptor of application installed from a bundle: " + key );
 
-            assertThatThrownBy( () -> appDescriptorService.createOrUpdate( params ) ).isInstanceOf( ForbiddenAccessException.class );
-        }
+        assertThatThrownBy( () -> appDescriptorService.createOrUpdate( params ) ).isInstanceOf( ForbiddenAccessException.class );
 
         verify( repoService, never() ).createApplicationNode( any() );
         verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
@@ -470,13 +462,9 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
-    void createOrUpdate_sets_locked_alone_for_an_application_built_with_gradle()
+    void createOrUpdate_sets_locked_alone_for_an_application_installed_from_a_bundle()
     {
-        final Bundle gradleBundle = mockAppBundle( MYAPP.getName() );
-        final Hashtable<String, String> headers = new Hashtable<>();
-        headers.put( "Bnd-LastModified", "1783360499694" );
-        Mockito.when( gradleBundle.getHeaders() ).thenReturn( headers );
-        installed.install( gradleBundle );
+        installed.install( mockAppBundle( MYAPP.getName() ) );
 
         final AtomicReference<String> persisted = stubUpsert();
         persisted.set( "kind: \"Application\"\ntitle: \"Built\"\n" );
@@ -487,7 +475,7 @@ class ApplicationDescriptorServiceImplTest
         assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate(
             CreateOrUpdateApplicationDescriptorParams.create().key( MYAPP ).editor( edit -> edit.title = "Hijacked" ).locked( true ).build() ) ) )
             .isInstanceOf( IllegalArgumentException.class )
-            .hasMessage( "Cannot modify application built with Gradle: myapp" );
+            .hasMessage( "Cannot modify descriptor of application installed from a bundle: myapp" );
         verify( repoService, never() ).updateLocked( any(), Mockito.anyBoolean() );
 
         // the flag alone is set on the node, the descriptor is left as built
@@ -667,8 +655,6 @@ class ApplicationDescriptorServiceImplTest
         persisted.set( "kind: \"Application\"\n" );
         stubDescriptorNodeFrom( persisted, null );
         stubApplicationNode();
-        // a global application: the bundle ships a descriptor of its own, the persisted one is what every reader sees
-        installed.install( mockAppBundle( MYAPP.getName() ) );
 
         asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.title = "Renamed" ) ) );
 
@@ -685,9 +671,6 @@ class ApplicationDescriptorServiceImplTest
         assertEquals( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"Renamed\"\ndescription: \"Updated\"\n", persisted.get() );
         assertEquals( "Renamed", result.getTitle() );
         assertEquals( "Updated", result.getDescription() );
-
-        // the bundle descriptor is what that caller reads, and it is served from the bundle still
-        assertEquals( "My app description", bundleSource.callWith( () -> appDescriptorService.get( MYAPP ) ).getDescription() );
         assertEquals( "Updated", appDescriptorService.get( MYAPP ).getDescription() );
     }
 

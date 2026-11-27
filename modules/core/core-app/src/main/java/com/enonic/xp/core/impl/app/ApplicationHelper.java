@@ -61,35 +61,6 @@ public final class ApplicationHelper
     }
 
     /**
-     * A codeless application owns its schema ({@code cms/cms.yaml}), is installed globally (its schema is persisted in nodes)
-     * and is not built with gradle: the XP gradle plugin builds the manifest with Bnd, which always stamps it with
-     * {@code Bnd-LastModified} and {@code Tool}, while the manifest of a codeless application (built by Enonic CLI) has neither.
-     */
-    static boolean isCodelessApplication( final Bundle bundle )
-    {
-        return hasCmsDescriptor( bundle ) && !isLocalApplication( bundle ) && !isBuiltWithBnd( bundle );
-    }
-
-    /**
-     * {@code true} when the bundle was built with gradle: the XP gradle plugin builds the manifest with Bnd, which always stamps
-     * it with {@code Bnd-LastModified} and {@code Tool}.
-     */
-    static boolean isBuiltWithBnd( final Bundle bundle )
-    {
-        final String tool = bundle.getHeaders().get( ApplicationManifestConstants.TOOL );
-        return !isNullOrEmpty( bundle.getHeaders().get( ApplicationManifestConstants.BND_LAST_MODIFIED ) ) ||
-            ( tool != null && tool.startsWith( ApplicationManifestConstants.BND_TOOL_PREFIX ) );
-    }
-
-    /**
-     * {@code true} when the bundle ships a cms descriptor ({@code cms/cms.yaml}), i.e. the application owns its schema.
-     */
-    static boolean hasCmsDescriptor( final Bundle bundle )
-    {
-        return SchemaResourcePaths.CMS_DESCRIPTOR_PATHS.stream().anyMatch( path -> bundle.getEntry( path ) != null );
-    }
-
-    /**
      * Location of an application bundle. Local applications are marked by a location prefix,
      * the only channel that reaches the bundle tracker creating the application.
      */
@@ -537,16 +508,16 @@ public final class ApplicationHelper
     }
 
     /**
-     * The descriptor of an application built with gradle is never written: it is owned by the build, see
-     * {@link #isBuiltWithBnd(Bundle)}. The flag kept on its node alone is set and reset.
+     * The descriptor of an application installed from a bundle is never written: it is owned by the build of the bundle. The
+     * flag kept on its node alone is set and reset. The descriptor of a codeless application, which has no bundle, is.
      *
-     * @param builtWithGradle {@code true} when the descriptor of an application built with gradle is about to be edited
+     * @param bundle {@code true} when the descriptor of an application installed from a bundle is about to be edited
      */
-    static void requireNonGradleApplication( final ApplicationKey key, final boolean builtWithGradle )
+    static void requireNoBundle( final ApplicationKey key, final boolean bundle )
     {
-        if ( builtWithGradle )
+        if ( bundle )
         {
-            throw new IllegalArgumentException( "Cannot modify application built with Gradle: " + key );
+            throw new IllegalArgumentException( "Cannot modify descriptor of application installed from a bundle: " + key );
         }
     }
 

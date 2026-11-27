@@ -171,7 +171,7 @@ public class ApplicationResourceService
     private boolean isCodelessApplication( final String key )
     {
         final Application application = applicationService.getInstalledApplication( ApplicationKey.from( key ) );
-        return application != null && application.isCodeless();
+        return application != null && application.getClassLoader() == null;
     }
 
     public List<ApplicationInfoJson> getInstalledApplications()

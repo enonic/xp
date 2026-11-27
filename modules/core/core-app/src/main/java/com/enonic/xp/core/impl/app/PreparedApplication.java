@@ -16,10 +16,11 @@ import com.enonic.xp.app.ApplicationKey;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * An application bundle read before anything is written for it: its manifest and the schema resources to persist, validated.
+ * An application jar read before anything is written for it: its manifest and the schema resources to persist, validated.
  * The global installation and the migration of the application nodes go through this, so what they persist is the same.
+ * A jar without a manifest is a codeless application, see {@link AppInfoResolver}: its descriptor stands in for the manifest.
  *
- * @param appInfo         the manifest of the bundle
+ * @param appInfo         the manifest of the bundle, or what the descriptor of a codeless application declares in its place
  * @param schemaResources the resources to persist below the application node: the application descriptor and icon, and the
  *                        {@code cms} schema when the bundle ships {@code cms/cms.yaml}. The descriptor always declares the
  *                        version and the system version range of the application: what the bundle's own descriptor leaves out
@@ -153,5 +154,10 @@ record PreparedApplication(AppInfo appInfo, Map<String, ByteSource> schemaResour
     ApplicationKey key()
     {
         return ApplicationKey.from( appInfo.name );
+    }
+
+    boolean codeless()
+    {
+        return appInfo.codeless;
     }
 }

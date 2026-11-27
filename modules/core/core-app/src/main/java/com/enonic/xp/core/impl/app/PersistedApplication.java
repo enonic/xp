@@ -17,10 +17,11 @@ import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.util.Version;
 
 /**
- * An application that exists as nodes only, created through {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}:
- * it ships a persisted descriptor, and a schema once its cms descriptor is persisted, but no bundle, hence no code, class loader or
- * configuration. It is a codeless application as soon as it owns a schema. There is nothing to start or stop, it is always started.
- * Its version and system version range are the ones its persisted descriptor declares, there is no manifest to read them from.
+ * The codeless application: it exists as nodes only, installed from a jar without a manifest or created through
+ * {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}. It has a persisted descriptor, and a schema once its cms
+ * descriptor is persisted, but no bundle, hence no code, class loader or configuration. There is nothing to start or stop, it is
+ * always started. Its version and system version range are the ones its persisted descriptor declares, there is no manifest to
+ * read them from.
  */
 final class PersistedApplication
     implements Application
@@ -33,22 +34,16 @@ final class PersistedApplication
 
     private final Instant modifiedTime;
 
-    private final boolean codeless;
-
     private final Version version;
 
     private final VersionRange systemVersion;
 
     private final boolean locked;
 
-    /**
-     * @param codeless whether the cms descriptor ({@code cms/cms.yaml}) is persisted for the application
-     */
-    PersistedApplication( final Node applicationNode, final boolean codeless )
+    PersistedApplication( final Node applicationNode )
     {
         this.key = ApplicationKey.from( applicationNode.name().toString() );
         this.modifiedTime = ApplicationHelper.modifiedTime( applicationNode ).orElseThrow();
-        this.codeless = codeless;
         this.locked = ApplicationHelper.isLocked( applicationNode );
 
         final ApplicationDescriptor descriptor = readDescriptor( applicationNode, this.key );
@@ -144,12 +139,6 @@ final class PersistedApplication
     public boolean isSystem()
     {
         return false;
-    }
-
-    @Override
-    public boolean isCodeless()
-    {
-        return this.codeless;
     }
 
     @Override

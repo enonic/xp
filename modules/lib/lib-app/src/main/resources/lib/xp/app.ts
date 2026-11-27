@@ -41,8 +41,9 @@ export interface Application {
     started: boolean;
     system: boolean;
     /**
-     * Whether the application is codeless: it owns its schema without shipping any code, is always started and can neither
-     * be started nor stopped.
+     * Whether the application is codeless: it has no bundle, installed from a jar without a manifest or created with
+     * {@link createOrUpdate}. It is always started and can neither be started nor stopped, and its descriptor is edited with
+     * {@link createOrUpdate}.
      */
     codeless: boolean;
     /**

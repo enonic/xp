@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -8,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,7 +98,8 @@ class ApplicationServiceImplTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
         auditLogSupport.activate( appConfig );
 
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, auditLogSupport );
+        this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
+                                                   auditLogSupport );
     }
 
     @Test
@@ -166,7 +170,6 @@ class ApplicationServiceImplTest
         final Node app1Node = applicationNode( "app1", bundleNodeData() );
         final Node app2Node = applicationNode( "app2", persistedNodeData() );
         when( this.repoService.getApplications() ).thenReturn( Nodes.from( app1Node, app2Node ) );
-        when( this.repoService.hasCmsDescriptor( ApplicationKey.from( "app2" ) ) ).thenReturn( true );
 
         final Applications result = this.service.list();
         assertEquals( 2, result.getSize() );
@@ -175,7 +178,6 @@ class ApplicationServiceImplTest
         final Application persisted = result.get( 1 );
         assertInstanceOf( PersistedApplication.class, persisted );
         assertEquals( ApplicationKey.from( "app2" ), persisted.getKey() );
-        assertTrue( persisted.isCodeless() );
         assertTrue( persisted.isStarted() );
         assertFalse( persisted.isSystem() );
         assertNull( persisted.getClassLoader() );
@@ -208,10 +210,8 @@ class ApplicationServiceImplTest
         assertEquals( applicationKey, result.getKey() );
         assertEquals( applicationKey, this.service.getInstalledApplication( applicationKey ).getKey() );
 
-        // a descriptor alone makes no codeless application: the cms descriptor does
-        assertFalse( result.isCodeless() );
-        when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
-        assertTrue( this.service.get( applicationKey ).isCodeless() );
+        // without a bundle the application is codeless
+        assertNull( result.getClassLoader() );
     }
 
     @Test
@@ -232,14 +232,7 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
 
-        // nothing to start or stop without a bundle...
-        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "without bundle" );
-        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "without bundle" );
-
-        // ...and a codeless application, owning a schema, is always started
-        when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
+        // nothing to start or stop without a bundle: a codeless application is always started
         assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
             .hasMessageContaining( "codeless application" );
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
@@ -541,8 +534,9 @@ class ApplicationServiceImplTest
         assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
+    // an application installed from a bundle is never codeless, whatever schema the bundle ships
     @Test
-    void stopApplication_schemaApp_throws()
+    void stopApplication_bundle_with_cms_descriptor_stops()
         throws Exception
     {
         final Bundle bundle = deploy( "schemaApp",
@@ -552,56 +546,18 @@ class ApplicationServiceImplTest
 
         bundle.start();
 
-        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
-
-        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "codeless application" );
-
-        assertEquals( Bundle.ACTIVE, bundle.getState() );
-        verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
-        verifyNoEvents( ApplicationClusterEvents.stop( applicationKey ) );
-    }
-
-    @Test
-    void startApplication_schemaApp_throws()
-    {
-        final Bundle bundle = deploy( "schemaApp",
-                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
-
-        applicationRegistry.registerApplication( bundle );
-
-        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
-
-        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "codeless application" );
-
-        assertEquals( Bundle.INSTALLED, bundle.getState() );
-        verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
-    }
-
-    @Test
-    void stopApplication_gradleBuiltAppWithCmsDescriptor_stops()
-        throws Exception
-    {
-        final Bundle bundle = deploy( "gradleApp", buildWithoutBnd( newBundle( "gradleApp", true ).setHeader( "Bnd-LastModified", "1783360499694" )
-                                                                    .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
-
-        applicationRegistry.registerApplication( bundle );
-
-        bundle.start();
-
-        this.service.stopApplication( ApplicationKey.from( "gradleApp" ) );
+        this.service.stopApplication( ApplicationKey.from( "schemaApp" ) );
 
         assertEquals( Bundle.RESOLVED, bundle.getState() );
     }
 
     @Test
-    void install_stored_schema_application_is_started()
+    void install_stored_bundle_with_cms_descriptor_keeps_its_stored_state()
     {
         final String bundleName = "schemaApp";
         final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
 
-        // stored as stopped: a codeless application is started regardless
+        // stored as stopped: an application installed from a bundle stays so, whatever schema the bundle ships
         final PropertyTree data = bundleNodeData();
         data.setBoolean( ApplicationPropertyNames.STARTED, false );
         final Node node = Node.create()
@@ -620,8 +576,110 @@ class ApplicationServiceImplTest
 
         final Application application = this.service.getInstalledApplication( applicationKey );
         assertNotNull( application );
-        assertTrue( application.isCodeless() );
+        assertNotNull( application.getClassLoader() );
+        assertFalse( application.isStarted() );
+    }
+
+    @Test
+    void install_global_codeless_jar_persists_nodes_without_bundle()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "my.codeless" );
+        mockRepoGetNode( applicationNode( "my.codeless", persistedNodeData() ), "my.codeless" );
+
+        final Application application = this.service.installGlobalApplication( codelessJar( CODELESS_DESCRIPTOR, "1.2.3" ) );
+
+        assertInstanceOf( PersistedApplication.class, application );
+        assertEquals( applicationKey, application.getKey() );
+        assertNull( application.getClassLoader() );
         assertTrue( application.isStarted() );
+        assertNull( applicationRegistry.get( applicationKey ) );
+
+        verify( this.repoService ).upsertApplicationNode( argThat( info -> info.codeless && "1.2.3".equals( info.version ) ), any() );
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 3 && resources.containsKey( "enonic.yaml" ) && resources.containsKey( "cms/cms.yaml" ) &&
+                CONTENT_TYPE.equals( readResource( resources, "cms/content-types/mytype.yaml" ) ) ) );
+
+        final InOrder inOrder = Mockito.inOrder( this.repoService, this.eventPublisher );
+        inOrder.verify( this.repoService ).upsertApplicationNode( any(), any() );
+        inOrder.verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), any() );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationClusterEvents.install( applicationKey ) ) ) );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.installed( applicationKey ) ) ) );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( applicationKey ) ) ) );
+        verifyStartedEvent( applicationKey, never() );
+        verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
+    }
+
+    @Test
+    void install_global_codeless_jar_over_a_bundle_uninstalls_the_bundle()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "my.codeless" );
+        applicationRegistry.registerApplication( deployAppBundle( "my.codeless" ) );
+        assertNotNull( applicationRegistry.get( applicationKey ) );
+        mockRepoGetNode( applicationNode( "my.codeless", persistedNodeData() ), "my.codeless" );
+
+        final Application application = this.service.installGlobalApplication( codelessJar( CODELESS_DESCRIPTOR, "1.2.3" ) );
+
+        assertNull( application.getClassLoader() );
+        assertNull( applicationRegistry.get( applicationKey ) );
+        assertNull( this.service.getInstalledApplication( applicationKey ).getClassLoader() );
+        verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( applicationKey ) ) ) );
+        verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.installed( applicationKey ) ) ) );
+    }
+
+    @Test
+    void install_event_for_a_codeless_application_uninstalls_the_bundle_of_this_node()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "my.codeless" );
+        applicationRegistry.registerApplication( deployAppBundle( "my.codeless" ) );
+        mockRepoGetNode( applicationNode( "my.codeless", persistedNodeData() ), "my.codeless" );
+
+        this.service.onEvent( remote( ApplicationClusterEvents.install( applicationKey ) ) );
+
+        assertNull( applicationRegistry.get( applicationKey ) );
+        verify( this.repoService, never() ).getApplicationSource( any() );
+        verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( applicationKey ) ) ) );
+        verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.installed( applicationKey ) ) ) );
+    }
+
+    @Test
+    void install_global_codeless_jar_rejects_a_system_version_out_of_range()
+    {
+        final ByteSource source = codelessJar( "kind: \"Application\"\nname: \"my.codeless\"\nversion: \"1.2.3\"\nminSystemVersion: \"99.0.0\"\n", "1.2.3" );
+
+        assertThrows( ApplicationInvalidVersionException.class, () -> this.service.installGlobalApplication( source ) );
+
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
+    void install_global_codeless_jar_is_refused_over_a_locked_application()
+    {
+        final PropertyTree data = persistedNodeData();
+        data.setBoolean( ApplicationPropertyNames.LOCKED, true );
+        mockRepoGetNode( applicationNode( "my.codeless", data ), "my.codeless" );
+
+        final ByteSource source = codelessJar( CODELESS_DESCRIPTOR, "1.2.3" );
+        final ApplicationBundleException e =
+            assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( source ) );
+        assertEquals( "Cannot install application my.codeless: it is locked", e.getMessage() );
+
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
+    void install_local_codeless_jar_is_refused()
+    {
+        final ByteSource source = codelessJar( CODELESS_DESCRIPTOR, "1.2.3" );
+
+        assertThatThrownBy( () -> this.service.installLocalApplication( source ) ).isInstanceOf( ApplicationBundleException.class )
+            .hasMessage( "Cannot install codeless application my.codeless locally: it has no bundle" );
+
+        assertNull( applicationRegistry.get( ApplicationKey.from( "my.codeless" ) ) );
+        assertFalse( this.service.isLocalApplication( ApplicationKey.from( "my.codeless" ) ) );
     }
 
     @Test
@@ -1445,6 +1503,8 @@ class ApplicationServiceImplTest
 
     private static final String APP_DESCRIPTOR_WITH_VERSION = "kind: \"Application\"\nname: \"my.bundle\"\nversion: \"1.0.0\"\n";
 
+    private static final String CODELESS_DESCRIPTOR = "kind: \"Application\"\nname: \"my.codeless\"\nversion: \"1.2.3\"\n";
+
     private static final String CMS_DESCRIPTOR = "kind: \"CMS\"\n";
 
     private static final String CONTENT_TYPE = "kind: \"ContentType\"\nsuperType: \"base:structured\"\n";
@@ -1464,6 +1524,27 @@ class ApplicationServiceImplTest
                          .addResource( "cms/i18n/phrases/phrases_en.properties", stream( "phrases" ) )
                          .addResource( "i18n/phrases_en.properties", stream( "root-phrases" ) )
                          .build() );
+    }
+
+    // a codeless application jar: no manifest, nothing but the descriptor and the schema
+    private static ByteSource codelessJar( final String descriptor, final String version )
+    {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream( out ))
+        {
+            for ( final Map.Entry<String, String> entry : Map.of( "enonic.yaml", descriptor, "cms/cms.yaml", CMS_DESCRIPTOR,
+                                                                    "cms/content-types/mytype.yaml", CONTENT_TYPE ).entrySet() )
+            {
+                zip.putNextEntry( new ZipEntry( entry.getKey() ) );
+                zip.write( entry.getValue().getBytes( StandardCharsets.UTF_8 ) );
+                zip.closeEntry();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+        return ByteSource.wrap( out.toByteArray() );
     }
 
     private static ByteSource wrap( final InputStream in )

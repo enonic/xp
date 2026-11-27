@@ -25,7 +25,7 @@ public class ApplicationMapper
         gen.value( "modifiedTime", application.getModifiedTime() );
         gen.value( "started", application.isStarted() );
         gen.value( "system", application.isSystem() );
-        gen.value( "codeless", application.isCodeless() );
+        gen.value( "codeless", application.getClassLoader() == null );
         gen.value( "locked", application.isLocked() );
     }
 }

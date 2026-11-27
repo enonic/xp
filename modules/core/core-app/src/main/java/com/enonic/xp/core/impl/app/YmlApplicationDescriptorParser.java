@@ -34,6 +34,16 @@ final class YmlApplicationDescriptorParser
         return PARSER.parse( "Application", resource, ApplicationDescriptor.Builder.class, currentApplication );
     }
 
+    /**
+     * The {@code name} the descriptor declares, {@code null} when it declares none: read ahead of the descriptor where the
+     * application is not known yet, as for the jar of a codeless application, which carries no manifest to name it.
+     */
+    static ApplicationKey name( final String resource )
+    {
+        final String name = PARSER.field( resource, "name" );
+        return name == null ? null : ApplicationKey.from( name );
+    }
+
     @JsonIgnoreProperties("kind")
     private abstract static class ApplicationDescriptorBuilderMapper
     {

@@ -17,6 +17,11 @@ import com.enonic.xp.node.Nodes;
  */
 public interface ApplicationRepoService
 {
+    /**
+     * Creates or replaces the node of an application installed from a jar: it carries what the manifest declares and the jar as
+     * the bundle binary. The node of a codeless application, whose jar is no bundle, carries what its descriptor declares in
+     * place of the manifest and no binary; the binary of a bundle the node held before is dropped.
+     */
     Node upsertApplicationNode( AppInfo application, ByteSource source );
 
     /**
@@ -43,8 +48,7 @@ public interface ApplicationRepoService
     boolean hasApplicationDescriptor( ApplicationKey applicationKey );
 
     /**
-     * {@code true} when the cms descriptor ({@code cms/cms.yaml}) is persisted: the application owns a schema, and is a schema
-     * application unless its bundle ships business logic.
+     * {@code true} when the cms descriptor ({@code cms/cms.yaml}) is persisted: the application owns a schema.
      */
     boolean hasCmsDescriptor( ApplicationKey applicationKey );
 

@@ -129,7 +129,7 @@ class ApplicationRepoMigratorTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         auditLogSupport.activate( appConfig );
 
-        this.applicationService = new ApplicationServiceImpl(
+        this.applicationService = new ApplicationServiceImpl( bundleContext,
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ), auditLogSupport );
 

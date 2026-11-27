@@ -22,31 +22,6 @@ class ApplicationHelperTest
     extends BundleBasedTest
 {
     @Test
-    void hasCmsDescriptor_yaml()
-    {
-        final Bundle bundle = deploy( "app1", newBundle( "app1", true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
-
-        assertTrue( ApplicationHelper.hasCmsDescriptor( bundle ) );
-    }
-
-    @Test
-    void hasCmsDescriptor_yml()
-    {
-        final Bundle bundle = deploy( "app1", newBundle( "app1", true ).addResource( "cms/cms.yml", stream( "kind: \"CMS\"" ) ) );
-
-        assertTrue( ApplicationHelper.hasCmsDescriptor( bundle ) );
-    }
-
-    @Test
-    void hasCmsDescriptor_missing()
-    {
-        final Bundle bundle = deploy( "app1", newBundle( "app1", true ).addResource( "cms.yaml", stream( "kind: \"CMS\"" ) )
-            .addResource( "cms/content-types/mytype/mytype.yaml", stream( "kind: \"ContentType\"" ) ) );
-
-        assertFalse( ApplicationHelper.hasCmsDescriptor( bundle ) );
-    }
-
-    @Test
     void isLocalApplication_by_bundle_location()
     {
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
@@ -61,59 +36,6 @@ class ApplicationHelperTest
         final Bundle local = deploy( ApplicationHelper.toBundleLocation( appKey, true ), newBundle( "app1", true, "1.0.1" ) );
         assertTrue( ApplicationHelper.isLocalApplication( local ) );
         assertEquals( appKey, ApplicationHelper.getApplicationKey( local ) );
-    }
-
-    @Test
-    void isCodelessApplication_global_cms_without_bnd_headers()
-    {
-        final Bundle bundle =
-            deploy( "app1", buildWithoutBnd( newBundle( "app1", true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) ) );
-
-        assertTrue( ApplicationHelper.isCodelessApplication( bundle ) );
-    }
-
-    @Test
-    void isCodelessApplication_built_with_bnd_last_modified()
-    {
-        final Bundle bundle = deploy( "app1", buildWithoutBnd( newBundle( "app1", true ).setHeader( "Bnd-LastModified", "1783360499694" )
-                                                                  .addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) ) );
-
-        assertFalse( ApplicationHelper.isCodelessApplication( bundle ) );
-    }
-
-    @Test
-    void isCodelessApplication_built_with_bnd_tool()
-    {
-        final Bundle bundle = deploy( "app1", buildWithoutBnd( newBundle( "app1", true ).setHeader( "Tool", "Bnd-7.3.0.202606021345" )
-                                                                  .addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) ) );
-
-        assertFalse( ApplicationHelper.isCodelessApplication( bundle ) );
-    }
-
-    @Test
-    void isCodelessApplication_other_tool()
-    {
-        final Bundle bundle = deploy( "app1", buildWithoutBnd( newBundle( "app1", true ).setHeader( "Tool", "Enonic CLI" )
-                                                                  .addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) ) );
-
-        assertTrue( ApplicationHelper.isCodelessApplication( bundle ) );
-    }
-
-    @Test
-    void isCodelessApplication_without_cms_descriptor()
-    {
-        final Bundle bundle = deploy( "app1", buildWithoutBnd( newBundle( "app1", true ) ) );
-
-        assertFalse( ApplicationHelper.isCodelessApplication( bundle ) );
-    }
-
-    @Test
-    void isCodelessApplication_local()
-    {
-        final Bundle bundle = deploy( ApplicationHelper.toBundleLocation( ApplicationKey.from( "app1" ), true ),
-                                      buildWithoutBnd( newBundle( "app1", true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) ) );
-
-        assertFalse( ApplicationHelper.isCodelessApplication( bundle ) );
     }
 
     @Test

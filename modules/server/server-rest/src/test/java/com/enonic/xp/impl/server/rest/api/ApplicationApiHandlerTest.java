@@ -395,6 +395,7 @@ class ApplicationApiHandlerTest
     private Application createApplication()
     {
         final Application application = mock( Application.class );
+        when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
         when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
         when( application.getMinSystemVersion() ).thenReturn( "5.0" );

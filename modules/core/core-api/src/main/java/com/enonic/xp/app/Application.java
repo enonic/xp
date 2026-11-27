@@ -48,8 +48,13 @@ public interface Application
 
     /**
      * Returns the class loader loading the classes and resources of the application.
+     * <p>
+     * A codeless application has none: installed from a jar without a manifest or created through
+     * {@link ApplicationDescriptorService#createOrUpdate}, it has no bundle, and its descriptor, icon and schema are served from
+     * the application repository. It is always started and can neither be started nor stopped, and its descriptor is edited
+     * through the application descriptor service.
      *
-     * @return the application class loader
+     * @return the application class loader, or {@code null} for a codeless application
      */
     ClassLoader getClassLoader();
 
@@ -89,15 +94,6 @@ public interface Application
      * @return {@code true} for a system application
      */
     boolean isSystem();
-
-    /**
-     * Returns whether the application is codeless: it owns its schema ({@code cms/cms.yaml}), with content types, components
-     * and other schema resources served through the schema service, without shipping any code. A codeless application is
-     * always started and can neither be started nor stopped.
-     *
-     * @return {@code true} for a codeless application
-     */
-    boolean isCodeless();
 
     /**
      * Returns whether the application is a local application: one deployed from the deploy directory of this node only.

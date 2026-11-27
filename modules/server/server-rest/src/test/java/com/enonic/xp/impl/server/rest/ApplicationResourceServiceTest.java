@@ -148,7 +148,7 @@ class ApplicationResourceServiceTest
     void start_stop_schema_application_rejected()
     {
         final Application schemaApp = mock( Application.class );
-        when( schemaApp.isCodeless() ).thenReturn( true );
+        when( schemaApp.getClassLoader() ).thenReturn( null );
         when( applicationService.getInstalledApplication( ApplicationKey.from( "com.enonic.schema" ) ) ).thenReturn( schemaApp );
 
         final ApplicationParams params = createApplicationParams( "com.enonic.app1", "com.enonic.schema" );
@@ -169,7 +169,7 @@ class ApplicationResourceServiceTest
     void installed_application_schema_flag()
     {
         final Application application = createApplication();
-        when( application.isCodeless() ).thenReturn( true );
+        when( application.getClassLoader() ).thenReturn( null );
         when( applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
 
         assertThat( service.getInstalledApplication( application.getKey() ).getCodeless() ).isTrue();
@@ -341,6 +341,7 @@ class ApplicationResourceServiceTest
         when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
         when( application.isStarted() ).thenReturn( true );
         when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
+        when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         return application;
     }
 }

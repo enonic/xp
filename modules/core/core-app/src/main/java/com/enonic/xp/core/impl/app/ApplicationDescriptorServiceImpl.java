@@ -133,9 +133,9 @@ public class ApplicationDescriptorServiceImpl
         final Optional<Bundle> bundle = this.applicationFactoryService.findBundle( key );
         ApplicationHelper.requireNonSystemApplication( key, bundle.filter( ApplicationBundleUtils::isSystemApplication ).isPresent() );
         ApplicationHelper.requireNonLocalApplication( key, bundle.filter( ApplicationHelper::isLocalApplication ).isPresent() );
-        // the descriptor of an application built with gradle is owned by the build: nothing but the flag kept on its node is set
-        final boolean builtWithGradle = bundle.filter( ApplicationHelper::isBuiltWithBnd ).isPresent();
-        ApplicationHelper.requireNonGradleApplication( key, builtWithGradle && params.getEditor() != null );
+        // the descriptor of an application installed from a bundle is owned by its build: nothing but the flag kept on its node is set
+        final boolean fromBundle = bundle.isPresent();
+        ApplicationHelper.requireNoBundle( key, fromBundle && params.getEditor() != null );
 
         // the application nodes live in the application repository, whatever the context of the caller
         final boolean created = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) ) == null;
@@ -147,7 +147,7 @@ public class ApplicationDescriptorServiceImpl
 
         // the descriptor is left as is by a call setting nothing but the flag, unless the application is new: it gets its
         // first descriptor all the same
-        final boolean writeDescriptor = params.getEditor() != null || current == null && !builtWithGradle;
+        final boolean writeDescriptor = params.getEditor() != null || current == null && !fromBundle;
 
         final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( source );
         if ( params.getEditor() != null )

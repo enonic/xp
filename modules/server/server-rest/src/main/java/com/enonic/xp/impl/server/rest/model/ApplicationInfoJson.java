@@ -72,7 +72,7 @@ public class ApplicationInfoJson
                                         descriptor != null ? descriptor.getVendorName() : null,
                                         descriptor != null ? descriptor.getVendorUrl() : null, application.getModifiedTime(),
                                         application.isStarted() ? "started" : "stopped", local,
-                                        application.isSystem(), application.isCodeless(), application.isLocked(),
+                                        application.isSystem(), application.getClassLoader() == null, application.isLocked(),
                                         icon != null ? IconHash.of( icon ) : null );
     }
 

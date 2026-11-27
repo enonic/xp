@@ -17,4 +17,6 @@ public class AppInfo
     public String minSystemVersion;
 
     public boolean system;
+
+    public boolean codeless;
 }

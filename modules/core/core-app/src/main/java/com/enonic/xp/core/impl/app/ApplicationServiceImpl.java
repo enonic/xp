@@ -2,12 +2,14 @@ package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -39,6 +41,8 @@ public final class ApplicationServiceImpl
 
     private final Set<ApplicationKey> localApplicationSet = Collections.newSetFromMap( new ConcurrentHashMap<>() );
 
+    private final BundleContext context;
+
     private final ApplicationRegistry registry;
 
     private final ApplicationRepoService repoService;
@@ -50,11 +54,12 @@ public final class ApplicationServiceImpl
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
     @Activate
-    public ApplicationServiceImpl( @Reference final ApplicationRegistry applicationRegistry,
+    public ApplicationServiceImpl( final BundleContext context, @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
                                    @Reference final AppFilterService appFilterService,
                                    @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
+        this.context = context;
         this.registry = applicationRegistry;
         this.repoService = repoService;
         this.eventPublisher = eventPublisher;
@@ -122,8 +127,7 @@ public final class ApplicationServiceImpl
 
     private PersistedApplication persistedApplication( final Node applicationNode )
     {
-        final ApplicationKey key = ApplicationKey.from( applicationNode.name().toString() );
-        return new PersistedApplication( applicationNode, this.repoService.hasCmsDescriptor( key ) );
+        return new PersistedApplication( applicationNode );
     }
 
     private Application doGet( final ApplicationKey key )
@@ -296,6 +300,11 @@ public final class ApplicationServiceImpl
         // an upload and a pull both end here: neither replaces a locked application
         requireNotLocked( applicationKey, "install" );
 
+        if ( prepared.codeless() )
+        {
+            return doInstallCodelessApplication( prepared, byteSource );
+        }
+
         repoService.upsertApplicationNode( prepared.appInfo(), byteSource );
 
         // the schema is persisted before the bundle is installed: the application created for the bundle (and the
@@ -345,7 +354,8 @@ public final class ApplicationServiceImpl
 
         if ( !hasBundle( applicationNode ) )
         {
-            LOG.debug( "Application [{}] has no bundle, nothing to install", applicationKey );
+            replaceBundleByCodelessApplication( applicationKey );
+            LOG.info( "Codeless application [{}] installed successfully", applicationKey );
             return;
         }
 
@@ -364,6 +374,40 @@ public final class ApplicationServiceImpl
         doInstallApplication( byteSource, applicationKey, false );
 
         LOG.info( "Stored application [{}] installed successfully", applicationKey );
+    }
+
+    /**
+     * A codeless application is never installed as a bundle: its node holds no binary, its descriptor, icon and schema are
+     * persisted and served from nodes, and it is started by existing. The bundle of an application it replaces is uninstalled,
+     * here on this cluster node, on the others when they receive the install event.
+     */
+    private Application doInstallCodelessApplication( final PreparedApplication prepared, final ByteSource byteSource )
+    {
+        final ApplicationKey applicationKey = prepared.key();
+        ApplicationHelper.checkSystemVersion( prepared.appInfo().minSystemVersion, prepared.appInfo().maxSystemVersion,
+                                              this.context.getBundle().getVersion() );
+
+        repoService.upsertApplicationNode( prepared.appInfo(), byteSource );
+        repoService.persistApplicationSchema( applicationKey, prepared.schemaResources() );
+
+        this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
+
+        replaceBundleByCodelessApplication( applicationKey );
+
+        LOG.info( "Codeless application [{}] installed successfully", applicationKey );
+
+        this.eventPublisher.publish( ApplicationClusterEvents.installed( applicationKey ) );
+
+        return Objects.requireNonNull( findPersistedApplication( applicationKey ), "codeless application not found after install" );
+    }
+
+    private void replaceBundleByCodelessApplication( final ApplicationKey applicationKey )
+    {
+        if ( this.registry.get( applicationKey ) != null )
+        {
+            doUninstallApplication( applicationKey );
+        }
+        this.eventPublisher.publish( ApplicationEvents.installed( applicationKey ) );
     }
 
     private void doInstallStoredApplications()
@@ -405,7 +449,13 @@ public final class ApplicationServiceImpl
 
     private Application doInstallLocalApplication( final ByteSource byteSource )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( getAppInfo( byteSource ).name );
+        final AppInfo appInfo = getAppInfo( byteSource );
+        if ( appInfo.codeless )
+        {
+            throw new ApplicationBundleException(
+                String.format( "Cannot install codeless application %s locally: it has no bundle", appInfo.name ) );
+        }
+        final ApplicationKey applicationKey = ApplicationKey.from( appInfo.name );
 
         final Application application = doInstallApplication( byteSource, applicationKey, true );
         localApplicationSet.add( applicationKey );
@@ -416,28 +466,19 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    // a codeless application is always started, whatever state was stored for it, and an application without a bundle has
-    // nothing to start or stop
+    // a codeless application has no bundle: nothing to start or stop, it is always started
     private void requireStartableApplication( final ApplicationKey key, final String action )
     {
         final Application app = doGet( key );
-        if ( app == null )
-        {
-            return;
-        }
-        if ( app.isCodeless() )
+        if ( app != null && app.getClassLoader() == null )
         {
             throw new IllegalArgumentException( "Cannot " + action + " codeless application: " + key );
-        }
-        if ( app instanceof PersistedApplication )
-        {
-            throw new IllegalArgumentException( "Cannot " + action + " application without bundle: " + key );
         }
     }
 
     /**
-     * An application node without the bundle binary holds nothing but a persisted descriptor (created through
-     * {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}): there is no application to install.
+     * An application node without the bundle binary is a codeless application, installed from a jar without a manifest or created
+     * through {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}: there is no bundle to install.
      */
     private static boolean hasBundle( final Node applicationNode )
     {
@@ -453,10 +494,7 @@ public final class ApplicationServiceImpl
             return;
         }
         doInstallStoredApplication( applicationKey );
-        final Application application = registry.get( applicationKey );
-        final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) ||
-            application != null && application.isCodeless();
-        if ( started )
+        if ( Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) )
         {
             tryStartApplication( applicationKey );
         }
