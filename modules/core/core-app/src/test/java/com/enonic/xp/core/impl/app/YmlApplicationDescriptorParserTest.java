@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlApplicationDescriptorParserTest
 {
@@ -43,7 +44,7 @@ public class YmlApplicationDescriptorParserTest
         assertEquals( "Change orders", write.getTitle() );
         assertEquals( "scope.write.title", write.getTitleI18nKey() );
         assertEquals( "Create and change orders", write.getDescription() );
-        assertEquals( myapp, write.getApplication() );
+        assertEquals( MYAPP, write.getApplication() );
         assertEquals( Set.of( "myapp:read" ), write.getIncludes() );
         assertFalse( write.isRequired() );
         final Scope read = scopes.get( "myapp:read" ).orElseThrow();
