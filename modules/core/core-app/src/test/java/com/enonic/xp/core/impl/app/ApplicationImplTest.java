@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 
@@ -39,6 +40,19 @@ class ApplicationImplTest
 
         bundle.start();
         assertTrue( application.isStarted() );
+    }
+
+    @Test
+    void isLocal()
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapplication" );
+        final ApplicationUrlResolver urlResolver = Mockito.mock( ApplicationUrlResolver.class );
+
+        final Bundle global = deploy( ApplicationHelper.toBundleLocation( key, false ), newBundle( "myapplication", true ) );
+        assertFalse( new ApplicationImpl( global, urlResolver, null ).isLocal() );
+
+        final Bundle local = deploy( ApplicationHelper.toBundleLocation( key, true ), newBundle( "myapplication", true, "1.0.1" ) );
+        assertTrue( new ApplicationImpl( local, urlResolver, null ).isLocal() );
     }
 
     private Bundle deployBundle()

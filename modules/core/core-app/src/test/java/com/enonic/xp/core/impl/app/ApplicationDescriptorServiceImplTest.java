@@ -242,6 +242,28 @@ class ApplicationDescriptorServiceImplTest
     }
 
     @Test
+    void createOrUpdate_rejects_local_applications()
+    {
+        final ApplicationKey key = ApplicationKey.from( "com.enonic.localapp" );
+        final Bundle localBundle = mockAppBundle( key.getName() );
+        Mockito.when( localBundle.getLocation() ).thenReturn( ApplicationHelper.toBundleLocation( key, true ) );
+        appDescriptorService.start( componentContext );
+        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, localBundle ) );
+
+        final CreateOrUpdateApplicationDescriptorParams params =
+            CreateOrUpdateApplicationDescriptorParams.create().key( key ).editor( edit -> edit.title = "Hijacked" ).build();
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Cannot modify local application: " + key );
+
+        assertThatThrownBy( () -> appDescriptorService.createOrUpdate( params ) ).isInstanceOf( ForbiddenAccessException.class );
+
+        verify( repoService, never() ).createApplicationNode( any() );
+        verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
+        verify( eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
     void createOrUpdate_keeps_untouched_fields_and_clears_nulls()
     {
         final AtomicReference<String> persisted = stubUpsert();

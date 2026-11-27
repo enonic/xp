@@ -1056,6 +1056,57 @@ class DynamicSchemaServiceImplTest
     }
 
     @Test
+    void localApplicationIsNeverWritten()
+        throws Exception
+    {
+        final ApplicationKey key = ApplicationKey.from( "com.enonic.app.local" );
+        final Application localApplication = mock( Application.class );
+        when( localApplication.isLocal() ).thenReturn( true );
+        when( applicationRegistry.get( key ) ).thenReturn( localApplication );
+        createApplicationNode( key );
+
+        final String contentType = readResource( "_contentType.yaml" );
+        final String part = readResource( "_part.yaml" );
+        final String styles = readResource( "_styles.yaml" );
+        final String macro = readResource( "_macro.yaml" );
+        applicationEvents.clear();
+
+        final List<Runnable> writes = List.of( () -> dynamicSchemaService.createOrUpdateCms(
+                                                   CreateOrUpdateCmsParams.create().key( key ).resource( CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdateContentType( CreateOrUpdateContentSchemaParams.create()
+                                                                                                         .name( ContentTypeName.from( key, "mytype" ) )
+                                                                                                         .resource( contentType )
+                                                                                                         .build() ),
+                                               () -> dynamicSchemaService.createOrUpdatePart(
+                                                   CreateOrUpdateComponentParams.create().key( DescriptorKey.from( key, "mypart" ) ).resource( part ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdateStyles(
+                                                   CreateOrUpdateStylesParams.create().key( key ).resource( styles ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdateMacro(
+                                                   CreateOrUpdateMacroParams.create().key( MacroKey.from( key, "mymacro" ) ).resource( macro ).build() ),
+                                               () -> dynamicSchemaService.createOrUpdatePhrases(
+                                                   CreateOrUpdatePhrasesParams.create().key( key ).name( "phrases_en" ).resource( "a=b\n" ).build() ),
+                                               () -> dynamicSchemaService.deleteContentType( ContentTypeName.from( key, "mytype" ) ),
+                                               () -> dynamicSchemaService.deletePart( DescriptorKey.from( key, "mypart" ) ),
+                                               () -> dynamicSchemaService.deleteStyles( key ),
+                                               () -> dynamicSchemaService.deleteMacro( MacroKey.from( key, "mymacro" ) ),
+                                               () -> dynamicSchemaService.deletePhrases(
+                                                   DeleteDynamicPhrasesParams.create().key( key ).name( "phrases_en" ).build() ),
+                                               () -> dynamicSchemaService.deleteCms( key ) );
+        for ( final Runnable write : writes )
+        {
+            assertThatThrownBy( () -> createAdminContext().runWith( write ) )
+                .isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "Cannot modify local application: " + key );
+        }
+
+        assertThatThrownBy( () -> ctxDefault().runWith( writes.get( 0 ) ) ).isInstanceOf( ForbiddenAccessException.class );
+
+        assertTrue( applicationEvents.isEmpty() );
+        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/com.enonic.app.local" ) ) ) );
+        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/com.enonic.app.local/cms" ) ) ) );
+    }
+
+    @Test
     void createSchemaWithoutCmsDescriptor()
         throws Exception
     {
