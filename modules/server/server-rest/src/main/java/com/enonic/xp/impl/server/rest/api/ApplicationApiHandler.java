@@ -53,7 +53,7 @@ import com.enonic.xp.web.sse.SseMessage;
  * initial {@code list} event and the changes that follow leave out local and system applications, and report a change
  * whichever node it was made through.
  */
-@Component(service = {UniversalApiHandler.class, EventListener.class}, property = {"key=server:app", "title=Applications API",
+@Component(service = {UniversalApiHandler.class, EventListener.class}, property = {"key=server:app", "scopes=read:app", "scopes=app", "title=Applications API",
     "mount=management", "allowedPrincipals=role:system.admin"})
 public class ApplicationApiHandler
     extends ManagementApiHandler

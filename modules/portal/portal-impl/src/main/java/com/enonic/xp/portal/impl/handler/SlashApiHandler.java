@@ -37,6 +37,8 @@ import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.auth.AccessTokenInfo;
+import com.enonic.xp.security.token.ScopeService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
@@ -79,6 +81,8 @@ public class SlashApiHandler
 
     private final PortalScriptService scriptService;
 
+    private final ScopeService scopeService;
+
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
@@ -87,7 +91,8 @@ public class SlashApiHandler
                             @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
                             @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry,
-                            @Reference final SseManager sseManager, @Reference final PortalScriptService scriptService )
+                            @Reference final SseManager sseManager, @Reference final PortalScriptService scriptService,
+                            @Reference final ScopeService scopeService )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -97,6 +102,7 @@ public class SlashApiHandler
         this.universalApiHandlerRegistry = universalApiHandlerRegistry;
         this.sseManager = sseManager;
         this.scriptService = scriptService;
+        this.scopeService = scopeService;
     }
 
     @Activate
@@ -152,6 +158,13 @@ public class SlashApiHandler
         final boolean preflight = HandlerHelper.isPreflight( portalRequest );
         final boolean accessAllowed = verifyAccessToApi( apiDescriptor, portalRequest, mountContext, preflight );
         verifyRequestMounted( apiDescriptor, portalRequest, mountContext );
+
+        // A handler registered with XP checks the scopes itself, as it may take a different one for each of its operations.
+        final WebResponse insufficientScope = preflight || dynamicApiHandler != null ? null : insufficientScope( apiDescriptor );
+        if ( insufficientScope != null )
+        {
+            return insufficientScope;
+        }
 
         final Supplier<WebResponse> handler;
         if ( preflight )
@@ -357,6 +370,26 @@ public class SlashApiHandler
         {
             throw forbidden( apiDescriptor );
         }
+    }
+
+    /**
+     * The answer to a token that carries none of the scopes the API accepts, itself or through a
+     * scope that includes it: 403 with the scopes that would do (RFC 6750, section 3.1). Null when
+     * the request may go on.
+     */
+    private WebResponse insufficientScope( final ApiDescriptor apiDescriptor )
+    {
+        final AccessTokenInfo accessToken = ContextAccessor.current().getAuthInfo().getAccessToken();
+        if ( accessToken == null || apiDescriptor.getScopes().isEmpty() ||
+            apiDescriptor.isScopeSufficient( scopeService.getScopes().expand( accessToken.getScope() ) ) )
+        {
+            return null;
+        }
+        final String scope = String.join( " ", apiDescriptor.getScopes() );
+        return WebResponse.create()
+            .status( HttpStatus.FORBIDDEN )
+            .header( "WWW-Authenticate", "Bearer error=\"insufficient_scope\", scope=\"" + scope + "\"" )
+            .build();
     }
 
     private static WebException forbidden( final ApiDescriptor apiDescriptor )

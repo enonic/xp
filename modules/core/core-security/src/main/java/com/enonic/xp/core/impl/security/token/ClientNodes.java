@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.Client;
 
 /**
@@ -48,9 +49,15 @@ final class ClientNodes
     {
     }
 
+    static NodePath idProviderPath( final IdProviderKey idProvider )
+    {
+        return new NodePath( new NodePath( NodePath.ROOT, NodeName.from( PrincipalKey.IDENTITY_NODE_NAME ) ),
+                             NodeName.from( idProvider.toString() ) );
+    }
+
     static NodePath clientsPath( final IdProviderKey idProvider )
     {
-        return new NodePath( ScopeNodes.idProviderPath( idProvider ), NodeName.from( CLIENTS ) );
+        return new NodePath( idProviderPath( idProvider ), NodeName.from( CLIENTS ) );
     }
 
     static NodePath clientPath( final IdProviderKey idProvider, final String id )

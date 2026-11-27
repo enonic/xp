@@ -21,7 +21,7 @@ import com.enonic.xp.web.WebResponse;
  * {@code server:auditlog} - the audit log. {@code prune} removes records older than a threshold; {@code /cleanup} is
  * its alias.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:auditlog", "title=Audit Log API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:auditlog", "scopes=read:system", "scopes=system", "title=Audit Log API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class AuditLogApiHandler
     extends ManagementApiHandler

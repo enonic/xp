@@ -189,7 +189,7 @@ public final class Client
 
     /**
      * The most scopes the client may ask for, and what it gets when it names none. Empty means any
-     * of the id provider's scopes.
+     * declared scope.
      */
     public Set<String> getScope()
     {

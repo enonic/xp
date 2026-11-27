@@ -1,11 +1,18 @@
 package com.enonic.xp.app;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.security.token.Scope;
+import com.enonic.xp.security.token.Scopes;
+import com.enonic.xp.security.token.XpScopes;
 import com.enonic.xp.util.GenericValue;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 
@@ -31,6 +38,8 @@ public final class ApplicationDescriptor
 
     private final String url;
 
+    private final Scopes scopes;
+
     private ApplicationDescriptor( final Builder builder )
     {
         this.key = requireNonNull( builder.key, "key cannot be null" );
@@ -43,6 +52,31 @@ public final class ApplicationDescriptor
         this.vendorUrl = builder.vendorUrl;
         this.url = builder.url;
         this.schemaConfig = builder.schemaConfig.build();
+        this.scopes = toScopes( this.key, builder.scopes );
+    }
+
+    private static Scopes toScopes( final ApplicationKey key, final List<ApplicationScope> defined )
+    {
+        final Set<String> names = defined.stream().map( ApplicationScope::name ).collect( Collectors.toSet() );
+        checkArgument( names.size() == defined.size(), "Application [%s] defines a scope twice", key );
+        return defined.stream().map( scope -> {
+            scope.includes().forEach( included -> checkArgument( names.contains( included ) && !included.equals( scope.name() ),
+                                                                 "Scope [%s] of application [%s] includes [%s], which is not another scope of the application",
+                                                                 scope.name(), key, included ) );
+            final String id = key + ":" + scope.name();
+            checkArgument( XpScopes.all().get( id ).isEmpty(), "Scope [%s] of application [%s] would be XP's scope [%s]", scope.name(), key,
+                           id );
+            return Scope.create()
+                .id( id )
+                .application( key )
+                .title( scope.title() == null ? null : scope.title().text() )
+                .titleI18nKey( scope.title() == null ? null : scope.title().i18n() )
+                .description( scope.description() == null ? null : scope.description().text() )
+                .descriptionI18nKey( scope.description() == null ? null : scope.description().i18n() )
+                .includes( scope.includes().stream().map( included -> key + ":" + included ).toList() )
+                .required( scope.required() )
+                .build();
+        } ).collect( Scopes.collector() );
     }
 
     public ApplicationKey getKey()
@@ -95,6 +129,14 @@ public final class ApplicationDescriptor
         return schemaConfig;
     }
 
+    /**
+     * The scopes the application defines, each named {@code <application>:<name>}.
+     */
+    public Scopes getScopes()
+    {
+        return scopes;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -112,7 +154,8 @@ public final class ApplicationDescriptor
         return key.equals( that.key ) && Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
             Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) && Objects.equals( title, that.title ) &&
             Objects.equals( titleI18nKey, that.titleI18nKey ) && Objects.equals( vendorName, that.vendorName ) &&
-            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && schemaConfig.equals( that.schemaConfig );
+            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && schemaConfig.equals( that.schemaConfig ) &&
+            scopes.equals( that.scopes );
     }
 
     @Override
@@ -148,6 +191,8 @@ public final class ApplicationDescriptor
 
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
+        private List<ApplicationScope> scopes = List.of();
+
         private Builder()
         {
         }
@@ -168,6 +213,12 @@ public final class ApplicationDescriptor
         {
             this.description = localizedText.text();
             this.descriptionI18nKey = localizedText.i18n();
+            return this;
+        }
+
+        public Builder scopes( final List<ApplicationScope> scopes )
+        {
+            this.scopes = List.copyOf( scopes );
             return this;
         }
 

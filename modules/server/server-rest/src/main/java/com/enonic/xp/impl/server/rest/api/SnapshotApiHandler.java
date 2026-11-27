@@ -29,7 +29,7 @@ import com.enonic.xp.web.WebResponse;
 /**
  * {@code server:snapshot} - repository snapshots: list, create, restore and prune.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:snapshot", "title=Snapshot API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:snapshot", "scopes=read:repo", "scopes=repo", "title=Snapshot API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class SnapshotApiHandler
     extends ManagementApiHandler

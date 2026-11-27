@@ -21,7 +21,7 @@ import com.enonic.xp.web.WebResponse;
  * {@code server:system} - installation-wide maintenance. {@code prune} removes unused blobs and old versions;
  * {@code /vacuum} is its alias, kept for the name the operation has always had.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:system", "title=System API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:system", "scopes=read:system", "scopes=system", "title=System API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class SystemApiHandler
     extends ManagementApiHandler

@@ -9,6 +9,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.token.ScopeNames;
 import com.enonic.xp.util.GenericValue;
 
 import static java.util.Objects.requireNonNull;
@@ -34,6 +35,8 @@ public final class ApiDescriptor
 
     private final GenericValue schemaConfig;
 
+    private final ImmutableSet<String> scopes;
+
     private ApiDescriptor( final Builder builder )
     {
         requireNonNull( builder.key, "key cannot be null" );
@@ -49,6 +52,8 @@ public final class ApiDescriptor
         this.documentationUrl = builder.documentationUrl;
         this.mount = builder.mount;
         this.schemaConfig = builder.schemaConfig.build();
+        this.scopes = builder.scopes;
+        this.scopes.forEach( ScopeNames::checkScope );
     }
 
     public DescriptorKey getKey()
@@ -96,6 +101,27 @@ public final class ApiDescriptor
         return schemaConfig;
     }
 
+    /**
+     * The ids of the scopes the API accepts, XP's or an application's. Empty when the API asks for
+     * none.
+     */
+    public Set<String> getScopes()
+    {
+        return scopes;
+    }
+
+    /**
+     * Whether a token may call the API. An API that accepts no scopes asks for none; otherwise the
+     * token must carry one of them, itself or through a scope that includes it, so a token without
+     * scopes does not pass.
+     *
+     * @param tokenScope the token's scopes, with those they include
+     */
+    public boolean isScopeSufficient( final Set<String> tokenScope )
+    {
+        return scopes.isEmpty() || scopes.stream().anyMatch( tokenScope::contains );
+    }
+
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
         return principalKeys.contains( RoleKeys.ADMIN ) || allowedPrincipals.stream().anyMatch( principalKeys::contains );
@@ -125,6 +151,8 @@ public final class ApiDescriptor
         private ImmutableSet<String> mount = ImmutableSet.of();
 
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
+
+        private ImmutableSet<String> scopes = ImmutableSet.of();
 
         private Builder()
         {
@@ -195,6 +223,12 @@ public final class ApiDescriptor
         public Builder schemaConfig( final GenericValue value )
         {
             value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
+            return this;
+        }
+
+        public Builder scopes( final String... scopes )
+        {
+            this.scopes = ImmutableSet.copyOf( scopes );
             return this;
         }
 

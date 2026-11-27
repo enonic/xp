@@ -33,11 +33,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.api.ScopeRegistry;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
@@ -85,7 +89,7 @@ import static java.util.Objects.requireNonNull;
  * <li>{@code POST token}: tokens for a device code, an authorization code or a refresh token.</li>
  * <li>{@code POST register}: a signed client id carrying the client metadata posted (RFC 7591).</li>
  * </ul>
- * What may be asked for and granted is checked here: against the id provider's scopes, the
+ * What may be asked for and granted is checked here: against the scopes the APIs accept, the
  * client's record when it has one, the audiences XP serves, and the choice the user posted from
  * the page (see {@link OAuthConsentContext}). The page is the id provider's {@code oauthConsent}
  * function. An id provider without one gets the page of the {@code system} id provider when the vhost
@@ -147,6 +151,10 @@ public class OAuthHandler
 
     private final SecurityService securityService;
 
+    private final ScopeRegistry scopeService;
+
+    private final LocaleService localeService;
+
     private final VirtualHostService virtualHostService;
 
     private final IdProviderControllerService idProviderControllerService;
@@ -161,21 +169,26 @@ public class OAuthHandler
 
     @Activate
     public OAuthHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
-                               @Reference final SecurityService securityService, @Reference final VirtualHostService virtualHostService,
+                               @Reference final SecurityService securityService, @Reference final ScopeRegistry scopeService,
+                               @Reference final LocaleService localeService,
+                               @Reference final VirtualHostService virtualHostService,
                                @Reference final IdProviderControllerService idProviderControllerService,
                                @Reference final SharedMapService sharedMapService )
     {
-        this( grantService, accessTokenService, securityService, virtualHostService, idProviderControllerService, sharedMapService,
+        this( grantService, accessTokenService, securityService, scopeService, localeService, virtualHostService, idProviderControllerService, sharedMapService,
               Clock.systemUTC() );
     }
 
     OAuthHandler( final GrantService grantService, final AccessTokenService accessTokenService, final SecurityService securityService,
-                        final VirtualHostService virtualHostService, final IdProviderControllerService idProviderControllerService,
+                        final ScopeRegistry scopeService, final LocaleService localeService, final VirtualHostService virtualHostService,
+                        final IdProviderControllerService idProviderControllerService,
                         final SharedMapService sharedMapService, final Clock clock )
     {
         this.grantService = grantService;
         this.accessTokenService = accessTokenService;
         this.securityService = securityService;
+        this.scopeService = scopeService;
+        this.localeService = localeService;
         this.virtualHostService = virtualHostService;
         this.idProviderControllerService = idProviderControllerService;
         this.store = new DeviceCodeStore( sharedMapService, clock );
@@ -319,38 +332,11 @@ public class OAuthHandler
     }
 
     /**
-     * Resolves the {@code scope} and {@code resource} parameters against the id provider's scopes,
+     * Resolves the {@code scope} and {@code resource} parameters against the declared scopes,
      * what XP serves, and the client's lists.
      */
     private Asked asked( final PortalRequest request, final IdProviderKey idProvider, final Client client )
     {
-        final Scopes known = securityService.getScopes( idProvider );
-        final Set<String> clientScope = client.getScope();
-        final Set<String> scope = withinClient( scopes( param( request, "scope" ) ), clientScope );
-        if ( scope == null )
-        {
-            return Asked.refused( "invalid_scope", "Scope beyond the client's: " + clientScope );
-        }
-        if ( known.isEmpty() )
-        {
-            if ( !scope.isEmpty() )
-            {
-                return Asked.refused( "invalid_scope", "The id provider has no scopes; ask for none" );
-            }
-        }
-        else
-        {
-            if ( scope.isEmpty() && accessTokenService.isSelfRegisteredClientId( client.getId() ) )
-            {
-                return Asked.refused( "invalid_scope", "scope is required; known scopes: " + known.getIds() );
-            }
-            final Set<String> unknown = new LinkedHashSet<>( scope );
-            unknown.removeAll( known.getIds() );
-            if ( !unknown.isEmpty() )
-            {
-                return Asked.refused( "invalid_scope", "Unknown scope " + unknown + "; known scopes: " + known.getIds() );
-            }
-        }
         final Set<String> clientResource = client.getResource();
         final Set<String> requestedAudience = withinClient( audience( request ), clientResource );
         if ( requestedAudience == null )
@@ -390,6 +376,33 @@ public class OAuthHandler
                 return Asked.refused( "invalid_target", "Unknown resource " + unknown );
             }
             audience = requestedAudience;
+        }
+        final Scopes known = scopesFor( request, idProvider, audience );
+        final Set<String> clientScope = client.getScope();
+        final Set<String> scope = withinClient( scopes( param( request, "scope" ) ), clientScope );
+        if ( scope == null )
+        {
+            return Asked.refused( "invalid_scope", "Scope beyond the client's: " + clientScope );
+        }
+        if ( known.isEmpty() )
+        {
+            if ( !scope.isEmpty() )
+            {
+                return Asked.refused( "invalid_scope", "No scopes are declared for " + audience + "; ask for none" );
+            }
+        }
+        else
+        {
+            if ( scope.isEmpty() && accessTokenService.isSelfRegisteredClientId( client.getId() ) )
+            {
+                return Asked.refused( "invalid_scope", "scope is required; known scopes: " + known.getIds() );
+            }
+            final Set<String> unknown = new LinkedHashSet<>( scope );
+            unknown.removeAll( known.getIds() );
+            if ( !unknown.isEmpty() )
+            {
+                return Asked.refused( "invalid_scope", "Unknown scope " + unknown + "; known scopes: " + known.getIds() );
+            }
         }
         return new Asked( scope, audience, null, null );
     }
@@ -454,7 +467,7 @@ public class OAuthHandler
         return render( request, idProvider,
                        OAuthConsentContext.Confirm.forCode( idProvider, user.get(), pending.id(), clientId, client.get(),
                                                            accessTokenService.isSelfRegisteredClientId( clientId ),
-                                                           pending.scope(), pending.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ),
+                                                           pending.scope(), pending.audience(), localizedScopes( request ), csrfToken( user.get().getKey() ),
                                                            pending.redirectUri() ) );
     }
 
@@ -495,7 +508,7 @@ public class OAuthHandler
             return render( request, idProvider,
                            OAuthConsentContext.Confirm.forCode( idProvider, user.get(), p.id(), p.clientId(), client,
                                                                accessTokenService.isSelfRegisteredClientId( p.clientId() ), p.scope(),
-                                                               p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ),
+                                                               p.audience(), localizedScopes( request ), csrfToken( user.get().getKey() ),
                                                                p.redirectUri() ) );
         }
         final AuthorizationCodeStore.PendingAuthorization pending = taken.get();
@@ -503,7 +516,7 @@ public class OAuthHandler
         {
             return redirectError( pending.redirectUri(), pending.state(), "access_denied", null );
         }
-        final Scopes known = securityService.getScopes( idProvider );
+        final Scopes known = scopesFor( request, idProvider, pending.audience() );
         if ( known.isEmpty() && !pending.scope().isEmpty() )
         {
             return redirectError( pending.redirectUri(), pending.state(), "access_denied", "The scopes asked for no longer exist" );
@@ -516,8 +529,7 @@ public class OAuthHandler
         {
             return redirectError( pending.redirectUri(), pending.state(), "access_denied", "No permission was kept" );
         }
-        final RoleRestriction restriction =
-            known.restrictionFor( kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
+        final RoleRestriction restriction = ContextAccessor.current().getAuthInfo().getRestriction();
         final AuthorizationCodeStore.IssuedCode issued = codes.issue( pending, user.get().getKey(), kept, restriction );
         final Map<String, String> params = new LinkedHashMap<>();
         params.put( "code", issued.code() );
@@ -796,7 +808,7 @@ public class OAuthHandler
                        OAuthConsentContext.Confirm.forDevice( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ),
                                                              p.clientId(), client.get(),
                                                              accessTokenService.isSelfRegisteredClientId( p.clientId() ),
-                                                             p.scope(), p.audience(), securityService.getScopes( idProvider ), csrfToken( user.get().getKey() ) ) );
+                                                             p.scope(), p.audience(), localizedScopes( request ), csrfToken( user.get().getKey() ) ) );
     }
 
     private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider,
@@ -826,20 +838,63 @@ public class OAuthHandler
             return render( request, idProvider,
                            new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
         }
-        final Scopes known = securityService.getScopes( idProvider );
+        final Scopes known = scopesFor( request, idProvider, pending.get().audience() );
         final Set<String> kept = new LinkedHashSet<>( request.getParams().get( "scope" ) );
         known.stream().filter( Scope::isRequired ).map( Scope::getId ).forEach( kept::add );
         kept.retainAll( pending.get().scope() );
         kept.retainAll( known.getIds() );
         final boolean granted = approve && ( pending.get().scope().isEmpty() || ( known.isNotEmpty() && !kept.isEmpty() ) );
-        final RoleRestriction restriction =
-            known.restrictionFor( kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
+        final RoleRestriction restriction = ContextAccessor.current().getAuthInfo().getRestriction();
         return switch ( store.resolve( idProvider, userCode, granted, user.get().getKey(), kept, restriction ) )
         {
             case GONE -> render( request, idProvider, new OAuthConsentContext.Enter( idProvider, user.get(), OAuthConsentContext.INVALID_CODE ) );
             case SHOWN_TO_ANOTHER -> verificationPage( request, idProvider, settings );
             case RESOLVED -> render( request, idProvider, new OAuthConsentContext.Done( idProvider, user.get(), granted ) );
         };
+    }
+
+    /**
+     * The declared scopes as the consent page shows them: a title or description that names a phrase
+     * of its application is worded in the language the browser prefers, where the application has it.
+     */
+    private Scopes localizedScopes( final PortalRequest request )
+    {
+        return scopeService.getScopes().stream().map( scope -> {
+            final ApplicationKey application = scope.getApplication();
+            if ( application == null || scope.getTitleI18nKey() == null && scope.getDescriptionI18nKey() == null )
+            {
+                return scope;
+            }
+            final MessageBundle bundle =
+                localeService.getBundle( application, localeService.getSupportedLocale( request.getLocales(), application ) );
+            return Scope.create()
+                .id( scope.getId() )
+                .application( application )
+                .title( phrase( bundle, scope.getTitleI18nKey(), scope.getTitle() ) )
+                .titleI18nKey( scope.getTitleI18nKey() )
+                .description( phrase( bundle, scope.getDescriptionI18nKey(), scope.getDescription() ) )
+                .descriptionI18nKey( scope.getDescriptionI18nKey() )
+                .includes( scope.getIncludes() )
+                .required( scope.isRequired() )
+                .build();
+        } ).collect( Scopes.collector() );
+    }
+
+    private static @Nullable String phrase( final @Nullable MessageBundle bundle, final @Nullable String key, final @Nullable String text )
+    {
+        if ( bundle == null || key == null )
+        {
+            return text;
+        }
+        try
+        {
+            final String phrase = bundle.localize( key );
+            return phrase == null ? text : phrase;
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return text;
+        }
     }
 
     /**
@@ -1346,6 +1401,109 @@ public class OAuthHandler
                                 .uri( "https://developer.enonic.com/docs/enonic-cli" )
                                 .grantTypes( List.of( GrantTypes.DEVICE_CODE, GrantTypes.AUTHORIZATION_CODE, GrantTypes.REFRESH_TOKEN ) )
                                 .build() );
+    }
+
+    /**
+     * The scopes a token for these audiences may be asked for: those of the APIs served by the
+     * mappings that would accept the token, which are the mappings the id provider's
+     * {@code autologin} flow is on and that take one of the audiences: the scopes those APIs accept
+     * and the scopes that include them. Scopes of APIs the token cannot reach are not offered.
+     */
+    private Scopes scopesFor( final PortalRequest request, final IdProviderKey idProvider, final Set<String> audience )
+    {
+        final String self = accessTokenService.getIssuer();
+        final List<VirtualHost> accepting = mappings( request ).filter( mapping -> {
+            final VirtualHostIdProvider settings = mapping.getIdProviders().get( idProvider );
+            return settings != null && settings.serves( IdProviderFlow.AUTOLOGIN );
+        } ).filter( mapping -> audience.stream().anyMatch( resource -> accepts( mapping, resource, self ) ) ).toList();
+        final boolean managementByDefault = IdProviderKey.system().equals( idProvider ) && configuredMappings().stream()
+            .noneMatch( mapping -> DispatchConstants.MANAGEMENT_CONNECTOR.equals( mapping.getConnector() ) ) &&
+            audience.stream().anyMatch( resource -> self.equals( resource ) || reachesDefaultManagement( request, resource ) );
+        return scopeService.getScopes( accepting, managementByDefault );
+    }
+
+    /**
+     * Whether the mapping takes a token for the resource: XP's issuer name where the mapping declares
+     * no audience, an audience it declares, or a URL at or below the one its source path is served at.
+     */
+    private static boolean accepts( final VirtualHost mapping, final String resource, final String self )
+    {
+        if ( mapping.getAudience().isEmpty() ? self.equals( resource ) : mapping.getAudience().contains( resource ) )
+        {
+            return true;
+        }
+        final URI uri;
+        try
+        {
+            uri = new URI( resource );
+        }
+        catch ( URISyntaxException e )
+        {
+            return false;
+        }
+        final String scheme = uri.getScheme();
+        final String host = uri.getHost();
+        if ( host == null || !( "https".equals( scheme ) || "http".equals( scheme ) ) || !SERVED_CONNECTORS.contains( mapping.getConnector() ) ||
+            !mapping.matchesHost( host ) )
+        {
+            return false;
+        }
+        final String identifier = mapping.identifier( scheme, host, uri.getPort() );
+        return resource.equals( identifier ) || resource.startsWith( identifier + "/" );
+    }
+
+    /**
+     * Whether a URL is one the management endpoint is reached at where it has no mapping of its own, and so takes the
+     * system id provider's tokens for any URL of its own. Nothing here tells which URLs those are, so it is a URL no
+     * mapping serves: none matches its host and path, or it is on another port than this request, which a mapping
+     * served.
+     */
+    private boolean reachesDefaultManagement( final PortalRequest request, final String resource )
+    {
+        final URI uri;
+        try
+        {
+            uri = new URI( resource );
+        }
+        catch ( URISyntaxException e )
+        {
+            return false;
+        }
+        final String scheme = uri.getScheme();
+        final String host = uri.getHost();
+        if ( host == null || !( "https".equals( scheme ) || "http".equals( scheme ) ) )
+        {
+            return false;
+        }
+        if ( port( scheme, uri.getPort() ) != port( request.getScheme(), request.getPort() ) )
+        {
+            return true;
+        }
+        return mappings( request ).filter( mapping -> mapping.matchesHost( host ) ).noneMatch( mapping -> {
+            final String identifier = mapping.identifier( scheme, host, uri.getPort() );
+            return resource.equals( identifier ) || resource.startsWith( identifier + "/" );
+        } );
+    }
+
+    private static int port( final String scheme, final int port )
+    {
+        return port > 0 ? port : "https".equals( scheme ) ? 443 : 80;
+    }
+
+    /**
+     * The request's mapping and the configured ones.
+     */
+    private Stream<VirtualHost> mappings( final PortalRequest request )
+    {
+        return Stream.concat( Stream.ofNullable( request.getVirtualHost() ), configuredMappings().stream() ).distinct();
+    }
+
+    /**
+     * The mappings of the configuration, none of which is in use while virtual hosts are off.
+     */
+    private List<VirtualHost> configuredMappings()
+    {
+        return virtualHostService.isEnabled() ? virtualHostService.getVirtualHosts() : List.of();
     }
 
     /**

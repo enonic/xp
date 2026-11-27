@@ -1,47 +1,53 @@
 package com.enonic.xp.security.token;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.app.ApplicationKey;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A scope of an id provider: what a client may ask for, what a user is asked to approve, and the
- * roles a token granted it is restricted to. A scope with no roles restricts nothing.
+ * A scope: a named area of access that XP or an application defines. It is what a client may ask
+ * for and what a user is asked to approve; an API says which scopes it accepts, and a token is let
+ * in when it carries one of them. A scope may include others, as a wider level of access includes
+ * the narrower ones.
  */
 @NullMarked
 public final class Scope
 {
-    private final IdProviderKey idProvider;
-
     private final String id;
 
     private final String title;
 
     private final @Nullable String description;
 
-    private final PrincipalKeys roles;
+    private final @Nullable ApplicationKey application;
+
+    private final @Nullable String titleI18nKey;
+
+    private final @Nullable String descriptionI18nKey;
+
+    private final ImmutableSet<String> includes;
 
     private final boolean required;
 
     private Scope( final Builder builder )
     {
-        this.idProvider = requireNonNull( builder.idProvider, "idProvider is required" );
         this.id = ScopeNames.checkScope( requireNonNull( builder.id, "id is required" ) );
         this.title = builder.title == null ? this.id : builder.title;
         this.description = builder.description;
-        this.roles = builder.roles;
-        for ( final PrincipalKey role : this.roles )
-        {
-            checkArgument( role.isRole(), "a scope may only imply roles, not %s", role );
-        }
+        this.application = builder.application;
+        this.titleI18nKey = builder.titleI18nKey;
+        this.descriptionI18nKey = builder.descriptionI18nKey;
+        this.includes = ImmutableSet.copyOf( builder.includes );
+        this.includes.forEach( ScopeNames::checkScope );
         this.required = builder.required;
     }
 
@@ -54,16 +60,9 @@ public final class Scope
     }
 
     /**
-     * The id provider the scope belongs to.
-     */
-    public IdProviderKey getIdProvider()
-    {
-        return idProvider;
-    }
-
-    /**
      * The scope's id: what a client puts in {@code scope} and what the token carries. A
-     * {@link ScopeNames scope name}, unique within the id provider.
+     * {@link ScopeNames scope name}: a plain name for a scope of XP's, {@code <application>:<name>} for an
+     * application's.
      */
     public String getId()
     {
@@ -87,11 +86,12 @@ public final class Scope
     }
 
     /**
-     * The roles a token granted this scope is restricted to. Empty for a label.
+     * The ids of the scopes this one includes: a token granted this scope passes wherever one of
+     * them is accepted.
      */
-    public PrincipalKeys getRoles()
+    public Set<String> getIncludes()
     {
-        return roles;
+        return includes;
     }
 
     /**
@@ -102,25 +102,51 @@ public final class Scope
         return required;
     }
 
+    /**
+     * The application that defines the scope, whose phrases the i18n keys name; null for a scope of XP's.
+     */
+    public @Nullable ApplicationKey getApplication()
+    {
+        return application;
+    }
+
+    /**
+     * The key of the title's phrase among the application's, or null. {@link #getTitle()} is the
+     * text to show where there is no such phrase.
+     */
+    public @Nullable String getTitleI18nKey()
+    {
+        return titleI18nKey;
+    }
+
+    /**
+     * The key of the description's phrase among the application's, or null.
+     */
+    public @Nullable String getDescriptionI18nKey()
+    {
+        return descriptionI18nKey;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
-        return this == o || o instanceof Scope that && idProvider.equals( that.idProvider ) && id.equals( that.id ) &&
-            title.equals( that.title ) && Objects.equals( description, that.description ) && roles.equals( that.roles ) &&
-            required == that.required;
+        return this == o || o instanceof Scope that && id.equals( that.id ) &&
+            title.equals( that.title ) && Objects.equals( description, that.description ) && includes.equals( that.includes ) &&
+            required == that.required && Objects.equals( application, that.application ) &&
+            Objects.equals( titleI18nKey, that.titleI18nKey ) && Objects.equals( descriptionI18nKey, that.descriptionI18nKey );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( idProvider, id, title, description, roles, required );
+        return Objects.hash( id, title, description, includes, required, application, titleI18nKey, descriptionI18nKey );
     }
 
     @Override
     public String toString()
     {
-        return "Scope{" + "idProvider=" + idProvider + ", id=" + id + ", title=" + title + ", description=" + description +
-            ", roles=" + roles + ", required=" + required + '}';
+        return "Scope{" + "id=" + id + ", title=" + title + ", description=" + description +
+            ", includes=" + includes + ", required=" + required + '}';
     }
 
     /**
@@ -128,29 +154,24 @@ public final class Scope
      */
     public static final class Builder
     {
-        private @Nullable IdProviderKey idProvider;
-
         private @Nullable String id;
 
         private @Nullable String title;
 
         private @Nullable String description;
 
-        private PrincipalKeys roles = PrincipalKeys.empty();
+        private @Nullable ApplicationKey application;
+
+        private @Nullable String titleI18nKey;
+
+        private @Nullable String descriptionI18nKey;
+
+        private Set<String> includes = Set.of();
 
         private boolean required;
 
         private Builder()
         {
-        }
-
-        /**
-         * The id provider the scope belongs to. Required.
-         */
-        public Builder idProvider( final IdProviderKey idProvider )
-        {
-            this.idProvider = idProvider;
-            return this;
         }
 
         /**
@@ -181,11 +202,38 @@ public final class Scope
         }
 
         /**
-         * The roles the scope implies; empty (the default) for a label.
+         * The ids of the scopes this one includes; none by default.
          */
-        public Builder roles( final PrincipalKeys roles )
+        public Builder includes( final Collection<String> includes )
         {
-            this.roles = roles;
+            this.includes = Set.copyOf( includes );
+            return this;
+        }
+
+        /**
+         * The application that declares the scope, whose phrases the i18n keys name.
+         */
+        public Builder application( final @Nullable ApplicationKey application )
+        {
+            this.application = application;
+            return this;
+        }
+
+        /**
+         * The key of the title's phrase among the application's.
+         */
+        public Builder titleI18nKey( final @Nullable String titleI18nKey )
+        {
+            this.titleI18nKey = titleI18nKey;
+            return this;
+        }
+
+        /**
+         * The key of the description's phrase among the application's.
+         */
+        public Builder descriptionI18nKey( final @Nullable String descriptionI18nKey )
+        {
+            this.descriptionI18nKey = descriptionI18nKey;
             return this;
         }
 
@@ -201,8 +249,8 @@ public final class Scope
         /**
          * Builds the scope.
          *
-         * @throws NullPointerException     when the id provider or the id is missing
-         * @throws IllegalArgumentException when the id is not a scope name, or a principal is not a role
+         * @throws NullPointerException     when the id is missing
+         * @throws IllegalArgumentException when the id is not a scope name
          */
         public Scope build()
         {

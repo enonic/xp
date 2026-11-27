@@ -6,3 +6,12 @@ vendorUrl: "Vendor URL"
 config:
   property_1: "value_1"
   property_2: "value_2"
+scopes:
+  - name: "write"
+    title:
+      text: "Change orders"
+      i18n: "scope.write.title"
+    description: "Create and change orders"
+    includes: ["read"]
+  - name: "read"
+    required: true

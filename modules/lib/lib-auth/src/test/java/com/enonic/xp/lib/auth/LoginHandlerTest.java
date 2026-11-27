@@ -22,8 +22,6 @@ import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.token.AccessTokenService;
-import com.enonic.xp.security.token.Scope;
-import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
@@ -56,7 +54,6 @@ class LoginHandlerTest
         final AccessTokenService accessTokenService = Mockito.mock( AccessTokenService.class );
         Mockito.when( accessTokenService.getIssuer() ).thenReturn( "xp" );
         addService( AccessTokenService.class, accessTokenService );
-        Mockito.when( this.securityService.getScopes( Mockito.any() ) ).thenReturn( Scopes.empty() );
 
         ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
@@ -183,7 +180,7 @@ class LoginHandlerTest
     }
 
     @Test
-    void testLoginWithAccessTokenDerivesRolesFromTheScopes()
+    void testLoginWithAccessTokenLeavesTheScopesToTheApi()
     {
         serveVirtualHost( Set.of( "xp-api" ), withScopes() );
         final AuthenticationInfo authInfo =
@@ -194,8 +191,7 @@ class LoginHandlerTest
 
         final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
         verify( this.securityService ).authenticate( token.capture() );
-        assertEquals( RoleRestriction.to( PrincipalKeys.from( "role:cms.project.site.viewer", "role:cms.project.site.editor" ) ),
-                      token.getValue().getRestriction() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
 
         final AuthenticationInfo loggedIn = ContextAccessor.current().getAuthInfo();
         assertEquals( TestDataFixtures.getTestUser().getKey(), loggedIn.getUser().getKey() );
@@ -306,19 +302,8 @@ class LoginHandlerTest
         verifyNoInteractions( this.securityService );
     }
 
-    /**
-     * Gives the enonic id provider two scopes and returns vhost settings enabling it.
-     */
     private VirtualHostIdProvider withScopes()
     {
-        final IdProviderKey enonic = IdProviderKey.from( "enonic" );
-        Mockito.when( this.securityService.getScopes( enonic ) ).thenReturn( Scopes.from( Scope.create()
-                                                                                .idProvider( enonic )
-                                                                                .id( "content:read" )
-                                                                                .roles( PrincipalKeys.from( "role:cms.project.site.viewer",
-                                                                                                            "role:cms.project.site.editor" ) )
-                                                                                .build(),
-                                                                            Scope.create().idProvider( enonic ).id( "profile" ).required( true ).build() ) );
         return VirtualHostIdProvider.create().build();
     }
 

@@ -33,7 +33,7 @@ import com.enonic.xp.web.WebResponse;
  * {@code server:index} - the search and storage indices of a repository. Exposes replica counts, the one index setting
  * an operator tunes, instead of raw Elasticsearch settings.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:index", "title=Index API", "mount=management",
+@Component(service = UniversalApiHandler.class, property = {"key=server:index", "scopes=read:repo", "scopes=repo", "title=Index API", "mount=management",
     "allowedPrincipals=role:system.admin"})
 public class IndexApiHandler
     extends ManagementApiHandler

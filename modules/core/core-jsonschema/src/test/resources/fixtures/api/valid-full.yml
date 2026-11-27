@@ -7,3 +7,6 @@ allow:
 mount:
   - "web"
   - "management"
+scopes:
+  - "read:content"
+  - "com.example.myapp:write"
